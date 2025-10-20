@@ -95,11 +95,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-- **[NEXT-003] Setup ESLint and Prettier** [Status: Ready] [Started: 2025-10-20]
-  - Story file: `docs/story-NEXT-003.md`
-  - Points: 2
-  - Epic: Milestone 1.1 - Next.js Project Foundation
-  - Implementation: Configure ESLint + Prettier for Next.js + TypeScript + Tailwind CSS
+(Empty - use SM agent with \*story-ready to move story from TODO to IN PROGRESS)
 
 ---
 
@@ -109,6 +105,14 @@ Completed stories with dates and points:
 
 ### Phase 1: Next.js Project Initialization
 
+- [NEXT-003] Setup ESLint and Prettier (2025-10-20) [Points: 2]
+  - Configured ESLint with Next.js + TypeScript + React rules
+  - Configured Prettier with Tailwind CSS plugin
+  - Added npm scripts (lint, lint:fix, format, format:check, check-all)
+  - Formatted all existing code (40+ files)
+  - Updated README.md with Code Quality section
+  - All checks pass (type-check, lint, format)
+  - Story file: `docs/story-NEXT-003.md`
 - [NEXT-002] Configure project structure (app/, lib/, components/) (2025-10-20) [Points: 3]
   - Created lib/ structure (agents, workflows, state, templates, config, llm, cli, types, utils)
   - Created components/ structure (ui, features)
@@ -163,9 +167,9 @@ Completed stories with dates and points:
   - Configured hot reload for development
   - Updated all documentation with deployment details
 
-### Total Completed: 7 stories | 32 points
+### Total Completed: 8 stories | 34 points
 
-### Total Remaining: 38+ stories (estimated)
+### Total Remaining: 37+ stories (estimated)
 
 ---
 
