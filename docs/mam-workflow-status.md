@@ -90,11 +90,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-- **[SETUP-002] Setup wizard UI (3-step configuration)** [Status: Ready] [Started: 2025-10-20]
-  - Story file: `docs/story-SETUP-002.md`
-  - Points: 5
-  - Epic: Milestone 1.2 - Setup Wizard & Configuration
-  - Implementation: Create multi-step wizard with project info, LLM config, and module selection
+(Empty - ready for next story from TODO)
 
 ---
 
@@ -104,6 +100,17 @@ Completed stories with dates and points:
 
 ### Phase 1: Next.js Project Initialization
 
+- [SETUP-002] Setup wizard UI (3-step configuration) (2025-10-20) [Points: 5]
+  - Created multi-step wizard with 4 steps (Project, LLM, Modules, Summary)
+  - StepIndicator component with progress tracking
+  - ProjectInfoStep: Project name, output folder, user name, language
+  - LLMConfigStep: Provider selection (Gemini, Claude, OpenAI, Local), API key, model
+  - ModuleConfigStep: MAM, MAB, CIS module toggles
+  - SummaryStep: Review configuration before saving
+  - Responsive design, dark mode, accessibility features
+  - TypeScript types for wizard state
+  - All quality checks pass, production build succeeds
+  - Story file: `docs/story-SETUP-002.md`
 - [NEXT-005] Create base layout and navigation (2025-10-20) [Points: 3]
   - Created Navigation component with responsive mobile menu
   - Created Footer component with branding and links
@@ -187,9 +194,9 @@ Completed stories with dates and points:
   - Configured hot reload for development
   - Updated all documentation with deployment details
 
-### Total Completed: 10 stories | 39 points
+### Total Completed: 11 stories | 44 points
 
-### Total Remaining: 35+ stories (estimated)
+### Total Remaining: 34+ stories (estimated)
 
 ---
 
