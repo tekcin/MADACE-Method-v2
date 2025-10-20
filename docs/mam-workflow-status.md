@@ -18,12 +18,11 @@ Stories ready to be drafted (ordered by priority for Next.js implementation):
 
 ### Milestone 1.2: Setup Wizard & Configuration
 
-- [SETUP-003] Project information step (name, output folder, user)
-- [SETUP-004] LLM configuration step (provider selection, API key)
-- [SETUP-005] Module selection step (MAM, MAB, CIS toggles)
 - [SETUP-006] Configuration persistence (config.yaml + .env)
 - [SETUP-007] Configuration validation with Zod
 - [SETUP-008] Settings page for ongoing configuration
+
+**Note:** [SETUP-003], [SETUP-004], [SETUP-005] were completed as part of [SETUP-002] which implemented all step UIs
 
 ### Milestone 1.3: Core TypeScript Modules
 
@@ -36,7 +35,6 @@ Stories ready to be drafted (ordered by priority for Next.js implementation):
 
 ### Milestone 1.4: LLM Integration
 
-- [LLM-013] Multi-provider LLM client (lib/llm/client.ts)
 - [LLM-014] Gemini provider implementation
 - [LLM-015] Claude provider implementation
 - [LLM-016] OpenAI provider implementation
@@ -90,7 +88,11 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - ready for next story from TODO)
+- **[LLM-013] Multi-provider LLM client (lib/llm/client.ts)** [Status: Ready] [Started: 2025-10-20]
+  - Story file: `docs/story-LLM-013.md`
+  - Points: 8
+  - Epic: Milestone 1.4 - LLM Integration
+  - Implementation: Create unified LLM client with stub implementations for all 4 providers
 
 ---
 
