@@ -210,11 +210,7 @@ export class AgentLoader {
       }
 
       if (error instanceof Error && error.name === 'ZodError') {
-        throw new AgentLoadError(
-          `Agent validation failed: ${error.message}`,
-          filePath,
-          error
-        );
+        throw new AgentLoadError(`Agent validation failed: ${error.message}`, filePath, error);
       }
 
       throw new AgentLoadError(`Failed to load agent: ${String(error)}`, filePath, error);
@@ -287,7 +283,13 @@ Update `lib/agents/index.ts`:
 ```typescript
 export * from './loader';
 export * from './schema';
-export type { Agent, AgentMetadata, AgentPersona, AgentMenuItem, AgentPrompt } from '@/lib/types/agent';
+export type {
+  Agent,
+  AgentMetadata,
+  AgentPersona,
+  AgentMenuItem,
+  AgentPrompt,
+} from '@/lib/types/agent';
 ```
 
 Update `lib/types/index.ts` to include agent types:
@@ -395,6 +397,7 @@ curl http://localhost:3000/api/agents/sm
 ### Error Handling
 
 Three types of errors:
+
 1. **File not found** - `ENOENT` error
 2. **Invalid YAML** - `yaml.YAMLException`
 3. **Validation failure** - Zod validation error

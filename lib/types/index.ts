@@ -9,35 +9,14 @@
 // Agent Types
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-export type AgentMetadata = {
-  id: string;
-  name: string;
-  title: string;
-  icon: string;
-  module: string;
-  version: string;
-};
-
-export type AgentPersona = {
-  role: string;
-  identity: string;
-  communication_style?: string;
-  principles?: string;
-};
-
-export type AgentMenuItem = {
-  label: string;
-  command: string;
-  description?: string;
-};
-
-export type Agent = {
-  metadata: AgentMetadata;
-  persona: AgentPersona;
-  critical_actions?: string[];
-  menu?: AgentMenuItem[];
-  prompts?: Record<string, string>;
-};
+export type {
+  Agent,
+  AgentMetadata,
+  AgentPersona,
+  AgentMenuItem,
+  AgentPrompt,
+  AgentFile,
+} from './agent';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Workflow Types
