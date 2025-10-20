@@ -88,12 +88,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-- **[NEXT-002] Configure project structure (app/, lib/, components/)** [Status: Ready] [Started: 2025-10-20]
-  - Story file: `docs/story-NEXT-002.md`
-  - Points: 3
-  - Epic: Milestone 1.1 - Next.js Project Foundation
-  - Reviewed by: SM Agent (Approved ✅)
-  - Next: Implement story with DEV agent guidance, then run `*story-approved` when complete
+(Empty - use SM agent with *story-ready to move story from TODO to IN PROGRESS)
 
 ---
 
@@ -102,6 +97,13 @@ Story being implemented (only ONE at a time):
 Completed stories with dates and points:
 
 ### Phase 1: Next.js Project Initialization
+- [NEXT-002] Configure project structure (app/, lib/, components/) (2025-10-20) [Points: 3]
+  - Created lib/ structure (agents, workflows, state, templates, config, llm, cli, types, utils)
+  - Created components/ structure (ui, features)
+  - Added comprehensive type definitions (Agent, Workflow, State, Config, LLM types)
+  - Added utility functions (date, string, JSON, object, array, error utilities)
+  - Added README.md for each directory
+  - Story file: `docs/story-NEXT-002.md`
 - [NEXT-001] Initialize Next.js 14 project with TypeScript and Tailwind (2025-10-20) [Points: 5]
   - Initialized Next.js 15.5.6 with App Router
   - Configured TypeScript with strict mode
@@ -148,8 +150,8 @@ Completed stories with dates and points:
   - Configured hot reload for development
   - Updated all documentation with deployment details
 
-### Total Completed: 6 stories | 29 points
-### Total Remaining: 39+ stories (estimated)
+### Total Completed: 7 stories | 32 points
+### Total Remaining: 38+ stories (estimated)
 
 ---
 
