@@ -14,7 +14,7 @@ Stories ready to be drafted (ordered by priority for Next.js implementation):
 
 ### Milestone 1.1: Next.js Project Foundation
 
-- [NEXT-005] Create base layout and navigation
+(Empty - all Milestone 1.1 stories moved to active work)
 
 ### Milestone 1.2: Setup Wizard & Configuration
 
@@ -83,8 +83,8 @@ Stories ready to be drafted (ordered by priority for Next.js implementation):
 
 Story ready for drafting (only ONE at a time):
 
-- **[NEXT-004] Configure environment variables (.env.example)** [Status: Ready] [Moved: 2025-10-20]
-  - Automatically moved from BACKLOG when [NEXT-003] moved to IN PROGRESS
+- **[NEXT-005] Create base layout and navigation** [Status: Ready] [Moved: 2025-10-20]
+  - Automatically moved from BACKLOG when [NEXT-004] moved to IN PROGRESS
   - Story file: _[To be created with *create-story]_
   - Points: _[TBD]_
   - Epic: Milestone 1.1 - Next.js Project Foundation
@@ -95,7 +95,11 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - use SM agent with \*story-ready to move story from TODO to IN PROGRESS)
+- **[NEXT-004] Configure environment variables (.env.example)** [Status: Ready] [Started: 2025-10-20]
+  - Story file: `docs/story-NEXT-004.md`
+  - Points: 2
+  - Epic: Milestone 1.1 - Next.js Project Foundation
+  - Implementation: Create .env.example with all environment variables for LLM providers
 
 ---
 
