@@ -248,6 +248,7 @@ export class GeminiProvider extends BaseLLMProvider {
 ```
 
 Create similar stubs for:
+
 - `lib/llm/providers/claude.ts`
 - `lib/llm/providers/openai.ts`
 - `lib/llm/providers/local.ts`
@@ -346,6 +347,7 @@ curl -X POST http://localhost:3000/api/llm/test \
 ### Architecture Pattern
 
 Using **Strategy Pattern** for provider implementations:
+
 - `LLMClient` is the context
 - `ILLMProvider` is the strategy interface
 - Each provider class is a concrete strategy
@@ -353,6 +355,7 @@ Using **Strategy Pattern** for provider implementations:
 ### Why Stubs for Now?
 
 We're creating stub implementations because:
+
 1. Actual API integration requires testing with real API keys
 2. Each provider has unique authentication and request formats
 3. Allows us to build the architecture without external dependencies
