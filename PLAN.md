@@ -1,6 +1,6 @@
-# MADACE_RUST_PY Development Plan
+# MADACE-Method v2.0 Development Plan
 
-**Project:** MADACE_RUST_PY - Experimental Next.js Implementation
+**Project:** MADACE-Method v2.0 - Experimental Next.js Implementation
 **Version:** 2.1.0 (Simplified Architecture - Feasibility Confirmed)
 **Status:** ✅ Ready for Implementation
 **Planning Date:** 2025-10-20

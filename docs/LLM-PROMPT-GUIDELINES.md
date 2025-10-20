@@ -163,7 +163,7 @@ Use Zod for validation.
 const systemPrompt = `
 ${getTechStackContext()}
 
-You are implementing a new feature for MADACE_RUST_PY.
+You are implementing a new feature for MADACE-Method v2.0.
 
 CONSTRAINTS:
 - Only use TypeScript 5.7.3

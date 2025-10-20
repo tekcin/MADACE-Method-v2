@@ -1,8 +1,8 @@
 {
-  "name": "madace-web",
-  "version": "0.1.0",
+  "name": "madace-method-v2",
+  "version": "2.0.0-alpha",
   "private": true,
-  "description": "MADACE experimental Next.js full-stack implementation",
+  "description": "MADACE-Method v2.0 - Next.js full-stack implementation",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -30,7 +30,11 @@
     "eslint-config-next": "^15.5.6",
     "@eslint/eslintrc": "^3.3.0"
   },
-  "keywords": ["madace", "next.js", "typescript", "ai-agents"],
+  "keywords": ["madace", "madace-method", "v2", "next.js", "typescript", "ai-agents", "workflow", "state-machine"],
   "author": "MADACE Team",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tekcin/MADACE-Method-v2"
+  }
 }

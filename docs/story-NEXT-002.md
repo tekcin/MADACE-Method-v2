@@ -165,7 +165,7 @@ npx tsc --noEmit
 ### Proposed Directory Structure
 
 ```
-MADACE_RUST_PY/
+MADACE-Method v2.0/
 ├── app/                          # Next.js App Router
 │   ├── layout.tsx               # Root layout
 │   ├── page.tsx                 # Home page

@@ -1,7 +1,7 @@
 # MADACE Web Architecture - Feasibility Test Report
 
 **Date:** 2025-10-20
-**Project:** MADACE_RUST_PY (Next.js Full-Stack Implementation)
+**Project:** MADACE-Method v2.0 (Next.js Full-Stack Implementation)
 **Status:** ✅ ALL TESTS PASSED
 
 ---
@@ -152,9 +152,9 @@ Status: AVAILABLE ✅
 
 **Paths Verified:**
 ```
-✓ /Users/nimda/MADACE_RUST_PY/madace/core/config.yaml
-✓ /Users/nimda/MADACE_RUST_PY/docs/mam-workflow-status.md
-✓ /Users/nimda/MADACE_RUST_PY/.env
+✓ /Users/nimda/MADACE-Method v2.0/madace/core/config.yaml
+✓ /Users/nimda/MADACE-Method v2.0/docs/mam-workflow-status.md
+✓ /Users/nimda/MADACE-Method v2.0/.env
 ```
 
 **Status:** PASS
@@ -348,7 +348,7 @@ Based on feasibility results:
 **Zero-Setup Development:**
 ```bash
 git clone <repo>
-cd MADACE_RUST_PY
+cd MADACE-Method v2.0
 docker-compose -f docker-compose.dev.yml up -d
 open http://localhost:8080  # VSCode in browser
 # Start coding immediately!

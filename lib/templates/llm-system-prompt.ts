@@ -12,7 +12,7 @@ import { getTechStackContext, getAgentTechStackContext } from '../constants/tech
 export function getBaseSystemPrompt(): string {
   return `${getTechStackContext()}
 
-You are an AI assistant working on the MADACE_RUST_PY project, an experimental Next.js implementation of the MADACE-METHOD framework.
+You are an AI assistant working on the MADACE-Method v2.0 project, the next generation web-based implementation of the MADACE-METHOD framework.
 
 CRITICAL CONSTRAINTS:
 - Only generate TypeScript code (no Python, no Rust)

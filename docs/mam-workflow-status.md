@@ -1,6 +1,6 @@
 # MAM Workflow Status
 
-**Project:** MADACE_RUST_PY - Experimental Next.js Full-Stack Implementation
+**Project:** MADACE-Method v2.0 - Experimental Next.js Full-Stack Implementation
 **Current Phase:** Phase 1 - Planning Complete, Ready for Implementation
 **Last Updated:** 2025-10-20
 **Methodology:** Using official MADACE-METHOD to build this experimental implementation

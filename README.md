@@ -1,17 +1,30 @@
-# MADACE_RUST_PY
+# MADACE-Method v2.0
 
-**IMPORTANT**: This is an experimental implementation of MADACE-METHOD using a simplified Next.js full-stack architecture.
+**Version**: 2.0.0-alpha | **Status**: In Development ✅
 
-For the official MADACE-METHOD framework (Node.js-based), see: https://github.com/tekcin/MADACE-METHOD
+**MADACE-Method v1.0** (Official): https://github.com/tekcin/MADACE-METHOD
 
 ---
 
-## 🎯 What is This Project?
+## 🎯 What is MADACE-Method v2.0?
 
-This repository is a **proof-of-concept** implementation of the MADACE-METHOD philosophy using a modern web-based architecture:
+MADACE-Method v2.0 is the **next generation** of the MADACE-METHOD framework, rebuilt from the ground up with modern web technologies and enhanced user experience.
 
-- **Official MADACE**: Node.js/JavaScript CLI-based framework
-- **This Project**: Next.js 15 full-stack TypeScript with Web UI
+### Version Comparison
+
+- **v1.0 (Official)**: Node.js/JavaScript CLI-based framework
+- **v2.0 (This Project)**: Next.js 15 full-stack TypeScript with Web UI
+
+### What's New in v2.0
+
+✅ **Web-First Architecture**: Full browser-based UI replacing CLI
+✅ **Type-Safe**: TypeScript throughout with strict mode + Zod validation
+✅ **Modern Stack**: Next.js 15, React 19, Tailwind CSS 4
+✅ **Single Runtime**: Pure Node.js/TypeScript (no multi-language complexity)
+✅ **Visual State Machine**: Kanban-style workflow visualization
+✅ **Multi-LLM Support**: Choose between Gemini, Claude, OpenAI, or local models
+✅ **Real-Time Updates**: Live workflow status and progress tracking
+✅ **Docker-Ready**: Production and development containers included
 
 ### Architecture
 
@@ -122,8 +135,8 @@ This implementation maintains the core MADACE philosophy:
 
 ```bash
 # 1. Clone repository
-git clone <this-repo-url>
-cd MADACE_RUST_PY
+git clone https://github.com/tekcin/MADACE-Method-v2.git
+cd MADACE-Method-v2
 
 # 2. Create data folder
 mkdir madace-data
@@ -150,8 +163,8 @@ docker-compose -f docker-compose.dev.yml up -d
 
 ```bash
 # 1. Clone and install
-git clone <this-repo-url>
-cd MADACE_RUST_PY
+git clone https://github.com/tekcin/MADACE-Method-v2.git
+cd MADACE-Method-v2
 npm install
 
 # 2. Start development server
@@ -482,38 +495,41 @@ For the official framework:
 
 ---
 
-## Comparison: Official vs This Implementation
+## Comparison: v1.0 vs v2.0
 
-| Aspect | Official MADACE | This Project |
-|--------|----------------|--------------|
+| Aspect | v1.0 (Official MADACE) | v2.0 (This Project) |
+|--------|----------------------|---------------------|
 | **Language** | JavaScript/Node.js | TypeScript/Node.js |
-| **Architecture** | CLI-based | Web UI (Next.js) |
-| **Deployment** | npm install | Docker (single image + volume) |
+| **Type Safety** | Runtime only | Compile-time + Runtime (TypeScript + Zod) |
+| **Architecture** | CLI-based | Web UI (Next.js 15) |
+| **Deployment** | npm install | Docker (optimized containers) |
 | **Interface** | Command-line | Browser-based |
 | **Performance** | Fast (V8 engine) | Fast (same V8 engine) |
-| **Complexity** | Lower (single runtime) | Low (single runtime) |
-| **Maturity** | v1.0-alpha.2 (stable) | Experimental (proof-of-concept) |
-| **IDE Support** | 5+ IDEs native | Any browser |
-| **LLM Selection** | Fixed | User-selectable (4 options) |
+| **Complexity** | Lower | Low (single runtime) |
+| **Maturity** | v1.0-alpha.2 (stable) | v2.0-alpha (experimental) |
+| **IDE Support** | 5+ IDEs native | Any browser + VSCode Server |
+| **LLM Selection** | Fixed | User-selectable (Gemini/Claude/OpenAI/Local) |
 | **State Machine UI** | CLI text | Visual Kanban board |
+| **Real-Time Updates** | N/A | Live progress tracking |
 
 ---
 
-## When to Use Which?
+## When to Use Which Version?
 
-### Use Official MADACE-METHOD If:
-- You want a production-ready framework ✅
-- You prefer command-line workflows ✅
-- You need native IDE integration ✅
-- You want community modules and support ✅
-- You value simplicity and ease of installation ✅
+### Use v1.0 (Official MADACE-METHOD) If:
+- ✅ You want a production-ready framework
+- ✅ You prefer command-line workflows
+- ✅ You need native IDE integration
+- ✅ You want community modules and support
+- ✅ You value simplicity and ease of installation
 
-### Use This Implementation If:
-- You prefer web-based interfaces 🌐
-- You want visual state machine (Kanban board) 📊
-- You want to choose your LLM provider 🤖
-- You're exploring alternative MADACE UIs 🔬
-- You want to contribute to UI/UX R&D 🔧
+### Use v2.0 (This Project) If:
+- 🌐 You prefer web-based interfaces
+- 📊 You want visual state machine (Kanban board)
+- 🤖 You want to choose your LLM provider
+- 🎨 You want modern UI/UX with real-time updates
+- 🔬 You're exploring next-gen MADACE features
+- 🔧 You want to contribute to v2 development
 
 ---
 
@@ -532,13 +548,27 @@ See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for architectu
 
 ## Contributing
 
-This is an experimental project. Contributions are welcome, but please note:
+MADACE-Method v2.0 is under active development. Contributions are welcome!
 
-1. **Not Official**: This is not the official MADACE-METHOD implementation
-2. **Experimental**: Architecture recently simplified, under active development
-3. **Educational**: Great for learning Next.js, TypeScript, and MADACE concepts
+### How to Contribute
 
-For contributing to the official framework, see:
+1. **Fork the Repository**: https://github.com/tekcin/MADACE-Method-v2
+2. **Create a Feature Branch**: `git checkout -b feature/your-feature`
+3. **Follow the Tech Stack**: TypeScript 5.7.3, Next.js 15.5.6 (see [TECH-STACK.md](./docs/TECH-STACK.md))
+4. **Run Tests**: `npm run type-check` and `npm run lint`
+5. **Submit PR**: With clear description of changes
+
+### Development Guidelines
+
+- Follow TypeScript strict mode
+- Use Zod for all validation
+- Add JSDoc comments for public APIs
+- Update documentation when adding features
+- Test on both development and production Docker containers
+
+### Contributing to v1.0 (Official)
+
+For the official MADACE-METHOD v1.0 framework:
 https://github.com/tekcin/MADACE-METHOD
 
 ---
@@ -566,4 +596,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-<sub>Experimental Next.js implementation of MADACE-METHOD with Web UI</sub>
+<sub>MADACE-Method v2.0 - Next Generation Web-Based AI Development Framework</sub>

@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This repository (MADACE_RUST_PY) is a **proof-of-concept** implementation with a simplified Next.js full-stack architecture:
+This repository (MADACE-Method v2.0) is a **proof-of-concept** implementation with a simplified Next.js full-stack architecture:
 
 - **Frontend**: Next.js 14 with React 18 and App Router
 - **Backend**: Next.js API Routes and Server Actions
@@ -217,7 +217,7 @@ Modules are located in `madace/` directory:
 
 ### Directory Structure (Future)
 ```
-/Users/nimda/MADACE_RUST_PY/
+/Users/nimda/MADACE-Method v2.0/
 ├── app/                    # Next.js App Router
 │   ├── page.tsx           # Home page
 │   ├── api/               # API routes

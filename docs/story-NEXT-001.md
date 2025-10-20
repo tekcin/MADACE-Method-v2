@@ -139,7 +139,7 @@ npm start
 
 ### Project Structure After Initialization
 ```
-MADACE_RUST_PY/
+MADACE-Method v2.0/
 ├── app/                    # Next.js App Router
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Home page
@@ -284,7 +284,7 @@ This story is considered DONE when:
 ## Implementation Notes
 
 ### Before You Start
-1. Ensure you're in the project root: `/Users/nimda/MADACE_RUST_PY`
+1. Ensure you're in the project root: `/Users/nimda/MADACE-Method v2.0`
 2. Verify Node.js version: `node -v` (should be v24.10.0+)
 3. Review existing files that might conflict
 4. Consider backing up current state: `git commit -am "Pre-Next.js initialization"`

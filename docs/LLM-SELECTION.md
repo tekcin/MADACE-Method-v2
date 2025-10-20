@@ -1,4 +1,4 @@
-# LLM Selection Guide for MADACE_RUST_PY
+# LLM Selection Guide for MADACE-Method v2.0
 
 **Purpose:** This guide explains how to select and configure the LLM (Large Language Model) used for planning and architecture work in this project.
 
@@ -12,7 +12,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│           MADACE_RUST_PY Development Flow               │
+│           MADACE-Method v2.0 Development Flow               │
 └─────────────────────────────────────────────────────────┘
 
 Phase 1: Planning & Architecture (User-Selected LLM)
@@ -260,7 +260,7 @@ Once planning/architecture is complete and work is broken into stories, implemen
 
 ## Recommended Choice by Project Type
 
-### For This Project (MADACE_RUST_PY Simplification):
+### For This Project (MADACE-Method v2.0 Simplification):
 
 **Recommendation: Google Gemini (gemini-2.0-flash-exp)**
 
@@ -295,7 +295,7 @@ This will interactively ask:
 
 **Script Output Example:**
 ```
-🤖 MADACE_RUST_PY - LLM Selection for Planning & Architecture
+🤖 MADACE-Method v2.0 - LLM Selection for Planning & Architecture
 ================================================================
 
 This LLM will be used for:
@@ -391,7 +391,7 @@ PLANNING_LLM=claude npm run plan-project
 
 ## Cost Estimation
 
-For typical MADACE_RUST_PY planning/architecture work:
+For typical MADACE-Method v2.0 planning/architecture work:
 
 **Phase 1: Initial Planning (PRD, Architecture, ADRs)**
 - Gemini Free Tier: $0 (within limits)
@@ -430,7 +430,7 @@ For typical MADACE_RUST_PY planning/architecture work:
 - Complete privacy and control
 - Suitable for confidential projects
 
-**Recommendation for MADACE_RUST_PY:**
+**Recommendation for MADACE-Method v2.0:**
 This is an open-source experimental project, so cloud LLMs are fine. If forking for proprietary use, consider local models.
 
 ---

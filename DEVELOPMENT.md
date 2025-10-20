@@ -9,7 +9,7 @@ This guide explains how to develop MADACE using the **development container** wi
 ```bash
 # 1. Clone repository
 git clone <repo-url>
-cd MADACE_RUST_PY
+cd MADACE-Method v2.0
 
 # 2. Create data folder
 mkdir madace-data
@@ -75,7 +75,7 @@ open http://localhost:8080
 All code changes are **live-synced** between host and container:
 
 ```
-Host: ./MADACE_RUST_PY/
+Host: ./MADACE-Method v2.0/
   ↕ (live sync)
 Container: /workspace/
 ```
@@ -188,7 +188,7 @@ volumes:
 
 ### Source Code
 
-- **Host**: `./MADACE_RUST_PY/`
+- **Host**: `./MADACE-Method v2.0/`
 - **Container**: `/workspace/`
 - **Sync**: Live (two-way)
 

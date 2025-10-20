@@ -8,7 +8,7 @@
 
 ## Context and Problem Statement
 
-This ADR documents the architectural decision for MADACE_RUST_PY experimental implementation.
+This ADR documents the architectural decision for MADACE-Method v2.0 experimental implementation.
 
 **Key Requirements:**
 1. **Simplicity** - Minimize architectural complexity

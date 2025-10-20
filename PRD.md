@@ -1,7 +1,7 @@
 # Product Requirements Document (PRD)
 
-**Project:** MADACE_RUST_PY - Experimental Next.js Implementation
-**Version:** 2.2.0
+**Project:** MADACE-Method v2.0 - Next Generation Web-Based Implementation
+**Version:** 2.0.0-alpha
 **Status:** ✅ In Development
 **Last Updated:** 2025-10-20
 **Document Owner:** MADACE Core Team
@@ -18,7 +18,7 @@
 
 ## Executive Summary
 
-MADACE_RUST_PY is an **experimental proof-of-concept** that empowers individual developers and small teams to build production-ready software through AI-assisted workflows. The system provides a structured, agent-based approach to software development, from ideation through deployment, using natural language configuration and intelligent orchestration.
+MADACE-Method v2.0 is an **experimental proof-of-concept** that empowers individual developers and small teams to build production-ready software through AI-assisted workflows. The system provides a structured, agent-based approach to software development, from ideation through deployment, using natural language configuration and intelligent orchestration.
 
 **Implementation**: Next.js 15 full-stack TypeScript with web-based UI.
 
@@ -44,7 +44,7 @@ Democratize software development by providing an intuitive, modular framework th
 - Project planning, architecture, and implementation are fragmented across different tools
 
 **Solution:**
-MADACE_RUST_PY provides a unified framework that guides users through the entire software development lifecycle using specialized AI agents, pre-built workflows, and natural language configuration. The system enforces best practices while remaining flexible enough for projects of any scale.
+MADACE-Method v2.0 provides a unified framework that guides users through the entire software development lifecycle using specialized AI agents, pre-built workflows, and natural language configuration. The system enforces best practices while remaining flexible enough for projects of any scale.
 
 ### 1.2 Target Audience
 

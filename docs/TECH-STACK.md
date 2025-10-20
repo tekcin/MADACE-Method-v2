@@ -1,4 +1,4 @@
-# MADACE_RUST_PY Technology Stack
+# MADACE-Method v2.0 Technology Stack
 
 **Version**: 1.0.0
 **Last Updated**: 2025-10-20

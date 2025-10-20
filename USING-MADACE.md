@@ -1,8 +1,8 @@
-# Using Official MADACE-METHOD to Build MADACE_RUST_PY
+# Using Official MADACE-METHOD to Build MADACE-Method v2.0
 
 **Meta Approach**: Using MADACE to build MADACE (experimental Next.js full-stack version)
 
-This guide shows you how to use the official MADACE-METHOD framework to plan, manage, and implement the MADACE_RUST_PY experimental project.
+This guide shows you how to use the official MADACE-METHOD framework to plan, manage, and implement the MADACE-Method v2.0 experimental project.
 
 > **Note**: This project was originally planned as Rust+Python+Next.js but has been simplified to **Next.js 14 Full-Stack TypeScript**. See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for details.
 
@@ -19,7 +19,7 @@ This guide shows you how to use the official MADACE-METHOD framework to plan, ma
 **The Paradox**: We have an empty experimental MADACE implementation, but the official MADACE-METHOD is production-ready!
 
 **The Solution**: Use official MADACE-METHOD to:
-1. Plan the MADACE_RUST_PY project (PRD, Epics, Stories)
+1. Plan the MADACE-Method v2.0 project (PRD, Epics, Stories)
 2. Manage implementation workflow (BACKLOG → TODO → IN PROGRESS → DONE)
 3. Guide development with AI agents (PM, Architect, SM, DEV)
 4. Validate the experimental architecture through real use
@@ -91,7 +91,7 @@ Since the CLI is still in development, we'll use the agents manually through Cla
 **Agent**: PM (Product Manager)
 **Workflow**: `*assess-scale`
 
-**Purpose**: Determine if MADACE_RUST_PY is Level 0, 1, 2, 3, or 4
+**Purpose**: Determine if MADACE-Method v2.0 is Level 0, 1, 2, 3, or 4
 
 **Expected Outcome**:
 - **Level 2-3** (Medium/Large project)
@@ -237,7 +237,7 @@ Implement YAML parsing and validation for agent definition files...
 
 ---
 
-## 📋 Current State of MADACE_RUST_PY
+## 📋 Current State of MADACE-Method v2.0
 
 ### What Exists (To Reference)
 - ✅ `docs/PRD.md` - Comprehensive (can be refined with PM agent)
@@ -564,7 +564,7 @@ Plan:    PLAN.md (reference for story list)
 
 ## 📝 Summary
 
-**What We're Doing**: Using production-ready MADACE-METHOD to build experimental MADACE_RUST_PY
+**What We're Doing**: Using production-ready MADACE-METHOD to build experimental MADACE-Method v2.0
 
 **Benefits**:
 - ✅ Validated workflow system
