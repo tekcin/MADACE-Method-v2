@@ -18,7 +18,6 @@ Stories ready to be drafted (ordered by priority for Next.js implementation):
 
 ### Milestone 1.2: Setup Wizard & Configuration
 
-- [SETUP-002] Setup wizard UI (3-step configuration)
 - [SETUP-003] Project information step (name, output folder, user)
 - [SETUP-004] LLM configuration step (provider selection, API key)
 - [SETUP-005] Module selection step (MAM, MAB, CIS toggles)
@@ -91,7 +90,11 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - ready for next story from TODO)
+- **[SETUP-002] Setup wizard UI (3-step configuration)** [Status: Ready] [Started: 2025-10-20]
+  - Story file: `docs/story-SETUP-002.md`
+  - Points: 5
+  - Epic: Milestone 1.2 - Setup Wizard & Configuration
+  - Implementation: Create multi-step wizard with project info, LLM config, and module selection
 
 ---
 
