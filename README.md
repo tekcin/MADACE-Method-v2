@@ -17,13 +17,15 @@ MADACE-Method v2.0 is the **next generation** of the MADACE-METHOD framework, re
 
 ### What's New in v2.0
 
-✅ **Web-First Architecture**: Full browser-based UI replacing CLI
+✅ **Dual Interface**: Web UI + CLI (both work simultaneously with same state)
+✅ **Web-First Architecture**: Full browser-based UI in addition to CLI
 ✅ **Type-Safe**: TypeScript throughout with strict mode + Zod validation
 ✅ **Modern Stack**: Next.js 15, React 19, Tailwind CSS 4
 ✅ **Single Runtime**: Pure Node.js/TypeScript (no multi-language complexity)
-✅ **Visual State Machine**: Kanban-style workflow visualization
+✅ **Visual State Machine**: Kanban-style workflow visualization (Web) + text status (CLI)
 ✅ **Multi-LLM Support**: Choose between Gemini, Claude, OpenAI, or local models
 ✅ **Real-Time Updates**: Live workflow status and progress tracking
+✅ **CLI Integration**: Full Claude CLI and Gemini CLI support maintained
 ✅ **Docker-Ready**: Production and development containers included
 
 ### Architecture
@@ -296,6 +298,105 @@ See [ARCHITECTURE.md - Deployment](./ARCHITECTURE.md#deployment) for full docume
 
 ---
 
+## CLI Support
+
+**MADACE-Method v2.0 maintains full CLI functionality** alongside the new Web UI.
+
+### Dual Interface Approach
+
+Both interfaces work with the **same files and state**:
+
+```
+┌─────────────────────────────────────────────┐
+│         MADACE-Method v2.0                   │
+│                                              │
+│  ┌──────────────┐      ┌──────────────┐    │
+│  │   Web UI     │      │     CLI      │    │
+│  │  (Browser)   │      │  (Terminal)  │    │
+│  └──────┬───────┘      └──────┬───────┘    │
+│         │                     │             │
+│         └──────────┬──────────┘             │
+│                    ▼                         │
+│         ┌─────────────────────┐             │
+│         │   Shared State      │             │
+│         │  - Workflow Status  │             │
+│         │  - Stories          │             │
+│         │  - Configuration    │             │
+│         └─────────────────────┘             │
+└─────────────────────────────────────────────┘
+```
+
+### Using CLI (Claude CLI or Gemini CLI)
+
+**Same workflows, different interface:**
+
+```bash
+# Via Claude CLI
+claude --project madace-method-v2 agent pm
+claude --project madace-method-v2 workflow plan-project
+
+# Via Gemini CLI
+gemini --project madace-method-v2 agent pm
+gemini --project madace-method-v2 workflow plan-project
+
+# Result: Same files generated in docs/
+# State synchronized with Web UI automatically
+```
+
+### Using Web UI
+
+```
+1. Open http://localhost:3000
+2. Click "PM Agent"
+3. Click "*plan-project"
+4. Fill form in browser
+5. Submit
+
+# Result: Same files generated in docs/
+# State synchronized with CLI automatically
+```
+
+### Simultaneous Usage
+
+You can **use both at the same time**:
+
+```bash
+Terminal 1: claude --project madace-method-v2 workflow create-story
+Browser:    View live progress at http://localhost:3000
+
+# OR
+
+Browser:    Start workflow in Web UI
+Terminal 2: Watch status with `cat docs/mam-workflow-status.md`
+```
+
+### CLI Integration Features
+
+✅ **Claude CLI Integration**: Full support for @anthropic-ai/claude-cli
+✅ **Gemini CLI Integration**: Full support for Google's Gemini CLI
+✅ **File-Based Sync**: Both interfaces read/write same files
+✅ **Real-Time Updates**: WebSocket syncs changes from CLI to Web UI
+✅ **No Conflicts**: Safe concurrent usage
+✅ **Same Business Logic**: Both use same TypeScript modules
+
+### CLI Installation
+
+```bash
+# Install Claude CLI
+npm install -g @anthropic-ai/claude-cli
+
+# Install Gemini CLI
+npm install -g @google/generative-ai-cli
+
+# Verify installation
+claude --version
+gemini --version
+```
+
+See [ARCHITECTURE.md - CLI Integration](./ARCHITECTURE.md#cli-integration) for detailed documentation.
+
+---
+
 ## LLM Selection
 
 This project separates LLM usage into two phases:
@@ -501,16 +602,19 @@ For the official framework:
 |--------|----------------------|---------------------|
 | **Language** | JavaScript/Node.js | TypeScript/Node.js |
 | **Type Safety** | Runtime only | Compile-time + Runtime (TypeScript + Zod) |
-| **Architecture** | CLI-based | Web UI (Next.js 15) |
+| **Architecture** | CLI-based | Dual Interface (Web UI + CLI) |
+| **CLI Support** | CLI only | ✅ CLI + Web UI (both work together) |
 | **Deployment** | npm install | Docker (optimized containers) |
-| **Interface** | Command-line | Browser-based |
+| **Interface** | Command-line | Browser + Command-line (simultaneous) |
 | **Performance** | Fast (V8 engine) | Fast (same V8 engine) |
 | **Complexity** | Lower | Low (single runtime) |
 | **Maturity** | v1.0-alpha.2 (stable) | v2.0-alpha (experimental) |
-| **IDE Support** | 5+ IDEs native | Any browser + VSCode Server |
+| **IDE Support** | 5+ IDEs native | Any browser + VSCode Server + CLI |
 | **LLM Selection** | Fixed | User-selectable (Gemini/Claude/OpenAI/Local) |
-| **State Machine UI** | CLI text | Visual Kanban board |
-| **Real-Time Updates** | N/A | Live progress tracking |
+| **State Machine UI** | CLI text | Visual Kanban board (Web) + CLI text |
+| **Real-Time Updates** | N/A | Live progress tracking + WebSocket sync |
+| **Claude CLI** | Compatible | ✅ Fully integrated |
+| **Gemini CLI** | Compatible | ✅ Fully integrated |
 
 ---
 
