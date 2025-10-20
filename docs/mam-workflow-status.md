@@ -13,7 +13,6 @@
 Stories ready to be drafted (ordered by priority for Next.js implementation):
 
 ### Milestone 1.1: Next.js Project Foundation
-- [NEXT-003] Setup ESLint and Prettier
 - [NEXT-004] Configure environment variables (.env.example)
 - [NEXT-005] Create base layout and navigation
 
@@ -77,8 +76,8 @@ Stories ready to be drafted (ordered by priority for Next.js implementation):
 
 Story ready for drafting (only ONE at a time):
 
-- **[NEXT-002] Configure project structure (app/, lib/, components/)** [Status: Backlog] [Moved: 2025-10-20]
-  - Automatically moved from BACKLOG when [NEXT-001] moved to IN PROGRESS
+- **[NEXT-003] Setup ESLint and Prettier** [Status: Backlog] [Moved: 2025-10-20]
+  - Automatically moved from BACKLOG when [NEXT-002] moved to IN PROGRESS
   - Story file: _[To be created with *create-story]_
   - Points: _[TBD]_
   - Epic: Milestone 1.1 - Next.js Project Foundation
@@ -89,7 +88,12 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - use SM agent with *story-ready to move story from TODO to IN PROGRESS)
+- **[NEXT-002] Configure project structure (app/, lib/, components/)** [Status: Ready] [Started: 2025-10-20]
+  - Story file: `docs/story-NEXT-002.md`
+  - Points: 3
+  - Epic: Milestone 1.1 - Next.js Project Foundation
+  - Reviewed by: SM Agent (Approved ✅)
+  - Next: Implement story with DEV agent guidance, then run `*story-approved` when complete
 
 ---
 
