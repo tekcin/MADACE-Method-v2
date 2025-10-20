@@ -95,11 +95,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-- **[NEXT-004] Configure environment variables (.env.example)** [Status: Ready] [Started: 2025-10-20]
-  - Story file: `docs/story-NEXT-004.md`
-  - Points: 2
-  - Epic: Milestone 1.1 - Next.js Project Foundation
-  - Implementation: Create .env.example with all environment variables for LLM providers
+(Empty - ready for next story from TODO)
 
 ---
 
@@ -108,6 +104,16 @@ Story being implemented (only ONE at a time):
 Completed stories with dates and points:
 
 ### Phase 1: Next.js Project Initialization
+
+- [NEXT-004] Configure environment variables (.env.example) (2025-10-20) [Points: 2]
+  - Created comprehensive .env.example with all LLM providers and configuration
+  - All 4 LLM providers documented (Gemini, Claude, OpenAI, Local/Ollama)
+  - Application configuration variables (project settings, paths)
+  - Runtime configuration (Next.js, Docker, CLI integration)
+  - WebSocket configuration for CLI/Web UI sync
+  - Module configuration (MAM, MAB, CIS)
+  - All verification tests passed
+  - Story file: `docs/story-NEXT-004.md`
 
 - [NEXT-003] Setup ESLint and Prettier (2025-10-20) [Points: 2]
   - Configured ESLint with Next.js + TypeScript + React rules
@@ -171,9 +177,9 @@ Completed stories with dates and points:
   - Configured hot reload for development
   - Updated all documentation with deployment details
 
-### Total Completed: 8 stories | 34 points
+### Total Completed: 9 stories | 36 points
 
-### Total Remaining: 37+ stories (estimated)
+### Total Remaining: 36+ stories (estimated)
 
 ---
 
