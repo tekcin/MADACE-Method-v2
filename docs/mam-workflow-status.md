@@ -91,11 +91,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-- **[NEXT-005] Create base layout and navigation** [Status: Ready] [Started: 2025-10-20]
-  - Story file: `docs/story-NEXT-005.md`
-  - Points: 3
-  - Epic: Milestone 1.1 - Next.js Project Foundation
-  - Implementation: Create root layout, navigation component, footer, and responsive design
+(Empty - ready for next story from TODO)
 
 ---
 
@@ -105,6 +101,17 @@ Completed stories with dates and points:
 
 ### Phase 1: Next.js Project Initialization
 
+- [NEXT-005] Create base layout and navigation (2025-10-20) [Points: 3]
+  - Created Navigation component with responsive mobile menu
+  - Created Footer component with branding and links
+  - Updated root layout with flexbox structure
+  - Created placeholder pages (Agents, Workflows, Settings)
+  - Updated home page with MADACE branding and features
+  - Dark mode support (system preference)
+  - Accessibility features (ARIA labels, keyboard navigation)
+  - Heroicons integration
+  - All quality checks pass, production build succeeds
+  - Story file: `docs/story-NEXT-005.md`
 - [NEXT-004] Configure environment variables (.env.example) (2025-10-20) [Points: 2]
   - Created comprehensive .env.example with all LLM providers and configuration
   - All 4 LLM providers documented (Gemini, Claude, OpenAI, Local/Ollama)
@@ -177,9 +184,9 @@ Completed stories with dates and points:
   - Configured hot reload for development
   - Updated all documentation with deployment details
 
-### Total Completed: 9 stories | 36 points
+### Total Completed: 10 stories | 39 points
 
-### Total Remaining: 36+ stories (estimated)
+### Total Remaining: 35+ stories (estimated)
 
 ---
 
