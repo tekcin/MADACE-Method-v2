@@ -29,11 +29,13 @@ docker-compose -f docker-compose.dev.yml up -d
 The development container comes with **everything pre-installed**:
 
 ### IDEs
+
 - **VSCode Server** (code-server) on port 8080
 - **Cursor IDE** on port 8081
 - All extensions pre-configured
 
 ### Development Tools
+
 - Node.js 20
 - TypeScript, ts-node
 - ESLint, Prettier
@@ -41,10 +43,12 @@ The development container comes with **everything pre-installed**:
 - Git, curl, wget, vim, nano
 
 ### LLM Integration
+
 - Claude CLI (`@anthropic-ai/claude-cli`)
 - Ready for Gemini CLI integration
 
 ### VSCode Extensions
+
 - ESLint (JavaScript/TypeScript linting)
 - Prettier (Code formatting)
 - Tailwind CSS IntelliSense
@@ -92,6 +96,7 @@ Auto-reloads on file changes
 ### 4. Run Commands
 
 **Inside VSCode terminal:**
+
 ```bash
 npm run dev          # Start Next.js dev server
 npm test             # Run tests
@@ -163,10 +168,10 @@ docker exec -it -u root madace-dev bash
 
 ## Ports
 
-| Port | Service | URL |
-|------|---------|-----|
-| 3000 | Next.js Dev Server | http://localhost:3000 |
-| 8080 | VSCode Server | http://localhost:8080 |
+| Port | Service             | URL                   |
+| ---- | ------------------- | --------------------- |
+| 3000 | Next.js Dev Server  | http://localhost:3000 |
+| 8080 | VSCode Server       | http://localhost:8080 |
 | 8081 | Cursor (if enabled) | http://localhost:8081 |
 
 ---
@@ -179,8 +184,8 @@ The development container uses **named volumes** for persistence:
 
 ```yaml
 volumes:
-  - .:/workspace                           # Source code (live sync)
-  - ./madace-data:/workspace/madace-data  # User data
+  - .:/workspace # Source code (live sync)
+  - ./madace-data:/workspace/madace-data # User data
   - madace-node-modules:/workspace/node_modules
   - madace-vscode-extensions:/home/dev/.local/share/code-server
   - madace-cursor-config:/home/dev/.config/Cursor
@@ -233,7 +238,7 @@ The development container enables **hot reload** for instant feedback:
 module.exports = {
   webpack: (config) => {
     config.watchOptions = {
-      poll: 1000,           // Check for changes every second
+      poll: 1000, // Check for changes every second
       aggregateTimeout: 300, // Delay before rebuilding
     };
     return config;
@@ -370,6 +375,7 @@ environment:
 ```
 
 Rebuild:
+
 ```bash
 docker-compose -f docker-compose.dev.yml down
 docker-compose -f docker-compose.dev.yml up -d
@@ -378,17 +384,20 @@ docker-compose -f docker-compose.dev.yml up -d
 ### Install Additional VSCode Extensions
 
 **Method 1: Inside VSCode Server**
+
 1. Open http://localhost:8080
 2. Click Extensions (Ctrl+Shift+X)
 3. Search and install
 
 **Method 2: Via Dockerfile.dev**
 Edit `Dockerfile.dev`:
+
 ```dockerfile
 RUN code-server --install-extension publisher.extension-name
 ```
 
 Rebuild:
+
 ```bash
 docker-compose -f docker-compose.dev.yml build
 ```
@@ -396,6 +405,7 @@ docker-compose -f docker-compose.dev.yml build
 ### Install Additional npm Packages
 
 **Temporary (lost on rebuild):**
+
 ```bash
 docker exec -it madace-dev bash
 npm install package-name
@@ -403,6 +413,7 @@ npm install package-name
 
 **Permanent:**
 Add to `package.json` and rebuild:
+
 ```bash
 docker-compose -f docker-compose.dev.yml build
 ```
@@ -410,10 +421,11 @@ docker-compose -f docker-compose.dev.yml build
 ### Change Port Mappings
 
 Edit `docker-compose.dev.yml`:
+
 ```yaml
 ports:
-  - "3001:3000"    # Host 3001 → Container 3000
-  - "8888:8080"    # Host 8888 → Container 8080
+  - '3001:3000' # Host 3001 → Container 3000
+  - '8888:8080' # Host 8888 → Container 8080
 ```
 
 ---
@@ -446,6 +458,7 @@ docker-compose -f docker-compose.dev.yml up -d
 ### Hot Reload Not Working
 
 1. Check environment variables in `docker-compose.dev.yml`:
+
    ```yaml
    - CHOKIDAR_USEPOLLING=true
    - WATCHPACK_POLLING=true
@@ -527,6 +540,7 @@ tar -czf madace-data-backup-$(date +%Y%m%d).tar.gz madace-data/
 When ready to deploy:
 
 1. **Test production build locally:**
+
    ```bash
    npm run build
    npm start
@@ -534,6 +548,7 @@ When ready to deploy:
    ```
 
 2. **Build production container:**
+
    ```bash
    docker build -t madace-web:latest .
    ```

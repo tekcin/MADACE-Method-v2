@@ -72,12 +72,7 @@ export const TECH_STACK = {
 
   // LLM Providers
   llm: {
-    providers: [
-      'Google Gemini',
-      'Anthropic Claude',
-      'OpenAI GPT',
-      'Local Models (Ollama)',
-    ],
+    providers: ['Google Gemini', 'Anthropic Claude', 'OpenAI GPT', 'Local Models (Ollama)'],
   },
 
   // Deployment

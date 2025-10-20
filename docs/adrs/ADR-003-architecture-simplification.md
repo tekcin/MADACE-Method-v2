@@ -11,6 +11,7 @@
 This ADR documents the architectural decision for MADACE-Method v2.0 experimental implementation.
 
 **Key Requirements:**
+
 1. **Simplicity** - Minimize architectural complexity
 2. **Type Safety** - Compile-time guarantees
 3. **Development Velocity** - Fast iteration and debugging
@@ -35,6 +36,7 @@ This ADR documents the architectural decision for MADACE-Method v2.0 experimenta
 ### Next.js Full-Stack (TypeScript) ✅ **SELECTED**
 
 **Architecture:**
+
 ```
 ┌─────────────────────────────────────┐
 │      Next.js 14 (App Router)        │
@@ -59,6 +61,7 @@ This ADR documents the architectural decision for MADACE-Method v2.0 experimenta
 ```
 
 **Pros:**
+
 - ✅ **ONE runtime** (Node.js only)
 - ✅ **ONE language** (TypeScript everywhere)
 - ✅ **Type safety** via TypeScript (90% of Rust's benefit, 0% of FFI pain)
@@ -70,11 +73,13 @@ This ADR documents the architectural decision for MADACE-Method v2.0 experimenta
 - ✅ **Still innovative** - Web UI vs. CLI is genuine differentiation
 
 **Cons:**
+
 - ❌ Less type safety than Rust (but TypeScript is very good)
 - ❌ Potentially slower than Rust (but Node.js is fast enough)
 - ❌ No "cool factor" of multi-language architecture
 
 **Tech Stack:**
+
 ```json
 {
   "frontend": "Next.js 14 + React 18 + TypeScript",
@@ -124,6 +129,7 @@ This ADR documents the architectural decision for MADACE-Method v2.0 experimenta
 ### Phase 1: Project Initialization ✅ COMPLETE
 
 **Completed:**
+
 - ✅ Next.js 15 initialized with TypeScript
 - ✅ Tailwind CSS 4 configured
 - ✅ ESLint configured
@@ -135,6 +141,7 @@ This ADR documents the architectural decision for MADACE-Method v2.0 experimenta
 ### Phase 2: Project Structure ✅ COMPLETE
 
 **File Structure:**
+
 ```
 madace-web/
 ├── app/                    # Next.js App Router
@@ -196,6 +203,7 @@ madace-web/
 ### Phase 3: Core Implementation (In Progress)
 
 **To Implement:**
+
 1. ⬜ Agent loading from YAML
 2. ⬜ Workflow execution engine
 3. ⬜ State machine (BACKLOG → TODO → IN PROGRESS → DONE)
@@ -204,6 +212,7 @@ madace-web/
 6. ⬜ Web UI for all operations
 
 **Testing Plan:**
+
 - Load PM agent
 - Execute plan-project workflow
 - Create story via SM agent
@@ -247,12 +256,12 @@ madace-web/
     "react-dom": "^18.3.0",
     "typescript": "^5.0.0",
 
-    "js-yaml": "^4.1.0",          // YAML parsing
-    "handlebars": "^4.7.8",       // Template engine
-    "zod": "^3.22.0",             // Runtime validation
-    "@google/generative-ai": "^0.2.0",  // Gemini SDK
+    "js-yaml": "^4.1.0", // YAML parsing
+    "handlebars": "^4.7.8", // Template engine
+    "zod": "^3.22.0", // Runtime validation
+    "@google/generative-ai": "^0.2.0", // Gemini SDK
 
-    "@radix-ui/react-*": "^1.0.0",      // Shadcn/ui components
+    "@radix-ui/react-*": "^1.0.0", // Shadcn/ui components
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "tailwind-merge": "^2.0.0"
@@ -291,11 +300,15 @@ const AgentSchema = z.object({
       communication_style: z.string().optional(),
       principles: z.string().optional(),
     }),
-    menu: z.array(z.object({
-      trigger: z.string(),
-      action: z.string(),
-      description: z.string(),
-    })).optional(),
+    menu: z
+      .array(
+        z.object({
+          trigger: z.string(),
+          action: z.string(),
+          description: z.string(),
+        })
+      )
+      .optional(),
   }),
 });
 
@@ -304,11 +317,12 @@ export type Agent = z.infer<typeof AgentSchema>;
 export async function loadAgent(path: string): Promise<Agent> {
   const content = await fs.readFile(path, 'utf-8');
   const data = yaml.load(content);
-  return AgentSchema.parse(data);  // Runtime validation
+  return AgentSchema.parse(data); // Runtime validation
 }
 ```
 
 **Benefits over Rust:**
+
 - No FFI complexity
 - Just as type-safe (Zod + TypeScript)
 - Easier to debug
@@ -321,11 +335,13 @@ export async function loadAgent(path: string): Promise<Agent> {
 **Is Node.js Fast Enough?**
 
 YES. Benchmarks:
+
 - YAML parsing: ~1ms (vs. Rust ~0.5ms) - **Negligible difference**
 - File I/O: ~5ms (vs. Rust ~3ms) - **Negligible difference**
 - Template rendering: ~10ms (vs. Rust ~5ms) - **Negligible difference**
 
 **Why it doesn't matter:**
+
 - User interaction is ~100-500ms anyway
 - LLM calls are 1-10 seconds
 - No concurrent users (experimental project)
@@ -338,18 +354,21 @@ YES. Benchmarks:
 ## Migration Impact
 
 ### What Changes:
+
 - ❌ Rust code (wasn't written yet)
 - ❌ Python code (was just Hello World)
 - ❌ FFI complexity (eliminated)
 - ✅ Next.js frontend (rebuilt with App Router)
 
 ### What Stays the Same:
+
 - ✅ MADACE philosophy (agents, workflows, state machine)
 - ✅ Agent YAML files (no changes needed)
 - ✅ Documentation (update tech stack sections)
 - ✅ MADACE-METHOD usage (still using official agents)
 
 ### Timeline Impact:
+
 - **Old estimate**: 12 weeks to Alpha MVP
 - **New estimate**: 4 weeks to Alpha MVP
 - **Savings**: 8 weeks (67% faster)
@@ -359,12 +378,15 @@ YES. Benchmarks:
 ## Risks and Mitigations
 
 ### Risk 1: "But What About Learning Rust?"
+
 **Mitigation**: This project was never a good Rust learning opportunity - the FFI complexity would teach bad patterns. Learn Rust with a proper Rust project instead.
 
 ### Risk 2: "TypeScript Isn't as Safe as Rust"
+
 **Mitigation**: TypeScript + Zod gives 90% of the safety with 10% of the complexity. This is a pragmatic trade-off.
 
 ### Risk 3: "Performance Might Be Worse"
+
 **Mitigation**: Benchmark it. If Node.js is too slow (unlikely), we have data. Premature optimization is the root of all evil.
 
 ---
@@ -372,6 +394,7 @@ YES. Benchmarks:
 ## Decision Validation
 
 ### Success Metrics:
+
 1. ✅ Working prototype in 4 weeks (vs. 12+ with Rust)
 2. ✅ Agent loading functional
 3. ✅ State machine working
@@ -379,20 +402,22 @@ YES. Benchmarks:
 5. ✅ Zero FFI debugging sessions
 
 ### Comparison to Old Architecture:
-| Metric | Rust+Python+Next.js | Next.js Full-Stack |
-|--------|---------------------|-------------------|
-| **Time to MVP** | 12+ weeks | 4 weeks |
-| **Runtimes** | 3 | 1 |
-| **Languages** | 3 | 1 |
-| **FFI Bugs** | Unknown (high) | 0 |
-| **Type Safety** | Rust (best), Python (worst) | TypeScript (good) |
-| **Deployment** | Complex | Simple |
+
+| Metric          | Rust+Python+Next.js         | Next.js Full-Stack |
+| --------------- | --------------------------- | ------------------ |
+| **Time to MVP** | 12+ weeks                   | 4 weeks            |
+| **Runtimes**    | 3                           | 1                  |
+| **Languages**   | 3                           | 1                  |
+| **FFI Bugs**    | Unknown (high)              | 0                  |
+| **Type Safety** | Rust (best), Python (worst) | TypeScript (good)  |
+| **Deployment**  | Complex                     | Simple             |
 
 ---
 
 ## Consequences
 
 ### Positive:
+
 - ✅ **3x faster development** - Single language, no FFI
 - ✅ **Simpler deployment** - One Docker container
 - ✅ **Easier debugging** - All JavaScript/TypeScript
@@ -401,11 +426,13 @@ YES. Benchmarks:
 - ✅ **Proven stack** - Lower risk
 
 ### Negative:
+
 - ❌ **Less "cool"** - No multi-language bragging rights
 - ❌ **Slightly slower** - But Node.js is fast enough
 - ❌ **Less learning** - Won't learn Rust or FFI (but that's okay)
 
 ### Neutral:
+
 - Architecture is now **boring** - And that's good! Boring means reliable.
 - Can always **revisit Rust** - If performance becomes an issue (unlikely)
 
@@ -414,6 +441,7 @@ YES. Benchmarks:
 ## Implementation Checklist
 
 ### Immediate (Today):
+
 - [x] Get user approval for simplification ✅
 - [x] Design LLM selection system ✅
 - [x] Create LLM selection documentation ✅
@@ -424,6 +452,7 @@ YES. Benchmarks:
 - [ ] Copy agent YAML files to new project
 
 ### Week 1:
+
 - [ ] Set up TypeScript + Next.js App Router
 - [ ] Implement multi-provider LLM client
 - [ ] Implement agent loader
@@ -431,6 +460,7 @@ YES. Benchmarks:
 - [ ] Test agent loading end-to-end
 
 ### Week 2-3:
+
 - [ ] Implement workflow engine
 - [ ] Implement state machine
 - [ ] Implement template engine
@@ -438,6 +468,7 @@ YES. Benchmarks:
 - [ ] Set up local Docker agent for implementation
 
 ### Week 4:
+
 - [ ] Complete UI components
 - [ ] End-to-end testing
 - [ ] Docker deployment
@@ -468,11 +499,13 @@ YES. Benchmarks:
 This simplification is the **right decision**.
 
 The Rust+Python+Next.js architecture was:
+
 - ❌ Solving problems we don't have
 - ❌ Adding risk without proven benefit
 - ❌ Slowing development velocity
 
 The Next.js full-stack architecture is:
+
 - ✅ Proven and battle-tested
 - ✅ Fast to develop
 - ✅ Still innovative (Web UI)

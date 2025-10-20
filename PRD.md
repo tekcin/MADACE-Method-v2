@@ -37,6 +37,7 @@ Democratize software development by providing an intuitive, modular framework th
 ### 1.1 Problem Statement
 
 **Current Challenges:**
+
 - Building software requires extensive technical expertise across multiple domains
 - Small teams and solo founders struggle to execute on ideas without hiring expensive developers
 - Traditional development tools assume technical proficiency
@@ -49,6 +50,7 @@ MADACE-Method v2.0 provides a unified framework that guides users through the en
 ### 1.2 Target Audience
 
 **Primary Users:**
+
 1. **"VIBE Coders"** - Non-technical entrepreneurs and innovators who want to build MVPs using AI
 2. **Solo Developers** - Individual developers who want AI-assisted workflows with structure
 3. **Small Teams** - 2-5 person teams needing process and AI amplification
@@ -57,18 +59,21 @@ MADACE-Method v2.0 provides a unified framework that guides users through the en
 **User Personas:**
 
 **Persona 1: The Visionary Entrepreneur**
+
 - Has product ideas but limited coding experience
 - Comfortable with AI tools and natural language interaction
 - Needs guidance through the development process
 - Values speed and iteration over perfection
 
 **Persona 2: The Solo Developer**
+
 - Experienced developer working alone
 - Wants AI assistance with structure
 - Needs architecture guidance for complex projects
 - Values best practices and maintainability
 
 **Persona 3: The Technical Founder**
+
 - Strong technical background
 - Building MVP while also handling business
 - Needs to maximize productivity
@@ -106,6 +111,7 @@ MADACE-Method v2.0 provides a unified framework that guides users through the en
 _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 
 **Full-Stack:**
+
 - Framework: Next.js 15.5.6 (App Router)
 - UI Library: React 19.0.0
 - Language: TypeScript 5.7.3 (strict mode)
@@ -114,25 +120,30 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 - Components: Shadcn/ui
 
 **Backend:**
+
 - API: Next.js API Routes
 - Server Actions: Next.js Server Actions
 
 **Business Logic:**
+
 - Language: TypeScript 5.7.3
 - Validation: Zod 4.1.12 (runtime type checking)
 - YAML Parsing: js-yaml 4.1.0
 - Templates: Handlebars 4.7.8
 
 **Integration:**
+
 - State Persistence: File system (YAML, JSON, Markdown)
 - LLM: Multi-provider (Gemini/Claude/OpenAI/Local)
 
 ### 3.2 Core Components
 
 #### 3.2.1 Agent System
+
 **Purpose:** Specialized AI personas that guide specific workflows
 
 **Key Features:**
+
 - YAML-based agent definitions
 - Persona configuration (role, identity, communication style)
 - Menu-driven command interface
@@ -140,6 +151,7 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 - Reusable prompt libraries
 
 **Agent Types:**
+
 - **MADACE Master** - Central orchestrator for local environments
 - **PM (Product Manager)** - Scale-adaptive planning (Level 0-4)
 - **Analyst** - Requirements discovery and research
@@ -150,9 +162,11 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 - **Creativity** - Innovation and creative problem-solving
 
 #### 3.2.2 Workflow Engine
+
 **Purpose:** Execute multi-step processes with state management
 
 **Key Features:**
+
 - YAML-based workflow definitions
 - Sequential step execution
 - Multiple action types (elicit, reflect, guide, template, validate, sub-workflow)
@@ -161,15 +175,18 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 - Context passing between steps
 
 **Workflow Phases:**
+
 1. **Analysis** (Optional) - brainstorm-project, research, product-brief
 2. **Planning** (Required) - plan-project, assess-scale, detect-project-type
 3. **Solutioning** (Levels 3-4) - solution-architecture, jit-tech-spec
 4. **Implementation** - create-story, dev-story, story-approved, retrospective
 
 #### 3.2.3 State Machine
+
 **Purpose:** Manage story lifecycle with strict state transitions
 
 **Key Features:**
+
 - Single source of truth: `mam-workflow-status.md`
 - Atomic state transitions: BACKLOG → TODO → IN PROGRESS → DONE
 - One-at-a-time enforcement (only ONE story in TODO, ONE in IN PROGRESS)
@@ -177,15 +194,18 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 - Story metadata tracking (status, points, dates)
 
 **States:**
+
 - **BACKLOG** - Ordered list of stories to draft
 - **TODO** - Single story ready for drafting
 - **IN PROGRESS** - Single story being implemented
 - **DONE** - Completed stories with completion metadata
 
 #### 3.2.4 Template Engine
+
 **Purpose:** Render templates with variable substitution
 
 **Key Features:**
+
 - Multiple interpolation patterns (`{var}`, `{{var}}`, `${var}`, `%VAR%`, `$var`)
 - Nested variable resolution
 - Context merging from multiple sources
@@ -194,9 +214,11 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 - Standard MADACE variables (project_name, user_name, current_date, etc.)
 
 #### 3.2.5 Configuration Manager
+
 **Purpose:** Load, validate, and manage system configuration
 
 **Key Features:**
+
 - Auto-detection of config location
 - Cross-platform path resolution
 - Installation validation
@@ -204,28 +226,32 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 - Module enablement flags
 
 **Configuration Schema:**
+
 ```yaml
-project_name: string              # Required - project identifier
-output_folder: string             # Required - where docs are generated
-user_name: string                 # Required - developer name
-communication_language: string    # Required - UI language
-madace_version: string            # Framework version
+project_name: string # Required - project identifier
+output_folder: string # Required - where docs are generated
+user_name: string # Required - developer name
+communication_language: string # Required - UI language
+madace_version: string # Framework version
 modules:
-  mam: { enabled: boolean }       # MADACE Agile Method
-  mab: { enabled: boolean }       # MADACE Builder
-  cis: { enabled: boolean }       # Creative Intelligence Suite
+  mam: { enabled: boolean } # MADACE Agile Method
+  mab: { enabled: boolean } # MADACE Builder
+  cis: { enabled: boolean } # Creative Intelligence Suite
 ```
 
 #### 3.2.6 Manifest Manager
+
 **Purpose:** Track installed agents, workflows, and tasks
 
 **Key Features:**
+
 - CSV-based registries
 - Component discovery
 - Installation tracking
 - Statistics and reporting
 
 **Manifest Files:**
+
 - `agent-manifest.csv` - All installed agents
 - `workflow-manifest.csv` - All installed workflows
 - `task-manifest.csv` - All installed tasks
@@ -237,9 +263,11 @@ modules:
 ### 4.1 Core Modules
 
 #### Module 1: MADACE Core
+
 **Purpose:** Framework orchestration and universal features
 
 **Components:**
+
 - MADACE Master agent
 - System initialization workflows
 - Configuration management
@@ -248,15 +276,18 @@ modules:
 **User Value:** Foundation for all other modules
 
 #### Module 2: MADACE Method (MAM)
+
 **Purpose:** Agile software development with scale-adaptive planning
 
 **Components:**
+
 - 5 specialized agents (PM, Analyst, Architect, SM, DEV)
 - 15+ workflows covering analysis → planning → solutioning → implementation
 - Scale-adaptive planning (Level 0-4)
 - State machine for story management
 
 **Scale Levels:**
+
 - **Level 0** - Tiny (< 1 week): Direct to code, minimal docs
 - **Level 1** - Small (1-4 weeks): Basic PRD + Epics
 - **Level 2** - Medium (1-3 months): Full PRD + detailed Epics
@@ -266,9 +297,11 @@ modules:
 **User Value:** Complete development methodology from idea to production
 
 #### Module 3: MADACE Builder (MAB)
+
 **Purpose:** Create custom agents, workflows, and modules
 
 **Components:**
+
 - Builder agent
 - create-agent workflow
 - create-workflow workflow
@@ -278,9 +311,11 @@ modules:
 **User Value:** Extend framework with custom functionality
 
 #### Module 4: Creative Intelligence Suite (CIS)
+
 **Purpose:** Unlock innovation and creative problem-solving
 
 **Components:**
+
 - Creativity agent
 - SCAMPER brainstorming
 - Six Thinking Hats
@@ -297,9 +332,11 @@ modules:
 ### 5.1 Must-Have Features (MVP)
 
 #### F1: Web-Based Interface
+
 **Description:** React-based UI for all user interactions
 
 **Requirements:**
+
 - [ ] Next.js frontend with SSR
 - [ ] Real-time status updates
 - [ ] Natural language command input
@@ -308,14 +345,17 @@ modules:
 - [ ] Configuration management UI
 
 **Success Criteria:**
+
 - Non-technical user can navigate UI without training
 - All core workflows accessible via web interface
 - Mobile-responsive design
 
 #### F2: AI Agent Orchestration
+
 **Description:** Specialized agents guide users through workflows
 
 **Requirements:**
+
 - [ ] YAML-based agent definitions
 - [ ] Agent loader with validation
 - [ ] Agent runtime with execution context
@@ -324,14 +364,17 @@ modules:
 - [ ] Persona display
 
 **Success Criteria:**
+
 - Agents load in < 1 second
 - Agent personas provide clear guidance
 - Menu commands execute correctly 100% of the time
 
 #### F3: Workflow Execution Engine
+
 **Description:** Execute multi-step workflows with state management
 
 **Requirements:**
+
 - [ ] YAML workflow parser
 - [ ] Sequential step execution
 - [ ] State persistence to disk
@@ -340,14 +383,17 @@ modules:
 - [ ] Context passing
 
 **Success Criteria:**
+
 - Workflows resume correctly after interruption
 - All step types execute successfully
 - State files are human-readable
 
 #### F4: State Machine Management
+
 **Description:** Enforce story lifecycle rules
 
 **Requirements:**
+
 - [ ] Single source of truth (status file)
 - [ ] Atomic state transitions
 - [ ] One-at-a-time enforcement
@@ -355,14 +401,17 @@ modules:
 - [ ] Story metadata tracking
 
 **Success Criteria:**
+
 - No state corruption under normal operation
 - Rules enforced 100% (cannot violate one-at-a-time)
 - Status file remains valid Markdown
 
 #### F5: Template Rendering System
+
 **Description:** Generate documents from templates
 
 **Requirements:**
+
 - [ ] Multiple interpolation patterns
 - [ ] Nested variable resolution
 - [ ] Strict mode validation
@@ -370,14 +419,17 @@ modules:
 - [ ] Standard variable library
 
 **Success Criteria:**
+
 - Templates render in < 500ms
 - Missing variables detected in strict mode
 - Generated documents are well-formatted
 
 #### F6: Configuration Management
+
 **Description:** Auto-detect and validate configuration
 
 **Requirements:**
+
 - [ ] Auto-detection (multiple search paths)
 - [ ] Schema validation
 - [ ] Cross-platform path resolution
@@ -385,14 +437,17 @@ modules:
 - [ ] Module enablement
 
 **Success Criteria:**
+
 - Config detected 100% when present
 - Validation errors are clear and actionable
 - Paths work on macOS, Linux, Windows
 
 #### F7: LLM Integration
+
 **Description:** Pluggable LLM architecture
 
 **Requirements:**
+
 - [ ] Default Gemini model integration
 - [ ] Abstract LLM interface
 - [ ] API key management
@@ -400,28 +455,34 @@ modules:
 - [ ] Error handling and retries
 
 **Success Criteria:**
+
 - Can swap LLM without code changes
 - API failures handled gracefully
 - Token usage monitored and logged
 
 #### F8: API Backend
+
 **Description:** Next.js API Routes orchestrating all operations
 
 **Requirements:**
+
 - [ ] TypeScript API routes
 - [ ] Async operation support
 - [ ] Error handling
 - [ ] Logging and monitoring
 
 **Success Criteria:**
+
 - API response time < 200ms (excluding LLM calls)
 - 100% API coverage for UI needs
 - Clear error messages
 
 #### F9: Scale-Adaptive Planning
+
 **Description:** Automatically adjust planning depth to project size
 
 **Requirements:**
+
 - [ ] Project assessment workflow
 - [ ] Level 0-4 determination logic
 - [ ] Conditional workflow execution
@@ -429,14 +490,17 @@ modules:
 - [ ] Comprehensive docs for large projects
 
 **Success Criteria:**
+
 - Level detected correctly for sample projects
 - Small projects don't require unnecessary docs
 - Large projects get full architecture support
 
 #### F10: Docker Deployment
+
 **Description:** Easy installation and deployment
 
 **Requirements:**
+
 - [x] Production Dockerfile (optimized Alpine image ~200MB)
 - [x] Development Dockerfile (with VSCode Server + Cursor ~2-3GB)
 - [x] docker-compose.yml for production deployment
@@ -448,6 +512,7 @@ modules:
 - [x] Hot reload enabled in development mode
 
 **Success Criteria:**
+
 - ✅ `docker-compose up` launches production system
 - ✅ `docker-compose -f docker-compose.dev.yml up -d` launches development environment with IDEs
 - ✅ Non-technical user can install in < 5 minutes
@@ -458,54 +523,64 @@ modules:
 ### 5.2 Should-Have Features (Post-MVP)
 
 #### F11: Sub-Workflow Support
+
 **Description:** Nest workflows within workflows
 
 **Status:** Planned for v1.0-beta
 
 **Requirements:**
+
 - [ ] Sub-workflow execution
 - [ ] Context inheritance
 - [ ] Independent state tracking
 - [ ] Parent workflow reference
 
 #### F12: Workflow Dependencies
+
 **Description:** Define prerequisite workflows
 
 **Status:** Planned for v1.0-beta
 
 **Requirements:**
+
 - [ ] Dependency validation
 - [ ] Auto-execution of prerequisites
 - [ ] Dependency graph visualization
 
 #### F13: Progress Dashboard
+
 **Description:** Visual tracking of project progress
 
 **Status:** Planned for v1.0-beta
 
 **Requirements:**
+
 - [ ] Story burn-down chart
 - [ ] Workflow completion status
 - [ ] Time tracking per story
 - [ ] Velocity metrics
 
 #### F14: Multi-User Collaboration
+
 **Description:** Team support with role-based access
 
 **Status:** Planned for v1.0 stable
 
 **Requirements:**
+
 - [ ] User authentication
 - [ ] Role-based permissions
 - [ ] Activity feed
 - [ ] Conflict resolution
 
 #### F15: Integration Ecosystem
+
 **Description:** Connect with external tools
 
 **Status:** Planned for v1.0 stable
 
 **Requirements:**
+
 - [ ] GitHub integration
 - [ ] Jira integration
 - [ ] Slack notifications
@@ -528,24 +603,28 @@ modules:
 ### 6.1 Primary User Journey: Building an MVP
 
 **Step 1: Installation**
+
 1. Clone repository
 2. Run `docker-compose up`
 3. Access web UI at `localhost:3000`
 4. Complete initial configuration
 
 **Step 2: Project Planning**
+
 1. Load PM agent
 2. Run `plan-project` workflow
 3. System assesses scale (Level 0-4)
 4. Generate PRD and Epics based on scale
 
 **Step 3: Architecture (Levels 3-4 only)**
+
 1. Load Architect agent
 2. Run `solution-architecture` workflow
 3. Review and approve architecture
 4. Generate tech specs per epic (JIT)
 
 **Step 4: Story Implementation**
+
 1. Run `init-backlog` to populate BACKLOG from Epics
 2. Run `workflow-status` to see current state
 3. Run `create-story` to draft story from TODO
@@ -556,6 +635,7 @@ modules:
 8. Repeat until BACKLOG is empty
 
 **Step 5: Deployment**
+
 1. Run deployment workflow
 2. Review deployment checklist
 3. Deploy to production
@@ -565,10 +645,12 @@ modules:
 ### 6.2 Secondary User Journey: Creating Custom Agent
 
 **Step 1: Load Builder**
+
 1. Access web UI
 2. Load Builder agent
 
 **Step 2: Design Agent**
+
 1. Run `create-agent` workflow
 2. Define agent metadata (id, name, title, icon)
 3. Define persona (role, identity, principles)
@@ -576,11 +658,13 @@ modules:
 5. Define reusable prompts
 
 **Step 3: Test Agent**
+
 1. Load custom agent
 2. Execute menu commands
 3. Validate behavior
 
 **Step 4: Register Agent**
+
 1. Add to agent manifest
 2. Make available to other workflows
 
@@ -592,25 +676,25 @@ modules:
 
 ### 7.1 Performance Requirements
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Agent Load Time | < 1 second | Time from trigger to persona display |
-| Workflow Step Execution | < 500ms | Time per step (excluding LLM calls) |
-| Template Rendering | < 500ms | Single template with 50 variables |
-| State Machine Transition | < 100ms | Atomic state update |
-| API Response Time | < 200ms | Backend API (excluding LLM) |
-| Frontend Initial Load | < 3 seconds | First contentful paint |
-| LLM Response Time | < 10 seconds | 95th percentile |
+| Metric                   | Target       | Measurement                          |
+| ------------------------ | ------------ | ------------------------------------ |
+| Agent Load Time          | < 1 second   | Time from trigger to persona display |
+| Workflow Step Execution  | < 500ms      | Time per step (excluding LLM calls)  |
+| Template Rendering       | < 500ms      | Single template with 50 variables    |
+| State Machine Transition | < 100ms      | Atomic state update                  |
+| API Response Time        | < 200ms      | Backend API (excluding LLM)          |
+| Frontend Initial Load    | < 3 seconds  | First contentful paint               |
+| LLM Response Time        | < 10 seconds | 95th percentile                      |
 
 ### 7.2 Scalability Requirements
 
-| Dimension | Minimum | Target | Maximum |
-|-----------|---------|--------|---------|
-| Concurrent Users | 1 | 10 | 100 |
-| Agents per Installation | 5 | 20 | 100 |
-| Workflows per Module | 5 | 15 | 50 |
-| Stories per Project | 10 | 100 | 500 |
-| Template Size | 1 KB | 50 KB | 500 KB |
+| Dimension               | Minimum | Target | Maximum |
+| ----------------------- | ------- | ------ | ------- |
+| Concurrent Users        | 1       | 10     | 100     |
+| Agents per Installation | 5       | 20     | 100     |
+| Workflows per Module    | 5       | 15     | 50      |
+| Stories per Project     | 10      | 100    | 500     |
+| Template Size           | 1 KB    | 50 KB  | 500 KB  |
 
 ### 7.3 Reliability Requirements
 
@@ -631,11 +715,13 @@ modules:
 ### 7.5 Platform Requirements
 
 **Supported Operating Systems:**
+
 - macOS 11+ (Big Sur and later)
 - Ubuntu 20.04+
 - Windows 10+ (with WSL2)
 
 **Required Software:**
+
 - Docker 20.10+
 - Docker Compose 2.0+
 - 8GB RAM minimum
@@ -644,17 +730,20 @@ modules:
 ### 7.6 Compatibility Requirements
 
 **Frontend:**
+
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
 - Edge 90+
 
 **Backend:**
+
 - Python 3.9+
 - FastAPI 0.100+
 - uvicorn 0.20+
 
 **Core:**
+
 - Rust 1.70+ (2021 edition)
 - Cargo 1.70+
 
@@ -665,36 +754,42 @@ modules:
 ### 8.1 UI Components
 
 **Home Dashboard:**
+
 - Welcome message with current agent
 - Quick actions (most common workflows)
 - Recent activity feed
 - Project health indicators
 
 **Agent View:**
+
 - Agent persona display (icon, name, role, identity)
 - Menu commands (clear descriptions)
 - Command history
 - Agent statistics
 
 **Workflow View:**
+
 - Workflow progress indicator
 - Current step details
 - Step history
 - Pause/resume controls
 
 **State Machine View:**
+
 - Visual representation of BACKLOG → TODO → IN PROGRESS → DONE
 - Story cards with metadata
 - Drag-and-drop support (future)
 - Filtering and search
 
 **Configuration View:**
+
 - Project settings
 - Module enablement toggles
 - LLM configuration
 - Path settings
 
 **Template Library:**
+
 - Browse available templates
 - Preview templates
 - Template variables documentation
@@ -703,18 +798,21 @@ modules:
 ### 8.2 Interaction Patterns
 
 **Natural Language Input:**
+
 - Chat-like interface for commands
 - Autocomplete for common commands
 - Command history
 - Inline help
 
 **Conversational Flows:**
+
 - Agents ask clarifying questions
 - Multi-turn conversations
 - Context awareness
 - Conversation history
 
 **Feedback & Validation:**
+
 - Real-time validation messages
 - Success/error toasts
 - Confirmation dialogs for destructive actions
@@ -727,25 +825,27 @@ modules:
 ### 9.1 Core Entities
 
 **Agent:**
+
 ```yaml
 metadata:
-  id: string              # Unique identifier
-  name: string            # Short name
-  title: string           # Full title
-  icon: string            # Emoji
-  module: string          # Parent module
-  version: string         # Agent version
+  id: string # Unique identifier
+  name: string # Short name
+  title: string # Full title
+  icon: string # Emoji
+  module: string # Parent module
+  version: string # Agent version
 persona:
-  role: string            # Primary role
-  identity: string        # Detailed identity
+  role: string # Primary role
+  identity: string # Detailed identity
   communication_style: string
   principles: string
-critical_actions: array   # Auto-execute on load
-menu: array              # Command menu
-prompts: array           # Reusable prompts
+critical_actions: array # Auto-execute on load
+menu: array # Command menu
+prompts: array # Reusable prompts
 ```
 
 **Workflow:**
+
 ```yaml
 name: string             # Workflow name
 description: string      # What it does
@@ -759,19 +859,21 @@ steps: array            # Execution steps
 ```
 
 **Story:**
+
 ```markdown
 [STORY-ID] Title (filename.md) [Status: Draft|Ready|InReview|Done] [Points: N] [Date: YYYY-MM-DD]
 ```
 
 **Configuration:**
+
 ```yaml
 project_name: string
 output_folder: string
 user_name: string
 communication_language: string
 madace_version: string
-installed_at: string     # ISO 8601
-ide: string             # cursor, vscode, etc.
+installed_at: string # ISO 8601
+ide: string # cursor, vscode, etc.
 modules:
   mam: { enabled: boolean }
   mab: { enabled: boolean }
@@ -813,17 +915,20 @@ project-root/
 ### 10.1 Product Metrics
 
 **Adoption:**
+
 - Downloads per month: Target 100+ by end of alpha
 - Active installations: Target 50+ by end of alpha
 - Module enablement rate: Target 80%+ enable MAM
 
 **Engagement:**
+
 - Stories created per user: Target 20+ per project
 - Workflows executed per user: Target 50+ per project
 - Custom agents created: Target 5% of users create custom agents
 - Session duration: Target 30+ minutes per session
 
 **Quality:**
+
 - Workflow completion rate: Target 95%+
 - State machine consistency: Target 100% (no violations)
 - Error rate: Target < 1% of operations
@@ -832,11 +937,13 @@ project-root/
 ### 10.2 Business Metrics
 
 **Market Validation:**
+
 - GitHub stars: Target 500+ by end of beta
 - Community contributions: Target 10+ contributors by v1.0
 - Module marketplace submissions: Target 20+ custom modules by v1.0
 
 **User Satisfaction:**
+
 - Net Promoter Score (NPS): Target 40+
 - User retention (30-day): Target 60%+
 - Support ticket volume: Target < 10 per week
@@ -845,12 +952,14 @@ project-root/
 ### 10.3 Technical Metrics
 
 **Performance:**
+
 - Average agent load time: Target < 1 second
 - Average workflow step time: Target < 500ms
 - API response time (p95): Target < 200ms
 - LLM response time (p95): Target < 10 seconds
 
 **Reliability:**
+
 - System uptime: Target 99%+
 - Data loss incidents: Target 0
 - State corruption incidents: Target 0
@@ -863,6 +972,7 @@ project-root/
 ### 11.1 Technical Risks
 
 **Risk 1: LLM API Reliability**
+
 - **Impact:** High - System unusable if LLM is down
 - **Probability:** Medium - Third-party APIs have outages
 - **Mitigation:**
@@ -872,6 +982,7 @@ project-root/
   - Queue operations for offline execution
 
 **Risk 2: State Corruption**
+
 - **Impact:** High - Data loss and workflow failure
 - **Probability:** Low - Atomic operations reduce risk
 - **Mitigation:**
@@ -881,6 +992,7 @@ project-root/
   - Recovery procedures in documentation
 
 **Risk 3: FFI Integration Complexity**
+
 - **Impact:** Medium - Bugs could cause crashes
 - **Probability:** Medium - FFI is error-prone
 - **Mitigation:**
@@ -890,6 +1002,7 @@ project-root/
   - Clear error propagation to Python
 
 **Risk 4: Cross-Platform Path Issues**
+
 - **Impact:** Medium - Workflows fail on some platforms
 - **Probability:** Medium - Windows paths differ
 - **Mitigation:**
@@ -901,6 +1014,7 @@ project-root/
 ### 11.2 Product Risks
 
 **Risk 1: User Complexity**
+
 - **Impact:** High - Users abandon if too complex
 - **Probability:** High - Framework is comprehensive
 - **Mitigation:**
@@ -910,6 +1024,7 @@ project-root/
   - Video walkthroughs
 
 **Risk 2: LLM Cost**
+
 - **Impact:** Medium - High costs deter users
 - **Probability:** Medium - LLM APIs can be expensive
 - **Mitigation:**
@@ -919,6 +1034,7 @@ project-root/
   - Transparent cost tracking
 
 **Risk 3: Competition**
+
 - **Impact:** Medium - Other AI dev tools
 - **Probability:** High - Fast-moving space
 - **Mitigation:**
@@ -930,6 +1046,7 @@ project-root/
 ### 11.3 Business Risks
 
 **Risk 1: Open Source Sustainability**
+
 - **Impact:** High - Project dies without maintainers
 - **Probability:** Medium - Many OSS projects struggle
 - **Mitigation:**
@@ -939,6 +1056,7 @@ project-root/
   - Consider commercial support tier
 
 **Risk 2: Legal/Licensing**
+
 - **Impact:** Medium - License violations
 - **Probability:** Low - Using permissive licenses
 - **Mitigation:**
@@ -956,12 +1074,14 @@ project-root/
 **Timeline:** Q4 2025 (Oct-Dec)
 
 **Goals:**
+
 - Validate core architecture
 - Prove Rust-Python-Next.js integration
 - Test agent and workflow systems
 - Gather early feedback
 
 **Deliverables:**
+
 - ✅ Next.js 14 full-stack architecture (simplified from multi-tier)
 - ✅ TypeScript business logic modules
 - ✅ MADACE Master agent
@@ -975,6 +1095,7 @@ project-root/
 - ⬜ Settings page
 
 **Success Criteria:**
+
 - 10+ alpha testers
 - 3+ complete MVP builds
 - Core architecture validated
@@ -984,12 +1105,14 @@ project-root/
 **Timeline:** Q1-Q2 2026 (Jan-Jun)
 
 **Goals:**
+
 - Feature completeness
 - Production readiness
 - Performance optimization
 - Community building
 
 **Deliverables:**
+
 - All MAM agents and workflows
 - MAB and CIS modules complete
 - Sub-workflow support
@@ -1000,6 +1123,7 @@ project-root/
 - Full documentation
 
 **Success Criteria:**
+
 - 100+ beta testers
 - 50+ active projects
 - < 5 critical bugs
@@ -1010,11 +1134,13 @@ project-root/
 **Timeline:** Q3 2026 (Jul-Sep)
 
 **Goals:**
+
 - Production release
 - Enterprise readiness
 - Ecosystem launch
 
 **Deliverables:**
+
 - Multi-user collaboration
 - External integrations (GitHub, Jira)
 - Module marketplace
@@ -1024,6 +1150,7 @@ project-root/
 - CI/CD integration
 
 **Success Criteria:**
+
 - 500+ installations
 - 10+ commercial users
 - 99% uptime
@@ -1034,11 +1161,13 @@ project-root/
 **Timeline:** Q4 2026+
 
 **Goals:**
+
 - Advanced AI features
 - Enterprise scale
 - Global adoption
 
 **Features:**
+
 - Real-time collaboration
 - Visual workflow builder
 - Mobile app
@@ -1054,12 +1183,14 @@ project-root/
 ### 13.1 External Dependencies
 
 **LLM Providers:**
+
 - Google Gemini API (default)
 - OpenAI API (optional)
 - Anthropic Claude API (optional)
 - Local models via Ollama (future)
 
 **Infrastructure:**
+
 - Docker Hub (image distribution)
 - GitHub (code hosting)
 - npm registry (frontend dependencies)
@@ -1067,20 +1198,24 @@ project-root/
 - crates.io (Rust dependencies)
 
 **Third-Party Services:**
+
 - None required for core functionality
 - Optional: GitHub integration, Jira integration
 
 ### 13.2 Internal Dependencies
 
 **Rust Core → Backend:**
+
 - FFI interface must be stable
 - Breaking changes require backend updates
 
 **Backend → Frontend:**
+
 - REST API must be versioned
 - OpenAPI spec must be current
 
 **Workflows → Templates:**
+
 - Template changes may break workflows
 - Version compatibility required
 
@@ -1125,13 +1260,12 @@ project-root/
 
 ### 15.3 Change Log
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0.0 | 2025-10-19 | MADACE Team | Initial comprehensive PRD |
+| Version | Date       | Author      | Changes                   |
+| ------- | ---------- | ----------- | ------------------------- |
+| 1.0.0   | 2025-10-19 | MADACE Team | Initial comprehensive PRD |
 
 ---
 
 **Document Status:** Living Document
 **Review Cycle:** Monthly
 **Next Review:** 2025-11-19
-

@@ -3,6 +3,7 @@
 **Purpose:** This guide explains how to select and configure the LLM (Large Language Model) used for planning and architecture work in this project.
 
 **Important Distinction:**
+
 - **Planning/Architecture Phase**: Uses user-selected LLM (this guide)
 - **Implementation Phase**: Uses local Docker agent (configured separately)
 
@@ -44,11 +45,13 @@ Phase 2: Implementation (Local Docker Agent)
 ### Option 1: Google Gemini (Default)
 
 **Models:**
+
 - `gemini-2.0-flash-exp` - Latest experimental model (best performance)
 - `gemini-1.5-pro` - Production-ready, excellent reasoning
 - `gemini-1.5-flash` - Faster, good for iteration
 
 **Strengths:**
+
 - ✅ **Free Tier Available**: 60 requests/minute on free tier
 - ✅ **Large Context Window**: 1M+ tokens (can process entire codebase)
 - ✅ **Multimodal**: Can analyze images, diagrams, screenshots
@@ -57,17 +60,20 @@ Phase 2: Implementation (Local Docker Agent)
 - ✅ **Long-Form Planning**: Great at creating comprehensive PRDs and architecture docs
 
 **Limitations:**
+
 - ❌ Rate limits on free tier (60/min)
 - ❌ Experimental models may change behavior
 - ❌ Requires Google Cloud account
 
 **Best For:**
+
 - Projects needing comprehensive architecture design
 - Multi-language codebases (Rust + TypeScript)
 - Teams wanting free tier option
 - Fast iteration during planning
 
 **Setup:**
+
 ```bash
 # 1. Get API key from https://aistudio.google.com/app/apikey
 # 2. Set environment variable
@@ -80,6 +86,7 @@ echo "GEMINI_MODEL=gemini-2.0-flash-exp" >> .env
 ```
 
 **Cost (Paid Tier):**
+
 - Input: $0.075 per 1M tokens (cheap)
 - Output: $0.30 per 1M tokens
 - Typical PRD generation: ~$0.05-0.20
@@ -89,11 +96,13 @@ echo "GEMINI_MODEL=gemini-2.0-flash-exp" >> .env
 ### Option 2: Anthropic Claude (Recommended for Complex Architecture)
 
 **Models:**
+
 - `claude-sonnet-4.5` - Best reasoning, architecture design
 - `claude-opus-4` - Most powerful (coming soon)
 - `claude-sonnet-3.5` - Excellent balance
 
 **Strengths:**
+
 - ✅ **Best Reasoning**: Superior at complex architectural decisions
 - ✅ **Large Context**: 200K tokens (entire projects)
 - ✅ **Excellent Writing**: PRDs and ADRs are very polished
@@ -102,17 +111,20 @@ echo "GEMINI_MODEL=gemini-2.0-flash-exp" >> .env
 - ✅ **Thoughtful ADRs**: Creates well-structured decision records
 
 **Limitations:**
+
 - ❌ **No Free Tier**: Requires paid account
 - ❌ Higher cost than Gemini
 - ❌ API rate limits (depends on tier)
 
 **Best For:**
+
 - Complex architectural decisions
 - Writing comprehensive ADRs
 - Projects requiring deep technical reasoning
 - Teams prioritizing quality over cost
 
 **Setup:**
+
 ```bash
 # 1. Get API key from https://console.anthropic.com/
 # 2. Set environment variable
@@ -125,6 +137,7 @@ echo "CLAUDE_MODEL=claude-sonnet-4.5" >> .env
 ```
 
 **Cost:**
+
 - Sonnet 4.5 Input: $3 per 1M tokens
 - Sonnet 4.5 Output: $15 per 1M tokens
 - Typical PRD generation: ~$0.50-2.00
@@ -134,11 +147,13 @@ echo "CLAUDE_MODEL=claude-sonnet-4.5" >> .env
 ### Option 3: OpenAI GPT (Popular Choice)
 
 **Models:**
+
 - `gpt-4-turbo` - Fast, capable, good value
 - `gpt-4o` - Best multimodal capabilities
 - `gpt-4o-mini` - Cheaper, faster, good enough
 
 **Strengths:**
+
 - ✅ **Widely Used**: Most popular, well-documented
 - ✅ **Fast**: Especially turbo and mini models
 - ✅ **Multimodal**: GPT-4o handles images well
@@ -147,17 +162,20 @@ echo "CLAUDE_MODEL=claude-sonnet-4.5" >> .env
 - ✅ **Function Calling**: Great for structured outputs
 
 **Limitations:**
+
 - ❌ **No Free Tier**: Requires paid account
 - ❌ Smaller context window (128K max)
 - ❌ Sometimes verbose (less concise than Claude)
 
 **Best For:**
+
 - Teams already using OpenAI
 - Projects needing multimodal analysis
 - Fast iteration during planning
 - Structured data generation (JSON schemas)
 
 **Setup:**
+
 ```bash
 # 1. Get API key from https://platform.openai.com/api-keys
 # 2. Set environment variable
@@ -170,6 +188,7 @@ echo "OPENAI_MODEL=gpt-4-turbo" >> .env
 ```
 
 **Cost:**
+
 - GPT-4 Turbo Input: $10 per 1M tokens
 - GPT-4 Turbo Output: $30 per 1M tokens
 - GPT-4o Mini Input: $0.15 per 1M tokens (cheaper option)
@@ -181,11 +200,13 @@ echo "OPENAI_MODEL=gpt-4-turbo" >> .env
 ### Option 4: Local Models (Privacy & Cost-Conscious)
 
 **Options:**
+
 - `llama-3.1-70b` via Ollama - Strong reasoning
 - `codellama-34b` - Specialized for code
 - `mixtral-8x7b` - Excellent open model
 
 **Strengths:**
+
 - ✅ **Free**: No API costs
 - ✅ **Privacy**: Data never leaves your machine
 - ✅ **No Rate Limits**: Use as much as you want
@@ -193,6 +214,7 @@ echo "OPENAI_MODEL=gpt-4-turbo" >> .env
 - ✅ **Customizable**: Fine-tune for your needs
 
 **Limitations:**
+
 - ❌ **Hardware Required**: Need GPU (16GB+ VRAM recommended)
 - ❌ Slower than cloud APIs
 - ❌ Smaller context windows (8K-32K typically)
@@ -200,12 +222,14 @@ echo "OPENAI_MODEL=gpt-4-turbo" >> .env
 - ❌ Setup complexity
 
 **Best For:**
+
 - Privacy-sensitive projects
 - Teams with powerful local hardware
 - Learning/experimentation
 - Offline development environments
 
 **Setup (Ollama):**
+
 ```bash
 # 1. Install Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
@@ -220,6 +244,7 @@ echo "OLLAMA_HOST=http://localhost:11434" >> .env
 ```
 
 **Cost:**
+
 - Free (only electricity and hardware)
 
 ---
@@ -229,6 +254,7 @@ echo "OLLAMA_HOST=http://localhost:11434" >> .env
 Once planning/architecture is complete and work is broken into stories, implementation uses a **local Docker agent** automatically.
 
 **Why Local Agent for Implementation:**
+
 - Consistency across environments
 - No API costs during coding
 - Faster iteration (no network latency)
@@ -236,6 +262,7 @@ Once planning/architecture is complete and work is broken into stories, implemen
 - Always available (no rate limits)
 
 **Setup:**
+
 ```bash
 # Docker agent will be configured automatically
 # Uses ollama/llamafile in Docker container
@@ -246,15 +273,15 @@ Once planning/architecture is complete and work is broken into stories, implemen
 
 ## Decision Matrix
 
-| Criteria | Gemini | Claude | OpenAI | Local |
-|----------|--------|--------|--------|-------|
-| **Cost** | 🟢 Free tier available | 🔴 Paid only | 🔴 Paid only | 🟢 Free |
-| **Quality (Architecture)** | 🟡 Very Good | 🟢 Excellent | 🟢 Excellent | 🟡 Good |
-| **Speed** | 🟢 Very Fast | 🟡 Medium | 🟢 Fast | 🔴 Slow |
-| **Context Window** | 🟢 1M+ tokens | 🟢 200K tokens | 🟡 128K tokens | 🔴 8-32K tokens |
-| **Privacy** | 🔴 Cloud | 🔴 Cloud | 🔴 Cloud | 🟢 Local |
-| **Setup Difficulty** | 🟢 Easy | 🟢 Easy | 🟢 Easy | 🔴 Complex |
-| **Best For** | Free tier, speed | Complex reasoning | General use | Privacy |
+| Criteria                   | Gemini                 | Claude            | OpenAI         | Local           |
+| -------------------------- | ---------------------- | ----------------- | -------------- | --------------- |
+| **Cost**                   | 🟢 Free tier available | 🔴 Paid only      | 🔴 Paid only   | 🟢 Free         |
+| **Quality (Architecture)** | 🟡 Very Good           | 🟢 Excellent      | 🟢 Excellent   | 🟡 Good         |
+| **Speed**                  | 🟢 Very Fast           | 🟡 Medium         | 🟢 Fast        | 🔴 Slow         |
+| **Context Window**         | 🟢 1M+ tokens          | 🟢 200K tokens    | 🟡 128K tokens | 🔴 8-32K tokens |
+| **Privacy**                | 🔴 Cloud               | 🔴 Cloud          | 🔴 Cloud       | 🟢 Local        |
+| **Setup Difficulty**       | 🟢 Easy                | 🟢 Easy           | 🟢 Easy        | 🔴 Complex      |
+| **Best For**               | Free tier, speed       | Complex reasoning | General use    | Privacy         |
 
 ---
 
@@ -265,6 +292,7 @@ Once planning/architecture is complete and work is broken into stories, implemen
 **Recommendation: Google Gemini (gemini-2.0-flash-exp)**
 
 **Rationale:**
+
 1. **Free Tier**: Sufficient for architecture planning
 2. **Large Context**: Can analyze entire Next.js codebase at once
 3. **Fast Iteration**: Need to quickly generate ADRs, tech specs
@@ -272,6 +300,7 @@ Once planning/architecture is complete and work is broken into stories, implemen
 5. **Multimodal**: Helpful if analyzing architecture diagrams
 
 **Alternative: Anthropic Claude (if budget allows)**
+
 - Better at creating thoughtful ADRs (like ADR-003)
 - Superior architectural reasoning
 - More polished documentation
@@ -287,6 +316,7 @@ When you're ready to start planning, run:
 ```
 
 This will interactively ask:
+
 1. Which LLM provider you want to use
 2. Which specific model (with explanations)
 3. Guide you through API key setup
@@ -294,6 +324,7 @@ This will interactively ask:
 5. Save configuration to `.env`
 
 **Script Output Example:**
+
 ```
 🤖 MADACE-Method v2.0 - LLM Selection for Planning & Architecture
 ================================================================
@@ -321,6 +352,7 @@ Enter choice (1-4):
 ## Configuration Files
 
 ### .env (Git-ignored)
+
 ```bash
 # Planning/Architecture LLM Configuration
 PLANNING_LLM=gemini                    # Options: gemini, claude, openai, local
@@ -337,6 +369,7 @@ IMPLEMENTATION_MODEL=auto              # Auto-selected based on hardware
 ```
 
 ### .env.example (Git-tracked)
+
 ```bash
 # Copy this to .env and fill in your values
 
@@ -394,6 +427,7 @@ PLANNING_LLM=claude npm run plan-project
 For typical MADACE-Method v2.0 planning/architecture work:
 
 **Phase 1: Initial Planning (PRD, Architecture, ADRs)**
+
 - Gemini Free Tier: $0 (within limits)
 - Gemini Paid: ~$0.50-1.00
 - Claude Sonnet: ~$2.00-5.00
@@ -401,6 +435,7 @@ For typical MADACE-Method v2.0 planning/architecture work:
 - Local: $0
 
 **Phase 2: Epic Breakdown & Story Creation (27 stories)**
+
 - Gemini Free Tier: $0 (within limits)
 - Gemini Paid: ~$1.00-2.00
 - Claude Sonnet: ~$5.00-10.00
@@ -408,6 +443,7 @@ For typical MADACE-Method v2.0 planning/architecture work:
 - Local: $0
 
 **Total Planning Phase Cost Estimate:**
+
 - Gemini: $0-3.00
 - Claude: $7.00-15.00
 - OpenAI: $4.50-9.00
@@ -420,12 +456,14 @@ For typical MADACE-Method v2.0 planning/architecture work:
 ## Privacy Considerations
 
 ### Cloud LLMs (Gemini, Claude, OpenAI):
+
 - Your prompts and code are sent to provider's servers
 - Providers may use data for model improvement (check TOS)
 - Use API terms that prohibit training on your data if concerned
 - Consider local models for proprietary/sensitive projects
 
 ### Local LLMs:
+
 - Data never leaves your machine
 - Complete privacy and control
 - Suitable for confidential projects
@@ -448,6 +486,7 @@ This is an open-source experimental project, so cloud LLMs are fine. If forking 
 
 **Q: Can I use different LLMs for different tasks?**
 A: Yes, but we recommend consistency during planning phase. You could use:
+
 - Claude for ADRs (best reasoning)
 - Gemini for rapid iteration
 - Local for privacy-sensitive specs
@@ -469,6 +508,7 @@ A: Yes, but only local models. Cloud providers offer fine-tuning (at extra cost)
 ## Support
 
 If you have issues with LLM configuration:
+
 1. Check `.env` file syntax
 2. Verify API keys are valid
 3. Test network connectivity

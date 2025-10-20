@@ -19,30 +19,33 @@ This repository (MADACE-Method v2.0) is a **proof-of-concept** implementation wi
 ### Architecture Evolution
 
 **Previous Design (Rejected)**: Rust (core) + Python (backend) + Next.js (frontend)
+
 - Issues: FFI complexity, 3 runtimes, over-engineering
 
 **Current Design (Approved)**: Next.js 14 Full-Stack TypeScript
+
 - Benefits: Single runtime, single language, proven stack, 4-week timeline
 
 See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full rationale.
 
 ### Official MADACE-METHOD vs This Project
 
-| Aspect | Official MADACE | This Project (Experimental) |
-|--------|----------------|---------------------------|
-| **Language** | JavaScript/Node.js | TypeScript/Node.js |
-| **Interface** | CLI + IDE integration | Web UI (browser-based) |
-| **Architecture** | Single runtime | Single runtime (Next.js) |
-| **Status** | v1.0-alpha.2 (Stable) | Proof-of-concept (Alpha) |
-| **State Machine** | CLI text | Visual Kanban board |
-| **LLM Selection** | Fixed | User-selectable (4 options) |
-| **Use Case** | Production use | Research & UI innovation |
+| Aspect            | Official MADACE       | This Project (Experimental) |
+| ----------------- | --------------------- | --------------------------- |
+| **Language**      | JavaScript/Node.js    | TypeScript/Node.js          |
+| **Interface**     | CLI + IDE integration | Web UI (browser-based)      |
+| **Architecture**  | Single runtime        | Single runtime (Next.js)    |
+| **Status**        | v1.0-alpha.2 (Stable) | Proof-of-concept (Alpha)    |
+| **State Machine** | CLI text              | Visual Kanban board         |
+| **LLM Selection** | Fixed                 | User-selectable (4 options) |
+| **Use Case**      | Production use        | Research & UI innovation    |
 
 ## Project Status
 
 **Current Phase**: ✅ Ready for Implementation - Feasibility Confirmed
 
 **Completed**:
+
 - ✅ Architecture review and simplification decision
 - ✅ LLM selection system created
 - ✅ Documentation updated for new architecture
@@ -53,6 +56,7 @@ See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full ratio
 - ✅ CLI tools confirmed (Claude CLI v2.0.14, Gemini CLI v0.9.0)
 
 **Implementation Ready**:
+
 - ⏭️ Initialize Next.js 14 project
 - ⬜ Implement Setup Wizard (Priority #1)
 - ⬜ Implement Settings Page (Priority #2)
@@ -69,6 +73,7 @@ See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full ratio
 ## Development Commands
 
 ### LLM Selection (First Step)
+
 ```bash
 # Interactive LLM selection for planning/architecture
 ./scripts/select-llm.sh
@@ -78,6 +83,7 @@ See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full ratio
 ```
 
 ### Next.js Development (Once Project Created)
+
 ```bash
 npm install                # Install dependencies
 npm run dev                # Development server (http://localhost:3000)
@@ -92,6 +98,7 @@ npm test                   # Run tests (Jest + RTL)
 **Two deployment modes:**
 
 #### Development Container (with VSCode + Cursor)
+
 ```bash
 # Start development environment with IDEs pre-installed
 mkdir madace-data
@@ -112,6 +119,7 @@ docker-compose -f docker-compose.dev.yml up -d
 ```
 
 #### Production Deployment (optimized image)
+
 ```bash
 # Create data folder on host
 mkdir madace-data
@@ -132,6 +140,7 @@ docker run -d \
 ```
 
 **Data Persistence (both modes):**
+
 - All config, generated files, and user data stored in `./madace-data/` (host folder)
 - Volume mounted to `/app/data` (production) or `/workspace/madace-data` (dev)
 - Survives container restarts and updates
@@ -139,6 +148,7 @@ docker run -d \
 ## Architecture Highlights
 
 ### Component Communication Flow
+
 ```
 User (Browser) → Frontend (React)
                      ↓
@@ -167,6 +177,7 @@ User (Browser) → Frontend (React)
 ### Key Architectural Components (TypeScript)
 
 **Agent System** (`lib/agents/loader.ts`, `lib/agents/runtime.ts`):
+
 - Loads and validates agent YAML definitions (Zod schemas)
 - Executes critical actions on agent load
 - Manages agent personas, menus, and prompts
@@ -174,18 +185,21 @@ User (Browser) → Frontend (React)
 - **Type-safe** with runtime validation
 
 **Workflow Engine** (`lib/workflows/engine.ts`):
+
 - Parses and executes workflow YAML files
 - Sequential step execution with state persistence
 - Supports action types: elicit, reflect, guide, template, validate, sub-workflow
 - State files: `.{workflow-name}.state.json`
 
 **Template Engine** (`lib/templates/engine.ts`):
+
 - Handlebars template rendering
 - Support for legacy patterns: `{var}`, `${var}`, `%VAR%`
 - Standard MADACE variables
 - Template validation
 
 **State Machine** (`lib/state/machine.ts`):
+
 - Manages story lifecycle: BACKLOG → TODO → IN PROGRESS → DONE
 - **Critical Rules**:
   - Only ONE story in TODO at a time
@@ -195,6 +209,7 @@ User (Browser) → Frontend (React)
 - **Visual Kanban Board** in Web UI
 
 **LLM Client** (`lib/llm/client.ts`):
+
 - Multi-provider abstraction (Gemini, Claude, OpenAI, Local)
 - Unified interface across providers
 - Configuration via `.env` file
@@ -202,6 +217,7 @@ User (Browser) → Frontend (React)
 - Implementation phase: Local Docker agent
 
 **Configuration Manager** (`lib/config/manager.ts`):
+
 - Auto-detects config location: `./madace/core/config.yaml`
 - Cross-platform path resolution
 - Validates installation integrity
@@ -210,12 +226,14 @@ User (Browser) → Frontend (React)
 ### Module System
 
 Modules are located in `madace/` directory:
+
 - **core**: Framework orchestration (MADACE Master agent)
 - **mam**: MADACE Agile Method - PM, Analyst, Architect, SM, DEV agents
 - **mab**: MADACE Builder - Agent/workflow/module creation
 - **cis**: Creative Intelligence Suite - Creativity workflows
 
 ### Directory Structure (Future)
+
 ```
 /Users/nimda/MADACE-Method v2.0/
 ├── app/                    # Next.js App Router
@@ -319,6 +337,7 @@ Modules are located in `madace/` directory:
 ## Key Configuration
 
 ### Environment Variables (.env)
+
 ```bash
 # Planning/Architecture LLM
 PLANNING_LLM=gemini                    # Options: gemini, claude, openai, local
@@ -330,11 +349,12 @@ IMPLEMENTATION_AGENT=docker
 ```
 
 ### MADACE Configuration (madace/core/config.yaml)
+
 ```yaml
-project_name: string              # Required
-output_folder: string             # Required (e.g., "docs")
-user_name: string                 # Required
-communication_language: string    # Required
+project_name: string # Required
+output_folder: string # Required (e.g., "docs")
+user_name: string # Required
+communication_language: string # Required
 modules:
   mam: { enabled: boolean }
   mab: { enabled: boolean }
@@ -344,6 +364,7 @@ modules:
 ## Critical Development Rules
 
 ### State Machine Operations
+
 - NEVER manually edit `docs/mam-workflow-status.md`
 - ALWAYS read story state from the status file (single source of truth)
 - Use state transition methods: `transitionBacklogToTodo()`, `transitionTodoToInProgress()`, `transitionInProgressToDone()`
@@ -351,6 +372,7 @@ modules:
 - Web UI displays as visual Kanban board
 
 ### TypeScript & Type Safety
+
 - Use Zod schemas for all YAML parsing and validation
 - Define types with `z.infer<typeof Schema>`
 - Never use `any` type without explicit reason
@@ -358,6 +380,7 @@ modules:
 - Validate at runtime (YAML is untrusted input)
 
 ### YAML Definitions
+
 - Agent files: `*.agent.yaml` with metadata, persona, menu, prompts
 - Workflow files: `workflow.yaml` with name, description, steps
 - Use `action` field for workflow steps
@@ -365,6 +388,7 @@ modules:
 - Validate with Zod before processing
 
 ### Template Rendering
+
 - Primary: Handlebars `{{variable_name}}`
 - Legacy support: `{variable-name}`, `${variable}`, `%VAR%`
 - Validate required variables before rendering
@@ -372,12 +396,14 @@ modules:
 - Standard variables from config
 
 ### Path Handling
+
 - Always use `path.resolve()` for absolute paths
 - Cross-platform compatibility (macOS/Linux/Windows)
 - Sandbox operations to project directory
 - Validate paths are within project boundaries
 
 ### LLM Integration
+
 - Use multi-provider client abstraction
 - Planning phase: User-selected LLM (configured via web UI)
 - Implementation phase: Local Docker agent
@@ -413,6 +439,7 @@ npm test -- --watch         # Watch mode
 This project uses different LLMs for different phases:
 
 **Phase 1: Planning & Architecture** (User-Selected)
+
 - Google Gemini (Recommended - Free tier)
 - Anthropic Claude (Best reasoning)
 - OpenAI GPT (Popular)
@@ -421,6 +448,7 @@ This project uses different LLMs for different phases:
 Run `./scripts/select-llm.sh` for interactive setup.
 
 **Phase 2: Implementation** (Automatic)
+
 - Local Docker agent
 - No user configuration needed
 
@@ -438,6 +466,7 @@ See [`docs/LLM-SELECTION.md`](./docs/LLM-SELECTION.md) for detailed guide.
 - **[LLM-SELECTION.md](./docs/LLM-SELECTION.md)** - LLM selection guide
 
 ### Architecture Decision Records (ADRs)
+
 - **[ADR-001](./docs/adrs/ADR-001-multi-tier-architecture.md)** - Multi-Tier Architecture (Superseded)
 - **[ADR-002](./docs/adrs/ADR-002-ffi-strategy.md)** - FFI Strategy (Superseded)
 - **[ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)** - Architecture Simplification ✅
@@ -445,6 +474,7 @@ See [`docs/LLM-SELECTION.md`](./docs/LLM-SELECTION.md) for detailed guide.
 ## Getting Started
 
 1. **Create Next.js Project**:
+
    ```bash
    npx create-next-app@latest . --typescript --tailwind --app
    npm install zod js-yaml handlebars
@@ -480,6 +510,7 @@ See [`docs/LLM-SELECTION.md`](./docs/LLM-SELECTION.md) for detailed guide.
    - Support both web UI and CLI simultaneously
 
 7. **Test & Deploy**:
+
    ```bash
    npm test                # Run tests
    npm run build           # Production build

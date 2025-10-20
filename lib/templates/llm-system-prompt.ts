@@ -108,14 +108,12 @@ Always persist workflow state to allow resumption on failure.`;
 /**
  * Get complete system prompt with tech stack for any LLM call
  */
-export function getSystemPrompt(
-  context: {
-    type: 'base' | 'code' | 'agent' | 'workflow';
-    role?: string;
-    workflow?: string;
-    additionalContext?: string;
-  }
-): string {
+export function getSystemPrompt(context: {
+  type: 'base' | 'code' | 'agent' | 'workflow';
+  role?: string;
+  workflow?: string;
+  additionalContext?: string;
+}): string {
   let prompt = '';
 
   switch (context.type) {

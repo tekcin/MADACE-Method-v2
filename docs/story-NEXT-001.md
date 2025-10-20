@@ -15,6 +15,7 @@
 Initialize the Next.js 14 project with TypeScript, Tailwind CSS, and App Router. This is the foundation story that sets up the entire project structure for the MADACE web-based implementation.
 
 **Context:**
+
 - We've completed planning and Docker deployment configuration
 - Architecture is simplified to Next.js full-stack TypeScript (no Rust/Python)
 - All feasibility tests passed
@@ -44,19 +45,22 @@ This story creates the foundational project structure that all subsequent storie
 ## Implementation Plan
 
 ### Step 1: Run create-next-app
+
 ```bash
 npx create-next-app@latest . --typescript --tailwind --app --eslint
 ```
 
 **Options to select:**
+
 - Would you like to use TypeScript? → **Yes**
 - Would you like to use ESLint? → **Yes**
 - Would you like to use Tailwind CSS? → **Yes**
 - Would you like to use `src/` directory? → **No** (use app/ directly)
 - Would you like to use App Router? → **Yes**
-- Would you like to customize the default import alias? → **No** (use @/*)
+- Would you like to customize the default import alias? → **No** (use @/\*)
 
 ### Step 2: Verify Installation
+
 ```bash
 # Check that key files exist
 ls -la app/
@@ -67,20 +71,24 @@ ls -la next.config.js
 ```
 
 ### Step 3: Configure TypeScript (Strict Mode)
+
 Edit `tsconfig.json` to add strict settings:
+
 ```json
 {
   "compilerOptions": {
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": true
     // ... other settings from create-next-app
   }
 }
 ```
 
 ### Step 4: Update .gitignore
+
 Ensure the following are ignored:
+
 ```
 # Next.js
 .next/
@@ -112,6 +120,7 @@ coverage/
 ```
 
 ### Step 5: Test Development Server
+
 ```bash
 npm run dev
 # Visit http://localhost:3000
@@ -119,6 +128,7 @@ npm run dev
 ```
 
 ### Step 6: Test Hot Reload
+
 ```bash
 # Edit app/page.tsx
 # Change some text
@@ -127,6 +137,7 @@ npm run dev
 ```
 
 ### Step 7: Test Production Build
+
 ```bash
 npm run build
 npm start
@@ -138,6 +149,7 @@ npm start
 ## Technical Notes
 
 ### Project Structure After Initialization
+
 ```
 MADACE-Method v2.0/
 ├── app/                    # Next.js App Router
@@ -155,6 +167,7 @@ MADACE-Method v2.0/
 ```
 
 ### Key Dependencies Installed
+
 - `next` (14.x) - Next.js framework
 - `react` (18.x) - React library
 - `react-dom` (18.x) - React DOM
@@ -166,11 +179,13 @@ MADACE-Method v2.0/
 ### Configuration Files
 
 **tsconfig.json:**
+
 - Enables strict mode for type safety
-- Configures path aliases (@/*)
+- Configures path aliases (@/\*)
 - Enables incremental compilation
 
 **next.config.js:**
+
 - Default Next.js configuration
 - Will be extended in future stories for:
   - Environment variables
@@ -178,6 +193,7 @@ MADACE-Method v2.0/
   - API rewrites
 
 **tailwind.config.ts:**
+
 - Configured for app/ directory
 - Includes all necessary content paths
 - Will be extended for custom theme
@@ -187,6 +203,7 @@ MADACE-Method v2.0/
 ## Testing Checklist
 
 **Manual Testing:**
+
 - [ ] `npm run dev` starts without errors
 - [ ] http://localhost:3000 displays default page
 - [ ] Editing app/page.tsx triggers hot reload
@@ -197,6 +214,7 @@ MADACE-Method v2.0/
 - [ ] `npm run lint` runs without errors
 
 **Verification Commands:**
+
 ```bash
 # Start dev server
 npm run dev
@@ -216,10 +234,12 @@ npx tsc --noEmit
 ## Dependencies
 
 **Depends On:**
+
 - [DOCKER-001] Docker deployment (DONE) - For development container option
 - [FEAS-001] Feasibility testing (DONE) - Validated Node.js environment
 
 **Blocks:**
+
 - [NEXT-002] Configure project structure
 - [NEXT-003] Setup ESLint and Prettier
 - [SETUP-002] Setup wizard UI
@@ -230,16 +250,19 @@ npx tsc --noEmit
 ## Risks & Mitigations
 
 **Risk 1: Version Incompatibility**
+
 - **Risk:** Next.js 14 may have breaking changes
 - **Mitigation:** Using `@latest` ensures stable version, documented in package.json for consistency
 - **Likelihood:** Low (Next.js is stable)
 
 **Risk 2: Existing Files Conflict**
+
 - **Risk:** create-next-app may conflict with existing files
 - **Mitigation:** Review existing files first, backup if needed
 - **Likelihood:** Medium (we have existing docs, scripts)
 
 **Risk 3: Node.js Version Issues**
+
 - **Risk:** Node.js version mismatch
 - **Mitigation:** Already validated v24.10.0 in feasibility tests
 - **Likelihood:** Low (version confirmed)
@@ -268,6 +291,7 @@ This story is considered DONE when:
 **Estimated Time:** 1-2 hours
 
 **Breakdown:**
+
 - Run create-next-app: 5 minutes
 - Configure TypeScript strict mode: 10 minutes
 - Update .gitignore: 5 minutes
@@ -284,18 +308,21 @@ This story is considered DONE when:
 ## Implementation Notes
 
 ### Before You Start
+
 1. Ensure you're in the project root: `/Users/nimda/MADACE-Method v2.0`
 2. Verify Node.js version: `node -v` (should be v24.10.0+)
 3. Review existing files that might conflict
 4. Consider backing up current state: `git commit -am "Pre-Next.js initialization"`
 
 ### During Implementation
+
 - Follow the implementation plan step-by-step
 - Check each acceptance criterion as you complete it
 - Note any deviations or issues encountered
 - Ask for help if blocked (DEV agent available)
 
 ### After Completion
+
 - Run all verification commands
 - Ensure no errors in console
 - Commit changes with clear message

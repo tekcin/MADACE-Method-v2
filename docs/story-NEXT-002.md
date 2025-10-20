@@ -15,6 +15,7 @@
 Organize the Next.js project with a proper directory structure following best practices. Create the standard directories for libraries, components, types, and utilities that will house the MADACE business logic.
 
 **Context:**
+
 - [NEXT-001] completed - Next.js 14 is initialized and running
 - We need a clean, scalable structure for the MADACE implementation
 - Following Next.js 14 App Router conventions with TypeScript
@@ -71,12 +72,14 @@ mkdir -p components/features
 ### Step 3: Create Index Files and Documentation
 
 For each `lib/` subdirectory, create:
+
 - `index.ts` - Barrel export file
 - `README.md` - Directory purpose and usage
 
 ### Step 4: Create Type Definitions Starter
 
 Create `lib/types/index.ts` with common types:
+
 ```typescript
 // Core MADACE types
 export type AgentMetadata = {
@@ -108,6 +111,7 @@ export * from './config';
 ### Step 5: Create Utility Functions Starter
 
 Create `lib/utils/index.ts`:
+
 ```typescript
 /**
  * Utility functions for MADACE
@@ -263,21 +267,25 @@ MADACE-Method v2.0/
 ## Testing Checklist
 
 **Directory Creation:**
+
 - [ ] All `lib/` subdirectories exist
 - [ ] All `components/` subdirectories exist
 - [ ] Each directory has `index.ts`
 - [ ] Each directory has `README.md`
 
 **TypeScript Compilation:**
+
 - [ ] `npx tsc --noEmit` passes without errors
 - [ ] Type definitions in `lib/types/index.ts` are valid
 - [ ] Utility functions in `lib/utils/index.ts` compile
 
 **Documentation:**
+
 - [ ] ARCHITECTURE.md updated with structure
 - [ ] Each README.md explains directory purpose
 
 **Verification Commands:**
+
 ```bash
 # Check structure
 ls -la lib/*/
@@ -298,9 +306,11 @@ find lib components -name "README.md"
 ## Dependencies
 
 **Depends On:**
+
 - [NEXT-001] Initialize Next.js 14 project (DONE) ✅
 
 **Blocks:**
+
 - [CORE-011] Agent Loader implementation
 - [CORE-012] Agent Runtime implementation
 - [CORE-013] Workflow Engine implementation
@@ -312,11 +322,13 @@ find lib components -name "README.md"
 ## Risks & Mitigations
 
 **Risk 1: Directory Structure Changes Later**
+
 - **Risk:** May need to reorganize as project grows
 - **Mitigation:** Keep good documentation, use barrel exports for easy refactoring
 - **Likelihood:** Low (following Next.js best practices)
 
 **Risk 2: TypeScript Path Aliases**
+
 - **Risk:** Import paths may break
 - **Mitigation:** Already configured `@/*` alias in tsconfig.json
 - **Likelihood:** Low (configured in NEXT-001)
@@ -345,6 +357,7 @@ This story is considered DONE when:
 **Estimated Time:** 45 minutes - 1 hour
 
 **Breakdown:**
+
 - Create directories: 5 minutes
 - Create index.ts files: 10 minutes
 - Create README.md files: 15 minutes
@@ -360,17 +373,20 @@ This story is considered DONE when:
 ## Implementation Notes
 
 ### Before You Start
+
 - Ensure [NEXT-001] is complete and Next.js is running
 - Review the proposed directory structure above
 - Understand the separation of concerns (lib vs components vs app)
 
 ### During Implementation
+
 - Create directories in the order shown
 - Don't skip the README files (they're documentation!)
 - Keep each index.ts simple (just exports)
 - Test TypeScript compilation after each major step
 
 ### After Completion
+
 - Review the structure with `tree` command
 - Ensure all imports work
 - Commit with descriptive message

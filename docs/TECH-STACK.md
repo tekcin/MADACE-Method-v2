@@ -7,25 +7,25 @@
 
 ## Core Stack
 
-| Category | Technology | Version |
-|----------|-----------|---------|
-| **Framework** | Next.js | 15.5.6 |
-| **UI Library** | React | 19.0.0 |
-| **Language** | TypeScript | 5.7.3 |
-| **Runtime** | Node.js | 20+ |
-| **Styling** | Tailwind CSS | 4.1.1 |
-| **Validation** | Zod | 4.1.12 |
-| **YAML Parser** | js-yaml | 4.1.0 |
-| **Templates** | Handlebars | 4.7.8 |
+| Category        | Technology   | Version |
+| --------------- | ------------ | ------- |
+| **Framework**   | Next.js      | 15.5.6  |
+| **UI Library**  | React        | 19.0.0  |
+| **Language**    | TypeScript   | 5.7.3   |
+| **Runtime**     | Node.js      | 20+     |
+| **Styling**     | Tailwind CSS | 4.1.1   |
+| **Validation**  | Zod          | 4.1.12  |
+| **YAML Parser** | js-yaml      | 4.1.0   |
+| **Templates**   | Handlebars   | 4.7.8   |
 
 ---
 
 ## Development Tools
 
-| Tool | Version |
-|------|---------|
-| **Linter** | ESLint | 9.19.0 |
-| **Package Manager** | npm | 11.6.0 |
+| Tool                | Version |
+| ------------------- | ------- | ------ |
+| **Linter**          | ESLint  | 9.19.0 |
+| **Package Manager** | npm     | 11.6.0 |
 
 ---
 
@@ -86,9 +86,10 @@ TECH STACK CONTEXT:
 ## Version Update Policy
 
 When updating versions:
+
 1. Update this file first
 2. Update package.json
-3. Update all *.md files that reference versions
+3. Update all \*.md files that reference versions
 4. Update LLM prompt templates
 5. Commit with message: "Update tech stack to [version]"
 

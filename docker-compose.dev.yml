@@ -11,9 +11,9 @@ services:
 
     # Port mappings
     ports:
-      - "3000:3000"    # Next.js dev server
-      - "8080:8080"    # VSCode Server (code-server)
-      - "8081:8081"    # Cursor server (if needed)
+      - '3000:3000' # Next.js dev server
+      - '8080:8080' # VSCode Server (code-server)
+      - '8081:8081' # Cursor server (if needed)
 
     # Named volume on host system
     volumes:
@@ -61,7 +61,7 @@ services:
 
     # Health check
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
       interval: 30s
       timeout: 10s
       retries: 3

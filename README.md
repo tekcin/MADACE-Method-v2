@@ -31,6 +31,7 @@ MADACE-Method v2.0 is the **next generation** of the MADACE-METHOD framework, re
 ### Architecture
 
 **Next.js 15 Full-Stack TypeScript**
+
 - ✅ Single runtime (Node.js only)
 - ✅ Single language (TypeScript everywhere)
 - ✅ Proven stack (battle-tested)
@@ -42,11 +43,13 @@ MADACE-Method v2.0 is the **next generation** of the MADACE-METHOD framework, re
 ## Architecture
 
 ### Official MADACE (Node.js CLI)
+
 ```
 User → IDE/CLI → Node.js Engine → AI Agents → Workflows
 ```
 
 ### This Project (Next.js Web UI)
+
 ```
 ┌─────────────────────────────────────┐
 │      Next.js 14 (App Router)        │
@@ -91,12 +94,14 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for detailed version information._
 This implementation maintains the core MADACE philosophy:
 
 ### C.O.R.E. System
+
 - **Collaboration**: Human-AI partnership where both contribute unique strengths
 - **Optimized**: Collaborative process refined for maximum effectiveness
 - **Reflection**: Guided thinking that helps discover better solutions
 - **Engine**: Framework that orchestrates specialized agents and workflows
 
 ### Key Features
+
 1. **Human Amplification, Not Replacement** - AI agents guide thinking, don't do it for you
 2. **Scale-Adaptive Planning** - Projects route through workflows based on complexity (Level 0-4)
 3. **Just-In-Time Design** - Tech specs created per epic during implementation
@@ -112,18 +117,21 @@ This implementation maintains the core MADACE philosophy:
 ### Prerequisites
 
 **For Production Deployment (Docker):**
+
 - Docker 20.10+ and Docker Compose
 - 2GB RAM minimum
 - 1GB disk space (optimized production image)
 - Named volume on host system (for persistent data)
 
 **For Development (Docker with IDEs):**
+
 - Docker 20.10+ and Docker Compose
 - 4GB RAM minimum (for VSCode + Cursor + Next.js)
 - 5GB disk space (includes IDE tools)
 - Browser for VSCode Server access
 
 **For Local Development (No Docker):**
+
 - Node.js 20+ (for Next.js)
 - npm 9+ or pnpm
 - 4GB RAM minimum
@@ -153,6 +161,7 @@ docker-compose -f docker-compose.dev.yml up -d
 ```
 
 **What's included:**
+
 - ✅ VSCode Server (browser-based IDE)
 - ✅ Cursor IDE (AI-powered coding)
 - ✅ All npm dependencies installed
@@ -175,6 +184,7 @@ npm run dev
 ```
 
 **3. Web-Based Configuration (Recommended):**
+
 ```
 1. Open http://localhost:3000 in your browser
 2. Complete the setup wizard:
@@ -189,6 +199,7 @@ npm run dev
 **All configuration is done via the web UI** - no manual file editing required!
 
 **Alternative: CLI Configuration (Optional)**
+
 ```bash
 # For advanced users who prefer CLI
 ./scripts/select-llm.sh
@@ -218,6 +229,7 @@ docker-compose -f docker-compose.dev.yml up -d
 ```
 
 **Features:**
+
 - Browser-based VSCode with extensions
 - Cursor IDE for AI-powered coding
 - Hot reload for live code changes
@@ -225,6 +237,7 @@ docker-compose -f docker-compose.dev.yml up -d
 - Source code live-mounted from host
 
 **Stop/restart:**
+
 ```bash
 docker-compose -f docker-compose.dev.yml down
 docker-compose -f docker-compose.dev.yml up -d
@@ -255,12 +268,14 @@ docker run -d \
 ```
 
 **Features:**
+
 - Optimized image (~200 MB vs 2-3 GB for dev)
 - Production-ready Next.js build
 - No IDEs (runtime only)
 - Secure (non-root user, minimal attack surface)
 
 **What's in the data folder:**
+
 - `config/` - Configuration and API keys (from web UI)
 - `agents/custom/` - Your custom agents
 - `workflows/custom/` - Your custom workflows
@@ -268,6 +283,7 @@ docker run -d \
 - `output/` - All generated artifacts
 
 **Data persistence & backup:**
+
 ```bash
 # Stop container (data preserved in madace-data/)
 docker-compose down
@@ -285,14 +301,14 @@ docker-compose up -d
 
 **Container comparison:**
 
-| Feature | Development (`docker-compose.dev.yml`) | Production (`docker-compose.yml`) |
-|---------|----------------------------------------|-----------------------------------|
-| **Image Size** | ~2-3 GB | ~200 MB |
-| **IDEs** | VSCode + Cursor | None |
-| **Use Case** | Development | Production |
-| **Ports** | 3000, 8080, 8081 | 3000 |
-| **Code** | Live-mounted | Baked in |
-| **Hot Reload** | ✅ Enabled | ❌ Not applicable |
+| Feature        | Development (`docker-compose.dev.yml`) | Production (`docker-compose.yml`) |
+| -------------- | -------------------------------------- | --------------------------------- |
+| **Image Size** | ~2-3 GB                                | ~200 MB                           |
+| **IDEs**       | VSCode + Cursor                        | None                              |
+| **Use Case**   | Development                            | Production                        |
+| **Ports**      | 3000, 8080, 8081                       | 3000                              |
+| **Code**       | Live-mounted                           | Baked in                          |
+| **Hot Reload** | ✅ Enabled                             | ❌ Not applicable                 |
 
 See [ARCHITECTURE.md - Deployment](./ARCHITECTURE.md#deployment) for full documentation.
 
@@ -404,6 +420,7 @@ This project separates LLM usage into two phases:
 ### Phase 1: Planning & Architecture (User-Selected LLM)
 
 **Web UI Setup (Recommended)**:
+
 1. Open http://localhost:3000
 2. Navigate to Settings → LLM
 3. Choose your provider:
@@ -416,11 +433,13 @@ This project separates LLM usage into two phases:
 6. Save configuration
 
 **CLI Setup (Alternative)**:
+
 ```bash
 ./scripts/select-llm.sh  # Interactive setup with verbose explanations
 ```
 
 ### Phase 2: Implementation (Automatic)
+
 Uses local Docker agent for code generation. No configuration needed.
 
 **Documentation**: [`docs/LLM-SELECTION.md`](./docs/LLM-SELECTION.md)
@@ -432,26 +451,33 @@ Uses local Docker agent for code generation. No configuration needed.
 This implementation includes the same MADACE modules:
 
 ### 🎯 MADACE Core
+
 - MADACE Master orchestrator
 - Agent loading system
 - Workflow execution engine
 - Configuration management
 
 ### 🏗️ MADACE Method (MAM)
+
 Agile AI-driven software development:
+
 - **5 Agents**: PM, Analyst, Architect, SM (Scrum Master), DEV
 - **Scale-Adaptive Planning**: Level 0-4 routing
 - **Four-Phase Workflow**: Analysis → Planning → Solutioning → Implementation
 - **Story State Machine**: Strict lifecycle management
 
 ### 🛠️ MADACE Builder (MAB)
+
 Custom agent/workflow/module creation:
+
 - Create custom AI agents
 - Build domain-specific workflows
 - Scaffold new modules
 
 ### 💡 Creative Intelligence Suite (CIS)
+
 Innovation and creative thinking:
+
 - SCAMPER brainstorming
 - Six Thinking Hats
 - Design Thinking process
@@ -470,6 +496,7 @@ This project uses the official MADACE-METHOD to manage its own development. See 
 #### Via Web UI (Recommended)
 
 **Planning Phase:**
+
 ```
 1. Open http://localhost:3000
 2. Click "Agents" → "PM (Product Manager)"
@@ -480,6 +507,7 @@ This project uses the official MADACE-METHOD to manage its own development. See 
 ```
 
 **Implementation Phase:**
+
 ```
 1. Load SM agent for story management:
    - *create-story     → Draft new story from backlog
@@ -493,6 +521,7 @@ This project uses the official MADACE-METHOD to manage its own development. See 
 #### Via Claude CLI / Gemini CLI (Alternative)
 
 **Planning Phase:**
+
 ```bash
 # Using Claude CLI
 claude --project madace agent pm
@@ -504,6 +533,7 @@ gemini --project madace workflow plan-project
 ```
 
 **Implementation Phase:**
+
 ```bash
 # Using Claude CLI
 claude --project madace agent sm
@@ -521,6 +551,7 @@ gemini --project madace workflow create-story
 ## Documentation
 
 ### Project Documentation
+
 - **[CLAUDE.md](./CLAUDE.md)** - Guide for AI assistants working with this codebase
 - **[PRD.md](./PRD.md)** - Product requirements for this implementation
 - **[PLAN.md](./PLAN.md)** - Development roadmap (4-week timeline)
@@ -530,10 +561,13 @@ gemini --project madace workflow create-story
 - **[LLM-SELECTION.md](./docs/LLM-SELECTION.md)** - LLM selection guide
 
 ### Architecture Decision Records (ADRs)
+
 - **[ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)** - Next.js Full-Stack Architecture ✅
 
 ### Official MADACE Documentation
+
 For the official framework:
+
 - [MADACE-METHOD Repository](https://github.com/tekcin/MADACE-METHOD)
 - [Official Documentation](https://github.com/tekcin/MADACE-METHOD/tree/main/docs)
 
@@ -544,6 +578,7 @@ For the official framework:
 **Current Phase**: Alpha - Ready for Implementation ✅
 
 **Recent Milestones**:
+
 - ✅ Next.js 15 full-stack architecture
 - ✅ LLM selection system implemented
 - ✅ **Feasibility tests completed (ALL PASSED)**
@@ -555,6 +590,7 @@ For the official framework:
 - ⏭️ Next: Initialize Next.js project and begin implementation
 
 **Completed**:
+
 - ✅ Next.js 15 project initialized
 - ✅ Project structure configured
 - ✅ LLM selection system (`./scripts/select-llm.sh`)
@@ -567,6 +603,7 @@ For the official framework:
 - ✅ Development environment guide ([DEVELOPMENT.md](./DEVELOPMENT.md))
 
 **Ready to Implement**:
+
 - ⬜ Setup Wizard (web-based configuration)
 - ⬜ Settings Page (ongoing configuration)
 - ⬜ Agent system implementation (TypeScript)
@@ -577,6 +614,7 @@ For the official framework:
 - ⬜ Web UI components (React + Tailwind)
 
 **Feasibility Confirmed** ([Full Report](./FEASIBILITY-REPORT.md)):
+
 - ✅ Node.js v24.10.0 (exceeds v20+ requirement)
 - ✅ Zod v4.1.12 validation working
 - ✅ js-yaml v4.1.0 parsing working
@@ -589,6 +627,7 @@ For the official framework:
 - ✅ All risks assessed and mitigated
 
 **Timeline** (Confirmed via feasibility tests):
+
 - **Week 1**: Setup wizard + Settings page → **LOW RISK** ✅
 - **Week 2-3**: Core business logic + LLM integration → **LOW RISK** ✅
 - **Week 4**: CLI integration + Testing + Deployment → **MEDIUM RISK** ✅
@@ -598,29 +637,30 @@ For the official framework:
 
 ## Comparison: v1.0 vs v2.0
 
-| Aspect | v1.0 (Official MADACE) | v2.0 (This Project) |
-|--------|----------------------|---------------------|
-| **Language** | JavaScript/Node.js | TypeScript/Node.js |
-| **Type Safety** | Runtime only | Compile-time + Runtime (TypeScript + Zod) |
-| **Architecture** | CLI-based | Dual Interface (Web UI + CLI) |
-| **CLI Support** | CLI only | ✅ CLI + Web UI (both work together) |
-| **Deployment** | npm install | Docker (optimized containers) |
-| **Interface** | Command-line | Browser + Command-line (simultaneous) |
-| **Performance** | Fast (V8 engine) | Fast (same V8 engine) |
-| **Complexity** | Lower | Low (single runtime) |
-| **Maturity** | v1.0-alpha.2 (stable) | v2.0-alpha (experimental) |
-| **IDE Support** | 5+ IDEs native | Any browser + VSCode Server + CLI |
-| **LLM Selection** | Fixed | User-selectable (Gemini/Claude/OpenAI/Local) |
-| **State Machine UI** | CLI text | Visual Kanban board (Web) + CLI text |
-| **Real-Time Updates** | N/A | Live progress tracking + WebSocket sync |
-| **Claude CLI** | Compatible | ✅ Fully integrated |
-| **Gemini CLI** | Compatible | ✅ Fully integrated |
+| Aspect                | v1.0 (Official MADACE) | v2.0 (This Project)                          |
+| --------------------- | ---------------------- | -------------------------------------------- |
+| **Language**          | JavaScript/Node.js     | TypeScript/Node.js                           |
+| **Type Safety**       | Runtime only           | Compile-time + Runtime (TypeScript + Zod)    |
+| **Architecture**      | CLI-based              | Dual Interface (Web UI + CLI)                |
+| **CLI Support**       | CLI only               | ✅ CLI + Web UI (both work together)         |
+| **Deployment**        | npm install            | Docker (optimized containers)                |
+| **Interface**         | Command-line           | Browser + Command-line (simultaneous)        |
+| **Performance**       | Fast (V8 engine)       | Fast (same V8 engine)                        |
+| **Complexity**        | Lower                  | Low (single runtime)                         |
+| **Maturity**          | v1.0-alpha.2 (stable)  | v2.0-alpha (experimental)                    |
+| **IDE Support**       | 5+ IDEs native         | Any browser + VSCode Server + CLI            |
+| **LLM Selection**     | Fixed                  | User-selectable (Gemini/Claude/OpenAI/Local) |
+| **State Machine UI**  | CLI text               | Visual Kanban board (Web) + CLI text         |
+| **Real-Time Updates** | N/A                    | Live progress tracking + WebSocket sync      |
+| **Claude CLI**        | Compatible             | ✅ Fully integrated                          |
+| **Gemini CLI**        | Compatible             | ✅ Fully integrated                          |
 
 ---
 
 ## When to Use Which Version?
 
 ### Use v1.0 (Official MADACE-METHOD) If:
+
 - ✅ You want a production-ready framework
 - ✅ You prefer command-line workflows
 - ✅ You need native IDE integration
@@ -628,6 +668,7 @@ For the official framework:
 - ✅ You value simplicity and ease of installation
 
 ### Use v2.0 (This Project) If:
+
 - 🌐 You prefer web-based interfaces
 - 📊 You want visual state machine (Kanban board)
 - 🤖 You want to choose your LLM provider
@@ -640,6 +681,7 @@ For the official framework:
 ## Why This Architecture
 
 **Next.js Full-Stack (TypeScript)**
+
 - Single runtime (Node.js) = simpler deployment
 - Single language (TypeScript) = faster development
 - Proven stack = lower risk
@@ -669,6 +711,24 @@ MADACE-Method v2.0 is under active development. Contributions are welcome!
 - Add JSDoc comments for public APIs
 - Update documentation when adding features
 - Test on both development and production Docker containers
+
+### Code Quality
+
+This project uses ESLint and Prettier for code quality and formatting.
+
+**Commands:**
+
+- `npm run lint` - Check for linting errors
+- `npm run lint:fix` - Auto-fix linting errors
+- `npm run format` - Format all code with Prettier
+- `npm run format:check` - Check if code is formatted
+- `npm run check-all` - Run type checking, linting, and format check
+
+**Editor Integration:**
+
+- **VSCode**: Install ESLint and Prettier extensions
+- **Cursor**: Install ESLint and Prettier extensions
+- Configure format on save in your editor settings
 
 ### Contributing to v1.0 (Official)
 
