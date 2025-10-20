@@ -1,45 +1,26 @@
 # Product Requirements Document (PRD)
 
 **Project:** MADACE_RUST_PY - Experimental Next.js Implementation
-**Version:** 2.1.0 (Simplified Architecture - Feasibility Confirmed)
-**Status:** ✅ Ready for Implementation
+**Version:** 2.2.0
+**Status:** ✅ In Development
 **Last Updated:** 2025-10-20
 **Document Owner:** MADACE Core Team
 
 > **✅ FEASIBILITY CONFIRMED (2025-10-20)**: Architecture validated through comprehensive testing.
 > See [FEASIBILITY-REPORT.md](./FEASIBILITY-REPORT.md) for full validation results.
 >
-> **Current Architecture**: **Next.js 14 Full-Stack TypeScript** (simplified, feasibility-validated)
+> **Architecture**: **Next.js 15 Full-Stack TypeScript**
 > **See**: [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)
 >
 > **For Official MADACE-METHOD**: https://github.com/tekcin/MADACE-METHOD
-
-> **HISTORICAL NOTE**: This PRD originally described the **REJECTED multi-tier architecture (Rust+Python+Next.js)**.
-> The vision and requirements remain the same, but implementation approach has been simplified.
-
----
-
-## ⚠️ Architecture Status
-
-**This document describes the REJECTED multi-tier architecture.**
-
-**Current Status**: Architecture simplified to **Next.js 14 Full-Stack TypeScript**
-
-**Why Changed**:
-- ❌ Rust+Python+Next.js was too complex (FFI, 3 runtimes)
-- ❌ No proven performance benefit
-- ❌ Slower development (12+ weeks vs 4 weeks)
-- ✅ Simplified to single runtime (Node.js) + single language (TypeScript)
-
-**See**: [ADR-003: Architecture Simplification](./docs/adrs/ADR-003-architecture-simplification.md) for full rationale.
 
 ---
 
 ## Executive Summary
 
-**NOTE**: This executive summary describes the ORIGINAL vision. The vision remains the same, but the implementation approach has changed to Next.js full-stack TypeScript.
-
 MADACE_RUST_PY is an **experimental proof-of-concept** that empowers individual developers and small teams to build production-ready software through AI-assisted workflows. The system provides a structured, agent-based approach to software development, from ideation through deployment, using natural language configuration and intelligent orchestration.
+
+**Implementation**: Next.js 15 full-stack TypeScript with web-based UI.
 
 ### Vision
 
@@ -120,27 +101,27 @@ MADACE_RUST_PY provides a unified framework that guides users through the entire
 
 ### 3.1 Technology Stack
 
-**Frontend Tier:**
-- Framework: Next.js 14+ (React 18+)
-- Runtime: Node.js
-- Purpose: Web-based UI for interaction and monitoring
-- Key Features: Server-side rendering, API communication, real-time updates
+**Full-Stack:**
+- Framework: Next.js 15 (App Router)
+- UI Library: React 19
+- Language: TypeScript 5
+- Runtime: Node.js 20+
+- Styling: Tailwind CSS 4
+- Components: Shadcn/ui
 
-**Backend Tier:**
-- Framework: FastAPI (Python 3.9+)
-- Purpose: REST API orchestration and business logic
-- Key Features: Async operations, OpenAPI documentation, LLM integration
+**Backend:**
+- API: Next.js API Routes
+- Server Actions: Next.js Server Actions
 
-**Core Tier:**
-- Language: Rust (2021 edition)
-- Build: Cargo with cdylib crate type
-- Purpose: High-performance business logic engine
-- Key Features: FFI interface, memory safety, concurrent execution
+**Business Logic:**
+- Language: TypeScript
+- Validation: Zod (runtime type checking)
+- YAML Parsing: js-yaml
+- Templates: Handlebars
 
 **Integration:**
-- Frontend → Backend: REST API over HTTP
-- Backend → Core: FFI (Foreign Function Interface)
-- State Persistence: File system (YAML, JSON, Markdown, CSV)
+- State Persistence: File system (YAML, JSON, Markdown)
+- LLM: Multi-provider (Gemini/Claude/OpenAI/Local)
 
 ### 3.2 Core Components
 
@@ -419,15 +400,14 @@ modules:
 - API failures handled gracefully
 - Token usage monitored and logged
 
-#### F8: REST API Backend
-**Description:** FastAPI backend orchestrating all operations
+#### F8: API Backend
+**Description:** Next.js API Routes orchestrating all operations
 
 **Requirements:**
-- [ ] OpenAPI documentation
+- [ ] TypeScript API routes
 - [ ] Async operation support
 - [ ] Error handling
 - [ ] Logging and monitoring
-- [ ] FFI integration with Rust core
 
 **Success Criteria:**
 - API response time < 200ms (excluding LLM calls)

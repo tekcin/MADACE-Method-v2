@@ -74,34 +74,19 @@ Explores a web-based UI approach while maintaining MADACE core principles:
 
 ---
 
-## Architecture Evolution
+## Architecture Overview
 
-### Previous Design (Rejected)
-
-**Multi-Tier Architecture**: Rust (core) + Python (backend) + Next.js (frontend)
-
-**Issues Identified**:
-- ❌ FFI complexity (Rust ↔ Python bindings)
-- ❌ Three runtimes (Node.js + Python + Rust)
-- ❌ No proven performance benefit
-- ❌ Slower development (context switching across 3 languages)
-- ❌ Over-engineering (solving problems we don't have)
-
-**Decision**: See [ADR-001](./docs/adrs/ADR-001-multi-tier-architecture.md) and [ADR-002](./docs/adrs/ADR-002-ffi-strategy.md) for details on the rejected approach.
-
-### Current Design (Approved)
-
-**Next.js 14 Full-Stack Architecture**: TypeScript everywhere
+**Next.js 15 Full-Stack Architecture**: TypeScript everywhere
 
 **Benefits**:
 - ✅ Single runtime (Node.js only)
 - ✅ Single language (TypeScript)
 - ✅ Type safety via TypeScript + Zod
 - ✅ Proven stack (battle-tested)
-- ✅ Fast development (4 weeks vs 12+ weeks)
-- ✅ Still innovative (Web UI vs CLI)
+- ✅ Fast development
+- ✅ Web UI innovation (vs CLI)
 
-**Decision**: See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full rationale.
+**Architectural Decision**: See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for rationale.
 
 ---
 
@@ -138,10 +123,10 @@ Explores a web-based UI approach while maintaining MADACE core principles:
 ```json
 {
   "frontend": {
-    "framework": "Next.js 14 (App Router)",
-    "ui_library": "React 18",
-    "language": "TypeScript 5+",
-    "styling": "Tailwind CSS",
+    "framework": "Next.js 15 (App Router)",
+    "ui_library": "React 19",
+    "language": "TypeScript 5",
+    "styling": "Tailwind CSS 4",
     "components": "Shadcn/ui (Radix UI primitives)"
   },
   "backend": {
@@ -157,12 +142,11 @@ Explores a web-based UI approach while maintaining MADACE core principles:
   },
   "llm": {
     "planning": "User-selectable (Gemini/Claude/OpenAI/Local)",
-    "implementation": "Local Docker agent (automatic)",
     "client": "Multi-provider abstraction"
   },
   "deployment": {
     "primary": "Docker (single image + named volume)",
-    "alternative": "Vercel (not recommended, ephemeral storage)"
+    "alternative": "Vercel"
   }
 }
 ```
@@ -251,11 +235,11 @@ export async function loadAgentsFromDirectory(dir: string): Promise<Agent[]>;
 export async function getAgentById(id: string): Promise<Agent>;
 ```
 
-**Benefits over Rust**:
-- No FFI complexity
+**Benefits**:
 - Type-safe with Zod runtime validation
-- Easier to debug (all TypeScript)
-- Faster to write
+- Easy to debug (all TypeScript)
+- Fast development
+- Single language/runtime
 
 ---
 
@@ -2147,9 +2131,7 @@ environment:
 
 ### Architecture Decision Records
 
-- [ADR-001](./docs/adrs/ADR-001-multi-tier-architecture.md) - Multi-Tier (Rejected)
-- [ADR-002](./docs/adrs/ADR-002-ffi-strategy.md) - FFI Strategy (Rejected)
-- [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) - Simplification (Approved)
+- [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) - Next.js Full-Stack Architecture
 
 ### External Resources
 

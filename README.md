@@ -11,23 +11,16 @@ For the official MADACE-METHOD framework (Node.js-based), see: https://github.co
 This repository is a **proof-of-concept** implementation of the MADACE-METHOD philosophy using a modern web-based architecture:
 
 - **Official MADACE**: Node.js/JavaScript CLI-based framework
-- **This Project**: Next.js 14 full-stack TypeScript with Web UI
+- **This Project**: Next.js 15 full-stack TypeScript with Web UI
 
-### Architecture Evolution
+### Architecture
 
-**Previous Plan** (Rejected): Rust (core) + Python (backend) + Next.js (frontend)
-- ❌ Too complex (FFI, 3 runtimes, no proven benefit)
-- ❌ Slower development (context switching across 3 languages)
-- ❌ Solving problems we don't have
-
-**Current Plan** (Approved): Next.js 14 Full-Stack TypeScript
+**Next.js 15 Full-Stack TypeScript**
 - ✅ Single runtime (Node.js only)
 - ✅ Single language (TypeScript everywhere)
 - ✅ Proven stack (battle-tested)
-- ✅ Fast development (4 weeks vs 12+ weeks)
-- ✅ Still innovative (Web UI vs CLI)
-
-See [`docs/adrs/ADR-003-architecture-simplification.md`](./docs/adrs/ADR-003-architecture-simplification.md) for the full architectural decision.
+- ✅ Fast development
+- ✅ Web UI innovation (vs CLI)
 
 ---
 
@@ -63,12 +56,11 @@ User → IDE/CLI → Node.js Engine → AI Agents → Workflows
 ```
 
 **Technology Stack:**
-- **Frontend**: Next.js 14 + React 18 + TypeScript
+- **Frontend**: Next.js 15 + React 19 + TypeScript 5
 - **Backend**: Next.js API Routes + Server Actions
 - **Business Logic**: TypeScript modules
 - **LLM (Planning)**: User-selectable (Gemini/Claude/OpenAI/Local)
-- **LLM (Implementation)**: Local Docker agent (automatic)
-- **Styling**: Tailwind CSS + Shadcn/ui
+- **Styling**: Tailwind CSS 4
 - **Deployment**: Docker or Vercel
 
 ---
@@ -418,9 +410,7 @@ gemini --project madace workflow create-story
 - **[LLM-SELECTION.md](./docs/LLM-SELECTION.md)** - LLM selection guide
 
 ### Architecture Decision Records (ADRs)
-- **[ADR-001](./docs/adrs/ADR-001-multi-tier-architecture.md)** - Multi-Tier Architecture (Superseded)
-- **[ADR-002](./docs/adrs/ADR-002-ffi-strategy.md)** - FFI Strategy (Superseded)
-- **[ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)** - Architecture Simplification ✅
+- **[ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)** - Next.js Full-Stack Architecture ✅
 
 ### Official MADACE Documentation
 For the official framework:
@@ -434,7 +424,7 @@ For the official framework:
 **Current Phase**: Alpha - Ready for Implementation ✅
 
 **Recent Milestones**:
-- ✅ Architecture simplified to Next.js full-stack
+- ✅ Next.js 15 full-stack architecture
 - ✅ LLM selection system implemented
 - ✅ **Feasibility tests completed (ALL PASSED)**
 - ✅ **Docker deployment validated (Production + Development)**
@@ -445,18 +435,18 @@ For the official framework:
 - ⏭️ Next: Initialize Next.js project and begin implementation
 
 **Completed**:
-- ✅ Architecture review and simplification
+- ✅ Next.js 15 project initialized
+- ✅ Project structure configured
 - ✅ LLM selection system (`./scripts/select-llm.sh`)
-- ✅ Documentation overhaul
-- ✅ ADRs created (ADR-001, ADR-002, ADR-003)
+- ✅ Documentation
 - ✅ **Feasibility testing (Node.js, Zod, YAML, LLM, CLI tools)**
 - ✅ **Docker deployment configured (Production + Development containers)**
-- ✅ package.json created with core dependencies
+- ✅ TypeScript with strict mode
+- ✅ Tailwind CSS 4
 - ✅ Comprehensive feasibility report ([FEASIBILITY-REPORT.md](./FEASIBILITY-REPORT.md))
 - ✅ Development environment guide ([DEVELOPMENT.md](./DEVELOPMENT.md))
 
 **Ready to Implement**:
-- ⏭️ Next.js 14 project initialization
 - ⬜ Setup Wizard (web-based configuration)
 - ⬜ Settings Page (ongoing configuration)
 - ⬜ Agent system implementation (TypeScript)
@@ -479,10 +469,10 @@ For the official framework:
 - ✅ All risks assessed and mitigated
 
 **Timeline** (Confirmed via feasibility tests):
-- **Week 1**: Next.js setup + Setup wizard + Settings page → **LOW RISK** ✅
+- **Week 1**: Setup wizard + Settings page → **LOW RISK** ✅
 - **Week 2-3**: Core business logic + LLM integration → **LOW RISK** ✅
 - **Week 4**: CLI integration + Testing + Deployment → **MEDIUM RISK** ✅
-- **Total**: 4 weeks to Alpha MVP (vs 12+ weeks with multi-tier)
+- **Total**: 4 weeks to Alpha MVP
 
 ---
 
@@ -521,24 +511,16 @@ For the official framework:
 
 ---
 
-## Why the Architecture Changed
+## Why This Architecture
 
-**Original Plan**: Rust + Python + Next.js (Multi-Tier)
-- Goal: Explore performance benefits and FFI patterns
-- Problem: High complexity, no proven benefit
-- FFI adds significant risk and debugging overhead
-- Three runtimes slow development velocity
-
-**Decision**: Simplified to Next.js Full-Stack (TypeScript)
-- Eliminates FFI complexity
-- Single language = faster development
+**Next.js Full-Stack (TypeScript)**
+- Single runtime (Node.js) = simpler deployment
+- Single language (TypeScript) = faster development
 - Proven stack = lower risk
-- Still innovative (Web UI vs CLI)
-- 4 weeks to MVP vs 12+ weeks
+- Web UI innovation (vs CLI in official MADACE)
+- Type-safe with excellent developer experience
 
-**Result**: Focus on real innovation (Web UI, visual state machine) instead of solving problems we don't have.
-
-See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full rationale.
+See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for architectural rationale.
 
 ---
 

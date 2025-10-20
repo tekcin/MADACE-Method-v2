@@ -1,24 +1,21 @@
-# ADR-003: Architecture Simplification (Rust+Python+Next.js → Next.js Full-Stack)
+# ADR-003: Next.js Full-Stack Architecture
 
-**Status:** Proposed
+**Status:** Approved
 **Date:** 2025-10-19
 **Deciders:** Architect Agent, User
-**Supersedes:** ADR-001 (Multi-Tier Architecture), ADR-002 (FFI Strategy)
 
 ---
 
 ## Context and Problem Statement
 
-After completing architecture review (ADR-001 and ADR-002), we identified that the Rust+Python+Next.js multi-tier architecture introduces significant complexity without proven benefits:
+This ADR documents the architectural decision for MADACE_RUST_PY experimental implementation.
 
-**Key Issues:**
-1. **FFI Complexity** - Rust ↔ Python bindings are error-prone and hard to debug
-2. **Three Runtimes** - Node.js + Python + Rust creates operational overhead
-3. **No Proven Need** - Performance claims are unsubstantiated (official MADACE runs fine in Node.js)
-4. **Development Velocity** - Context switching between 3 languages slows progress
-5. **Over-Engineering** - Solving problems we don't have
-
-**Question**: Should we simplify the architecture to accelerate development and reduce risk?
+**Key Requirements:**
+1. **Simplicity** - Minimize architectural complexity
+2. **Type Safety** - Compile-time guarantees
+3. **Development Velocity** - Fast iteration and debugging
+4. **Innovation** - Deliver unique value vs official MADACE
+5. **Proven Technology** - Battle-tested stack
 
 ---
 
@@ -33,9 +30,9 @@ After completing architecture review (ADR-001 and ADR-002), we identified that t
 
 ---
 
-## Considered Options
+## Architecture Decision
 
-### Option 1: Next.js Full-Stack (TypeScript) ⬅️ **RECOMMENDED**
+### Next.js Full-Stack (TypeScript) ✅ **SELECTED**
 
 **Architecture:**
 ```
@@ -95,103 +92,47 @@ After completing architecture review (ADR-001 and ADR-002), we identified that t
 
 ---
 
-### Option 2: Fork Official MADACE + Add Web UI
+## Decision Rationale
 
-**Architecture:**
-```
-Next.js UI → Official MADACE Core (JavaScript)
-```
+1. **Simplicity First**
+   - Single runtime (Node.js)
+   - Single language (TypeScript)
+   - No FFI complexity
+   - Proven patterns
 
-**Pros:**
-- ✅ Leverage official MADACE (already works)
-- ✅ Focus on UI innovation
-- ✅ Stay compatible with official
+2. **Type Safety**
+   - TypeScript provides compile-time guarantees
+   - Zod adds runtime validation
+   - 90% of Rust's safety with 10% of complexity
 
-**Cons:**
-- ❌ Tied to official architecture
-- ❌ Less learning value (just UI work)
-- ❌ Harder to contribute back (UI might not fit official vision)
+3. **Development Velocity**
+   - Single language = faster iteration
+   - Proven stack = less troubleshooting
+   - Great developer experience
+   - 4-week timeline to MVP
 
----
-
-### Option 3: Keep Rust+Python+Next.js
-
-**Status:** ❌ **REJECTED**
-
-**Why:**
-- High complexity, no proven benefit
-- FFI is primary risk factor
-- Slows development velocity
-- Harder to maintain
-- Solves problems we don't have
-
----
-
-## Decision Outcome
-
-**Chosen Option**: **Option 1 - Next.js Full-Stack (TypeScript)**
-
-**Rationale:**
-
-1. **Eliminate Unproven Complexity**
-   - Rust: No performance need proven
-   - Python: Unnecessary middle layer
-   - FFI: High risk, zero reward
-
-2. **Keep What Matters**
-   - Web UI: Genuine innovation
-   - MADACE Philosophy: Agent workflows, state machine
-   - TypeScript: Type safety without FFI pain
-
-3. **Maximize Velocity**
-   - Single language: Faster development
-   - Proven stack: Less troubleshooting
-   - Great DX: Fast iteration
-
-4. **Still Innovative**
+4. **Real Innovation**
    - Web UI vs. CLI (official is CLI-first)
-   - Visual state machine
+   - Visual state machine (Kanban board)
    - Modern Next.js patterns (App Router, Server Components)
-   - TypeScript best practices
+   - User-selectable LLM providers
 
 ---
 
-## Migration Plan
+## Implementation Status
 
-### Phase 1: Clean Slate (Week 1)
+### Phase 1: Project Initialization ✅ COMPLETE
 
-**Remove:**
-```bash
-rm -rf core/          # Rust code (only placeholder anyway)
-rm -rf backend/       # Python code (only Hello World)
-```
-
-**Keep:**
-```bash
-# Documentation (update for new arch)
-README.md
-ARCHITECTURE.md
-PRD.md
-PLAN.md
-CLAUDE.md
-USING-MADACE.md
-
-# MADACE agents (still valid)
-madace/mam/agents/*.agent.yaml
-
-# Frontend (rebuild with App Router)
-frontend/  # Will be rebuilt from scratch
-```
-
-**Add:**
-```bash
-# New Next.js 14 App Router project
-npx create-next-app@latest madace-web --typescript --tailwind --app
-```
+**Completed:**
+- ✅ Next.js 15 initialized with TypeScript
+- ✅ Tailwind CSS 4 configured
+- ✅ ESLint configured
+- ✅ Documentation updated
+- ✅ MADACE agents copied
 
 ---
 
-### Phase 2: Core Implementation (Week 2-3)
+### Phase 2: Project Structure ✅ COMPLETE
 
 **File Structure:**
 ```
@@ -252,17 +193,17 @@ madace-web/
 
 ---
 
-### Phase 3: Feature Parity (Week 4)
+### Phase 3: Core Implementation (In Progress)
 
-**Implement:**
-1. ✅ Agent loading from YAML
-2. ✅ Workflow execution engine
-3. ✅ State machine (BACKLOG → TODO → IN PROGRESS → DONE)
-4. ✅ Template rendering
-5. ✅ LLM integration (Gemini)
-6. ✅ Web UI for all operations
+**To Implement:**
+1. ⬜ Agent loading from YAML
+2. ⬜ Workflow execution engine
+3. ⬜ State machine (BACKLOG → TODO → IN PROGRESS → DONE)
+4. ⬜ Template rendering
+5. ⬜ LLM integration (multi-provider)
+6. ⬜ Web UI for all operations
 
-**Test:**
+**Testing Plan:**
 - Load PM agent
 - Execute plan-project workflow
 - Create story via SM agent
