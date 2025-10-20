@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  madace-dev:
+    # Build from development Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+    container_name: madace-dev
+
+    # Port mappings
+    ports:
+      - "3000:3000"    # Next.js dev server
+      - "8080:8080"    # VSCode Server (code-server)
+      - "8081:8081"    # Cursor server (if needed)
+
+    # Named volume on host system
+    volumes:
+      # Project source code (live reload)
+      - .:/workspace
+      # Data folder for persistent storage
+      - ./madace-data:/workspace/madace-data
+      # Node modules (performance optimization)
+      - madace-node-modules:/workspace/node_modules
+      # VSCode extensions persist
+      - madace-vscode-extensions:/home/dev/.local/share/code-server
+      # Cursor config persist
+      - madace-cursor-config:/home/dev/.config/Cursor
+
+    # Environment variables
+    environment:
+      # Development mode
+      - NODE_ENV=development
+
+      # Data paths
+      - MADACE_DATA_DIR=/workspace/madace-data
+      - MADACE_CONFIG_FILE=/workspace/madace-data/config/config.yaml
+      - MADACE_ENV_FILE=/workspace/madace-data/config/.env
+
+      # Next.js
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+
+      # VSCode Server
+      - CODE_SERVER_PASSWORD=madace123
+
+      # Enable hot reload
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+
+    # Working directory
+    working_dir: /workspace
+
+    # Keep container running
+    stdin_open: true
+    tty: true
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    # Resource limits (development)
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+# Named volumes for persistence
+volumes:
+  madace-node-modules:
+    driver: local
+  madace-vscode-extensions:
+    driver: local
+  madace-cursor-config:
+    driver: local

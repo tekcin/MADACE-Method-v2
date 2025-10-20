@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  madace:
+    # Build from local Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Or use pre-built image (comment out 'build' above and uncomment below)
+    # image: madace-web:latest
+
+    container_name: madace
+
+    # Port mapping: host:container
+    ports:
+      - "3000:3000"
+
+    # Named volume on host system
+    # All user data, config, and generated files persist here
+    volumes:
+      - ./madace-data:/app/data
+
+    # Environment variables for container
+    environment:
+      # Data paths (container-side)
+      - MADACE_DATA_DIR=/app/data
+      - MADACE_CONFIG_FILE=/app/data/config/config.yaml
+      - MADACE_ENV_FILE=/app/data/config/.env
+
+      # Node.js configuration
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Resource limits (optional, adjust as needed)
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+# Optional: Named volumes (alternative to bind mount)
+# Uncomment if you prefer Docker-managed volumes over host folders
+# volumes:
+#   madace-data:
+#     driver: local

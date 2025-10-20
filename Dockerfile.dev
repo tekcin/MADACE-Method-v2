@@ -1,0 +1,129 @@
+# MADACE Development Container
+# Includes VSCode Server, Cursor, and all development dependencies
+
+FROM node:20-bookworm AS base
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    # Core tools
+    git \
+    curl \
+    wget \
+    unzip \
+    ca-certificates \
+    gnupg \
+    # VSCode dependencies
+    libx11-6 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
+    libnss3 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libgtk-3-0 \
+    libgbm1 \
+    libasound2 \
+    # Additional utilities
+    sudo \
+    procps \
+    vim \
+    nano \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create development user
+RUN useradd -m -s /bin/bash -u 1001 dev && \
+    echo "dev ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Set working directory
+WORKDIR /workspace
+
+# Install VSCode Server (code-server)
+RUN curl -fsSL https://code-server.dev/install.sh | sh
+
+# Install Cursor AppImage
+RUN mkdir -p /opt/cursor && \
+    cd /opt/cursor && \
+    wget -O cursor.AppImage https://downloader.cursor.sh/linux/appImage/x64 && \
+    chmod +x cursor.AppImage && \
+    # Extract AppImage for containerized use
+    ./cursor.AppImage --appimage-extract && \
+    mv squashfs-root cursor && \
+    rm cursor.AppImage && \
+    ln -s /opt/cursor/cursor/cursor /usr/local/bin/cursor
+
+# Install global npm packages for MADACE development
+RUN npm install -g \
+    typescript \
+    ts-node \
+    @types/node \
+    eslint \
+    prettier \
+    @anthropic-ai/claude-cli
+
+# Copy package.json and install dependencies
+COPY package.json package-lock.json* ./
+RUN if [ -f package-lock.json ]; then npm ci; \
+    else npm install; fi
+
+# Install additional development dependencies
+RUN npm install --save-dev \
+    @types/react \
+    @types/react-dom \
+    jest \
+    @testing-library/react \
+    @testing-library/jest-dom \
+    eslint-config-next
+
+# Copy all source code
+COPY --chown=dev:dev . .
+
+# Create data directory for volume mount
+RUN mkdir -p /workspace/madace-data && \
+    chown -R dev:dev /workspace/madace-data
+
+# Switch to development user
+USER dev
+
+# Expose ports
+EXPOSE 3000        # Next.js dev server
+EXPOSE 8080        # code-server (VSCode)
+EXPOSE 8081        # Cursor server (if applicable)
+
+# Set environment variables
+ENV NODE_ENV=development \
+    MADACE_DATA_DIR=/workspace/madace-data \
+    CODE_SERVER_CONFIG=/home/dev/.config/code-server/config.yaml \
+    SHELL=/bin/bash
+
+# Create code-server config
+RUN mkdir -p /home/dev/.config/code-server && \
+    echo "bind-addr: 0.0.0.0:8080" > /home/dev/.config/code-server/config.yaml && \
+    echo "auth: password" >> /home/dev/.config/code-server/config.yaml && \
+    echo "password: madace123" >> /home/dev/.config/code-server/config.yaml && \
+    echo "cert: false" >> /home/dev/.config/code-server/config.yaml
+
+# Install VSCode extensions for MADACE development
+RUN code-server --install-extension dbaeumer.vscode-eslint && \
+    code-server --install-extension esbenp.prettier-vscode && \
+    code-server --install-extension bradlc.vscode-tailwindcss && \
+    code-server --install-extension ms-vscode.vscode-typescript-next && \
+    code-server --install-extension christian-kohler.path-intellisense && \
+    code-server --install-extension dsznajder.es7-react-js-snippets && \
+    code-server --install-extension yoavbls.pretty-ts-errors
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \
+    CMD curl -f http://localhost:3000/api/health || exit 1
+
+# Default command: Start both code-server and Next.js dev server
+CMD ["sh", "-c", "code-server /workspace & npm run dev"]

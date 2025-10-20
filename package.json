@@ -1,0 +1,36 @@
+{
+  "name": "madace-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MADACE experimental Next.js full-stack implementation",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "next": "^15.5.6",
+    "@types/js-yaml": "^4.0.9",
+    "handlebars": "^4.7.8",
+    "js-yaml": "^4.1.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "@types/node": "^22.13.6",
+    "@types/react": "^19.0.11",
+    "@types/react-dom": "^19.0.3",
+    "tailwindcss": "^4.1.1",
+    "@tailwindcss/postcss": "^4.1.1",
+    "eslint": "^9.19.0",
+    "eslint-config-next": "^15.5.6",
+    "@eslint/eslintrc": "^3.3.0"
+  },
+  "keywords": ["madace", "next.js", "typescript", "ai-agents"],
+  "author": "MADACE Team",
+  "license": "MIT"
+}
