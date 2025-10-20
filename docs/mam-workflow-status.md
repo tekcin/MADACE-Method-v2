@@ -83,11 +83,7 @@ Stories ready to be drafted (ordered by priority for Next.js implementation):
 
 Story ready for drafting (only ONE at a time):
 
-- **[NEXT-005] Create base layout and navigation** [Status: Ready] [Moved: 2025-10-20]
-  - Automatically moved from BACKLOG when [NEXT-004] moved to IN PROGRESS
-  - Story file: _[To be created with *create-story]_
-  - Points: _[TBD]_
-  - Epic: Milestone 1.1 - Next.js Project Foundation
+(Empty - will auto-populate when current story moves to IN PROGRESS)
 
 ---
 
@@ -95,7 +91,11 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - ready for next story from TODO)
+- **[NEXT-005] Create base layout and navigation** [Status: Ready] [Started: 2025-10-20]
+  - Story file: `docs/story-NEXT-005.md`
+  - Points: 3
+  - Epic: Milestone 1.1 - Next.js Project Foundation
+  - Implementation: Create root layout, navigation component, footer, and responsive design
 
 ---
 
