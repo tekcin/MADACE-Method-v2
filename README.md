@@ -56,12 +56,18 @@ User → IDE/CLI → Node.js Engine → AI Agents → Workflows
 ```
 
 **Technology Stack:**
+
+**Tech Stack**: Next.js 15.5.6 • React 19.0.0 • TypeScript 5.7.3 • Node.js 20+ • Tailwind CSS 4.1.1 • Zod 4.1.12
+
 - **Frontend**: Next.js 15 + React 19 + TypeScript 5
 - **Backend**: Next.js API Routes + Server Actions
 - **Business Logic**: TypeScript modules
 - **LLM (Planning)**: User-selectable (Gemini/Claude/OpenAI/Local)
 - **Styling**: Tailwind CSS 4
+- **Validation**: Zod + TypeScript strict mode
 - **Deployment**: Docker or Vercel
+
+_See [TECH-STACK.md](./docs/TECH-STACK.md) for detailed version information._
 
 ---
 

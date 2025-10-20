@@ -101,12 +101,16 @@ MADACE_RUST_PY provides a unified framework that guides users through the entire
 
 ### 3.1 Technology Stack
 
+**Tech Stack**: Next.js 15.5.6 • React 19.0.0 • TypeScript 5.7.3 • Node.js 20+ • Tailwind CSS 4.1.1 • Zod 4.1.12
+
+_See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
+
 **Full-Stack:**
-- Framework: Next.js 15 (App Router)
-- UI Library: React 19
-- Language: TypeScript 5
+- Framework: Next.js 15.5.6 (App Router)
+- UI Library: React 19.0.0
+- Language: TypeScript 5.7.3 (strict mode)
 - Runtime: Node.js 20+
-- Styling: Tailwind CSS 4
+- Styling: Tailwind CSS 4.1.1
 - Components: Shadcn/ui
 
 **Backend:**
@@ -114,10 +118,10 @@ MADACE_RUST_PY provides a unified framework that guides users through the entire
 - Server Actions: Next.js Server Actions
 
 **Business Logic:**
-- Language: TypeScript
-- Validation: Zod (runtime type checking)
-- YAML Parsing: js-yaml
-- Templates: Handlebars
+- Language: TypeScript 5.7.3
+- Validation: Zod 4.1.12 (runtime type checking)
+- YAML Parsing: js-yaml 4.1.0
+- Templates: Handlebars 4.7.8
 
 **Integration:**
 - State Persistence: File system (YAML, JSON, Markdown)

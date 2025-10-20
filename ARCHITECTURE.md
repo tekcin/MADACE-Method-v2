@@ -120,13 +120,17 @@ Explores a web-based UI approach while maintaining MADACE core principles:
 
 ### Technology Stack
 
+**Tech Stack**: Next.js 15.5.6 • React 19.0.0 • TypeScript 5.7.3 • Node.js 20+ • Tailwind CSS 4.1.1 • Zod 4.1.12
+
+_See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
+
 ```json
 {
   "frontend": {
-    "framework": "Next.js 15 (App Router)",
-    "ui_library": "React 19",
-    "language": "TypeScript 5",
-    "styling": "Tailwind CSS 4",
+    "framework": "Next.js 15.5.6 (App Router)",
+    "ui_library": "React 19.0.0",
+    "language": "TypeScript 5.7.3 (strict mode)",
+    "styling": "Tailwind CSS 4.1.1",
     "components": "Shadcn/ui (Radix UI primitives)"
   },
   "backend": {
@@ -135,10 +139,10 @@ Explores a web-based UI approach while maintaining MADACE core principles:
     "runtime": "Node.js 20+"
   },
   "business_logic": {
-    "language": "TypeScript",
-    "validation": "Zod (runtime type checking)",
-    "yaml_parsing": "js-yaml",
-    "templates": "Handlebars"
+    "language": "TypeScript 5.7.3",
+    "validation": "Zod 4.1.12 (runtime type checking)",
+    "yaml_parsing": "js-yaml 4.1.0",
+    "templates": "Handlebars 4.7.8"
   },
   "llm": {
     "planning": "User-selectable (Gemini/Claude/OpenAI/Local)",
