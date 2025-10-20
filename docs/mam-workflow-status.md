@@ -87,11 +87,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-- **[CORE-011] Agent Loader (lib/agents/loader.ts with Zod validation)** [Status: Ready] [Started: 2025-10-20]
-  - Story file: `docs/story-CORE-011.md`
-  - Points: 5
-  - Epic: Milestone 1.3 - Core TypeScript Modules
-  - Implementation: Create type-safe agent loader with Zod validation for MADACE agent YAML files
+(Empty - ready for next story)
 
 ---
 
@@ -101,6 +97,16 @@ Completed stories with dates and points:
 
 ### Phase 1: Next.js Project Initialization
 
+- [CORE-011] Agent Loader with Zod validation (2025-10-20) [Points: 5]
+  - Created type-safe agent loader for MADACE agent YAML files
+  - lib/types/agent.ts: Complete TypeScript interfaces
+  - lib/agents/schema.ts: Zod schemas for runtime validation
+  - lib/agents/loader.ts: AgentLoader class with caching
+  - API routes: GET /api/agents and GET /api/agents/[name]
+  - Successfully loads all 5 MAM agents (PM, Analyst, Architect, SM, DEV)
+  - Comprehensive error handling (file not found, invalid YAML, validation failure)
+  - All quality checks pass, production build succeeds
+  - Story file: `docs/story-CORE-011.md`
 - [LLM-013] Multi-provider LLM client (2025-10-20) [Points: 8]
   - Created unified LLM client abstraction with Strategy pattern
   - lib/llm/types.ts: TypeScript interfaces (LLMConfig, LLMRequest, LLMResponse, LLMStreamChunk, ILLMProvider)
@@ -207,7 +213,7 @@ Completed stories with dates and points:
   - Configured hot reload for development
   - Updated all documentation with deployment details
 
-### Total Completed: 12 stories | 52 points
+### Total Completed: 13 stories | 57 points
 
 ### Total Remaining: 34+ stories (estimated)
 
