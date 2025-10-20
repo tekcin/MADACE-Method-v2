@@ -26,7 +26,6 @@ Stories ready to be drafted (ordered by priority for Next.js implementation):
 
 ### Milestone 1.3: Core TypeScript Modules
 
-- [CORE-011] Agent Loader (lib/agents/loader.ts with Zod validation)
 - [CORE-012] Agent Runtime (lib/agents/runtime.ts)
 - [CORE-013] Workflow Engine (lib/workflows/engine.ts)
 - [CORE-014] Template Engine (lib/templates/engine.ts with Handlebars)
@@ -88,7 +87,11 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - ready for next story)
+- **[CORE-011] Agent Loader (lib/agents/loader.ts with Zod validation)** [Status: Ready] [Started: 2025-10-20]
+  - Story file: `docs/story-CORE-011.md`
+  - Points: 5
+  - Epic: Milestone 1.3 - Core TypeScript Modules
+  - Implementation: Create type-safe agent loader with Zod validation for MADACE agent YAML files
 
 ---
 
