@@ -20,7 +20,7 @@ services:
       # Project source code (live reload)
       - .:/workspace
       # Data folder for persistent storage
-      - ./madace-data:/workspace/madace-data
+      - madace-data:/workspace/madace-data
       # Node modules (performance optimization)
       - madace-node-modules:/workspace/node_modules
       # VSCode extensions persist
@@ -79,6 +79,8 @@ services:
 
 # Named volumes for persistence
 volumes:
+  madace-data:
+    driver: local
   madace-node-modules:
     driver: local
   madace-vscode-extensions:
