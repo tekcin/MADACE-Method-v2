@@ -1,5 +1,7 @@
 # LLM Selection Guide for MADACE-Method v2.0
 
+**MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
+
 **Purpose:** This guide explains how to select and configure the LLM (Large Language Model) used for planning and architecture work in this project.
 
 **Important Distinction:**
@@ -56,7 +58,7 @@ Phase 2: Implementation (Local Docker Agent)
 - ✅ **Large Context Window**: 1M+ tokens (can process entire codebase)
 - ✅ **Multimodal**: Can analyze images, diagrams, screenshots
 - ✅ **Fast Response**: Especially flash models
-- ✅ **Strong Code Generation**: Excellent at TypeScript, Rust, Python
+- ✅ **Strong Code Generation**: Excellent at TypeScript and modern frameworks
 - ✅ **Long-Form Planning**: Great at creating comprehensive PRDs and architecture docs
 
 **Limitations:**
@@ -68,7 +70,7 @@ Phase 2: Implementation (Local Docker Agent)
 **Best For:**
 
 - Projects needing comprehensive architecture design
-- Multi-language codebases (Rust + TypeScript)
+- Full-stack TypeScript projects
 - Teams wanting free tier option
 - Fast iteration during planning
 

@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
+
 > **IMPORTANT**: This is an **experimental implementation** exploring MADACE-METHOD concepts using Next.js 14 full-stack TypeScript.
 >
 > The **official MADACE-METHOD** is Node.js CLI-based. See: https://github.com/tekcin/MADACE-METHOD
@@ -16,17 +18,16 @@ This repository (MADACE-Method v2.0) is a **proof-of-concept** implementation wi
 - **UI**: Web-based interface with visual Kanban board
 - **LLM**: User-selectable (Gemini/Claude/OpenAI/Local)
 
-### Architecture Evolution
+### Architecture
 
-**Previous Design (Rejected)**: Rust (core) + Python (backend) + Next.js (frontend)
+**Current Design**: Next.js 15 Full-Stack TypeScript
 
-- Issues: FFI complexity, 3 runtimes, over-engineering
+- Single runtime (Node.js)
+- Single language (TypeScript everywhere)
+- Proven stack with battle-tested components
+- 4-week timeline to Alpha MVP
 
-**Current Design (Approved)**: Next.js 14 Full-Stack TypeScript
-
-- Benefits: Single runtime, single language, proven stack, 4-week timeline
-
-See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full rationale.
+See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for architectural decisions.
 
 ### Official MADACE-METHOD vs This Project
 
@@ -42,7 +43,7 @@ See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full ratio
 
 ## Project Status
 
-**Current Phase**: ✅ Ready for Implementation - Feasibility Confirmed
+**Current Phase**: ✅ Implementation In Progress - Foundation Complete
 
 **Completed**:
 
@@ -54,21 +55,31 @@ See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full ratio
 - ✅ Core dependencies installed (zod, js-yaml, handlebars)
 - ✅ Environment validated (Node.js v24.10.0)
 - ✅ CLI tools confirmed (Claude CLI v2.0.14, Gemini CLI v0.9.0)
-
-**Implementation Ready**:
-
-- ⏭️ Initialize Next.js 14 project
-- ⬜ Implement Setup Wizard (Priority #1)
-- ⬜ Implement Settings Page (Priority #2)
-- ⬜ Implement TypeScript business logic
-- ⬜ Build React UI components
-- ⬜ Implement CLI integration
+- ✅ **Next.js 15.5.6 project initialized**
+- ✅ **Project structure created** (app/, lib/, components/)
+- ✅ **ESLint and Prettier configured**
+- ✅ **Environment variables configured** (.env.example)
+- ✅ **Base layout and navigation** (responsive, dark mode)
+- ✅ **Setup Wizard UI** (4-step configuration wizard)
+- ✅ **Agent Loader** (Zod validation, YAML parsing, caching)
+- ✅ **Multi-provider LLM client** (Gemini, Claude, OpenAI, Local)
+- ✅ **API routes** (agents, LLM test)
 - ✅ Docker deployment configured (production + development)
 - ✅ Development container with VSCode Server + Cursor ready
 
+**In Progress**:
+
+- ⏭️ Configuration persistence (save config.yaml + .env from web UI)
+- ⬜ Settings Page (edit configuration)
+- ⬜ Workflow Engine
+- ⬜ State Machine
+- ⬜ Template Engine
+
+**Completed Stories**: 13 stories | 57 points (see [docs/mam-workflow-status.md](./docs/mam-workflow-status.md))
+
 **Feasibility Validation**: See [FEASIBILITY-REPORT.md](./FEASIBILITY-REPORT.md)
 
-**Timeline**: 4 weeks to Alpha MVP (confirmed via feasibility tests)
+**Timeline**: Week 2 of 4-week Alpha MVP timeline
 
 ## Development Commands
 
@@ -82,15 +93,21 @@ See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for full ratio
 ./scripts/test-llm.sh
 ```
 
-### Next.js Development (Once Project Created)
+### Next.js Development
 
 ```bash
 npm install                # Install dependencies
 npm run dev                # Development server (http://localhost:3000)
 npm run build              # Production build
 npm start                  # Production server
-npm run lint               # Lint code
-npm test                   # Run tests (Jest + RTL)
+
+# Code Quality
+npm run type-check         # TypeScript type checking (no emit)
+npm run lint               # ESLint (check)
+npm run lint:fix           # ESLint (auto-fix)
+npm run format             # Prettier (format all files)
+npm run format:check       # Prettier (check only)
+npm run check-all          # Run all checks (type-check + lint + format:check)
 ```
 
 ### Docker Deployment
@@ -176,29 +193,39 @@ User (Browser) → Frontend (React)
 
 ### Key Architectural Components (TypeScript)
 
-**Agent System** (`lib/agents/loader.ts`, `lib/agents/runtime.ts`):
+**Agent System** (`lib/agents/`):
 
-- Loads and validates agent YAML definitions (Zod schemas)
-- Executes critical actions on agent load
-- Manages agent personas, menus, and prompts
-- Handles execution context and menu commands
-- **Type-safe** with runtime validation
+- **Loader** (`loader.ts`): AgentLoader class with YAML parsing and caching
+  - Singleton pattern with `loadAgent()` and `loadMAMAgents()` functions
+  - In-memory caching to avoid repeated file reads
+  - Custom `AgentLoadError` for detailed error messages
+  - Example: `loadMAMAgents()` loads all 5 MAM agents from `madace/mam/agents/`
+- **Schema** (`schema.ts`): Zod validation schemas
+  - `AgentFileSchema` validates entire YAML structure
+  - `AgentSchema` for agent metadata and definition
+  - Runtime type safety with `z.infer<typeof AgentSchema>`
+- **Types** (`lib/types/agent.ts`): TypeScript interfaces
+  - `Agent`, `AgentMetadata`, `AgentPersona`, `AgentMenu`, `AgentPrompt`
+  - Type-safe agent structure throughout the application
+- **Runtime** (TODO): Agent execution engine not yet implemented
 
-**Workflow Engine** (`lib/workflows/engine.ts`):
+**Workflow Engine** (TODO - `lib/workflows/`):
 
 - Parses and executes workflow YAML files
 - Sequential step execution with state persistence
 - Supports action types: elicit, reflect, guide, template, validate, sub-workflow
 - State files: `.{workflow-name}.state.json`
+- **Status**: Not yet implemented (placeholder index.ts only)
 
-**Template Engine** (`lib/templates/engine.ts`):
+**Template Engine** (TODO - `lib/templates/`):
 
-- Handlebars template rendering
+- Handlebars template rendering (planned)
 - Support for legacy patterns: `{var}`, `${var}`, `%VAR%`
 - Standard MADACE variables
 - Template validation
+- **Status**: Not yet implemented (has `llm-system-prompt.ts` placeholder)
 
-**State Machine** (`lib/state/machine.ts`):
+**State Machine** (TODO - `lib/state/`):
 
 - Manages story lifecycle: BACKLOG → TODO → IN PROGRESS → DONE
 - **Critical Rules**:
@@ -206,84 +233,151 @@ User (Browser) → Frontend (React)
   - Only ONE story in IN PROGRESS at a time
   - Single source of truth: `docs/mam-workflow-status.md`
   - Atomic state transitions (no skipping states)
-- **Visual Kanban Board** in Web UI
+- **Visual Kanban Board** in Web UI (planned)
+- **Status**: Not yet implemented (placeholder index.ts only)
 
-**LLM Client** (`lib/llm/client.ts`):
+**LLM Client** (`lib/llm/`):
 
-- Multi-provider abstraction (Gemini, Claude, OpenAI, Local)
-- Unified interface across providers
-- Configuration via `.env` file
-- Planning phase: User-selected LLM
-- Implementation phase: Local Docker agent
+- **Client** (`client.ts`): Factory pattern for multi-provider support
+  - `LLMClient` class with `chat()` and `chatStream()` methods
+  - Provider switching via `createProvider()` factory
+  - Configuration validation before each request
+  - Example: `createLLMClient({ provider: 'gemini', apiKey, model })`
+- **Providers** (`providers/`): Strategy pattern implementations
+  - `BaseLLMProvider` abstract class with common functionality
+  - Gemini, Claude, OpenAI, Local providers (all currently stubs)
+  - Each provider implements `ILLMProvider` interface
+  - Support for both blocking and streaming responses
+- **Types** (`types.ts`): LLM interfaces
+  - `LLMConfig`, `LLMRequest`, `LLMResponse`, `LLMStreamChunk`, `ILLMProvider`
+  - AsyncGenerator for streaming API
+- **Config** (`config.ts`): `getLLMConfigFromEnv()` helper
+- **API Route**: `app/api/llm/test/route.ts` for testing LLM connections
+- **Status**: ✅ Architecture complete, providers need real implementations
 
-**Configuration Manager** (`lib/config/manager.ts`):
+**Configuration Manager** (TODO - `lib/config/`):
 
-- Auto-detects config location: `./madace/core/config.yaml`
+- Auto-detects config location: `./madace/core/config.yaml` (planned)
 - Cross-platform path resolution
 - Validates installation integrity
 - Zod schema validation
+- **Status**: Not yet implemented (placeholder index.ts only)
+- **Next**: Implement `app/api/config/route.ts` to save setup wizard config
+
+### API Routes
+
+Currently implemented REST endpoints:
+
+**Agent Operations** (`app/api/agents/`):
+
+- `GET /api/agents` - List all MAM agents
+  - Returns array of 5 agents (PM, Analyst, Architect, SM, DEV)
+  - Uses `loadMAMAgents()` from agent loader
+  - Example response: `[{ name: 'pm', version: '1.0.0', ... }]`
+- `GET /api/agents/[name]` - Get single agent by name
+  - Example: `/api/agents/pm` returns PM agent definition
+  - 404 if agent not found
+  - Uses `loadAgent()` with file path
+
+**LLM Operations** (`app/api/llm/`):
+
+- `POST /api/llm/test` - Test LLM connection
+  - Request: `{ provider, apiKey, model, testPrompt? }`
+  - Response: `{ success, message, provider }`
+  - Uses `createLLMClient()` and `chat()` method
+  - Validates configuration before testing
+
+**TODO** (Not yet implemented):
+
+- `POST /api/config` - Save configuration (setup wizard)
+- `GET /api/config` - Load configuration
+- `GET /api/workflows` - List workflows
+- `POST /api/workflows/[name]/execute` - Execute workflow
+- `GET /api/state` - Get current state machine state
+- `POST /api/state/transition` - Transition story state
 
 ### Module System
 
 Modules are located in `madace/` directory:
 
-- **core**: Framework orchestration (MADACE Master agent)
-- **mam**: MADACE Agile Method - PM, Analyst, Architect, SM, DEV agents
-- **mab**: MADACE Builder - Agent/workflow/module creation
-- **cis**: Creative Intelligence Suite - Creativity workflows
+- **core**: Framework orchestration (MADACE Master agent) - TODO
+- **mam**: MADACE Agile Method - PM, Analyst, Architect, SM, DEV agents ✅
+- **mab**: MADACE Builder - Agent/workflow/module creation - TODO
+- **cis**: Creative Intelligence Suite - Creativity workflows - TODO
 
-### Directory Structure (Future)
+### Directory Structure
 
 ```
-/Users/nimda/MADACE-Method v2.0/
+/Users/nimda/MADACE-Method-v2.0/
 ├── app/                    # Next.js App Router
-│   ├── page.tsx           # Home page
+│   ├── page.tsx           # Home page ✅
+│   ├── layout.tsx         # Root layout ✅
 │   ├── api/               # API routes
-│   │   ├── agents/        # Agent operations
-│   │   ├── workflows/     # Workflow execution
-│   │   ├── state/         # State machine
-│   │   └── health/        # Health check endpoint
-│   ├── setup/             # Setup wizard
-│   ├── settings/          # Settings page
-│   ├── dashboard/         # Dashboard UI
-│   └── layout.tsx         # Root layout
+│   │   ├── agents/        # Agent operations ✅
+│   │   │   ├── route.ts   # GET /api/agents (list all)
+│   │   │   └── [name]/route.ts  # GET /api/agents/:name
+│   │   ├── llm/           # LLM operations ✅
+│   │   │   └── test/route.ts    # POST /api/llm/test
+│   │   ├── workflows/     # Workflow execution (TODO)
+│   │   ├── state/         # State machine (TODO)
+│   │   └── config/        # Configuration API (TODO)
+│   ├── setup/             # Setup wizard ✅
+│   │   └── page.tsx       # 4-step wizard UI
+│   ├── settings/          # Settings page (placeholder)
+│   │   └── page.tsx
+│   ├── agents/            # Agents page (placeholder)
+│   │   └── page.tsx
+│   └── workflows/         # Workflows page (placeholder)
+│       └── page.tsx
 │
 ├── lib/                   # Business logic (TypeScript)
-│   ├── agents/
-│   │   ├── loader.ts      # Agent YAML loading
-│   │   ├── runtime.ts     # Agent execution
-│   │   └── types.ts       # Agent TypeScript types
-│   ├── workflows/
-│   │   ├── engine.ts      # Workflow execution
-│   │   ├── parser.ts      # YAML parsing
-│   │   └── types.ts       # Workflow types
-│   ├── state/
-│   │   ├── machine.ts     # State machine logic
-│   │   ├── parser.ts      # Status file parsing
-│   │   └── types.ts       # State types
-│   ├── templates/
-│   │   ├── engine.ts      # Template rendering
-│   │   └── types.ts       # Template types
-│   ├── llm/
-│   │   ├── client.ts      # Multi-provider LLM client
-│   │   ├── gemini.ts      # Gemini integration
-│   │   ├── claude.ts      # Claude integration
-│   │   ├── openai.ts      # OpenAI integration
-│   │   ├── local.ts       # Local model integration
-│   │   └── types.ts       # LLM types
-│   ├── config/
-│   │   ├── loader.ts      # Config path resolution
-│   │   └── storage.ts     # Save/load configuration
-│   └── cli/
-│       ├── adapter.ts     # Unified CLI adapter
-│       ├── claude.ts      # Claude CLI integration
-│       └── gemini.ts      # Gemini CLI integration
+│   ├── agents/            # Agent system ✅
+│   │   ├── loader.ts      # AgentLoader class (YAML + Zod validation)
+│   │   ├── schema.ts      # Zod schemas for agent validation
+│   │   └── index.ts       # Public exports
+│   ├── llm/               # LLM client ✅
+│   │   ├── client.ts      # LLMClient (factory pattern)
+│   │   ├── types.ts       # LLM interfaces
+│   │   ├── config.ts      # Environment config loader
+│   │   ├── providers/     # Provider implementations
+│   │   │   ├── base.ts    # BaseLLMProvider abstract class
+│   │   │   ├── gemini.ts  # Google Gemini (stub)
+│   │   │   ├── claude.ts  # Anthropic Claude (stub)
+│   │   │   ├── openai.ts  # OpenAI GPT (stub)
+│   │   │   └── local.ts   # Local/Ollama (stub)
+│   │   └── index.ts       # Public exports
+│   ├── types/             # TypeScript types ✅
+│   │   ├── agent.ts       # Agent interfaces
+│   │   ├── setup.ts       # Setup wizard types
+│   │   └── index.ts       # Aggregated exports
+│   ├── constants/         # Constants ✅
+│   │   └── tech-stack.ts  # Tech stack definitions
+│   ├── templates/         # Template engine (placeholders)
+│   │   ├── llm-system-prompt.ts
+│   │   └── index.ts
+│   ├── utils/             # Utility functions ✅
+│   │   └── index.ts       # Date, string, JSON, array utilities
+│   ├── workflows/         # Workflow engine (TODO)
+│   │   └── index.ts
+│   ├── state/             # State machine (TODO)
+│   │   └── index.ts
+│   ├── config/            # Configuration (TODO)
+│   │   └── index.ts
+│   └── cli/               # CLI integration (TODO)
+│       └── index.ts
 │
 ├── components/            # React components
-│   ├── ui/               # Shadcn/ui components
-│   ├── agent-card.tsx    # Agent display
-│   ├── state-board.tsx   # Kanban board (BACKLOG → DONE)
-│   └── workflow-progress.tsx
+│   ├── features/          # Feature components ✅
+│   │   ├── Navigation.tsx # Responsive nav with mobile menu
+│   │   ├── Footer.tsx     # Footer with links
+│   │   └── setup/         # Setup wizard components
+│   │       ├── StepIndicator.tsx   # Progress tracker
+│   │       ├── ProjectInfoStep.tsx # Project config
+│   │       ├── LLMConfigStep.tsx   # LLM selection
+│   │       ├── ModuleConfigStep.tsx # Module toggles
+│   │       └── SummaryStep.tsx     # Review config
+│   └── ui/                # UI primitives (empty, for Shadcn/ui)
+│       └── index.ts
 │
 ├── public/               # Static assets
 │   └── agents/          # Agent YAML files
@@ -297,14 +391,14 @@ Modules are located in `madace/` directory:
 │   ├── LLM-SELECTION.md # LLM selection guide
 │   └── mam-workflow-status.md   # State machine source of truth
 │
-├── madace/              # MADACE agents/workflows (built-in)
-│   ├── core/
-│   │   └── config.yaml
-│   ├── mam/
-│   │   ├── agents/
-│   │   └── workflows/
-│   ├── mab/
-│   └── cis/
+├── madace/              # MADACE agents/workflows (built-in) ✅
+│   └── mam/
+│       └── agents/      # 5 MAM agents (PM, Analyst, Architect, SM, DEV)
+│           ├── pm.agent.yaml
+│           ├── analyst.agent.yaml
+│           ├── architect.agent.yaml
+│           ├── sm.agent.yaml
+│           └── dev.agent.yaml
 │
 ├── madace-data/         # User data (Docker volume mount)
 │   ├── config/
@@ -316,23 +410,55 @@ Modules are located in `madace/` directory:
 │   └── output/          # Generated artifacts
 │
 ├── .env                 # Environment variables (git-ignored)
-├── .env.example         # Environment template
-├── .gitignore
-├── .dockerignore        # Docker build exclusions
-├── Dockerfile           # Multi-stage Docker build
-├── docker-compose.yml   # Docker Compose config
-├── package.json
-├── tsconfig.json
-└── next.config.js
+├── .env.example         # Environment template ✅
+├── .gitignore           # Git exclusions ✅
+├── .dockerignore        # Docker build exclusions ✅
+├── Dockerfile           # Multi-stage Docker build ✅
+├── docker-compose.yml   # Production deployment ✅
+├── docker-compose.dev.yml # Development with VSCode ✅
+├── package.json         # Dependencies and scripts ✅
+├── tsconfig.json        # TypeScript config (strict mode) ✅
+├── next.config.ts       # Next.js 15 config ✅
+├── eslint.config.mjs    # ESLint config ✅
+├── prettier.config.js   # Prettier config ✅
+└── tailwind.config.ts   # Tailwind CSS 4 config ✅
 ```
+
+**Legend**: ✅ = Implemented | (TODO) = Not yet implemented | (placeholder) = Basic implementation, needs work
 
 ## Design Patterns
 
+**Core Patterns**:
+
 - **Functional Programming**: Pure functions, immutable data
-- **Type Safety**: Zod schemas for runtime validation
-- **API Routes**: RESTful Next.js endpoints
-- **Server Actions**: Direct server-side execution
+- **Type Safety**: Zod schemas for runtime validation + TypeScript strict mode
+- **Singleton Pattern**: Default agent loader instance with caching
+- **Factory Pattern**: LLM client creation (`createLLMClient()`, `createProvider()`)
+- **Strategy Pattern**: LLM providers implementing `ILLMProvider` interface
 - **Component Composition**: Small, reusable React components
+
+**Next.js Patterns**:
+
+- **API Routes**: RESTful endpoints in `app/api/` (App Router)
+- **Server Components**: Default for all pages (use `'use client'` when needed)
+- **Client Components**: Interactive UI (marked with `'use client'` directive)
+  - Example: `app/setup/page.tsx` for wizard with React state
+- **Route Handlers**: `route.ts` files for API endpoints
+  - Example: `app/api/agents/route.ts` exports `GET` function
+
+**Error Handling**:
+
+- **Custom Errors**: `AgentLoadError` with file path and cause
+- **Try-Catch**: All file I/O and YAML parsing wrapped in try-catch
+- **Validation**: Zod parsing throws descriptive errors
+- **API Errors**: Return proper HTTP status codes (404, 500, etc.)
+
+**File Structure**:
+
+- **Barrel Exports**: `index.ts` files re-export public APIs
+- **Type Inference**: `z.infer<typeof Schema>` for Zod schemas
+- **Path Aliases**: `@/` prefix for imports (maps to project root)
+  - Example: `import { Agent } from '@/lib/types/agent'`
 
 ## Key Configuration
 
@@ -359,6 +485,123 @@ modules:
   mam: { enabled: boolean }
   mab: { enabled: boolean }
   cis: { enabled: boolean }
+```
+
+## Common Implementation Patterns
+
+Based on the current codebase, here are examples for implementing common tasks:
+
+### Loading Agents
+
+```typescript
+// Single agent
+import { loadAgent } from '@/lib/agents/loader';
+const agent = await loadAgent('/path/to/agent.yaml');
+
+// All MAM agents
+import { loadMAMAgents } from '@/lib/agents/loader';
+const agents = await loadMAMAgents();
+```
+
+### Creating LLM Clients
+
+```typescript
+// From environment variables
+import { createLLMClient } from '@/lib/llm/client';
+import { getLLMConfigFromEnv } from '@/lib/llm/config';
+
+const config = getLLMConfigFromEnv();
+const client = createLLMClient(config);
+
+// Manual configuration
+const client = createLLMClient({
+  provider: 'gemini',
+  apiKey: process.env.GEMINI_API_KEY!,
+  model: 'gemini-2.0-flash-exp',
+});
+
+// Using the client
+const response = await client.chat({
+  messages: [{ role: 'user', content: 'Hello!' }],
+});
+
+// Streaming
+for await (const chunk of client.chatStream(request)) {
+  console.log(chunk.content);
+}
+```
+
+### Creating API Routes
+
+```typescript
+// app/api/example/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  try {
+    const data = await fetchData();
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json({ error: 'Error message' }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  // Process body
+  return NextResponse.json({ success: true });
+}
+```
+
+### Zod Validation
+
+```typescript
+// Define schema
+import { z } from 'zod';
+
+const ConfigSchema = z.object({
+  name: z.string().min(1),
+  enabled: z.boolean().default(false),
+  options: z.array(z.string()).optional(),
+});
+
+// Validate data
+const validated = ConfigSchema.parse(untrustedData);
+
+// Type inference
+type Config = z.infer<typeof ConfigSchema>;
+
+// Safe parsing (no throw)
+const result = ConfigSchema.safeParse(data);
+if (result.success) {
+  console.log(result.data);
+} else {
+  console.error(result.error);
+}
+```
+
+### Component Structure
+
+```typescript
+// Client component with state
+'use client';
+
+import { useState } from 'react';
+import type { MyType } from '@/lib/types';
+
+export default function MyComponent() {
+  const [state, setState] = useState<MyType>({});
+
+  return <div>...</div>;
+}
+
+// Server component (default)
+import { loadData } from '@/lib/data';
+
+export default async function MyPage() {
+  const data = await loadData();
+  return <div>{data.title}</div>;
+}
 ```
 
 ## Critical Development Rules
@@ -414,15 +657,19 @@ modules:
 
 ## Testing Conventions
 
-- **Unit Tests**: Jest for TypeScript modules
-- **Component Tests**: React Testing Library for UI
-- **Integration Tests**: Next.js API route testing
+**Status**: Testing framework not yet configured
+
+- **Unit Tests**: Jest for TypeScript modules (TODO)
+- **Component Tests**: React Testing Library for UI (TODO)
+- **Integration Tests**: Next.js API route testing (TODO)
 - **E2E Tests**: Playwright (future)
 
+Current workflow uses manual testing:
+
 ```bash
-npm test                    # Run all tests
-npm test -- --coverage      # With coverage
-npm test -- --watch         # Watch mode
+npm run check-all          # Type-check + lint + format
+npm run build              # Verify production build
+npm run dev                # Manual testing in browser
 ```
 
 ## Security Considerations
@@ -473,63 +720,61 @@ See [`docs/LLM-SELECTION.md`](./docs/LLM-SELECTION.md) for detailed guide.
 
 ## Getting Started
 
-1. **Create Next.js Project**:
+For new developers joining the project:
+
+1. **Clone and Install**:
 
    ```bash
-   npx create-next-app@latest . --typescript --tailwind --app
-   npm install zod js-yaml handlebars
+   git clone <repo-url>
+   cd MADACE-Method-v2.0
+   npm install
    ```
 
-2. **Implement Web-Based Setup Wizard** (Priority #1):
-   - Create `app/setup/page.tsx` - Setup wizard UI
-   - Create `app/api/config/route.ts` - Save configuration endpoint
-   - Steps: Project Info → LLM Selection → Module Selection
-   - Auto-generate `.env` and `config.yaml`
-
-3. **Implement Settings Page** (Priority #2):
-   - Create `app/settings/page.tsx` - Settings UI
-   - Tabs: Project, LLM, Modules, Advanced
-   - Test LLM connection button
-   - Real-time configuration validation
-
-4. **Implement TypeScript Business Logic**:
-   - Start with `lib/agents/loader.ts`
-   - Add `lib/config/storage.ts` (manages YAML + .env)
-   - Use Zod for validation
-   - Follow functional programming patterns
-
-5. **Build React UI**:
-   - Use Shadcn/ui components
-   - Implement Kanban board for state machine
-   - Connect to API routes
-
-6. **Implement CLI Integration**:
-   - Create `lib/cli/claude.ts` - Claude CLI adapter
-   - Create `lib/cli/gemini.ts` - Gemini CLI adapter
-   - Create `lib/sync/cli-sync.ts` - WebSocket sync
-   - Support both web UI and CLI simultaneously
-
-7. **Test & Deploy**:
+2. **Development Server**:
 
    ```bash
-   npm test                # Run tests
-   npm run build           # Production build
+   npm run dev              # Start at http://localhost:3000
+   npm run check-all        # Verify code quality
+   ```
 
-   # Development deployment (with IDEs)
+3. **Explore Current Implementation**:
+   - Home page: http://localhost:3000
+   - Setup wizard: http://localhost:3000/setup
+   - Agents API: http://localhost:3000/api/agents
+   - Agent loader: `lib/agents/loader.ts`
+   - LLM client: `lib/llm/client.ts`
+
+4. **Next Tasks** (Priority Order):
+   - [ ] Configuration persistence (`app/api/config/route.ts`)
+   - [ ] Settings page implementation (`app/settings/page.tsx`)
+   - [ ] Workflow Engine (`lib/workflows/engine.ts`)
+   - [ ] State Machine (`lib/state/machine.ts`)
+   - [ ] Template Engine (`lib/templates/engine.ts`)
+
+5. **Docker Deployment** (Optional):
+
+   ```bash
+   # Development (with VSCode Server)
    mkdir madace-data
    docker-compose -f docker-compose.dev.yml up -d
-   # VSCode: http://localhost:8080
+   # VSCode: http://localhost:8080 (password: madace123)
    # Next.js: http://localhost:3000
 
-   # Production deployment (optimized)
+   # Production (optimized)
    mkdir madace-data
    docker-compose up -d
    # Access at http://localhost:3000
-   # Complete setup wizard
+   ```
+
+6. **Before Committing**:
+
+   ```bash
+   npm run check-all        # MUST pass before commit
+   npm run build            # Verify production build works
    ```
 
 ---
 
-**Note**: This project is under active development. The Rust+Python multi-tier architecture has been **rejected** in favor of a simpler Next.js full-stack approach. All documentation has been updated to reflect the new architecture.
+**Note**: This project is under active development as an experimental Next.js full-stack implementation.
 
 For the production-ready MADACE framework, use the official Node.js implementation: https://github.com/tekcin/MADACE-METHOD

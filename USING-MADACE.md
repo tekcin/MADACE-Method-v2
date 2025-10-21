@@ -1,10 +1,12 @@
 # Using Official MADACE-METHOD to Build MADACE-Method v2.0
 
+**MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
+
 **Meta Approach**: Using MADACE to build MADACE (experimental Next.js full-stack version)
 
 This guide shows you how to use the official MADACE-METHOD framework to plan, manage, and implement the MADACE-Method v2.0 experimental project.
 
-> **Note**: This project was originally planned as Rust+Python+Next.js but has been simplified to **Next.js 14 Full-Stack TypeScript**. See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for details.
+> **Note**: This project uses **Next.js 15 Full-Stack TypeScript** architecture. See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for architectural decisions.
 
 > **Development Environment**: A development container with VSCode Server and Cursor is available for browser-based development. See [DEVELOPMENT.md](./DEVELOPMENT.md) for setup instructions:
 >
@@ -78,9 +80,9 @@ Since the CLI is still in development, we'll use the agents manually through Cla
 
 ## BACKLOG
 
-- [CORE-001] Rust Agent Loader
-- [CORE-002] Rust Workflow Engine
-- [CORE-003] Rust State Machine
+- [NEXT-001] Initialize Next.js project
+- [SETUP-001] Project structure and documentation
+- [CORE-011] Agent Loader with Zod validation
   ...
 
 ## TODO
@@ -107,7 +109,7 @@ Since the CLI is still in development, we'll use the agents manually through Cla
 
 - **Level 2-3** (Medium/Large project)
 - Reason: Full-stack web application with agent system, state machine, and workflow engine
-- Simplified from original Level 3-4 (multi-tier with FFI)
+- Full-stack TypeScript implementation
 - Requires: PRD + Epics + Solution Architecture
 
 ### Step 3: Plan Project
@@ -168,9 +170,10 @@ Since the CLI is still in development, we'll use the agents manually through Cla
 ```markdown
 ## BACKLOG
 
-- [CORE-001] Agent Loader - YAML parsing
-- [CORE-002] Agent Runtime - Execution context
-- [CORE-003] Workflow Engine - Step execution
+- [NEXT-001] Initialize Next.js project
+- [CORE-011] Agent Loader with Zod validation
+- [LLM-013] Multi-provider LLM client
+- [SETUP-002] Setup wizard UI
   ...
 ```
 
@@ -197,35 +200,37 @@ Since the CLI is still in development, we'll use the agents manually through Cla
 ```bash
 # Workflow: *create-story
 # Reads: First story from BACKLOG
-# Creates: docs/story-CORE-001.md
+# Creates: docs/story-CORE-011.md
 # Updates: Moves story from BACKLOG to TODO
 ```
 
-**Story File** (`docs/story-CORE-001.md`):
+**Story File** (`docs/story-CORE-011.md`):
 
 ```markdown
-# [CORE-001] Agent Loader - YAML Parsing
+# [CORE-011] Agent Loader with Zod Validation
 
 **Status**: Draft
 **Points**: 5
-**Epic**: Rust Core Engine
+**Epic**: Core TypeScript Modules
 
 ## Description
 
-Implement YAML parsing and validation for agent definition files...
+Implement TypeScript agent loader with YAML parsing and Zod validation...
 
 ## Acceptance Criteria
 
 - [ ] Load agent YAML from disk
-- [ ] Validate against schema
+- [ ] Validate against Zod schema
 - [ ] Parse metadata, persona, menu
+- [ ] Implement caching
       ...
 
 ## Implementation Notes
 
-- Use serde_yaml crate
-- Define Agent struct
-- Implement error handling
+- Use js-yaml for YAML parsing
+- Use Zod for runtime validation
+- Create AgentLoader class with singleton pattern
+- Implement custom AgentLoadError
   ...
 ```
 
@@ -235,7 +240,7 @@ Implement YAML parsing and validation for agent definition files...
 # Workflow: *story-ready
 # Action: Review and approve story
 # Updates: TODO → IN PROGRESS
-# Side effect: Next BACKLOG → TODO (automatic)
+# Side effect: Next story from BACKLOG → TODO (automatic)
 ```
 
 #### 6c. Develop Story (DEV Agent)
@@ -344,7 +349,7 @@ Implement YAML parsing and validation for agent definition files...
 
 ## 🛠️ Practical Example: First Story
 
-Let's walk through implementing **[CORE-001] TypeScript Agent Loader** using MADACE:
+Let's walk through implementing **[CORE-011] Agent Loader with Zod Validation** using MADACE:
 
 ### 1. Load PM Agent and Check Status
 
@@ -368,8 +373,8 @@ Result: BACKLOG now has 30+ stories (simplified from 100+)
 
 ```
 SM: *create-story
-Action: Read first story from BACKLOG: [CORE-001] TypeScript Agent Loader
-Output: docs/story-CORE-001.md created
+Action: Read first story from BACKLOG: [CORE-011] Agent Loader with Zod Validation
+Output: docs/story-CORE-011.md created
 Status: BACKLOG → TODO
 ```
 
@@ -377,10 +382,10 @@ Status: BACKLOG → TODO
 
 ```
 SM: *story-ready
-Action: Review story-CORE-001.md
+Action: Review story-CORE-011.md
 Output: Story looks good, moving forward
 Status: TODO → IN PROGRESS
-Side Effect: [CORE-002] automatically moves BACKLOG → TODO
+Side Effect: [LLM-013] automatically moves BACKLOG → TODO
 ```
 
 ### 5. Implement with DEV Agent
@@ -427,19 +432,20 @@ Points: 5
 
 ---
 
-## BACKLOG (45 stories)
+## BACKLOG (30+ stories)
 
-- [CORE-003] Workflow Engine
-- [CORE-004] State Machine
+- [SETUP-006] Configuration persistence
+- [CORE-012] Agent Runtime
+- [CORE-013] Workflow Engine
   ...
 
 ## TODO (1 story)
 
-- [CORE-002] Agent Runtime
+- [LLM-013] Multi-provider LLM client
 
 ## IN PROGRESS (1 story)
 
-- [CORE-001] Agent Loader [Status: Ready] [Started: 2025-10-19]
+- [CORE-011] Agent Loader with Zod validation [Status: Ready] [Started: 2025-10-20]
 
 ## DONE (0 stories)
 
@@ -471,12 +477,12 @@ Points: 5
 
 1. ✅ Load SM agent
 2. ✅ Run `*init-backlog` → Populate from Epics
-3. ✅ Run `*create-story` → Draft CORE-001
+3. ✅ Run `*create-story` → Draft CORE-011
 4. ✅ Run `*story-ready` → Move to IN PROGRESS
 5. ✅ Load DEV agent
-6. ✅ Run `*dev-story` → Implement CORE-001
-7. ✅ Run `*story-approved` → Complete CORE-001
-8. 🔁 Repeat for CORE-002, CORE-003, etc.
+6. ✅ Run `*dev-story` → Implement CORE-011
+7. ✅ Run `*story-approved` → Complete CORE-011
+8. 🔁 Repeat for LLM-013, SETUP-002, etc.
 
 ### Ongoing: Story Development Loop
 

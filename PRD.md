@@ -736,16 +736,10 @@ modules:
 - Safari 14+
 - Edge 90+
 
-**Backend:**
+**Runtime:**
 
-- Python 3.9+
-- FastAPI 0.100+
-- uvicorn 0.20+
-
-**Core:**
-
-- Rust 1.70+ (2021 edition)
-- Cargo 1.70+
+- Node.js 20+
+- npm 9+
 
 ---
 
@@ -884,9 +878,9 @@ modules:
 
 ```
 project-root/
-├── frontend/                    # Next.js application
-├── backend/                     # FastAPI application
-├── core/                        # Rust core library
+├── app/                         # Next.js application (App Router)
+├── lib/                         # TypeScript business logic
+├── components/                  # React components
 ├── madace/                      # Framework installation
 │   ├── _cfg/                   # Configuration and manifests
 │   │   ├── agent-manifest.csv
@@ -991,17 +985,7 @@ project-root/
   - Automatic backups before transitions
   - Recovery procedures in documentation
 
-**Risk 3: FFI Integration Complexity**
-
-- **Impact:** Medium - Bugs could cause crashes
-- **Probability:** Medium - FFI is error-prone
-- **Mitigation:**
-  - Comprehensive error handling in Rust
-  - Safe FFI wrappers
-  - Extensive testing of FFI boundary
-  - Clear error propagation to Python
-
-**Risk 4: Cross-Platform Path Issues**
+**Risk 3: Cross-Platform Path Issues**
 
 - **Impact:** Medium - Workflows fail on some platforms
 - **Probability:** Medium - Windows paths differ
@@ -1076,13 +1060,13 @@ project-root/
 **Goals:**
 
 - Validate core architecture
-- Prove Rust-Python-Next.js integration
+- Prove Next.js full-stack TypeScript approach
 - Test agent and workflow systems
 - Gather early feedback
 
 **Deliverables:**
 
-- ✅ Next.js 14 full-stack architecture (simplified from multi-tier)
+- ✅ Next.js 15 full-stack architecture
 - ✅ TypeScript business logic modules
 - ✅ MADACE Master agent
 - ✅ Basic MAM workflows (plan-project, create-story)
@@ -1193,9 +1177,7 @@ project-root/
 
 - Docker Hub (image distribution)
 - GitHub (code hosting)
-- npm registry (frontend dependencies)
-- PyPI (backend dependencies)
-- crates.io (Rust dependencies)
+- npm registry (dependencies)
 
 **Third-Party Services:**
 
@@ -1204,15 +1186,15 @@ project-root/
 
 ### 13.2 Internal Dependencies
 
-**Rust Core → Backend:**
+**Business Logic → API Routes:**
 
-- FFI interface must be stable
-- Breaking changes require backend updates
+- TypeScript interfaces must be stable
+- Breaking changes require frontend updates
 
-**Backend → Frontend:**
+**API Routes → Frontend:**
 
 - REST API must be versioned
-- OpenAPI spec must be current
+- Type definitions must be current
 
 **Workflows → Templates:**
 

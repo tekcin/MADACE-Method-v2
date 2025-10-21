@@ -36,7 +36,7 @@
 
 ## Overview
 
-MADACE-Method v2.0 is an **experimental implementation** exploring the MADACE-METHOD philosophy using a simplified Next.js 14 full-stack architecture with a web-based UI.
+MADACE-Method v2.0 is an **experimental implementation** exploring the MADACE-METHOD philosophy using a simplified Next.js 15 full-stack architecture with a web-based UI.
 
 ### Official MADACE-METHOD
 
@@ -97,7 +97,7 @@ Explores a web-based UI approach while maintaining MADACE core principles:
 
 ```
 ┌─────────────────────────────────────┐
-│      Next.js 14 (App Router)        │
+│      Next.js 15 (App Router)        │
 │  ┌────────────┐  ┌──────────────┐   │
 │  │  Frontend  │  │  API Routes  │   │
 │  │  (React)   │  │  (Node.js)   │   │

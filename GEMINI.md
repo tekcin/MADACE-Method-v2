@@ -6,8 +6,7 @@ This project is MADACE-Method v2.0, a next-generation human-AI collaboration fra
 
 The architecture is designed to be modular, scalable, and high-performance, leveraging the strengths of each technology.
 
-- **Frontend:** A Next.js (React) application running on Node.js. It provides the user interface.
-- **Backend:** A Python application (using a framework like FastAPI) that serves a REST API. It orchestrates the business logic.
+- **Full-Stack:** A Next.js 15 full-stack TypeScript application running on Node.js. It provides both the user interface and API backend using Next.js API Routes and Server Actions.
 
 **Key Technologies:** Next.js 15, React 19, TypeScript 5, Node.js 20+, Tailwind CSS 4, Zod.
 
@@ -77,9 +76,9 @@ The architecture is designed to be modular, scalable, and high-performance, leve
   - `npm run check-all` - Run type checking, linting, and format check
 - **Documentation:** JSDoc comments for public APIs. Update documentation when adding features.
 - **Testing:** Test on both development and production Docker containers.
-- **API Communication:** The Next.js frontend should communicate with the Python backend via a well-defined REST API.
-- **Modularity:** Each tier (frontend, backend, core) should be as independent as possible.
-- **Testing:** Each tier should have its own set of tests:
-  - **Frontend:** Unit and component tests with a framework like Jest and React Testing Library.
-  - **Backend:** Unit and integration tests with a framework like Pytest.
-  - **Core:** Unit and integration tests with `cargo test`.
+- **API Communication:** The frontend components communicate with Next.js API Routes via standard REST endpoints.
+- **Modularity:** Separate business logic (lib/) from UI components (components/) and routes (app/).
+- **Testing:** Comprehensive testing strategy:
+  - **Components:** Unit and component tests with Jest and React Testing Library.
+  - **Business Logic:** Unit tests for TypeScript modules in lib/.
+  - **API Routes:** Integration tests for Next.js API endpoints.

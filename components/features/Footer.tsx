@@ -4,7 +4,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            MADACE-Method v2.0 - Multi-Agent Development Architecture
+            MADACE-Method v2.0 - Methodology for AI-Driven Agile Collaboration Engine
           </div>
           <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400">
             <a

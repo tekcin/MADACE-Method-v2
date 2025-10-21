@@ -1,5 +1,7 @@
 # MADACE-Method v2.0
 
+**MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
+
 **Version**: 2.0.0-alpha | **Status**: In Development ✅
 
 **MADACE-Method v1.0** (Official): https://github.com/tekcin/MADACE-METHOD
@@ -8,7 +10,7 @@
 
 ## 🎯 What is MADACE-Method v2.0?
 
-MADACE-Method v2.0 is the **next generation** of the MADACE-METHOD framework, rebuilt from the ground up with modern web technologies and enhanced user experience.
+MADACE-Method v2.0 is the **next generation** of the MADACE (Methodology for AI-Driven Agile Collaboration Engine) framework, rebuilt from the ground up with modern web technologies and enhanced user experience.
 
 ### Version Comparison
 

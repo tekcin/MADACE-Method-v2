@@ -8,7 +8,7 @@ export default function Home() {
           MADACE-Method v2.0
         </h1>
         <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-400">
-          Multi-Agent Development Architecture for Complex Ecosystems
+          Methodology for AI-Driven Agile Collaboration Engine
         </p>
         <p className="mt-4 text-base text-gray-500 dark:text-gray-500">
           A framework for building complex software systems using AI-powered multi-agent workflows.

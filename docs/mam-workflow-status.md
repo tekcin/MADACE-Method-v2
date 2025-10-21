@@ -1,10 +1,12 @@
 # MAM Workflow Status
 
+**MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
+
 **Project:** MADACE-Method v2.0 - Experimental Next.js Full-Stack Implementation
 **Current Phase:** Phase 1 - Planning Complete, Ready for Implementation
-**Last Updated:** 2025-10-20
+**Last Updated:** 2025-10-21
 **Methodology:** Using official MADACE-METHOD to build this experimental implementation
-**Architecture:** Next.js 14 Full-Stack TypeScript (Simplified from multi-tier)
+**Architecture:** Next.js 15 Full-Stack TypeScript
 
 ---
 
@@ -166,7 +168,7 @@ Completed stories with dates and points:
   - Added utility functions (date, string, JSON, object, array, error utilities)
   - Added README.md for each directory
   - Story file: `docs/story-NEXT-002.md`
-- [NEXT-001] Initialize Next.js 14 project with TypeScript and Tailwind (2025-10-20) [Points: 5]
+- [NEXT-001] Initialize Next.js 15 project with TypeScript and Tailwind (2025-10-20) [Points: 5]
   - Initialized Next.js 15.5.6 with App Router
   - Configured TypeScript with strict mode
   - Installed Tailwind CSS 4.1.1
@@ -236,7 +238,7 @@ Completed stories with dates and points:
 
 1. **Initialize Next.js Project** - Run `npx create-next-app@latest` with proper config
 2. **Load SM Agent** - Begin story creation workflow
-3. **Move [NEXT-001] to TODO** - First story: Initialize Next.js 14 project
+3. **Move [NEXT-001] to TODO** - First story: Initialize Next.js 15 project
 4. **Implement Stories** - Follow MADACE workflow: TODO → IN PROGRESS → DONE
 
 **Velocity:**
@@ -260,15 +262,14 @@ This project is using the official MADACE-METHOD framework to plan and implement
 
 ### Architecture Status
 
-**Current Architecture:** Next.js 14 Full-Stack TypeScript
+**Current Architecture:** Next.js 15 Full-Stack TypeScript
 
 - Single runtime: Node.js 20+
 - Single language: TypeScript
-- No FFI complexity
-- Proven stack
-- 4-week timeline (vs 12+ weeks with multi-tier)
+- Proven stack with battle-tested components
+- 4-week timeline to Alpha MVP
 
-See [ADR-003](../adrs/ADR-003-architecture-simplification.md) for full rationale.
+See [ADR-003](../adrs/ADR-003-architecture-simplification.md) for architectural decisions.
 
 ### Agent Files Available
 

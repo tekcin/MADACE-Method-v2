@@ -1,4 +1,4 @@
-# [NEXT-001] Initialize Next.js 14 Project
+# [NEXT-001] Initialize Next.js 15 Project
 
 **Status:** DONE ✅
 **Points:** 5
@@ -12,12 +12,12 @@
 
 ## Description
 
-Initialize the Next.js 14 project with TypeScript, Tailwind CSS, and App Router. This is the foundation story that sets up the entire project structure for the MADACE web-based implementation.
+Initialize the Next.js 15 project with TypeScript, Tailwind CSS, and App Router. This is the foundation story that sets up the entire project structure for the MADACE web-based implementation.
 
 **Context:**
 
 - We've completed planning and Docker deployment configuration
-- Architecture is simplified to Next.js full-stack TypeScript (no Rust/Python)
+- Architecture is Next.js full-stack TypeScript
 - All feasibility tests passed
 - This is the first implementation story following MADACE-METHOD
 
@@ -28,7 +28,7 @@ This story creates the foundational project structure that all subsequent storie
 
 ## Acceptance Criteria
 
-- [ ] Next.js 14 project initialized with latest stable version
+- [ ] Next.js 15 project initialized with latest stable version
 - [ ] TypeScript configured with strict mode enabled
 - [ ] Tailwind CSS installed and configured
 - [ ] App Router structure created (app/ directory)
