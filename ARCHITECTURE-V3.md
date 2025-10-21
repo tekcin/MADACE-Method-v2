@@ -1,16 +1,16 @@
-# MADACE-Method v3.0 - Architecture
+# MADACE-Method v3.0 - Proposed Architecture
 
 **Project:** MADACE-Method v3.0
 **Version:** 3.0.0-alpha
-**Document Status:** Technical Reference
+**Document Status:** Proposal
 
-> This document outlines the architecture for the next major version of the MADACE-Method, focusing on enhancing the capabilities of agents, the CLI, and the web interface.
+> This document outlines the proposed architecture for the next major version of the MADACE-Method, focusing on enhancing the capabilities of agents, the CLI, and the web interface.
 
 ---
 
 ## 1. Overview
 
-This document introduces a set of architectural changes and new features designed to make the MADACE-Method more dynamic, intelligent, and user-friendly. The proposed changes are focused on three key areas: Agents, CLI, and the Web Interface.
+This proposal introduces a set of architectural changes and new features designed to make the MADACE-Method more dynamic, intelligent, and user-friendly. The proposed changes are focused on three key areas: Agents, CLI, and the Web Interface.
 
 ---
 
