@@ -14,6 +14,7 @@
 MADACE v3.0 represents a major evolution from the v2.0 experimental Next.js implementation. Building on the successful v2.0 Alpha MVP (40 stories, 218 points, 9.8/10 quality), v3.0 introduces four transformative feature sets that will elevate MADACE from a proof-of-concept to a production-ready AI-driven development platform.
 
 **Key Innovations**:
+
 - Database-driven architecture replacing file-based storage
 - Interactive CLI with REPL and terminal dashboard
 - Natural language conversation with AI agents
@@ -34,6 +35,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 ### 1.2 Problem Statement
 
 **v2.0 Limitations**:
+
 - Static YAML-based agent definitions (cannot be modified at runtime)
 - File-based configuration fragmentation (.env + YAML + localStorage)
 - Menu-driven agent interaction (restrictive, not conversational)
@@ -42,6 +44,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - No agent memory or context retention
 
 **User Pain Points**:
+
 - Developers: "I want to create custom agents without editing YAML files"
 - Teams: "We need to collaborate on the same project in real-time"
 - Power Users: "I prefer terminal workflows but the CLI is too basic"
@@ -50,12 +53,14 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 ### 1.3 Goals and Objectives
 
 **Primary Goals**:
+
 1. Enable dynamic agent management through UI/CLI (no file editing)
 2. Provide natural language conversation with context-aware agents
 3. Support real-time team collaboration on shared projects
 4. Elevate CLI to first-class interface with terminal dashboard
 
 **Success Metrics**:
+
 - 50+ custom agents created by users in first 3 months
 - 80% of interactions use conversational mode vs. menu mode
 - 20+ teams actively collaborating on projects
@@ -72,17 +77,20 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Experience**: 5 years full-stack development
 
 **Goals**:
+
 - Build side projects faster with AI assistance
 - Create custom agents for specific frameworks (Next.js, Django)
 - Work primarily in terminal/CLI
 - Maintain context across multiple sessions
 
 **Frustrations**:
+
 - Switching between terminal and browser breaks flow
 - Agents forget previous conversations
 - Cannot customize agents without YAML knowledge
 
 **v3.0 Solutions**:
+
 - Interactive CLI with REPL and dashboard
 - Persistent agent memory
 - UI-based agent customization
@@ -94,17 +102,20 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Project**: Enterprise SaaS application
 
 **Goals**:
+
 - Collaborate on complex projects in real-time
 - Share AI agent configurations across team
 - Review code together with AI assistance
 - Track project progress collaboratively
 
 **Frustrations**:
+
 - v2.0 is single-user only
 - No way to share agent customizations
 - Manual synchronization of project state
 
 **v3.0 Solutions**:
+
 - Real-time collaborative editing
 - Shared agent library
 - WebSocket-based live updates
@@ -116,17 +127,20 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Experience**: PhD in NLP, 8 years AI/ML
 
 **Goals**:
+
 - Experiment with different LLM providers and models
 - Fine-tune agent prompts and personas
 - Build domain-specific agents (legal, medical, finance)
 - Export/import agent configurations
 
 **Frustrations**:
+
 - Limited control over agent behavior
 - Cannot A/B test different prompts
 - No analytics on agent performance
 
 **v3.0 Solutions**:
+
 - Database-backed agent definitions (easy versioning)
 - Conversational testing interface
 - Agent analytics dashboard (future: v3.1+)
@@ -147,6 +161,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Migrate from file-based storage (YAML, .env, localStorage) to unified database (SQLite for dev, PostgreSQL for production).
 
 **Acceptance Criteria**:
+
 - ✅ Database schema defined for agents, workflows, config, state, memory
 - ✅ Migration scripts created for v2.0 → v3.0 data
 - ✅ Backward compatibility maintained (can read v2.0 YAML files)
@@ -154,11 +169,13 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Automated backups and restore functionality
 
 **Technical Details**:
+
 - **Stack**: Prisma ORM + SQLite (dev) + PostgreSQL (prod)
 - **Tables**: agents, workflows, config, state_machine, agent_memory, users, projects
 - **Indexes**: Optimized for common queries (agent lookup, state transitions)
 
 **User Stories**:
+
 - [DB-001] As a developer, I want all configuration in one place (5 points)
 - [DB-002] As a user, I want to migrate my v2.0 data to v3.0 (8 points)
 - [DB-003] As a system, I need optimized database queries (5 points)
@@ -169,6 +186,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Allow users to create, edit, and delete agents through Web UI and CLI without editing YAML files.
 
 **Acceptance Criteria**:
+
 - ✅ Agent CRUD API endpoints (POST/PUT/DELETE /api/agents)
 - ✅ Web UI: Agent creation wizard with template selection
 - ✅ Web UI: Agent editor with persona, prompts, menu customization
@@ -177,6 +195,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Agent export/import (JSON format)
 
 **User Stories**:
+
 - [AGENT-001] As a user, I want to create a new agent via UI (8 points)
 - [AGENT-002] As a user, I want to edit agent persona and prompts (5 points)
 - [AGENT-003] As a user, I want to delete unused agents (2 points)
@@ -188,6 +207,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Consolidate all configuration (.env, config.yaml, localStorage) into database with UI management.
 
 **Acceptance Criteria**:
+
 - ✅ All config stored in database `config` table
 - ✅ Web UI: Settings page for all configuration
 - ✅ CLI: `madace config get/set` commands
@@ -196,6 +216,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Config validation with Zod schemas
 
 **User Stories**:
+
 - [CONFIG-001] As a user, I want one place to manage all settings (8 points)
 - [CONFIG-002] As a user, I want secure API key storage (5 points)
 - [CONFIG-003] As a developer, I want environment-specific configs (5 points)
@@ -214,6 +235,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Add interactive Read-Eval-Print Loop for conversational CLI interaction.
 
 **Acceptance Criteria**:
+
 - ✅ `madace repl` command launches interactive mode
 - ✅ Auto-completion for commands and agent names
 - ✅ Command history (up/down arrows)
@@ -222,10 +244,12 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Exit with Ctrl+C or /exit command
 
 **Technical Details**:
+
 - **Library**: inquirer.js or prompts for interactive input
 - **Features**: Tab completion, history, multi-line editing
 
 **User Stories**:
+
 - [CLI-001] As a power user, I want interactive CLI mode (8 points)
 - [CLI-002] As a user, I want command auto-completion (5 points)
 - [CLI-003] As a user, I want command history (3 points)
@@ -235,6 +259,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Text-based UI in terminal showing real-time project status, agents, workflows.
 
 **Acceptance Criteria**:
+
 - ✅ `madace dashboard` command launches TUI
 - ✅ Split-pane layout: agents | workflows | state machine | logs
 - ✅ Real-time updates (refreshes every 5 seconds)
@@ -243,10 +268,12 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Responsive to terminal resize
 
 **Technical Details**:
+
 - **Library**: blessed or ink (React for CLIs)
 - **Layout**: 4-pane dashboard with live data
 
 **User Stories**:
+
 - [CLI-004] As a developer, I want a terminal dashboard (13 points)
 - [CLI-005] As a user, I want keyboard-only navigation (5 points)
 
@@ -255,6 +282,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Ensure CLI has all features available in Web UI.
 
 **Acceptance Criteria**:
+
 - ✅ Agent management: create, edit, delete, list
 - ✅ Workflow execution: run, pause, resume, status
 - ✅ State machine: view, transition stories
@@ -262,6 +290,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Project: init, status, stats
 
 **User Stories**:
+
 - [CLI-006] As a CLI user, I want full feature access (8 points)
 
 ---
@@ -278,6 +307,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Integrate Natural Language Understanding service to parse user intent.
 
 **Acceptance Criteria**:
+
 - ✅ NLU service integrated (Dialogflow or Rasa)
 - ✅ Intent classification (create_agent, run_workflow, check_status, etc.)
 - ✅ Entity extraction (agent names, story IDs, file paths)
@@ -285,11 +315,13 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Fallback to menu mode if NLU confidence < 70%
 
 **Technical Details**:
+
 - **Service**: Dialogflow CX or Rasa Open Source
 - **Intents**: ~20 core intents mapped to MADACE actions
 - **Entities**: @agent, @workflow, @story, @file_path
 
 **User Stories**:
+
 - [NLU-001] As a user, I want to talk to agents naturally (13 points)
 - [NLU-002] As a system, I need to understand user intent (13 points)
 - [NLU-003] As a system, I need to extract entities (8 points)
@@ -299,6 +331,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Build chat UI in Web and CLI for conversational interaction.
 
 **Acceptance Criteria**:
+
 - ✅ Web UI: Chat component with message history
 - ✅ CLI: Chat mode with `madace chat <agent-name>`
 - ✅ Markdown rendering in chat messages
@@ -307,6 +340,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Voice input support (future: v3.1+)
 
 **User Stories**:
+
 - [CHAT-001] As a user, I want a chat interface (8 points)
 - [CHAT-002] As a user, I want to see message history (5 points)
 - [CHAT-003] As a user, I want markdown/code highlighting (5 points)
@@ -316,6 +350,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Agents remember conversations, user preferences, and project context.
 
 **Acceptance Criteria**:
+
 - ✅ Database table: agent_memory (agent_id, user_id, context, timestamp)
 - ✅ Agents access memory during conversations
 - ✅ Memory types: short-term (session), long-term (persistent)
@@ -323,6 +358,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Privacy: users can clear agent memory
 
 **User Stories**:
+
 - [MEMORY-001] As a user, I want agents to remember me (13 points)
 - [MEMORY-002] As a user, I want to clear agent memory (3 points)
 - [MEMORY-003] As an agent, I need context from past conversations (8 points)
@@ -341,6 +377,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Embed full-featured code editor in web interface.
 
 **Acceptance Criteria**:
+
 - ✅ Monaco Editor integrated (same as VS Code)
 - ✅ Syntax highlighting for 20+ languages
 - ✅ IntelliSense and auto-completion
@@ -349,10 +386,12 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Git operations (commit, push, pull)
 
 **Technical Details**:
+
 - **Editor**: @monaco-editor/react
 - **Features**: TypeScript/JavaScript LSP, multi-cursor, find/replace
 
 **User Stories**:
+
 - [IDE-001] As a developer, I want to code in the browser (21 points)
 - [IDE-002] As a user, I want syntax highlighting (5 points)
 - [IDE-003] As a developer, I want integrated terminal (8 points)
@@ -362,6 +401,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Multiple users editing same project simultaneously.
 
 **Acceptance Criteria**:
+
 - ✅ WebSocket server for real-time sync
 - ✅ Operational Transformation (OT) for conflict resolution
 - ✅ Shared cursors with user colors
@@ -370,10 +410,12 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ In-app chat for team communication
 
 **Technical Details**:
+
 - **Stack**: Socket.IO or Yjs for CRDT-based collaboration
 - **Conflict Resolution**: OT or CRDT algorithms
 
 **User Stories**:
+
 - [COLLAB-001] As a team, we want to code together (21 points)
 - [COLLAB-002] As a user, I want to see others' cursors (8 points)
 - [COLLAB-003] As a team, we want in-app chat (8 points)
@@ -383,6 +425,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 **Description**: Visual file browser for project navigation.
 
 **Acceptance Criteria**:
+
 - ✅ Tree-view file explorer
 - ✅ Create/rename/delete files/folders
 - ✅ Drag-and-drop file organization
@@ -390,6 +433,7 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 - ✅ Git status indicators (modified, new, deleted)
 
 **User Stories**:
+
 - [FILES-001] As a user, I want visual file navigation (13 points)
 - [FILES-002] As a user, I want to manage files via UI (8 points)
 
@@ -399,16 +443,16 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 
 ### 4.1 Technology Stack (Updated for v3.0)
 
-| Component | v2.0 | v3.0 |
-|-----------|------|------|
-| **Frontend** | Next.js 15 | Next.js 15 (same) |
-| **Backend** | API Routes | API Routes + tRPC |
-| **Database** | YAML files | Prisma + SQLite/PostgreSQL |
-| **Real-time** | None | Socket.IO / Yjs |
-| **NLU** | None | Dialogflow CX |
-| **Editor** | None | Monaco Editor |
-| **CLI** | Basic | inquirer + blessed |
-| **Auth** | None | NextAuth.js |
+| Component     | v2.0       | v3.0                       |
+| ------------- | ---------- | -------------------------- |
+| **Frontend**  | Next.js 15 | Next.js 15 (same)          |
+| **Backend**   | API Routes | API Routes + tRPC          |
+| **Database**  | YAML files | Prisma + SQLite/PostgreSQL |
+| **Real-time** | None       | Socket.IO / Yjs            |
+| **NLU**       | None       | Dialogflow CX              |
+| **Editor**    | None       | Monaco Editor              |
+| **CLI**       | Basic      | inquirer + blessed         |
+| **Auth**      | None       | NextAuth.js                |
 
 ### 4.2 Database Schema
 
@@ -579,33 +623,37 @@ POST   /api/v3/files/search       - Search files
 
 ### 5.1 Milestone Overview
 
-| Milestone | Epic | Timeline | Points | Status |
-|-----------|------|----------|--------|--------|
-| **3.1** | Database Migration & Unified Config | 3-4 weeks | 40-50 | 📅 Planned |
-| **3.2** | CLI Enhancements | 2-3 weeks | 25-35 | 📅 Planned |
-| **3.3** | Conversational AI & NLU | 4-6 weeks | 50-60 | 📅 Planned |
-| **3.4** | Web IDE & Collaboration | 6-8 weeks | 60-80 | 📅 Planned |
-| **Total** | All Epics | **16-20 weeks** | **175-225** | - |
+| Milestone | Epic                                | Timeline        | Points      | Status     |
+| --------- | ----------------------------------- | --------------- | ----------- | ---------- |
+| **3.1**   | Database Migration & Unified Config | 3-4 weeks       | 40-50       | 📅 Planned |
+| **3.2**   | CLI Enhancements                    | 2-3 weeks       | 25-35       | 📅 Planned |
+| **3.3**   | Conversational AI & NLU             | 4-6 weeks       | 50-60       | 📅 Planned |
+| **3.4**   | Web IDE & Collaboration             | 6-8 weeks       | 60-80       | 📅 Planned |
+| **Total** | All Epics                           | **16-20 weeks** | **175-225** | -          |
 
 ### 5.2 Detailed Timeline
 
 **Phase 1: Foundation (Milestone 3.1)** - Weeks 1-4
+
 - Week 1: Prisma setup, database schema design, migration scripts
 - Week 2: Agent CRUD API, dynamic agent management
 - Week 3: Unified config system, settings UI
 - Week 4: Testing, documentation, v3.1-alpha release
 
 **Phase 2: CLI Power-Up (Milestone 3.2)** - Weeks 5-7
+
 - Week 5: REPL implementation, auto-completion
 - Week 6: Terminal dashboard with blessed
 - Week 7: CLI feature parity, testing, v3.2-alpha release
 
 **Phase 3: Conversational AI (Milestone 3.3)** - Weeks 8-13
+
 - Week 8-9: NLU service integration (Dialogflow)
 - Week 10-11: Chat UI (web + CLI), message history
 - Week 12-13: Agent memory system, testing, v3.3-alpha release
 
 **Phase 4: Collaboration (Milestone 3.4)** - Weeks 14-21
+
 - Week 14-15: Monaco Editor integration
 - Week 16-17: File explorer, project management
 - Week 18-19: WebSocket sync, real-time collaboration
@@ -614,15 +662,18 @@ POST   /api/v3/files/search       - Search files
 ### 5.3 Release Strategy
 
 **Alpha Releases** (for each milestone):
+
 - v3.1-alpha: Database foundation
 - v3.2-alpha: CLI enhancements
 - v3.3-alpha: Conversational AI
 - v3.4-alpha: Full IDE + collaboration
 
 **Beta Release**:
+
 - v3.0-beta: All features integrated, performance optimization
 
 **Stable Release**:
+
 - v3.0.0: Production-ready, full documentation
 
 ---
@@ -631,14 +682,14 @@ POST   /api/v3/files/search       - Search files
 
 ### 6.1 Quantitative Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| **Custom Agents Created** | 50+ in first 3 months | Database count |
-| **Conversational Mode Usage** | 80% of interactions | Analytics tracking |
-| **Active Teams Collaborating** | 20+ teams | Project member count |
-| **CLI Primary Users** | 30% of user base | Usage analytics |
-| **Agent Memory Accuracy** | 85% context retention | User surveys |
-| **Real-time Sync Performance** | < 100ms latency | WebSocket metrics |
+| Metric                         | Target                | Measurement          |
+| ------------------------------ | --------------------- | -------------------- |
+| **Custom Agents Created**      | 50+ in first 3 months | Database count       |
+| **Conversational Mode Usage**  | 80% of interactions   | Analytics tracking   |
+| **Active Teams Collaborating** | 20+ teams             | Project member count |
+| **CLI Primary Users**          | 30% of user base      | Usage analytics      |
+| **Agent Memory Accuracy**      | 85% context retention | User surveys         |
+| **Real-time Sync Performance** | < 100ms latency       | WebSocket metrics    |
 
 ### 6.2 Qualitative Metrics
 
@@ -655,6 +706,7 @@ POST   /api/v3/files/search       - Search files
 ### 7.1 Technical Risks
 
 **Risk 1: NLU Accuracy**
+
 - **Impact**: High - Poor NLU would break conversational experience
 - **Probability**: Medium
 - **Mitigation**:
@@ -664,6 +716,7 @@ POST   /api/v3/files/search       - Search files
   - A/B test with real users
 
 **Risk 2: Real-time Collaboration Complexity**
+
 - **Impact**: High - Difficult to implement correctly
 - **Probability**: High
 - **Mitigation**:
@@ -673,6 +726,7 @@ POST   /api/v3/files/search       - Search files
   - Consider deferring to v3.1 if timeline slips
 
 **Risk 3: Database Migration**
+
 - **Impact**: High - Data loss would be catastrophic
 - **Probability**: Low
 - **Mitigation**:
@@ -684,6 +738,7 @@ POST   /api/v3/files/search       - Search files
 ### 7.2 Timeline Risks
 
 **Risk: Feature Scope Too Large**
+
 - **Impact**: Medium - Could delay v3.0 release
 - **Probability**: Medium
 - **Mitigation**:
@@ -720,6 +775,7 @@ POST   /api/v3/files/search       - Search files
 The following features are **not included** in v3.0 and deferred to future releases:
 
 **Deferred to v3.1+**:
+
 - Mobile applications (iOS/Android)
 - Advanced analytics dashboard
 - Agent performance metrics
@@ -730,6 +786,7 @@ The following features are **not included** in v3.0 and deferred to future relea
 - Agent marketplace
 
 **Deferred to v4.0+**:
+
 - Self-hosted enterprise version
 - On-premise deployment
 - SSO/SAML authentication
@@ -767,4 +824,4 @@ The following features are **not included** in v3.0 and deferred to future relea
 
 ---
 
-*This PRD follows MADACE Method Level 3 (Comprehensive Planning) for complex, multi-milestone projects.*
+_This PRD follows MADACE Method Level 3 (Comprehensive Planning) for complex, multi-milestone projects._

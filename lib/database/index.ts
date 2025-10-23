@@ -1,16 +1,25 @@
-import { PrismaClient } from '@prisma/client';
+/**
+ * Database Module
+ *
+ * Exports Prisma client singleton and database utility functions.
+ */
 
-declare global {
-  // allow global `var` declarations
-  var prisma: PrismaClient | undefined;
-}
+// Export Prisma client singleton
+export { prisma, connectDatabase, disconnectDatabase, isDatabaseHealthy } from './client';
 
-export const prisma =
-  global.prisma ||
-  new PrismaClient({
-    log: ['query'],
-  });
+// Export database utility functions
+export {
+  DatabaseError,
+  handlePrismaError,
+  paginate,
+  transaction,
+  exists,
+  softDelete,
+  batchUpsert,
+  getDatabaseStats,
+  clearDatabase,
+  search,
+} from './utils';
 
-if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prisma;
-}
+// Re-export Prisma types for convenience
+export type { PrismaClient } from '@prisma/client';

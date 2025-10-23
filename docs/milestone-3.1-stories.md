@@ -18,6 +18,7 @@
 **So that** we have a working database layer
 
 **Acceptance Criteria**:
+
 - ✅ Install Prisma dependencies (`prisma`, `@prisma/client`)
 - ✅ Initialize Prisma with `npx prisma init`
 - ✅ Configure SQLite for development in `.env`
@@ -26,6 +27,7 @@
 - ✅ Documentation: README section on database setup
 
 **Technical Notes**:
+
 ```bash
 npm install prisma @prisma/client
 npx prisma init
@@ -34,12 +36,14 @@ npx prisma generate
 ```
 
 **Files to Create/Modify**:
+
 - `prisma/schema.prisma`
 - `.env` (add DATABASE_URL)
 - `package.json` (add scripts)
 - `README.md` (database setup section)
 
 **Testing**:
+
 - Run `npx prisma studio` and verify database connection
 - Create test migration and verify it works
 
@@ -52,6 +56,7 @@ npx prisma generate
 **So that** we can store agents, config, workflows, and state
 
 **Acceptance Criteria**:
+
 - ✅ Define `Agent` model with metadata, persona, menu, prompts
 - ✅ Define `Config` model with key-value storage
 - ✅ Define `Workflow` model with steps and state
@@ -62,16 +67,19 @@ npx prisma generate
 - ✅ Run initial migration: `npx prisma migrate dev`
 
 **Schema** (from PRD-V3.md):
+
 ```prisma
 // See PRD-V3.md Section 4.2 for full schema
 // Key models: Agent, AgentMemory, Workflow, Config, StateMachine, Project, User
 ```
 
 **Files to Create/Modify**:
+
 - `prisma/schema.prisma` (complete schema)
 - `prisma/migrations/` (auto-generated)
 
 **Testing**:
+
 - Verify migration runs successfully
 - Open Prisma Studio and verify all tables created
 - Test relationships work correctly
@@ -85,6 +93,7 @@ npx prisma generate
 **So that** database connections are efficient and reusable
 
 **Acceptance Criteria**:
+
 - ✅ Create `lib/database/client.ts` with Prisma singleton
 - ✅ Create `lib/database/utils.ts` with common queries
 - ✅ Implement connection pooling for production
@@ -92,6 +101,7 @@ npx prisma generate
 - ✅ Export type-safe database types
 
 **Technical Notes**:
+
 ```typescript
 // lib/database/client.ts
 import { PrismaClient } from '@prisma/client';
@@ -106,11 +116,13 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 ```
 
 **Files to Create/Modify**:
+
 - `lib/database/client.ts`
 - `lib/database/utils.ts`
 - `lib/database/index.ts`
 
 **Testing**:
+
 - Test singleton pattern works (only one instance)
 - Test connection pooling
 - Verify no connection leaks
@@ -126,6 +138,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 **So that** I can create, read, update, and delete agents
 
 **Acceptance Criteria**:
+
 - ✅ Create `lib/services/agent-service.ts`
 - ✅ Implement `createAgent(data)` function
 - ✅ Implement `getAgent(id)` function
@@ -136,10 +149,12 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 - ✅ Add Zod validation for all inputs
 
 **Files to Create/Modify**:
+
 - `lib/services/agent-service.ts`
 - `lib/types/agent-service.ts`
 
 **Testing**:
+
 - Write unit tests for each CRUD function
 - Test validation catches invalid data
 - Test database constraints work
@@ -153,6 +168,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 **So that** I can create and customize agents dynamically
 
 **Acceptance Criteria**:
+
 - ✅ `POST /api/v3/agents` - Create agent
 - ✅ `GET /api/v3/agents` - List all agents
 - ✅ `GET /api/v3/agents/:id` - Get single agent
@@ -164,12 +180,14 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 - ✅ Error handling with descriptive messages
 
 **Files to Create/Modify**:
+
 - `app/api/v3/agents/route.ts`
 - `app/api/v3/agents/[id]/route.ts`
 - `app/api/v3/agents/[id]/export/route.ts`
 - `app/api/v3/agents/import/route.ts`
 
 **Testing**:
+
 - Write API route tests for each endpoint
 - Test error cases (404, 400, 500)
 - Test with Postman/Thunder Client
@@ -183,6 +201,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 **So that** I don't need to edit YAML files
 
 **Acceptance Criteria**:
+
 - ✅ Agent creation wizard component
 - ✅ Agent editor form (persona, prompts, menu)
 - ✅ Agent list/grid view with search
@@ -192,17 +211,20 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 - ✅ Success/error toast notifications
 
 **Components to Create**:
+
 - `components/features/agents/AgentWizard.tsx`
 - `components/features/agents/AgentEditor.tsx`
 - `components/features/agents/AgentList.tsx`
 - `components/features/agents/AgentDeleteModal.tsx`
 
 **Files to Create/Modify**:
+
 - `app/agents/create/page.tsx` - Agent creation page
 - `app/agents/[id]/edit/page.tsx` - Agent edit page
 - Component files (listed above)
 
 **Testing**:
+
 - Test form validation
 - Test create/update/delete flows
 - Test error handling
@@ -218,6 +240,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 **So that** we have a single source of truth
 
 **Acceptance Criteria**:
+
 - ✅ Create config service (`lib/services/config-service.ts`)
 - ✅ Implement `getConfig(key)` function
 - ✅ Implement `setConfig(key, value)` function
@@ -227,6 +250,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 - ✅ Migration script: YAML/env → database
 
 **Migration Strategy**:
+
 ```typescript
 // Read existing config.yaml and .env
 // Insert into database
@@ -234,10 +258,12 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 ```
 
 **Files to Create/Modify**:
+
 - `lib/services/config-service.ts`
 - `scripts/migrate-config.ts`
 
 **Testing**:
+
 - Test config CRUD operations
 - Test encryption/decryption
 - Test migration script with v2.0 data
@@ -251,6 +277,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 **So that** I can update settings programmatically
 
 **Acceptance Criteria**:
+
 - ✅ `GET /api/v3/config` - List all config
 - ✅ `GET /api/v3/config/:key` - Get single config
 - ✅ `PUT /api/v3/config/:key` - Set config value
@@ -259,10 +286,12 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 - ✅ Validation for known config keys
 
 **Files to Create/Modify**:
+
 - `app/api/v3/config/route.ts`
 - `app/api/v3/config/[key]/route.ts`
 
 **Testing**:
+
 - Test all CRUD operations
 - Test encryption works for API keys
 - Test validation prevents invalid configs
@@ -276,6 +305,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 **So that** I don't have to edit multiple files
 
 **Acceptance Criteria**:
+
 - ✅ Settings page with tabs: General, LLM, Modules, Advanced
 - ✅ Form inputs for all config values
 - ✅ Secure input for API keys (masked)
@@ -285,6 +315,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 - ✅ Real-time validation
 
 **Files to Create/Modify**:
+
 - `app/settings/page.tsx` (update existing)
 - `components/features/settings/SettingsTabs.tsx`
 - `components/features/settings/GeneralSettings.tsx`
@@ -292,6 +323,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 - `components/features/settings/ModuleSettings.tsx`
 
 **Testing**:
+
 - Test all form inputs
 - Test save/reset functionality
 - Test API key masking
@@ -307,6 +339,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 **So that** I don't lose my work
 
 **Acceptance Criteria**:
+
 - ✅ CLI command: `npm run migrate:v2-to-v3`
 - ✅ Read YAML agent files → insert into database
 - ✅ Read config.yaml → insert into config table
@@ -316,10 +349,12 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 - ✅ Dry-run mode to preview changes
 
 **Files to Create/Modify**:
+
 - `scripts/migrate-v2-to-v3.ts`
 - `package.json` (add script)
 
 **Testing**:
+
 - Test with real v2.0 data
 - Test dry-run mode
 - Test rollback capability
@@ -333,6 +368,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 **So that** we catch bugs early
 
 **Acceptance Criteria**:
+
 - ✅ Unit tests for all service functions (80%+ coverage)
 - ✅ Integration tests for API routes
 - ✅ Test data fixtures for common scenarios
@@ -341,12 +377,14 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 - ✅ All tests passing in CI/CD
 
 **Files to Create/Modify**:
+
 - `__tests__/lib/services/agent-service.test.ts`
 - `__tests__/lib/services/config-service.test.ts`
 - `__tests__/app/api/v3/agents/route.test.ts`
 - `__tests__/app/api/v3/config/route.test.ts`
 
 **Testing**:
+
 - Run `npm test` - all tests pass
 - Run `npm test -- --coverage` - 80%+ coverage
 
@@ -357,21 +395,25 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 ### By Category
 
 **Database Infrastructure (3 stories, 15 points)**:
+
 - DB-001: Prisma setup (5 points)
 - DB-002: Schema design (8 points)
 - DB-003: Database utilities (2 points)
 
 **Agent Management (3 stories, 18 points)**:
+
 - DB-004: Agent CRUD service (5 points)
 - DB-005: Agent API endpoints (8 points)
 - DB-006: Agent management UI (5 points)
 
 **Configuration System (3 stories, 12 points)**:
+
 - DB-007: Config migration (5 points)
 - DB-008: Config API endpoints (3 points)
 - DB-009: Settings UI (4 points)
 
 **Migration & Testing (2 stories, 3 points)**:
+
 - DB-010: v2→v3 migration tool (2 points)
 - DB-011: Test coverage (1 point)
 
@@ -382,27 +424,27 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 ## Recommended Execution Order
 
 **Week 1** (15 points):
+
 1. DB-001 → DB-002 → DB-003
 
-**Week 2** (18 points):
-2. DB-004 → DB-005 → DB-006
+**Week 2** (18 points): 2. DB-004 → DB-005 → DB-006
 
-**Week 3** (12 points):
-3. DB-007 → DB-008 → DB-009
+**Week 3** (12 points): 3. DB-007 → DB-008 → DB-009
 
-**Week 4** (3 points):
-4. DB-010 → DB-011 → Release v3.1-alpha
+**Week 4** (3 points): 4. DB-010 → DB-011 → Release v3.1-alpha
 
 ---
 
 ## Dependencies
 
 **External**:
+
 - Prisma installed and configured
 - SQLite for development
 - PostgreSQL for production (later)
 
 **Internal**:
+
 - v2.0.0-alpha codebase
 - Existing agent YAML files for migration
 - Test infrastructure (Jest)
@@ -412,6 +454,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 ## Success Criteria
 
 **Milestone 3.1 Complete When**:
+
 - ✅ All 11 stories DONE
 - ✅ Database schema deployed
 - ✅ Agent CRUD working in UI and API

@@ -104,15 +104,18 @@ agent:
 
       // Mock each agent file - need to setup individual mocks
       const mockContents = agentFiles.map((file) =>
-        validAgentContent.replace('name: PM', `name: ${file.replace('.agent.yaml', '').toUpperCase()}`)
+        validAgentContent.replace(
+          'name: PM',
+          `name: ${file.replace('.agent.yaml', '').toUpperCase()}`
+        )
       );
 
       mockFs.readFile
-        .mockResolvedValueOnce(mockContents[0])
-        .mockResolvedValueOnce(mockContents[1])
-        .mockResolvedValueOnce(mockContents[2])
-        .mockResolvedValueOnce(mockContents[3])
-        .mockResolvedValueOnce(mockContents[4]);
+        .mockResolvedValueOnce(mockContents[0]!)
+        .mockResolvedValueOnce(mockContents[1]!)
+        .mockResolvedValueOnce(mockContents[2]!)
+        .mockResolvedValueOnce(mockContents[3]!)
+        .mockResolvedValueOnce(mockContents[4]!);
 
       const agents = await loadMAMAgents();
 
