@@ -1,17 +1,19 @@
-import { Command } from 'commander';
+/**
+ * CLI Integration Module
+ *
+ * Provides adapters for CLI tools (Claude, Gemini) to work with MADACE
+ * using the same TypeScript business logic as the Web UI.
+ */
 
-const program = new Command();
+// Types
+export * from './types';
 
-program.name('madace-cli').description('CLI for MADACE-Method v2.0').version('0.0.1');
+// Base adapter
+export * from './adapter';
 
-program
-  .command('hello')
-  .description('A simple hello command')
-  .action(() => {
-    // eslint-disable-next-line no-console
-    console.log('Hello from MADACE CLI!');
-  });
+// CLI adapters
+export * from './claude';
+export * from './gemini';
 
-export const runCli = (args: string[]) => {
-  program.parse(args);
-};
+// Configuration generator
+export * from './config-generator';

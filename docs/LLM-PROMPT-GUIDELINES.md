@@ -11,9 +11,9 @@
 ```
 TECH STACK CONTEXT:
 - Framework: Next.js 15.5.6 (App Router)
-- Language: TypeScript 5.7.3 (strict mode)
+- Language: TypeScript 5.9.3 (strict mode)
 - Runtime: Node.js 20+
-- UI: React 19.0.0 + Tailwind CSS 4.1.1
+- UI: React 19.2.0 + Tailwind CSS 4.1.15
 - Validation: Zod 4.1.12
 - YAML: js-yaml 4.1.0
 - Templates: Handlebars 4.7.8
@@ -123,7 +123,7 @@ ${getTechStackContext()}
 Create a function to load YAML agent files with Zod validation.
 
 Requirements:
-- Use TypeScript 5.7.3 with strict mode
+- Use TypeScript 5.9.3 with strict mode
 - Use js-yaml 4.1.0 for parsing
 - Use Zod 4.1.12 for validation
 - Return a typed Result<Agent, Error>
@@ -166,11 +166,11 @@ ${getTechStackContext()}
 You are implementing a new feature for MADACE-Method v2.0.
 
 CONSTRAINTS:
-- Only use TypeScript 5.7.3
+- Only use TypeScript 5.9.3
 - Use Next.js 15.5.6 App Router patterns
-- Use React 19.0.0 Server Components where appropriate
+- Use React 19.2.0 Server Components where appropriate
 - Use Zod 4.1.12 for all validation
-- Use Tailwind CSS 4.1.1 for styling
+- Use Tailwind CSS 4.1.15 for styling
 - Follow functional programming patterns
 - Use async/await (no callbacks)
 - Handle errors with try/catch or Result types
@@ -300,7 +300,7 @@ const prompt = 'Implement this feature efficiently';
 // RIGHT
 const prompt = `
 ${getTechStackContext()}
-Implement this feature in TypeScript 5.7.3 only.
+Implement this feature in TypeScript 5.9.3 only.
 NO Python, NO Rust, NO other languages.
 `;
 ```
@@ -357,7 +357,7 @@ function validateLLMOutput(code: string): boolean {
 ### For Documentation Updates
 
 ```markdown
-**Tech Stack**: Next.js 15.5.6 • React 19.0.0 • TypeScript 5.7.3 • Node.js 20+ • Tailwind CSS 4.1.1 • Zod 4.1.12
+**Tech Stack**: Next.js 15.5.6 • React 19.2.0 • TypeScript 5.9.3 • Node.js 20+ • Tailwind CSS 4.1.15 • Zod 4.1.12
 ```
 
 ### For LLM System Prompts

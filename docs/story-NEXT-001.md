@@ -251,7 +251,7 @@ npx tsc --noEmit
 
 **Risk 1: Version Incompatibility**
 
-- **Risk:** Next.js 14 may have breaking changes
+- **Risk:** Next.js 15 may have breaking changes
 - **Mitigation:** Using `@latest` ensures stable version, documented in package.json for consistency
 - **Likelihood:** Low (Next.js is stable)
 
@@ -336,7 +336,7 @@ This story is considered DONE when:
 - [ARCHITECTURE.md](../ARCHITECTURE.md) - Technical architecture (Next.js full-stack)
 - [FEASIBILITY-REPORT.md](../FEASIBILITY-REPORT.md) - Node.js validation
 - [ADR-003](./adrs/ADR-003-architecture-simplification.md) - Architecture decision
-- [Next.js 14 Documentation](https://nextjs.org/docs) - Official docs
+- [Next.js 15 Documentation](https://nextjs.org/docs) - Official docs
 - [Next.js Installation Guide](https://nextjs.org/docs/getting-started/installation) - Setup guide
 
 ---

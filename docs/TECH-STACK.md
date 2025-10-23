@@ -1,7 +1,7 @@
 # MADACE-Method v2.0 Technology Stack
 
-**Version**: 1.0.0
-**Last Updated**: 2025-10-20
+**Version**: 1.0.1
+**Last Updated**: 2025-10-22 (Strict version enforcement)
 
 ---
 
@@ -10,10 +10,10 @@
 | Category        | Technology   | Version |
 | --------------- | ------------ | ------- |
 | **Framework**   | Next.js      | 15.5.6  |
-| **UI Library**  | React        | 19.0.0  |
-| **Language**    | TypeScript   | 5.7.3   |
+| **UI Library**  | React        | 19.2.0  |
+| **Language**    | TypeScript   | 5.9.3   |
 | **Runtime**     | Node.js      | 20+     |
-| **Styling**     | Tailwind CSS | 4.1.1   |
+| **Styling**     | Tailwind CSS | 4.1.15  |
 | **Validation**  | Zod          | 4.1.12  |
 | **YAML Parser** | js-yaml      | 4.1.0   |
 | **Templates**   | Handlebars   | 4.7.8   |
@@ -22,10 +22,12 @@
 
 ## Development Tools
 
-| Tool                | Version |
-| ------------------- | ------- | ------ |
-| **Linter**          | ESLint  | 9.19.0 |
-| **Package Manager** | npm     | 11.6.0 |
+| Tool                | Version  |
+| ------------------- | -------- | ------ |
+| **Linter**          | ESLint   | 9.38.0 |
+| **Prettier**        | Prettier | 3.6.2  |
+| **Test Framework**  | Jest     | 30.2.0 |
+| **Package Manager** | npm      | 11.6.0 |
 
 ---
 
@@ -72,9 +74,9 @@ Copy-paste this block into any documentation:
 ```
 TECH STACK CONTEXT:
 - Framework: Next.js 15.5.6 (App Router)
-- Language: TypeScript 5.7.3 (strict mode)
+- Language: TypeScript 5.9.3 (strict mode)
 - Runtime: Node.js 20+
-- UI: React 19.0.0 + Tailwind CSS 4.1.1
+- UI: React 19.2.0 + Tailwind CSS 4.1.15
 - Validation: Zod 4.1.12
 - YAML: js-yaml 4.1.0
 - Templates: Handlebars 4.7.8

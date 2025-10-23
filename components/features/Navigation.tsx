@@ -10,12 +10,18 @@ import {
   Bars3Icon,
   XMarkIcon,
   RectangleStackIcon,
+  BeakerIcon,
+  ViewColumnsIcon,
+  ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
+  { name: 'Kanban', href: '/kanban', icon: ViewColumnsIcon },
   { name: 'Agents', href: '/agents', icon: UserGroupIcon },
   { name: 'Workflows', href: '/workflows', icon: RectangleStackIcon },
+  { name: 'Sync Status', href: '/sync-status', icon: ArrowPathIcon },
+  { name: 'LLM Test', href: '/llm-test', icon: BeakerIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];
 

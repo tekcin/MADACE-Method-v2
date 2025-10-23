@@ -1,0 +1,75 @@
+# Docker Compose for MADACE with HTTPS (Production)
+# Uses Caddy as reverse proxy with automatic TLS certificates
+
+version: '3.8'
+
+services:
+  # MADACE Next.js Application
+  madace-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: madace-app
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      # Persistent data
+      - ./madace-data:/app/data
+    networks:
+      - madace-network
+    # Don't expose port 3000 externally - only accessible via Caddy
+    expose:
+      - '3000'
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3000']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Caddy Reverse Proxy with Automatic HTTPS
+  caddy:
+    image: caddy:2.7-alpine
+    container_name: madace-caddy
+    restart: unless-stopped
+    ports:
+      # HTTP (will redirect to HTTPS)
+      - '80:80'
+      # HTTPS
+      - '443:443'
+      # Caddy admin API (optional, remove in production)
+      - '2019:2019'
+    volumes:
+      # Caddy configuration
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Persistent certificate storage
+      - caddy-data:/data
+      - caddy-config:/config
+      # Logs
+      - ./logs/caddy:/var/log/caddy
+    environment:
+      # Set your domain name here
+      - DOMAIN=${DOMAIN:-localhost}
+    networks:
+      - madace-network
+    depends_on:
+      - madace-app
+    healthcheck:
+      test:
+        ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:2019/config/']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  madace-network:
+    driver: bridge
+
+volumes:
+  # Caddy data (certificates, etc.)
+  caddy-data:
+    driver: local
+  caddy-config:
+    driver: local

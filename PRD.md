@@ -106,17 +106,17 @@ MADACE-Method v2.0 provides a unified framework that guides users through the en
 
 ### 3.1 Technology Stack
 
-**Tech Stack**: Next.js 15.5.6 • React 19.0.0 • TypeScript 5.7.3 • Node.js 20+ • Tailwind CSS 4.1.1 • Zod 4.1.12
+**Tech Stack**: Next.js 15.5.6 • React 19.2.0 • TypeScript 5.9.3 • Node.js 20+ • Tailwind CSS 4.1.15 • Zod 4.1.12
 
 _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 
 **Full-Stack:**
 
 - Framework: Next.js 15.5.6 (App Router)
-- UI Library: React 19.0.0
-- Language: TypeScript 5.7.3 (strict mode)
+- UI Library: React 19.2.0
+- Language: TypeScript 5.9.3 (strict mode)
 - Runtime: Node.js 20+
-- Styling: Tailwind CSS 4.1.1
+- Styling: Tailwind CSS 4.1.15
 - Components: Shadcn/ui
 
 **Backend:**
@@ -126,7 +126,7 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 
 **Business Logic:**
 
-- Language: TypeScript 5.7.3
+- Language: TypeScript 5.9.3
 - Validation: Zod 4.1.12 (runtime type checking)
 - YAML Parsing: js-yaml 4.1.0
 - Templates: Handlebars 4.7.8

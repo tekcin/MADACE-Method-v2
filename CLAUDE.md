@@ -4,7 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 > **MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
 
-> **IMPORTANT**: This is an **experimental implementation** exploring MADACE-METHOD concepts using Next.js 14 full-stack TypeScript.
+> **⚠️ PROJECT VERSION: v2.0 (Experimental Next.js Implementation)**
+>
+> This document describes the **CURRENT project** (v2.0 Alpha).
+>
+> **For v3.0 future vision:** See [ROADMAP-V3-FUTURE-VISION.md](./ROADMAP-V3-FUTURE-VISION.md) and [ARCHITECTURE-V3-FUTURE.md](./ARCHITECTURE-V3-FUTURE.md)
+>
+> **DO NOT implement v3.0 features** (database, NLU, web IDE, real-time collaboration) in this v2.0 implementation.
+
+> **IMPORTANT**: This is an **experimental implementation** exploring MADACE-METHOD concepts using Next.js 15 full-stack TypeScript.
 >
 > The **official MADACE-METHOD** is Node.js CLI-based. See: https://github.com/tekcin/MADACE-METHOD
 
@@ -12,7 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repository (MADACE-Method v2.0) is a **proof-of-concept** implementation with a simplified Next.js full-stack architecture:
 
-- **Frontend**: Next.js 14 with React 18 and App Router
+- **Frontend**: Next.js 15.5.6 with React 19.2.0 and App Router
 - **Backend**: Next.js API Routes and Server Actions
 - **Business Logic**: TypeScript modules
 - **UI**: Web-based interface with visual Kanban board
@@ -108,9 +116,22 @@ npm run lint:fix           # ESLint (auto-fix)
 npm run format             # Prettier (format all files)
 npm run format:check       # Prettier (check only)
 npm run check-all          # Run all checks (type-check + lint + format:check)
+
+# Testing
+npm test                   # Run Jest tests (__tests__/ and *.spec.ts)
 ```
 
 ### Docker Deployment
+
+**IMPORTANT: Always use Docker Compose for Docker operations in this project.**
+
+Docker Compose provides:
+
+- Consistent configuration across environments
+- Volume management for data persistence
+- Easy service orchestration
+- Simplified command interface
+- Environment-specific configurations
 
 **Two deployment modes:**
 
@@ -125,6 +146,12 @@ docker-compose -f docker-compose.dev.yml up -d
 # - VSCode Server: http://localhost:8080 (password: madace123)
 # - Next.js Dev: http://localhost:3000
 # - Cursor: http://localhost:8081
+
+# Stop containers
+docker-compose -f docker-compose.dev.yml down
+
+# View logs
+docker-compose -f docker-compose.dev.yml logs -f
 
 # Features:
 # ✅ VSCode Server in browser with all extensions
@@ -141,20 +168,30 @@ docker-compose -f docker-compose.dev.yml up -d
 # Create data folder on host
 mkdir madace-data
 
-# Build and run production container
+# Build and run production container with Docker Compose (RECOMMENDED)
 docker-compose up -d
 
-# Or build manually
-docker build -t madace-web:latest .
-docker run -d \
-  --name madace \
-  -p 3000:3000 \
-  -v $(pwd)/madace-data:/app/data \
-  madace-web:latest
+# Stop containers
+docker-compose down
+
+# Rebuild after code changes
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
 
 # Access: http://localhost:3000
 # Complete setup wizard (saves to madace-data/config/)
 ```
+
+**Why Docker Compose?**
+
+- ✅ Declarative configuration in `docker-compose.yml`
+- ✅ Automatic volume creation and management
+- ✅ Named volumes for better data persistence
+- ✅ Easy to scale and add services (future: database, redis, etc.)
+- ✅ Consistent commands across dev/prod environments
+- ✅ No manual port/volume mapping needed
 
 **Data Persistence (both modes):**
 
@@ -287,14 +324,91 @@ Currently implemented REST endpoints:
   - Uses `createLLMClient()` and `chat()` method
   - Validates configuration before testing
 
-**TODO** (Not yet implemented):
+**Workflow Operations** (`app/api/workflows/`):
 
-- `POST /api/config` - Save configuration (setup wizard)
+- `GET /api/workflows` - List all workflows
+- `GET /api/workflows/[name]` - Get workflow details
+- `POST /api/workflows/[name]/execute` - Execute next workflow step
+- `GET /api/workflows/[name]/state` - Get workflow execution state
+- `DELETE /api/workflows/[name]/state` - Reset workflow state
+
+**State Operations** (`app/api/state/`):
+
+- `GET /api/state` - Get current workflow status from state machine
+
+**Configuration Operations** (`app/api/config/`):
+
 - `GET /api/config` - Load configuration
-- `GET /api/workflows` - List workflows
-- `POST /api/workflows/[name]/execute` - Execute workflow
-- `GET /api/state` - Get current state machine state
-- `POST /api/state/transition` - Transition story state
+- `POST /api/config` - Save configuration
+
+**Health Check** (`app/api/health/`):
+
+- `GET /api/health` - System health check (filesystem, state machine, config, LLM)
+
+**Sync Service** (`app/api/sync/`): ✅ **NEW**
+
+- `GET /api/sync` - Get sync service status and connected clients
+- `POST /api/sync` - Start/stop WebSocket sync service
+  - Request: `{ action: 'start' | 'stop', wsPort?: number }`
+  - Response: `{ success, running, clientCount }`
+
+### CLI Integration System ✅ **NEW**
+
+**Overview**: Real-time synchronization between Web UI and external CLI tools (Claude CLI, Gemini CLI).
+
+**Architecture** (`lib/cli/` and `lib/sync/`):
+
+- **CLI Adapters** (`lib/cli/`):
+  - `ClaudeCLIAdapter` - Integrates with Anthropic's Claude CLI
+  - `GeminiCLIAdapter` - Integrates with Google's Gemini CLI
+  - Both adapters use the same TypeScript business logic as Web UI
+  - Generate `.claude.json` and `.gemini.json` config files
+
+- **WebSocket Server** (`lib/sync/websocket-server.ts`):
+  - Real-time bidirectional communication (port 3001)
+  - Broadcasts state changes to all connected clients
+  - Client detection (Web UI, Claude CLI, Gemini CLI)
+  - Ping/pong heartbeat for connection health
+  - Singleton pattern with `getWebSocketServer()`
+
+- **File Watchers** (`lib/sync/file-watcher.ts`):
+  - Monitors workflow state files (`.*.state.json`)
+  - Monitors configuration changes
+  - Debounced change detection (300ms)
+  - Auto-broadcasts via WebSocket on file changes
+
+- **Sync Service** (`lib/sync/sync-service.ts`):
+  - Coordinates WebSocket server + file watchers
+  - Single entry point: `startSyncService()` / `stopSyncService()`
+  - Default paths: `madace-data/workflow-states`, `madace-data/config/config.yaml`
+
+**Web UI**:
+
+- **Sync Status Page** (`/sync-status`): Real-time dashboard
+  - Shows connected clients with source detection
+  - Start/Stop sync service buttons
+  - Auto-refresh every 5 seconds
+  - Client health indicators (Active/Idle)
+
+**Demo Script**:
+
+```bash
+./scripts/demo-cli-integration.sh  # Interactive demo of CLI integration
+```
+
+**How It Works**:
+
+1. Web UI or CLI makes changes to workflow state
+2. File watcher detects the change
+3. WebSocket server broadcasts update to all connected clients
+4. All clients (Web UI + CLI tools) receive real-time updates
+
+**Use Cases**:
+
+- Work in Claude CLI while monitoring progress in Web UI
+- Make changes in Web UI, see them instantly in CLI
+- Multiple developers working on same project simultaneously
+- Real-time collaboration between different interfaces
 
 ### Module System
 
@@ -414,8 +528,10 @@ Modules are located in `madace/` directory:
 ├── .gitignore           # Git exclusions ✅
 ├── .dockerignore        # Docker build exclusions ✅
 ├── Dockerfile           # Multi-stage Docker build ✅
-├── docker-compose.yml   # Production deployment ✅
+├── docker-compose.yml   # Production deployment (HTTP) ✅
 ├── docker-compose.dev.yml # Development with VSCode ✅
+├── docker-compose.https.yml # Production deployment (HTTPS) ✅
+├── Caddyfile            # Caddy reverse proxy config ✅
 ├── package.json         # Dependencies and scripts ✅
 ├── tsconfig.json        # TypeScript config (strict mode) ✅
 ├── next.config.ts       # Next.js 15 config ✅
@@ -606,6 +722,32 @@ export default async function MyPage() {
 
 ## Critical Development Rules
 
+### HTTP/HTTPS Security
+
+**ALWAYS use HTTPS for HTTP connections:**
+
+- All external HTTP requests MUST use HTTPS (never plain HTTP)
+- LLM provider APIs: Use HTTPS endpoints only
+  - Gemini: `https://generativelanguage.googleapis.com`
+  - OpenAI: `https://api.openai.com`
+  - Claude: `https://api.anthropic.com`
+- WebFetch and external API calls: Upgrade HTTP to HTTPS automatically
+- Local development (localhost) is exempt from this rule
+- Docker internal communication is exempt from this rule
+- Production deployments MUST use HTTPS with valid TLS certificates
+
+### Docker Operations
+
+**ALWAYS use Docker Compose for all Docker operations:**
+
+- Use `docker-compose up -d` instead of `docker run`
+- Use `docker-compose down` instead of `docker stop` or `docker rm`
+- Use `docker-compose logs -f` instead of `docker logs`
+- Use `docker-compose up -d --build` to rebuild images
+- Configuration lives in `docker-compose.yml` (prod) and `docker-compose.dev.yml` (dev)
+- Named volumes are managed automatically by Compose
+- Never use standalone `docker` commands for this project
+
 ### State Machine Operations
 
 - NEVER manually edit `docs/mam-workflow-status.md`
@@ -657,20 +799,112 @@ export default async function MyPage() {
 
 ## Testing Conventions
 
-**Status**: Testing framework not yet configured
+**Status**: Jest configured with ts-jest, tests in progress
 
-- **Unit Tests**: Jest for TypeScript modules (TODO)
-- **Component Tests**: React Testing Library for UI (TODO)
-- **Integration Tests**: Next.js API route testing (TODO)
-- **E2E Tests**: Playwright (future)
+### Test Framework Setup
 
-Current workflow uses manual testing:
+- **Test Runner**: Jest 30.2.0 with ts-jest preset
+- **Environment**: Node.js (for API routes and business logic)
+- **Config**: `jest.config.mjs` with Next.js integration
+- **Setup**: `jest.setup.js` provides global mocks (Request, Response, fetch, TextEncoder)
+
+### Running Tests
 
 ```bash
-npm run check-all          # Type-check + lint + format
+npm test                   # Run all tests with Jest
+npm run check-all          # Type-check + lint + format (no tests)
 npm run build              # Verify production build
 npm run dev                # Manual testing in browser
 ```
+
+### Test File Patterns
+
+**Location and Naming**:
+
+- Unit/Integration tests: `__tests__/**/*.test.ts` (mirrors `lib/` structure)
+- API route tests: Colocated as `app/api/**/*.spec.ts` OR in `__tests__/app/api/**/*.test.ts`
+
+**Current Test Coverage**:
+
+- ✅ `__tests__/lib/agents/loader.test.ts` - Agent loading and caching
+- ✅ `__tests__/lib/llm/client.test.ts` - LLM client (stub)
+- ✅ `__tests__/app/api/agents/route.test.ts` - Agent API endpoints
+- ✅ `app/api/llm/test/route.spec.ts` - LLM test endpoint
+- ⬜ `__tests__/lib/state/machine.test.ts` - State machine (TODO)
+
+### Testing Patterns
+
+**API Route Testing** (Next.js App Router):
+
+```typescript
+// app/api/example/route.spec.ts
+import { GET, POST } from './route';
+import { NextResponse } from 'next/server';
+
+jest.mock('next/server', () => ({
+  NextResponse: { json: jest.fn() },
+}));
+
+describe('GET /api/example', () => {
+  let mockRequest: Partial<Request>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockRequest = { url: 'http://localhost:3000/api/example' };
+  });
+
+  it('should return data', async () => {
+    const response = await GET(mockRequest as Request);
+    expect(response.status).toBe(200);
+  });
+});
+```
+
+**Business Logic Testing** (lib/ modules):
+
+```typescript
+// __tests__/lib/agents/loader.test.ts
+import { loadAgent, AgentLoadError } from '@/lib/agents/loader';
+import fs from 'fs/promises';
+
+jest.mock('fs/promises');
+const mockFs = fs as jest.Mocked<typeof fs>;
+
+describe('AgentLoader', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should load valid agent YAML', async () => {
+    mockFs.readFile.mockResolvedValue('agent:\n  metadata:\n    ...');
+    const agent = await loadAgent('/path/to/agent.yaml');
+    expect(agent.metadata.name).toBe('PM');
+  });
+
+  it('should cache loaded agents', async () => {
+    mockFs.readFile.mockResolvedValue(validYAML);
+    const agent1 = await loadAgent('/path');
+    const agent2 = await loadAgent('/path');
+    expect(agent1).toBe(agent2); // Same reference
+    expect(mockFs.readFile).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+**Mocking Patterns**:
+
+- Mock Next.js APIs: `jest.mock('next/server')`
+- Mock fs operations: `jest.mock('fs/promises')`
+- Mock lib modules: `jest.mock('@/lib/agents')`
+- Path aliases work in tests: `@/` maps to project root
+
+**Test Guidelines**:
+
+- Use `beforeEach` to clear mocks
+- Test error cases (file not found, invalid YAML, API errors)
+- Verify caching behavior where applicable
+- Mock external dependencies (fs, LLM APIs, Next.js)
+- Use TypeScript with proper typing for mocks
 
 ## Security Considerations
 
@@ -703,14 +937,21 @@ See [`docs/LLM-SELECTION.md`](./docs/LLM-SELECTION.md) for detailed guide.
 
 ## Additional Documentation
 
+### Current Project (v2.0)
+
 - **[README.md](./README.md)** - Project overview and quick start
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Comprehensive technical reference (2500+ lines)
+- **[PRD.md](./PRD.md)** - Product requirements document (v2.0 - AUTHORITATIVE)
 - **[DEVELOPMENT.md](./DEVELOPMENT.md)** - Development container guide (VSCode + Cursor)
+- **[HTTPS-DEPLOYMENT.md](./docs/HTTPS-DEPLOYMENT.md)** - ✅ **HTTPS deployment guide (Caddy + Let's Encrypt)**
 - **[FEASIBILITY-REPORT.md](./FEASIBILITY-REPORT.md)** - ✅ **Feasibility validation (ALL PASSED)**
-- **[PRD.md](./PRD.md)** - Product requirements document
 - **[PLAN.md](./PLAN.md)** - Development roadmap (4-week timeline)
 - **[USING-MADACE.md](./USING-MADACE.md)** - Using MADACE to build MADACE
 - **[LLM-SELECTION.md](./docs/LLM-SELECTION.md)** - LLM selection guide
+
+### Future Vision (v3.0)
+
+- **[ROADMAP-V3-FUTURE-VISION.md](./ROADMAP-V3-FUTURE-VISION.md)** - v3.0 product vision (2026+)
+- **[ARCHITECTURE-V3-FUTURE.md](./ARCHITECTURE-V3-FUTURE.md)** - v3.0 architecture proposals (2026+)
 
 ### Architecture Decision Records (ADRs)
 
@@ -760,10 +1001,17 @@ For new developers joining the project:
    # VSCode: http://localhost:8080 (password: madace123)
    # Next.js: http://localhost:3000
 
-   # Production (optimized)
+   # Production (HTTP - local/private network)
    mkdir madace-data
    docker-compose up -d
    # Access at http://localhost:3000
+
+   # Production (HTTPS - external access with domain)
+   mkdir -p madace-data logs/caddy
+   export DOMAIN=madace.yourdomain.com
+   docker-compose -f docker-compose.https.yml up -d
+   # Access at https://madace.yourdomain.com
+   # See docs/HTTPS-DEPLOYMENT.md for detailed setup
    ```
 
 6. **Before Committing**:

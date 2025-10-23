@@ -39,10 +39,10 @@ This ADR documents the architectural decision for MADACE-Method v2.0 experimenta
 
 ```
 ┌─────────────────────────────────────┐
-│      Next.js 14 (App Router)        │
+│    Next.js 15.5.6 (App Router)      │
 │  ┌────────────┐  ┌──────────────┐   │
 │  │  Frontend  │  │  API Routes  │   │
-│  │  (React)   │  │  (Node.js)   │   │
+│  │ (React 19) │  │  (Node.js)   │   │
 │  └────────────┘  └──────────────┘   │
 │         │               │            │
 │         └───────┬───────┘            │
@@ -56,7 +56,7 @@ This ADR documents the architectural decision for MADACE-Method v2.0 experimenta
 │    └────────────────────────┘       │
 │                                      │
 │  Single Runtime: Node.js 20+        │
-│  Single Language: TypeScript        │
+│  Single Language: TypeScript 5.9.3  │
 └──────────────────────────────────────┘
 ```
 
@@ -82,13 +82,13 @@ This ADR documents the architectural decision for MADACE-Method v2.0 experimenta
 
 ```json
 {
-  "frontend": "Next.js 14 + React 18 + TypeScript",
+  "frontend": "Next.js 15.5.6 + React 19.2.0 + TypeScript 5.9.3",
   "backend": "Next.js API Routes + Server Actions",
   "business_logic": "TypeScript modules",
   "database": "File-based (or SQLite if needed)",
   "llm_planning": "User-selectable (Gemini/Claude/OpenAI/Local)",
   "llm_implementation": "Local Docker agent (automatic)",
-  "styling": "Tailwind CSS + Shadcn/ui",
+  "styling": "Tailwind CSS 4.1.15 + Shadcn/ui",
   "deployment": "Docker or Vercel"
 }
 ```
@@ -448,7 +448,7 @@ YES. Benchmarks:
 - [x] Create interactive LLM selection script ✅
 - [ ] User selects their preferred LLM (run `./scripts/select-llm.sh`)
 - [ ] Remove `core/` and `backend/` directories
-- [ ] Create new Next.js 14 project
+- [ ] Create new Next.js 15 project
 - [ ] Copy agent YAML files to new project
 
 ### Week 1:
@@ -478,7 +478,7 @@ YES. Benchmarks:
 
 ## References
 
-- Next.js 14 App Router: https://nextjs.org/docs/app
+- Next.js 15 App Router: https://nextjs.org/docs/app
 - TypeScript Handbook: https://www.typescriptlang.org/docs/
 - Zod (Runtime Validation): https://zod.dev
 - Official MADACE: https://github.com/tekcin/MADACE-METHOD

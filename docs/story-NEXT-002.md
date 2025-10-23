@@ -16,9 +16,9 @@ Organize the Next.js project with a proper directory structure following best pr
 
 **Context:**
 
-- [NEXT-001] completed - Next.js 14 is initialized and running
+- [NEXT-001] completed - Next.js 15 is initialized and running
 - We need a clean, scalable structure for the MADACE implementation
-- Following Next.js 14 App Router conventions with TypeScript
+- Following Next.js 15 App Router conventions with TypeScript
 
 **Why This Story:**
 This story establishes the organizational foundation that all future code will follow. A well-organized structure makes development faster and more maintainable.
@@ -307,7 +307,7 @@ find lib components -name "README.md"
 
 **Depends On:**
 
-- [NEXT-001] Initialize Next.js 14 project (DONE) ✅
+- [NEXT-001] Initialize Next.js 15 project (DONE) ✅
 
 **Blocks:**
 
