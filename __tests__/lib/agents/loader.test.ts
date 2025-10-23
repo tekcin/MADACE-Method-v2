@@ -1,4 +1,4 @@
-import { loadAgent, loadMAMAgents, AgentLoadError } from '@/lib/agents/loader';
+import { loadAgent, loadMAMAgents, AgentLoadError, clearAgentCache } from '@/lib/agents/loader';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -9,6 +9,7 @@ const mockFs = fs as jest.Mocked<typeof fs>;
 describe('AgentLoader', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    clearAgentCache(); // Clear the singleton cache before each test
   });
 
   const testAgentPath = path.join(process.cwd(), 'madace/mam/agents/pm.agent.yaml');
@@ -65,7 +66,8 @@ agent:
     });
 
     it('should throw AgentLoadError for malformed YAML', async () => {
-      mockFs.readFile.mockResolvedValue('invalid: yaml: content:');
+      // Use truly malformed YAML that js-yaml will reject
+      mockFs.readFile.mockResolvedValue('agent:\n  metadata:\n    invalid\n  unbalanced: [bracket');
 
       await expect(loadAgent(testAgentPath)).rejects.toThrow(AgentLoadError);
     });
@@ -75,8 +77,13 @@ agent:
 agent:
   metadata:
     id: test-only
-    # Missing required fields
-  `;
+    name: Test
+    # Missing required fields: title, icon, module, version
+  persona:
+    role: Test
+  menu: []
+  prompts: []
+`;
 
       mockFs.readFile.mockResolvedValue(invalidSchemaContent);
 
@@ -95,12 +102,17 @@ agent:
       ];
       mockFs.readdir.mockResolvedValue(agentFiles as any);
 
-      // Mock each agent file
-      agentFiles.forEach((file) => {
-        mockFs.readFile.mockResolvedValueOnce(
-          validAgentContent.replace('PM', file.replace('.agent.yaml', '').toUpperCase())
-        );
-      });
+      // Mock each agent file - need to setup individual mocks
+      const mockContents = agentFiles.map((file) =>
+        validAgentContent.replace('name: PM', `name: ${file.replace('.agent.yaml', '').toUpperCase()}`)
+      );
+
+      mockFs.readFile
+        .mockResolvedValueOnce(mockContents[0])
+        .mockResolvedValueOnce(mockContents[1])
+        .mockResolvedValueOnce(mockContents[2])
+        .mockResolvedValueOnce(mockContents[3])
+        .mockResolvedValueOnce(mockContents[4]);
 
       const agents = await loadMAMAgents();
 
@@ -125,7 +137,7 @@ agent:
         'test.txt',
       ] as any);
 
-      const agentContent = validAgentContent.replace('PM', 'FILTERED');
+      const agentContent = validAgentContent.replace('name: PM', 'name: FILTERED');
       mockFs.readFile.mockResolvedValue(agentContent);
 
       const agents = await loadMAMAgents();
