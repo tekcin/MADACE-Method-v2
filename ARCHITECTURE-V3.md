@@ -8,6 +8,130 @@
 
 ---
 
+## ⚠️ CRITICAL DEVELOPMENT RULES FOR V3.0
+
+### File Access and Runtime Error Prevention
+
+**RULE 1: Never assume files exist in production**
+
+- ✅ **DO**: Always check if files exist before reading them
+- ✅ **DO**: Return graceful fallbacks when files are missing
+- ❌ **DON'T**: Use direct `fs.readFile()` without existence checks
+- ❌ **DON'T**: Throw errors for missing optional files
+
+**RULE 2: Development vs Production file paths**
+
+- Development files (like `docs/mam-workflow-status.md`) may NOT exist in production Docker builds
+- Production builds only include files in the Docker image (see `.dockerignore`)
+- API routes must handle missing development files gracefully
+
+**RULE 3: Graceful degradation pattern**
+
+```typescript
+// ✅ CORRECT: Check file existence first
+import { existsSync } from 'fs';
+
+if (!existsSync(filePath)) {
+  return { success: true, data: emptyState, message: 'File not found - returning empty state' };
+}
+
+// ❌ WRONG: Direct file access
+const data = await fs.readFile(filePath); // This will crash if file doesn't exist!
+```
+
+**RULE 4: Health checks should never fail for missing optional files**
+
+- Missing development files should return `status: 'pass'` with a descriptive message
+- Only fail health checks for critical system failures (database, disk space, permissions)
+
+**Example from production error fix:**
+
+```typescript
+// app/api/state/route.ts - BEFORE (caused production crash)
+const stateMachine = createStateMachine(statusFilePath);
+await stateMachine.load(); // CRASH: ENOENT error
+
+// app/api/state/route.ts - AFTER (graceful degradation)
+if (!existsSync(statusFilePath)) {
+  return NextResponse.json({
+    success: true,
+    status: { backlog: [], todo: [], inProgress: [], done: [] },
+    message: 'No workflow status file found - returning empty state',
+  });
+}
+```
+
+### Database Schema and Type Safety
+
+**RULE 5: Never flatten JSON fields in UI components**
+
+- Prisma schema uses `Json` type for `persona`, `menu`, and `prompts`
+- ✅ **DO**: Access JSON fields as `agent.persona` (JsonValue type)
+- ❌ **DON'T**: Create flattened fields like `agent.personaName`, `agent.personaRole`
+- Use type assertions when needed: `agent.persona as Record<string, unknown>`
+
+**RULE 6: Match Prisma types exactly**
+
+```typescript
+// ✅ CORRECT: Use Prisma-generated types
+import type { Agent } from '@prisma/client';
+
+// Agent type has these fields:
+// - persona: JsonValue (not personaName, personaRole, etc.)
+// - menu: JsonValue (not menuOptions, menuPrompt, etc.)
+// - prompts: JsonValue (not individual prompt fields)
+
+// ❌ WRONG: Creating custom types that don't match Prisma
+interface CustomAgent {
+  personaName: string; // Does not exist in database!
+  menuOptions: string[]; // Does not exist in database!
+}
+```
+
+**RULE 7: Service layer schema must match Prisma schema**
+
+```typescript
+// lib/services/agent-service.ts schema structure:
+export const CreateAgentSchema = z.object({
+  name: z.string(),
+  title: z.string(),
+  persona: z.object({  // Stored as JSON in Prisma
+    role: z.string(),
+    identity: z.string().optional(),
+  }),
+  menu: z.array(z.object({ ... })),  // Stored as JSON in Prisma
+  prompts: z.array(z.object({ ... })),  // Stored as JSON in Prisma
+});
+```
+
+### API Route Error Handling
+
+**RULE 8: All API routes must return proper error responses**
+
+```typescript
+// ✅ CORRECT: Structured error responses
+return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
+
+// ❌ WRONG: Throwing unhandled errors
+throw new Error(errorMessage); // Crashes Next.js server!
+```
+
+**RULE 9: Use try-catch in all API routes**
+
+- Wrap all async operations in try-catch blocks
+- Handle Prisma errors specifically (check for `PrismaClientKnownRequestError`)
+- Return appropriate HTTP status codes (400, 404, 500, etc.)
+
+### UI Component Best Practices
+
+**RULE 10: Keep UI components simple until schema is stable**
+
+- Complex forms (AgentEditor, AgentWizard) should be deferred until JSON schema is finalized
+- Start with read-only views (display JSON as formatted text)
+- Add edit functionality incrementally once schema patterns are proven
+
+---
+
 ## 1. Overview
 
 This proposal introduces a set of architectural changes and new features designed to make the MADACE-Method more dynamic, intelligent, and user-friendly. The proposed changes are focused on three key areas: Agents, CLI, and the Web Interface.

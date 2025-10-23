@@ -9,6 +9,47 @@
 
 ---
 
+## ⚠️ CRITICAL: READ BEFORE IMPLEMENTATION
+
+All developers implementing v3.0 features **MUST** read and follow:
+
+1. **[ARCHITECTURE-V3.md](./ARCHITECTURE-V3.md)** - Section: "CRITICAL DEVELOPMENT RULES FOR V3.0"
+2. **[PLAN-V3.md](./PLAN-V3.md)** - Section: "MANDATORY DEVELOPMENT CHECKLIST"
+
+### Key Implementation Rules
+
+**Before writing ANY code for v3.0:**
+
+✅ Verify file existence with `existsSync()` before reading
+✅ Return graceful fallbacks for missing development files
+✅ Use Prisma-generated types (never flatten JSON fields)
+✅ Wrap all async operations in try-catch blocks
+✅ Test in production Docker container
+
+**Production Errors to Avoid:**
+
+❌ `ENOENT` errors from missing files → Use existence checks
+❌ TypeScript errors from mismatched Prisma types → Use `@prisma/client` types
+❌ Unhandled API route errors → Use try-catch with proper error responses
+❌ Flattened JSON fields in UI → Access `agent.persona` as JsonValue
+
+### Recent Production Error Example
+
+```typescript
+// ❌ WRONG - Caused production crash
+const data = await fs.readFile(statusFilePath); // ENOENT error!
+
+// ✅ CORRECT - Graceful degradation
+if (!existsSync(statusFilePath)) {
+  return { success: true, data: emptyState };
+}
+const data = await fs.readFile(statusFilePath);
+```
+
+**See ARCHITECTURE-V3.md for complete rules and examples.**
+
+---
+
 ## Executive Summary
 
 MADACE v3.0 represents a major evolution from the v2.0 experimental Next.js implementation. Building on the successful v2.0 Alpha MVP (40 stories, 218 points, 9.8/10 quality), v3.0 introduces four transformative feature sets that will elevate MADACE from a proof-of-concept to a production-ready AI-driven development platform.

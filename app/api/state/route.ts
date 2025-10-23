@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createStateMachine } from '@/lib/state/machine';
-import { existsSync } from 'fs';
 import path from 'path';
 
 /**
@@ -11,20 +10,7 @@ export async function GET() {
   try {
     const statusFilePath = path.join(process.cwd(), 'docs', 'mam-workflow-status.md');
 
-    // Check if the file exists
-    if (!existsSync(statusFilePath)) {
-      return NextResponse.json({
-        success: true,
-        status: {
-          backlog: [],
-          todo: [],
-          inProgress: [],
-          done: [],
-        },
-        message: 'No workflow status file found - returning empty state',
-      });
-    }
-
+    // StateMachine.load() now handles missing files gracefully
     const stateMachine = createStateMachine(statusFilePath);
     await stateMachine.load();
     const status = stateMachine.getStatus();

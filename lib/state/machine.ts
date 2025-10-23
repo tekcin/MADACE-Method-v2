@@ -30,6 +30,20 @@ export class StateMachine {
 
   async load(): Promise<void> {
     try {
+      // Check if file exists first
+      try {
+        await fs.access(this.statusFilePath);
+      } catch {
+        // File doesn't exist - initialize with empty state
+        this.status = {
+          backlog: [],
+          todo: [],
+          inProgress: [],
+          done: [],
+        };
+        return;
+      }
+
       const content = await fs.readFile(this.statusFilePath, 'utf-8');
       this.status = this.parseStatusFile(content);
     } catch (error) {

@@ -4,6 +4,58 @@
 
 ---
 
+## ⚠️ MANDATORY DEVELOPMENT CHECKLIST
+
+Before implementing ANY feature in v3.0, developers MUST review and follow these rules:
+
+### Pre-Implementation Checklist
+
+- [ ] Read **ARCHITECTURE-V3.md** "CRITICAL DEVELOPMENT RULES" section
+- [ ] Verify file access uses `existsSync()` checks before reading
+- [ ] Confirm API routes return graceful fallbacks for missing files
+- [ ] Ensure UI components match Prisma schema types exactly
+- [ ] Verify all JSON fields (persona, menu, prompts) are handled as `JsonValue`
+- [ ] Confirm all API routes have try-catch error handling
+- [ ] Test both development AND production Docker builds
+- [ ] Verify health checks pass with missing optional files
+
+### Common Mistakes to Avoid
+
+❌ **NEVER** assume development files exist in production
+❌ **NEVER** flatten Prisma JSON fields into component props
+❌ **NEVER** throw unhandled errors in API routes
+❌ **NEVER** use `fs.readFile()` without existence checks
+❌ **NEVER** create custom types that don't match Prisma schema
+
+✅ **ALWAYS** check file existence with `existsSync()`
+✅ **ALWAYS** return graceful fallbacks for missing files
+✅ **ALWAYS** use Prisma-generated types from `@prisma/client`
+✅ **ALWAYS** wrap async operations in try-catch blocks
+✅ **ALWAYS** test in production Docker container before committing
+
+### Testing Requirements
+
+Every PR for v3.0 features MUST include:
+
+1. **Development Testing**: Feature works in `npm run dev`
+2. **Production Build**: `npm run build` succeeds with no errors
+3. **Docker Testing**: Feature works in production Docker container
+4. **Error Scenarios**: Tested with missing files and invalid data
+5. **Type Safety**: `npm run type-check` passes with zero errors
+
+### Code Review Checklist
+
+Reviewers must verify:
+
+- [ ] No direct file access without existence checks
+- [ ] All API routes have proper error handling
+- [ ] UI components use correct Prisma types
+- [ ] No flattened JSON fields in components
+- [ ] Production Docker build tested and working
+- [ ] Health checks pass in all scenarios
+
+---
+
 ## 1. Introduction
 
 The goal of this project is to implement the new architecture for MADACE-Method v3.0, which will make the system more dynamic, intelligent, and user-friendly. This plan breaks down the project into phases and milestones to ensure a smooth and successful implementation.
