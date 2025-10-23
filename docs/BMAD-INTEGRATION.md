@@ -1,6 +1,6 @@
 # BMAD-METHOD Integration Guide
 
-**Status**: ✅ Complete - 10 BMAD Agents Imported
+**Status**: ✅ Complete - 30 BMAD Agents Imported (10 v4 + 20 v6-Alpha)
 
 This document describes the integration of BMAD-METHOD agents into MADACE-Method v2.0.
 
@@ -8,7 +8,24 @@ This document describes the integration of BMAD-METHOD agents into MADACE-Method
 
 ## Overview
 
-[BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) (Breakthrough Method of Agile AI-Driven Development) is a universal AI agent framework that provides specialized agents for software development and beyond. We've successfully integrated all 10 core BMAD agents into MADACE.
+[BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) (BMad Core - Collaboration Optimized Reflection Engine) is a universal AI agent framework that provides specialized agents for software development and beyond. We've successfully integrated agents from both BMAD v4 (main branch) and v6-alpha branches into MADACE.
+
+### BMAD Versions
+
+**BMAD v4** (Main Branch):
+
+- 10 core agents
+- Markdown + YAML format
+- Stable production release
+- Module: `bmad`
+
+**BMAD v6-Alpha** (Alpha Branch):
+
+- 20 production agents across 5 modules
+- Pure YAML format
+- Complete ground-up rewrite
+- Advanced features: critical_actions, sidecar files, scale-adaptive workflows
+- Modules: `bmad-v6-core`, `bmad-v6-bmm`, `bmad-v6-bmb`, `bmad-v6-cis`, `bmad-v6-bmd`
 
 ### What is BMAD-METHOD?
 
@@ -22,20 +39,62 @@ BMAD-METHOD provides:
 
 ## Imported Agents
 
-### ✅ Successfully Imported (10/10)
+### ✅ BMAD v4 Agents (10/10)
 
-| Icon | Agent ID            | Title                            | When to Use                                                                                    |
-| ---- | ------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------- |
-| 📊   | `analyst`           | Business Analyst                 | Market research, brainstorming, competitive analysis, project briefs, brownfield documentation |
-| 🏗️   | `architect`         | Architect                        | System architecture, technical design, API specifications, data modeling, deployment planning  |
-| 🧙   | `bmad-master`       | BMad Master Task Executor        | Executing specific tasks from the BMAD workflow system                                         |
-| 🎭   | `bmad-orchestrator` | BMad Master Orchestrator         | Workflow coordination, multi-agent tasks, role switching guidance                              |
-| 💻   | `dev`               | Full Stack Developer             | Feature implementation, bug fixes, code reviews, technical debt reduction                      |
-| 📋   | `pm`                | Product Manager                  | PRDs, product strategy, feature prioritization, roadmap planning, stakeholder communication    |
-| 📝   | `po`                | Product Owner                    | User story refinement, backlog management, acceptance criteria, sprint planning                |
-| 🧪   | `qa`                | Test Architect & Quality Advisor | Test strategies, test automation, quality gates, acceptance testing                            |
-| 🏃   | `sm`                | Scrum Master                     | Story decomposition, sprint facilitation, team coordination, removing blockers                 |
-| 🎨   | `ux-expert`         | UX Expert                        | UX research, wireframes, prototyping, user flows, design systems                               |
+| Icon | Agent ID            | Title                            | Module | When to Use                                                                                    |
+| ---- | ------------------- | -------------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
+| 📊   | `analyst`           | Business Analyst                 | bmad   | Market research, brainstorming, competitive analysis, project briefs, brownfield documentation |
+| 🏗️   | `architect`         | Architect                        | bmad   | System architecture, technical design, API specifications, data modeling, deployment planning  |
+| 🧙   | `bmad-master`       | BMad Master Task Executor        | bmad   | Executing specific tasks from the BMAD workflow system                                         |
+| 🎭   | `bmad-orchestrator` | BMad Master Orchestrator         | bmad   | Workflow coordination, multi-agent tasks, role switching guidance                              |
+| 💻   | `dev`               | Full Stack Developer             | bmad   | Feature implementation, bug fixes, code reviews, technical debt reduction                      |
+| 📋   | `pm`                | Product Manager                  | bmad   | PRDs, product strategy, feature prioritization, roadmap planning, stakeholder communication    |
+| 📝   | `po`                | Product Owner                    | bmad   | User story refinement, backlog management, acceptance criteria, sprint planning                |
+| 🧪   | `qa`                | Test Architect & Quality Advisor | bmad   | Test strategies, test automation, quality gates, acceptance testing                            |
+| 🏃   | `sm`                | Scrum Master                     | bmad   | Story decomposition, sprint facilitation, team coordination, removing blockers                 |
+| 🎨   | `ux-expert`         | UX Expert                        | bmad   | UX research, wireframes, prototyping, user flows, design systems                               |
+
+### ✅ BMAD v6-Alpha Agents (20/20)
+
+**Core Module** (`bmad-v6-core`):
+| Icon | Agent ID | Title | When to Use |
+| ---- | ------------- | ----------------------------------------------------------------- | ---------------------------------------------- |
+| 🧙 | `bmad-master` | BMad Master Executor, Knowledge Custodian, and Workflow Orchestrator | Workflow coordination, task execution, orchestration |
+
+**BMM Module** (`bmad-v6-bmm`) - BMad Method for Software Development:
+| Icon | Agent ID | Title | When to Use |
+| ---- | ----------------- | -------------------- | ------------------------------------------------------- |
+| 📊 | `analyst` | Business Analyst | Market research, project briefs, requirement gathering |
+| 🏗️ | `architect` | Architect | System architecture, technical design, API specs |
+| 💻 | `dev-impl` | Developer Agent | Feature implementation, coding, technical work |
+| 🏛️ | `game-architect` | Game Architect | Game system architecture, technical game design |
+| 🎲 | `game-designer` | Game Designer | Game concept, mechanics, GDD creation |
+| 🕹️ | `game-dev` | Game Developer | Game feature implementation, game-specific coding |
+| 📋 | `pm` | Product Manager | PRDs, product strategy, feature planning |
+| 🏃 | `sm` | Scrum Master | Story creation, sprint management, workflow guidance |
+| 🧪 | `tea` | Master Test Architect| Test strategies, quality assurance, test automation |
+| 🎨 | `ux-expert` | UX Expert | UX research, wireframes, user flows, design systems |
+
+**BMB Module** (`bmad-v6-bmb`) - BMad Builder for Creating Custom Agents:
+| Icon | Agent ID | Title | When to Use |
+| ---- | --------------- | ------------ | -------------------------------------------------------- |
+| 🧙 | `bmad-builder` | BMad Builder | Creating custom agents, workflows, and modules |
+
+**CIS Module** (`bmad-v6-cis`) - Creative Intelligence Suite:
+| Icon | Agent ID | Title | When to Use |
+| ---- | -------------------------- | -------------------------------- | ---------------------------------------------- |
+| 🧠 | `brainstorming-coach` | Elite Brainstorming Specialist | Brainstorming sessions, idea generation |
+| 🔬 | `creative-problem-solver` | Master Problem Solver | Creative problem-solving, innovative solutions |
+| 🎨 | `design-thinking-coach` | Design Thinking Maestro | Design thinking workshops, user-centered design|
+| ⚡ | `innovation-strategist` | Disruptive Innovation Oracle | Innovation strategy, breakthrough thinking |
+| 📖 | `storyteller` | Master Storyteller | Narrative creation, storytelling, communication|
+
+**BMD Module** (`bmad-v6-bmd`) - BMad Development (Internal BMAD Tools):
+| Icon | Agent ID | Title | When to Use |
+| ---- | ---------------- | ------------------------------- | ---------------------------------------------- |
+| 🔧 | `cli-chief` | Chief CLI Tooling Officer | CLI tools, installer systems, build tooling |
+| 📚 | `doc-keeper` | Chief Documentation Keeper | Documentation maintenance, technical writing |
+| 🚀 | `release-chief` | Chief Release Officer | Release management, version control, deployment|
 
 ---
 
@@ -43,9 +102,13 @@ BMAD-METHOD provides:
 
 ### Conversion Process
 
-BMAD agents are stored in Markdown files with embedded YAML. We convert them to MADACE's database format:
+BMAD agents come in two formats depending on version. We convert both to MADACE's unified database format:
 
-**BMAD Format** (Markdown + YAML):
+#### BMAD v4 Format (Markdown + YAML)
+
+BMAD v4 agents are stored in Markdown files with embedded YAML blocks:
+
+**BMAD v4 Format** (Markdown + YAML):
 
 ````markdown
 # agent-name
@@ -75,9 +138,49 @@ dependencies:
 ```
 ````
 
-````
+#### BMAD v6-Alpha Format (Pure YAML)
+
+BMAD v6-alpha agents use a pure YAML format with new advanced features:
+
+**BMAD v6-Alpha Format** (Pure YAML):
+
+```yaml
+agent:
+  metadata:
+    id: bmad/bmm/agents/pm.md
+    name: John
+    title: Product Manager
+    icon: 📋
+    module: bmm
+
+  persona:
+    role: Investigative Product Strategist + Market-Savvy PM
+    identity: Product management veteran with 8+ years experience...
+    communication_style: Direct and analytical with stakeholders...
+    principles:
+      - I operate with an investigative mindset...
+      - My decision-making blends data-driven insights...
+
+  critical_actions:
+    - Load COMPLETE file {project-root}/bmad/bmm/sidecar/pm-instructions.md
+    - Load COMPLETE file {project-root}/bmad/bmm/sidecar/pm-memories.md
+
+  menu:
+    - trigger: prd
+      workflow: '{project-root}/bmad/bmm/workflows/2-plan-workflows/prd/workflow.yaml'
+      description: Create Product Requirements Document (PRD)
+
+    - trigger: validate
+      exec: '{project-root}/bmad/core/tasks/validate-workflow.xml'
+      description: Validate any document against its workflow checklist
+```
+
+#### Unified MADACE Format (Prisma Database)
+
+Both v4 and v6-alpha agents are converted to a unified database format:
 
 **MADACE Format** (Prisma Database):
+
 ```typescript
 {
   name: "pm",
@@ -101,16 +204,30 @@ dependencies:
     { name: "bmad-metadata", content: "{\"dependencies\": {...}}" }
   ]
 }
-````
+```
 
 ### Database Storage
 
-All BMAD agents are stored in the `Agent` table with:
+All BMAD agents are stored in the `Agent` table with module-based filtering:
+
+**BMAD v4 Agents**:
 
 - `module = "bmad"` for easy filtering
+- All 10 agents from main branch
+
+**BMAD v6-Alpha Agents**:
+
+- `module = "bmad-v6-core"` (1 agent)
+- `module = "bmad-v6-bmm"` (10 agents)
+- `module = "bmad-v6-bmb"` (1 agent)
+- `module = "bmad-v6-cis"` (5 agents)
+- `module = "bmad-v6-bmd"` (3 agents)
+
+**Common Fields**:
+
 - `persona` as JSON containing role, identity, style, principles
-- `menu` as JSON array of command options
-- `prompts` as JSON array including BMAD-specific metadata
+- `menu` as JSON array of command/trigger options
+- `prompts` as JSON array including version-specific metadata
 
 ---
 
@@ -169,36 +286,61 @@ curl http://localhost:3000/api/v3/agents/search?q=product
 
 ## Re-Importing or Updating Agents
 
-To re-import BMAD agents (e.g., after BMAD-METHOD updates):
+### BMAD v4 (Main Branch)
+
+To re-import BMAD v4 agents:
 
 ```bash
-# Clone or update BMAD-METHOD
+# Clone or update BMAD-METHOD v4
 cd /tmp
 git clone https://github.com/bmad-code-org/BMAD-METHOD.git
 
-# Run import script
+# Run v4 import script
 cd /Users/nimda/MADACE-Method-v2.0
 npm run import-bmad /tmp/BMAD-METHOD
 ```
 
-The importer will:
+### BMAD v6-Alpha
+
+To import or update BMAD v6-alpha agents:
+
+```bash
+# Clone v6-alpha branch
+cd /tmp
+git clone --branch v6-alpha https://github.com/bmad-code-org/BMAD-METHOD.git BMAD-METHOD-v6
+
+# Or update existing clone
+cd /tmp/BMAD-METHOD-v6
+git pull origin v6-alpha
+
+# Run v6-alpha import script
+cd /Users/nimda/MADACE-Method-v2.0
+npm run import-bmad-v6 /tmp/BMAD-METHOD-v6
+```
+
+### Import Behavior
+
+Both importers will:
 
 - ✅ Update existing agents with new data
 - ✅ Add any new agents
 - ✅ Preserve agent IDs and database relationships
+- ✅ Handle version-specific metadata correctly
 
 ---
 
 ## Implementation Details
 
-### Import Script
+### Import Scripts
 
-Location: `scripts/import-bmad-agents.ts`
+#### BMAD v4 Importer
+
+**Location**: `scripts/import-bmad-agents.ts`
 
 **Features:**
 
 - Extracts YAML from Markdown files
-- Converts BMAD structure to MADACE format
+- Converts BMAD v4 structure to MADACE format
 - Handles both array and object command formats
 - Stores BMAD-specific metadata in prompts
 - Updates existing agents or creates new ones
@@ -207,6 +349,25 @@ Location: `scripts/import-bmad-agents.ts`
 
 ```bash
 npm run import-bmad [path-to-BMAD-METHOD]
+```
+
+#### BMAD v6-Alpha Importer
+
+**Location**: `scripts/import-bmad-v6-agents.ts`
+
+**Features:**
+
+- Parses pure YAML format (no Markdown extraction)
+- Handles v6-alpha structure: metadata, critical_actions, menu triggers
+- Converts workflow/exec paths to MADACE menu format
+- Stores v6-specific metadata (critical_actions, module, type)
+- Module-aware naming: `bmad-v6-{module}`
+- Organizes agents by module (core, bmm, bmb, cis, bmd)
+
+**Running:**
+
+```bash
+npm run import-bmad-v6 [path-to-BMAD-METHOD-v6]
 ```
 
 ### Database Schema
@@ -303,6 +464,14 @@ Integration code is part of MADACE-Method v2.0 and follows the MIT License.
 ---
 
 **Last Updated**: 2025-10-23
-**Import Status**: ✅ 10/10 agents successfully imported
+**Import Status**:
+
+- ✅ BMAD v4: 10/10 agents successfully imported
+- ✅ BMAD v6-Alpha: 20/20 agents successfully imported
+- ✅ Total: 30 BMAD agents in database
+
 **MADACE Version**: v2.0.0-alpha
-**BMAD Version**: v4.x (main branch)
+**BMAD Versions**:
+
+- v4 (main branch) - 10 agents
+- v6-alpha (alpha branch) - 20 agents across 5 modules
