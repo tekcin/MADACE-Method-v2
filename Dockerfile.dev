@@ -128,4 +128,4 @@ HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \
     CMD curl -f http://localhost:3000/api/health || exit 1
 
 # Default command: Start both code-server and Next.js dev server
-CMD ["sh", "-c", "code-server /workspace & npm run dev"]
+CMD ["sh", "-c", "code-server --bind-addr 0.0.0.0:8080 --auth password /workspace & npm run dev"]
