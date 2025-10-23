@@ -13,11 +13,16 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check-all": "npm run type-check && npm run lint && npm run format:check",
-    "test": "jest"
+    "test": "jest",
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:reset": "prisma migrate reset"
   },
   "dependencies": {
     "@heroicons/react": "2.2.0",
-    "@prisma/client": "6.17.1",
+    "@prisma/client": "^6.17.1",
     "commander": "14.0.1",
     "handlebars": "4.7.8",
     "js-yaml": "4.1.0",
@@ -45,7 +50,7 @@
     "path-browserify": "1.0.1",
     "prettier": "3.6.2",
     "prettier-plugin-tailwindcss": "0.7.1",
-    "prisma": "6.17.1",
+    "prisma": "^6.17.1",
     "tailwindcss": "4.1.15",
     "ts-jest": "29.4.5",
     "typescript": "5.9.3"
