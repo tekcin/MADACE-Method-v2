@@ -67,8 +67,7 @@ RUN npm install -g \
     ts-node \
     @types/node \
     eslint \
-    prettier \
-    @anthropic-ai/claude-cli
+    prettier
 
 # Copy package.json and install dependencies
 COPY package.json package-lock.json* ./
