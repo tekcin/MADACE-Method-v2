@@ -50,16 +50,16 @@ WORKDIR /workspace
 # Install VSCode Server (code-server)
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
-# Install Cursor AppImage
-RUN mkdir -p /opt/cursor && \
-    cd /opt/cursor && \
-    wget -O cursor.AppImage https://downloader.cursor.sh/linux/appImage/x64 && \
-    chmod +x cursor.AppImage && \
-    # Extract AppImage for containerized use
-    ./cursor.AppImage --appimage-extract && \
-    mv squashfs-root cursor && \
-    rm cursor.AppImage && \
-    ln -s /opt/cursor/cursor/cursor /usr/local/bin/cursor
+# Install Cursor AppImage (commented out - optional, download was failing)
+# RUN mkdir -p /opt/cursor && \
+#     cd /opt/cursor && \
+#     wget -O cursor.AppImage https://downloader.cursor.sh/linux/appImage/x64 && \
+#     chmod +x cursor.AppImage && \
+#     # Extract AppImage for containerized use
+#     ./cursor.AppImage --appimage-extract && \
+#     mv squashfs-root cursor && \
+#     rm cursor.AppImage && \
+#     ln -s /opt/cursor/cursor/cursor /usr/local/bin/cursor
 
 # Install global npm packages for MADACE development
 RUN npm install -g \

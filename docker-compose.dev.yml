@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   madace-dev:
     # Build from development Dockerfile
@@ -13,7 +11,7 @@ services:
     ports:
       - '3000:3000' # Next.js dev server
       - '8080:8080' # VSCode Server (code-server)
-      - '8081:8081' # Cursor server (if needed)
+      # - '8081:8081' # Cursor server (disabled)
 
     # Named volume on host system
     volumes:
@@ -25,8 +23,8 @@ services:
       - madace-node-modules:/workspace/node_modules
       # VSCode extensions persist
       - madace-vscode-extensions:/home/dev/.local/share/code-server
-      # Cursor config persist
-      - madace-cursor-config:/home/dev/.config/Cursor
+      # Cursor config persist (disabled)
+      # - madace-cursor-config:/home/dev/.config/Cursor
 
     # Environment variables
     environment:
@@ -85,5 +83,5 @@ volumes:
     driver: local
   madace-vscode-extensions:
     driver: local
-  madace-cursor-config:
-    driver: local
+  # madace-cursor-config:
+  #   driver: local
