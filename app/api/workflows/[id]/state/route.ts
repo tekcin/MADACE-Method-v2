@@ -40,9 +40,9 @@ async function findWorkflowFile(name: string): Promise<string | null> {
 }
 
 // GET /api/workflows/[name]/state - Get current state
-export async function GET(request: NextRequest, { params }: { params: Promise<{ name: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { name } = await params;
+    const { id } = await params;
 
     // Check if state file exists
     const statePath = path.join(process.cwd(), 'madace-data', 'workflow-states');
@@ -85,13 +85,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 // DELETE /api/workflows/[name]/state - Reset workflow state
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ name: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { name } = await params;
+    const { id } = await params;
 
     // Load workflow to create executor
-    const workflowFile = await findWorkflowFile(name);
+    const workflowFile = await findWorkflowFile(id);
 
     if (!workflowFile) {
       return NextResponse.json(

@@ -41,9 +41,9 @@ async function findWorkflowFile(name: string): Promise<string | null> {
 }
 
 // GET /api/workflows/[name] - Get workflow details
-export async function GET(request: NextRequest, { params }: { params: Promise<{ name: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { name } = await params;
+    const { id } = await params;
 
     // Check for mock workflows
     const mockWorkflows: Record<string, Workflow> = {
@@ -164,20 +164,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       },
     };
 
-    // Try to load real workflow file
-    const workflowFile = await findWorkflowFile(name);
+    const workflowFile = await findWorkflowFile(id);
 
     let workflow: Workflow;
 
     if (workflowFile) {
       workflow = await loadWorkflow(workflowFile);
-    } else if (mockWorkflows[name]) {
-      workflow = mockWorkflows[name];
+    } else if (mockWorkflows[id]) {
+      workflow = mockWorkflows[id];
     } else {
       return NextResponse.json(
         {
           error: 'Workflow not found',
-          message: `No workflow found with name: ${name}`,
+          message: `No workflow found with name: ${id}`,
           available: Object.keys(mockWorkflows),
         },
         { status: 404 }
@@ -209,17 +208,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 // POST /api/workflows/[name] - Execute next step
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ name: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { name } = await params;
+    const { id } = await params;
     const body = await request.json();
     const { action } = body;
 
     // Load workflow
-    const workflowFile = await findWorkflowFile(name);
+    const workflowFile = await findWorkflowFile(id);
     let workflow: Workflow;
 
     if (workflowFile) {

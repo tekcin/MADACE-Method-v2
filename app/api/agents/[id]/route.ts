@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { loadAgent } from '@/lib/agents';
 import path from 'path';
 
-export async function GET(request: Request, { params }: { params: Promise<{ name: string }> }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { name } = await params;
-    const agentPath = path.join(process.cwd(), 'madace', 'mam', 'agents', `${name}.agent.yaml`);
+    const { id } = await params;
+    const agentPath = path.join(process.cwd(), 'madace', 'mam', 'agents', `${id}.agent.yaml`);
 
     const agent = await loadAgent(agentPath);
     return NextResponse.json({ agent });

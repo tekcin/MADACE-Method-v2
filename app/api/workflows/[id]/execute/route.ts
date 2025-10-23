@@ -39,17 +39,14 @@ async function findWorkflowFile(name: string): Promise<string | null> {
 }
 
 // POST /api/workflows/[name]/execute - Execute next step
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ name: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { name } = await params;
+    const { id } = await params;
     const body = await request.json().catch(() => ({}));
     const { variables, initialize = true } = body;
 
     // Load workflow
-    const workflowFile = await findWorkflowFile(name);
+    const workflowFile = await findWorkflowFile(id);
 
     if (!workflowFile) {
       return NextResponse.json(
