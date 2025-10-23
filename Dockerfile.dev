@@ -127,5 +127,11 @@ RUN code-server --install-extension dbaeumer.vscode-eslint && \
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \
     CMD curl -f http://localhost:3000/api/health || exit 1
 
+# Create startup script
+RUN echo '#!/bin/sh' > /home/dev/start.sh && \
+    echo 'code-server --bind-addr 0.0.0.0:8080 --auth password /workspace &' >> /home/dev/start.sh && \
+    echo 'npm run dev' >> /home/dev/start.sh && \
+    chmod +x /home/dev/start.sh
+
 # Default command: Start both code-server and Next.js dev server
-CMD ["sh", "-c", "code-server --bind-addr 0.0.0.0:8080 --auth password /workspace & npm run dev"]
+CMD ["/home/dev/start.sh"]
