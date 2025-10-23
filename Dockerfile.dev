@@ -50,16 +50,16 @@ WORKDIR /workspace
 # Install VSCode Server (code-server)
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
-# Install Cursor AppImage
-RUN mkdir -p /opt/cursor && \
-    cd /opt/cursor && \
-    wget -O cursor.AppImage https://downloader.cursor.sh/linux/appImage/x64 && \
-    chmod +x cursor.AppImage && \
-    # Extract AppImage for containerized use
-    ./cursor.AppImage --appimage-extract && \
-    mv squashfs-root cursor && \
-    rm cursor.AppImage && \
-    ln -s /opt/cursor/cursor/cursor /usr/local/bin/cursor
+# Install Cursor AppImage (commented out - optional, download was failing)
+# RUN mkdir -p /opt/cursor && \
+#     cd /opt/cursor && \
+#     wget -O cursor.AppImage https://downloader.cursor.sh/linux/appImage/x64 && \
+#     chmod +x cursor.AppImage && \
+#     # Extract AppImage for containerized use
+#     ./cursor.AppImage --appimage-extract && \
+#     mv squashfs-root cursor && \
+#     rm cursor.AppImage && \
+#     ln -s /opt/cursor/cursor/cursor /usr/local/bin/cursor
 
 # Install global npm packages for MADACE development
 RUN npm install -g \
@@ -67,8 +67,7 @@ RUN npm install -g \
     ts-node \
     @types/node \
     eslint \
-    prettier \
-    @anthropic-ai/claude-cli
+    prettier
 
 # Copy package.json and install dependencies
 COPY package.json package-lock.json* ./
@@ -95,9 +94,12 @@ RUN mkdir -p /workspace/madace-data && \
 USER dev
 
 # Expose ports
-EXPOSE 3000        # Next.js dev server
-EXPOSE 8080        # code-server (VSCode)
-EXPOSE 8081        # Cursor server (if applicable)
+# 3000: Next.js dev server
+# 8080: code-server (VSCode)
+# 8081: Cursor server (if applicable)
+EXPOSE 3000
+EXPOSE 8080
+EXPOSE 8081
 
 # Set environment variables
 ENV NODE_ENV=development \
@@ -125,5 +127,11 @@ RUN code-server --install-extension dbaeumer.vscode-eslint && \
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=40s \
     CMD curl -f http://localhost:3000/api/health || exit 1
 
+# Create startup script
+RUN echo '#!/bin/sh' > /home/dev/start.sh && \
+    echo 'code-server --bind-addr 0.0.0.0:8080 --auth password /workspace &' >> /home/dev/start.sh && \
+    echo 'npm run dev' >> /home/dev/start.sh && \
+    chmod +x /home/dev/start.sh
+
 # Default command: Start both code-server and Next.js dev server
-CMD ["sh", "-c", "code-server /workspace & npm run dev"]
+CMD ["/home/dev/start.sh"]
