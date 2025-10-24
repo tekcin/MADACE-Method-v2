@@ -1,47 +1,59 @@
-# Product Requirements Document (PRD) - MADACE v3.0
+# MADACE v3.0 - Product Requirements Document (PRD)
 
-**Project:** MADACE-Method v3.0 - Next-Generation AI Collaboration Platform
-**Version:** 3.0.0-planning
-**Status:** 📋 Planning Phase
-**Scale Level:** 4 (Enterprise)
-**Last Updated:** 2025-10-24
-**Document Owner:** MADACE Core Team
+**Project:** MADACE-Method v3.0 - Workflow Intelligence & Agent Enhancements
+**Version:** 3.0.0-beta
+**Document Status:** Planning (PM Agent Review)
+**Scale Level:** Level 3-4 (Complex to Enterprise-Scale)
+**Created:** 2025-10-24
+**Target Release:** Q1 2027 (Beta), Q2 2027 (GA)
+**Timeline:** 12 months (Q2 2026 - Q1 2027)
 
-> **🎯 MADACE-Method Applied**: This PRD follows MAM (MADACE Agile Method) guidelines for Level 4 projects
+> **📋 MADACE-Method Applied:** This PRD follows MAM (MADACE Agile Method) guidelines for Level 3-4 projects
+> 
+> **🎯 Key Decision:** v3.0 focuses on BMAD-inspired workflow intelligence features. Database-backed agents, NLU, Web IDE, and real-time collaboration are **deferred to v3.1+ (2027)**.
 
 ---
 
 ## Executive Summary
 
-MADACE v3.0 represents a major evolution from the current v2.0 file-based system to a comprehensive AI collaboration platform with database-backed agents, real-time collaboration, conversational interfaces, and an integrated web IDE.
+MADACE v3.0 integrates **8 proven innovations from BMAD v6** while maintaining MADACE's unique web-first, multi-provider LLM vision. This release focuses on:
 
-### Key Transformation
+- **Intelligent Automation:** Scale-Adaptive Workflow Router, Just-In-Time Tech Specs
+- **Contextual Awareness:** Story-Context Workflow, Brownfield Analysis
+- **User Empowerment:** Agent Sidecar Customization, Enhanced Setup Wizard
+- **Developer Productivity:** Universal Workflow Status Checker, Story Lifecycle Enhancements
 
-**From (v2.0):**
+### v3.0 Scope Decision
 
-- File-based agent definitions
-- Single-user workflows
-- Menu-driven commands
-- Static configuration
-- CLI + Web UI separation
+**Included in v3.0 (Q2-Q4 2026):**
+✅ Scale-Adaptive Workflow Router (Priority 0)
+✅ Universal Workflow Status Checker (Priority 0)
+✅ Just-In-Time Tech Specs (Priority 1)
+✅ Story-Context Workflow (Priority 1)
+✅ Brownfield Analysis (Priority 1)
+✅ Agent Sidecar Customization (Priority 1)
+✅ Enhanced Setup Wizard (Priority 1)
+✅ Story Lifecycle Enhancements (Priority 2)
 
-**To (v3.0):**
+**Deferred to v3.1+ (2027):**
+❌ Dynamic Agent Management (Database-backed agents) → v3.1 Q2 2027
+❌ Conversational Interaction (NLU) → v3.1 Q2 2027
+❌ Persistent Agent Memory (Database) → v3.1 Q2 2027
+❌ Interactive CLI Mode (REPL) → v3.1 Q3 2027
+❌ Terminal Dashboard (TUI) → v3.1 Q3 2027
+❌ CLI Feature Parity → v3.1 Q3 2027
+❌ Unified Configuration Database → v3.2 Q4 2027
+❌ Integrated Web IDE → v3.2 Q4 2027
+❌ Real-time Collaboration → v3.2 Q4 2027
 
-- Database-backed dynamic agents
-- Multi-user real-time collaboration
-- Natural language interaction
-- Persistent agent memory
-- Unified CLI + Web IDE experience
+**Rationale:** File-based agents with sidecar customization provide sufficient flexibility without the complexity of database migration. Focus on workflow intelligence delivers immediate value to users.
 
-### Vision
-
-Create a **collaborative AI development environment** where teams can:
-
-- Create and customize AI agents through natural conversation
-- Work together in real-time with shared cursors and live editing
-- Build software with AI assistance in a browser-based IDE
-- Access powerful CLI tools with interactive dashboards
-- Leverage agent memory for personalized, context-aware assistance
+### Success Criteria
+- **Adoption:** 1,000+ projects using v3.0 within 6 months of GA
+- **Retention:** 70%+ of v2.0 users upgrade to v3.0
+- **Performance:** Scale-Adaptive Router reduces planning time by 50% for simple projects
+- **Quality:** 85%+ user satisfaction rating
+- **Cost Savings:** 85% reduction in LLM API costs per story (via story-context)
 
 ---
 
@@ -49,639 +61,244 @@ Create a **collaborative AI development environment** where teams can:
 
 ### 1.1 Evolution from v2.0
 
-MADACE v2.0 successfully validated the core concepts:
+MADACE v2.0 Alpha (218 points delivered) successfully validated:
+- ✅ Next.js 15 full-stack architecture
+- ✅ Multi-provider LLM integration (Gemini, Claude, OpenAI, Local)
+- ✅ Agent-based workflows (5 MAM agents)
+- ✅ State machine with visual Kanban board
+- ✅ WebSocket sync (CLI ↔ Web UI)
+- ✅ Docker deployment (production + development)
 
-- ✅ Agent-based workflows
-- ✅ Scale-adaptive planning
-- ✅ Next.js full-stack architecture
-- ✅ Multi-provider LLM integration
-- ✅ State machine for story management
+**v3.0 Addresses v2.0 Limitations:**
+- ❌ One-size-fits-all workflows (now: scale-adaptive routing)
+- ❌ Stale upfront tech specs (now: JIT tech specs)
+- ❌ Generic agent responses (now: story-context workflow)
+- ❌ Difficult brownfield onboarding (now: automated analysis)
+- ❌ Risky agent customization (now: update-safe sidecars)
+- ❌ Manual status checking (now: universal status checker)
+- ❌ Limited setup wizard (now: comprehensive preferences)
+- ❌ Basic story lifecycle (now: 6-state with blocking)
 
-**v3.0 Builds On This Foundation:**
+### 1.2 Competitive Positioning
 
-- Addresses v2.0 limitations (static agents, single-user)
-- Introduces enterprise features (collaboration, memory, IDE)
-- Prepares for commercial deployment
-- Enables community-driven extensibility
+| Feature | MADACE v3.0 | BMAD v6 | GitHub Copilot | Cursor IDE |
+|---------|-------------|---------|----------------|------------|
+| **Scale-Adaptive Planning** | ✅ Levels 0-4 | ✅ Levels 0-4 | ❌ | ❌ |
+| **Multi-Provider LLM** | ✅ 4 providers | ❌ Fixed | ✅ 2 | ✅ Multiple |
+| **Web-First Interface** | ✅ Next.js UI | ❌ CLI-only | ❌ IDE-only | ❌ IDE-only |
+| **Brownfield Analysis** | ✅ Automated | ✅ Automated | ❌ Manual | ❌ Manual |
+| **Agent Customization** | ✅ Sidecars | ✅ Sidecars | ❌ | ❌ |
+| **Visual Kanban Board** | ✅ Web UI | ❌ CLI only | ❌ | ❌ |
+| **Story-Context Generation** | ✅ Automated | ✅ Automated | ❌ Manual | ❌ Manual |
+| **JIT Tech Specs** | ✅ On-demand | ✅ On-demand | ❌ | ❌ |
 
-### 1.2 Market Positioning
-
-**Competitive Landscape:**
-
-- **Cursor/GitHub Copilot**: Code completion, no workflow structure
-- **Claude Code**: CLI-based, no collaboration
-- **Replit/CodeSandbox**: IDE-focused, no AI agents
-- **Linear/Jira**: Project management, no AI coding
-
-**MADACE v3.0 Differentiation:**
-
-- ✨ Structured AI workflows (unique to MADACE)
-- 👥 Real-time team collaboration
-- 🤖 Customizable AI agents with memory
-- 🎯 End-to-end development lifecycle
-- 🔧 Extensible module system
-
-### 1.3 Target Users
-
-**Primary Personas:**
-
-1. **Remote Development Teams** (2-10 developers)
-   - Need: Collaborative AI-assisted development
-   - Pain: Context loss, async communication overhead
-   - Value: Real-time shared workspace with AI agents
-
-2. **AI-First Startups**
-   - Need: Rapid iteration with AI tooling
-   - Pain: Fragmented tools, no workflow structure
-   - Value: Unified platform from planning to deployment
-
-3. **Enterprise Innovation Labs**
-   - Need: Compliant AI development environment
-   - Pain: Shadow IT, ungoverned AI usage
-   - Value: Auditable, secure AI collaboration
+**MADACE v3.0 = Best of Both Worlds:**
+- MADACE: Web-first, visual Kanban, multi-provider LLM, Docker-native
+- BMAD: Workflow intelligence, customization system, universal status checker
 
 ---
 
-## 2. Product Features (Level 4 Breakdown)
+## 2. Features - Priority 0 (Q2 2026)
 
-### Epic 1: Dynamic Agent Management 🤖
+### Feature 2.1: Scale-Adaptive Workflow Router
 
-**Problem:** v2.0 agents are static YAML files, difficult to customize
+**Epic ID:** EPIC-V3-001  
+**Priority:** P0 (Critical)  
+**Effort:** 34 points (3 weeks)  
+**Dependencies:** None
 
-**Solution:** Database-backed agents with CRUD operations
+**Problem:** One-size-fits-all workflows don't adapt to project complexity. Simple scripts get over-planned, complex systems get under-planned.
 
-**Features:**
-
-- Create agents via web UI or CLI
-- Edit agent personas, prompts, and menu items
-- Delete and archive agents
-- Agent versioning and rollback
-- Import/export agent templates
-- Agent marketplace (future)
+**Solution:** Dynamic workflow routing that assesses project complexity (Levels 0-4) and automatically selects appropriate planning workflows.
 
 **User Stories:**
-
-1. As a developer, I want to create a custom agent from a template in < 2 minutes
-2. As an AI engineer, I want to fine-tune agent prompts and test iterations quickly
-3. As a project manager, I want to see all team agents and their usage stats
+1. As a developer starting a simple script, I want minimal documentation so I can start coding in <5 minutes
+2. As a PM planning an enterprise system, I want comprehensive documentation so nothing is missed
+3. As a team lead, I want the system to recommend the right planning level based on project characteristics
 
 **Acceptance Criteria:**
+- Complexity assessment with 8 criteria (team size, codebase size, integrations, security, duration, user base)
+- Level determination algorithm (0-4) with clear thresholds and scoring
+- Workflow routing YAML with conditional paths per level
+- User override option to manually select level
+- Assessment report document generation (docs/scale-assessment.md)
+- CLI command: `madace assess-scale` with --format options (table, json, markdown)
+- Web UI integration in enhanced setup wizard (auto-assessment on project creation)
 
-- Agent CRUD operations complete in < 500ms
-- Changes reflected in all user sessions within 2 seconds
-- Agent definitions validate against schema before save
-- Full audit trail of agent modifications
+**Technical Specifications:**
+- Assessment interface: `ComplexityAssessment` (TypeScript)
+- Workflow file: `workflows/route-workflow.yaml`
+- Routing step: `action: route` with level-based paths
+- Output document: `docs/scale-assessment.md`
+- API route: `POST /api/workflows/assess-scale`
+
+**Success Metrics:**
+- Level 0: <5 min from start to first story
+- Level 4: Complete docs in <2 hours
+- User satisfaction: 90%+ feel workflows match needs
+- Override rate: <10% (routing is accurate)
 
 ---
 
-### Epic 2: Conversational Interaction 💬
+### Feature 2.2: Universal Workflow Status Checker
 
-**Problem:** Menu-driven commands are restrictive
+**Epic ID:** EPIC-V3-002  
+**Priority:** P0 (Critical)  
+**Effort:** 21 points (2 weeks)  
+**Dependencies:** None
 
-**Solution:** Natural language understanding for flexible agent interaction
+**Problem:** No unified way to check workflow status across different contexts (epic, story, workflow, state machine). Users manually inspect multiple files.
 
-**Features:**
-
-- NLU integration (Dialogflow/Rasa)
-- Intent recognition for common workflows
-- Entity extraction (story IDs, file paths, etc.)
-- Multi-turn conversations with context
-- Conversation history and search
-- Voice input support (future)
+**Solution:** Single command interface to check status of any workflow entity with intelligent context detection.
 
 **User Stories:**
-
-1. As a developer, I want to ask "Create a new story for user authentication" and have the agent understand my intent
-2. As a project manager, I want to query "What's the status of Sprint 3?" in natural language
-3. As a team lead, I want agents to remember context from previous conversations
-
-**Acceptance Criteria:**
-
-- NLU intent accuracy > 85% for common commands
-- Response latency < 2 seconds (NLU + LLM)
-- Context maintained across conversation turns
-- Fallback to guided prompts when intent unclear
-
----
-
-### Epic 3: Persistent Agent Memory 🧠
-
-**Problem:** Agents are stateless, no learning or personalization
-
-**Solution:** Database-backed memory with user, project, and conversation context
-
-**Features:**
-
-- User preference storage (coding style, language, etc.)
-- Project context memory (architecture decisions, patterns)
-- Conversation history with semantic search
-- Memory retrieval based on context similarity
-- Memory pruning and summarization
-- Privacy controls (personal vs shared memory)
-
-**User Stories:**
-
-1. As a developer, I want agents to remember my preferred code style
-2. As a team, we want shared project knowledge accessible to all agents
-3. As a privacy-conscious user, I want to control what agents remember
+1. As a developer, I want to check story status with one command instead of opening status files
+2. As a PM, I want to see epic completion percentage without manual calculation
+3. As a team, we want real-time workflow status in our terminal and Web UI
 
 **Acceptance Criteria:**
+- Context-aware entity detection (epic → story → workflow → state machine)
+- Status provider interface: `IStatusProvider` with implementations for each entity type
+- Multiple output formats: `--format=table` (default), `--format=json`, `--format=markdown`
+- Watch mode with 2-second polling: `madace status --watch`
+- WebSocket integration for live updates (no polling needed)
+- CLI command: `madace status [entity]` with optional entity ID
+- API endpoint: `GET /api/status/:type/:id`
+- Web UI status dashboard page (`/status`)
 
-- Memory retrieval < 100ms for typical queries
-- Semantic search accuracy > 80%
-- Memory size limits enforced per user/project
-- GDPR-compliant data retention and deletion
+**Technical Specifications:**
+- Provider interface: `IStatusProvider` with `getStatus(entityId?: string)` method
+- Providers: `EpicStatusProvider`, `StoryStatusProvider`, `WorkflowStatusProvider`, `StateMachineStatusProvider`
+- CLI integration: `lib/cli/commands/status.ts`
+- API route: `app/api/status/[type]/[id]/route.ts`
+- WebSocket message type: `{ type: 'status_update', entity, data }`
 
----
-
-### Epic 4: Interactive CLI with Dashboard 📊
-
-**Problem:** v2.0 CLI is non-interactive, no system visibility
-
-**Solution:** REPL + TUI dashboard with real-time monitoring
-
-**Features:**
-
-- Interactive command mode with inquirer.js
-- REPL for exploratory interactions
-- blessed/neo-blessed TUI dashboard
-- Real-time agent, workflow, and state machine status
-- Split-screen layout (dashboard + command)
-- Keyboard shortcuts and navigation
-- Terminal themes and customization
-
-**User Stories:**
-
-1. As a CLI power user, I want an interactive mode that guides me through commands
-2. As a developer, I want a glanceable dashboard showing system state
-3. As a DevOps engineer, I want to monitor MADACE from the terminal
-
-**Acceptance Criteria:**
-
-- Dashboard updates in real-time (< 1 second latency)
-- REPL supports command history and autocomplete
-- TUI works across all supported terminals
-- Keyboard navigation 100% accessible
+**Success Metrics:**
+- Command usage: 50+ invocations per project
+- Coverage: 100% of workflow entities supported
+- Response time: <100ms (95th percentile)
+- Adoption: 80%+ use status checker daily
 
 ---
 
-### Epic 5: Integrated Web IDE 💻
+## 3. Features - Priority 1 (Q2-Q3 2026)
 
-**Problem:** v2.0 Web UI is configuration-only, no code editing
+### Feature 3.1: Just-In-Time (JIT) Technical Specifications
 
-**Solution:** Monaco Editor integration with file explorer and terminal
+**Epic ID:** EPIC-V3-003  
+**Effort:** 21 points (2 weeks)
 
-**Features:**
+Generate tech specs on-demand when epic implementation begins. Includes web research for latest APIs/standards.
 
-- Monaco Editor (VS Code engine) for code editing
-- File explorer with tree view
-- Integrated terminal for command execution
-- Syntax highlighting for 100+ languages
-- IntelliSense and code completion
-- Git integration (future)
-- Extension marketplace (future)
-
-**User Stories:**
-
-1. As a developer, I want to write code directly in the browser without switching tools
-2. As a remote worker, I want a full IDE accessible from any device
-3. As a code reviewer, I want to view and annotate code inline
-
-**Acceptance Criteria:**
-
-- Editor loads in < 3 seconds
-- File operations (open, save, rename) < 500ms
-- Terminal connects in < 1 second
-- IntelliSense latency < 200ms
+**Success Metrics:** 50% time savings, 90%+ usage rate, 100% freshness
 
 ---
 
-### Epic 6: Real-Time Collaboration 👥
+### Feature 3.2: Story-Context Workflow
 
-**Problem:** v2.0 is single-user, no team features
+**Epic ID:** EPIC-V3-004  
+**Effort:** 34 points (3 weeks)
 
-**Solution:** WebSocket-based real-time collaboration with CRDTs
+Just-in-time context gathering with 5 layers (requirements, related code, dependencies, testing, architecture). 80-95% token reduction vs full codebase.
 
-**Features:**
-
-- Shared cursors with user avatars
-- Live editing with conflict resolution (CRDTs)
-- In-app chat and video (future)
-- Presence indicators (online/offline/away)
-- Activity feed (who changed what)
-- Collaborative agent sessions
-- Session recording and replay (future)
-
-**User Stories:**
-
-1. As a pair programming team, we want to edit the same file simultaneously
-2. As a distributed team, we want to see who's online and what they're working on
-3. As a mentor, I want to guide a junior developer in real-time
-
-**Acceptance Criteria:**
-
-- Cursor position updates < 100ms latency
-- CRDT merge conflicts resolve automatically 99%+ of time
-- Chat messages delivered < 500ms
-- Supports 10+ concurrent users per project
+**Success Metrics:** 85% cost reduction, 30% faster completion, 40% fewer revisions
 
 ---
 
-### Epic 7: Unified Configuration & Database 💾
+### Feature 3.3: Brownfield Analysis Workflow
 
-**Problem:** v2.0 config is fragmented (YAML, .env, localStorage)
+**Epic ID:** EPIC-V3-005  
+**Effort:** 34 points (3 weeks)
 
-**Solution:** Single database source of truth (SQLite/PostgreSQL)
+Automated codebase documentation for existing projects. <10 min analysis for 50k LOC.
 
-**Features:**
-
-- Database schema for all configuration
-- Migration from v2.0 file-based system
-- Configuration API for UI and CLI
-- Real-time config synchronization
-- Configuration versioning and rollback
-- Export to YAML for backup
-- Database backups and restore
-
-**User Stories:**
-
-1. As a user, I want all my settings in one place
-2. As a team, we want configuration changes synced instantly
-3. As an admin, I want to rollback to a previous config version
-
-**Acceptance Criteria:**
-
-- Config reads < 50ms, writes < 100ms
-- Migration from v2.0 completes in < 5 minutes
-- Zero data loss during migration
-- Automatic backups before critical changes
+**Success Metrics:** 90% time savings vs manual docs, 85%+ accuracy
 
 ---
 
-## 3. Technical Architecture (Level 4 Requirements)
+### Feature 3.4: Agent Sidecar Customization System
 
-### 3.1 Database Schema Design
+**Epic ID:** EPIC-V3-006  
+**Effort:** 21 points (2 weeks)
 
-**Technology Choice:** PostgreSQL (primary) + SQLite (local dev)
+Update-safe agent overrides via sidecar YAML files. Deep merge strategy, Web UI editor with live preview.
 
-**Core Tables:**
-
-```sql
--- Agents (dynamic management)
-CREATE TABLE agents (
-  id UUID PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  title VARCHAR(500) NOT NULL,
-  icon VARCHAR(10),
-  module VARCHAR(100),
-  version VARCHAR(50),
-  persona JSONB NOT NULL,
-  menu JSONB NOT NULL,
-  prompts JSONB,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
-  created_by UUID REFERENCES users(id),
-  is_deleted BOOLEAN DEFAULT FALSE
-);
-
--- Agent Memory (persistent context)
-CREATE TABLE agent_memory (
-  id UUID PRIMARY KEY,
-  agent_id UUID REFERENCES agents(id),
-  user_id UUID REFERENCES users(id),
-  project_id UUID REFERENCES projects(id),
-  memory_type VARCHAR(50), -- user_pref, project_context, conversation
-  content JSONB NOT NULL,
-  embedding VECTOR(1536), -- for semantic search
-  created_at TIMESTAMP NOT NULL
-);
-
--- Conversations (NLU history)
-CREATE TABLE conversations (
-  id UUID PRIMARY KEY,
-  user_id UUID REFERENCES users(id),
-  agent_id UUID REFERENCES agents(id),
-  messages JSONB NOT NULL,
-  context JSONB,
-  started_at TIMESTAMP NOT NULL,
-  ended_at TIMESTAMP
-);
-
--- Configuration (unified)
-CREATE TABLE configuration (
-  id UUID PRIMARY KEY,
-  project_id UUID REFERENCES projects(id),
-  key VARCHAR(255) NOT NULL,
-  value JSONB NOT NULL,
-  version INTEGER NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  UNIQUE(project_id, key)
-);
-
--- Users (multi-user support)
-CREATE TABLE users (
-  id UUID PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  avatar_url VARCHAR(500),
-  preferences JSONB,
-  created_at TIMESTAMP NOT NULL,
-  last_seen_at TIMESTAMP
-);
-
--- Projects (workspace isolation)
-CREATE TABLE projects (
-  id UUID PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  description TEXT,
-  owner_id UUID REFERENCES users(id),
-  settings JSONB,
-  created_at TIMESTAMP NOT NULL
-);
-
--- Real-time Sessions (collaboration)
-CREATE TABLE sessions (
-  id UUID PRIMARY KEY,
-  project_id UUID REFERENCES projects(id),
-  user_id UUID REFERENCES users(id),
-  cursor_position JSONB,
-  active_file VARCHAR(500),
-  connected_at TIMESTAMP NOT NULL,
-  disconnected_at TIMESTAMP
-);
-```
-
-### 3.2 System Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     MADACE v3.0 Architecture                 │
-└─────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────┐  ┌──────────────────────────┐
-│      Web Browser         │  │      CLI Terminal        │
-│   (React + Monaco IDE)   │  │   (REPL + TUI Dashboard) │
-└──────────┬───────────────┘  └──────────┬───────────────┘
-           │                              │
-           └──────────────┬───────────────┘
-                          │
-                 ┌────────▼─────────┐
-                 │   Next.js API    │ ◄──── WebSocket Server
-                 │   (REST + WS)    │       (Real-time Collab)
-                 └────────┬─────────┘
-                          │
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-  ┌─────▼──────┐  ┌──────▼──────┐  ┌──────▼──────┐
-  │ Agent Svc  │  │ Workflow Svc │  │  NLU Svc    │
-  │ (Dynamic)  │  │ (Execution)  │  │ (Dialogflow)│
-  └─────┬──────┘  └──────┬───────┘  └──────┬──────┘
-        │                │                 │
-        └────────────────┼─────────────────┘
-                         │
-                  ┌──────▼──────┐
-                  │  PostgreSQL  │
-                  │  (Primary DB)│
-                  └──────┬───────┘
-                         │
-        ┌────────────────┼────────────────┐
-        │                │                │
-  ┌─────▼────┐    ┌─────▼────┐    ┌─────▼────┐
-  │ Agents   │    │  Memory  │    │  Config  │
-  │ Table    │    │  Table   │    │  Table   │
-  └──────────┘    └──────────┘    └──────────┘
-
-                         │
-                  ┌──────▼──────┐
-                  │  LLM Proxy   │
-                  │ (Multi-prov) │
-                  └──────┬───────┘
-                         │
-        ┌────────────────┼────────────────┐
-        │                │                │
-  ┌─────▼────┐    ┌─────▼────┐    ┌─────▼────┐
-  │ Gemini   │    │  Claude  │    │  OpenAI  │
-  │   API    │    │   API    │    │   API    │
-  └──────────┘    └──────────┘    └──────────┘
-```
-
-### 3.3 Technology Stack Updates
-
-**New Dependencies:**
-
-| Category     | Technology     | Purpose                    |
-| ------------ | -------------- | -------------------------- |
-| Database     | PostgreSQL 15+ | Primary data store         |
-| Database ORM | Prisma 5+      | Type-safe database client  |
-| Vector Store | pgvector       | Semantic search for memory |
-| WebSocket    | Socket.io 4+   | Real-time collaboration    |
-| CRDT         | Yjs            | Conflict-free editing      |
-| NLU          | Dialogflow ES  | Intent recognition         |
-| Code Editor  | Monaco Editor  | Browser IDE                |
-| CLI          | inquirer.js    | Interactive prompts        |
-| TUI          | blessed        | Terminal dashboard         |
-| Auth         | NextAuth.js    | Multi-user authentication  |
-
-### 3.4 Performance Requirements
-
-| Metric           | v2.0 Target | v3.0 Target | Notes              |
-| ---------------- | ----------- | ----------- | ------------------ |
-| Agent Load       | < 1s        | < 500ms     | DB caching         |
-| Config Read      | N/A         | < 50ms      | In-memory cache    |
-| DB Write         | N/A         | < 100ms     | Connection pooling |
-| WS Latency       | N/A         | < 100ms     | Cursor sync        |
-| IDE Load         | N/A         | < 3s        | Monaco init        |
-| NLU Response     | N/A         | < 2s        | Intent + LLM       |
-| Concurrent Users | 1           | 10+         | Per project        |
+**Success Metrics:** 40%+ users customize agents, 100% retention on updates
 
 ---
 
-## 4. Migration Strategy (v2.0 → v3.0)
+### Feature 3.5: Enhanced Setup Wizard
 
-### 4.1 Data Migration
+**Epic ID:** EPIC-V3-007  
+**Effort:** 21 points (2 weeks)
 
-**Phase 1: Schema Setup**
+6-step wizard capturing user preferences (name, technical level, languages, communication style). Auto-generates agent sidecars.
 
-- Create PostgreSQL database
-- Run Prisma migrations
-- Initialize pgvector extension
-
-**Phase 2: Agent Migration**
-
-- Parse all v2.0 YAML agent files
-- Convert to database records
-- Preserve agent IDs and versions
-- Validate schema compatibility
-
-**Phase 3: Configuration Migration**
-
-- Read v2.0 config.yaml
-- Transform to database records
-- Migrate .env variables
-- Preserve module enablement
-
-**Phase 4: State Migration**
-
-- Convert mam-workflow-status.md to DB
-- Populate stories table
-- Preserve state machine rules
-
-**Timeline:** 1-2 weeks for migration tooling + testing
-
-### 4.2 Backward Compatibility
-
-**Support v2.0 Export:**
-
-- Export agents to YAML format
-- Export config to config.yaml
-- Export state to Markdown
-- Allow "downgrade" path if needed
-
-**Versioning:**
-
-- Database schema versioning
-- API versioning (/api/v2, /api/v3)
-- Client-server compatibility checks
+**Success Metrics:** 85%+ completion rate, <10 min average time, 90%+ satisfaction
 
 ---
 
-## 5. Success Metrics
+## 4. Features - Priority 2 (Q4 2026)
 
-### 5.1 Adoption Metrics
+### Feature 4.1: Story Lifecycle Enhancements
 
-- v2.0 → v3.0 migration rate: > 80% within 6 months
-- New v3.0 installations: > 500 within 12 months
-- Multi-user projects: > 100 teams within 12 months
+**Epic ID:** EPIC-V3-008  
+**Effort:** 21 points (2 weeks)
 
-### 5.2 Engagement Metrics
+Extended state machine: BACKLOG → TODO → IN_PROGRESS → REVIEW → TESTING → DONE + BLOCKED state.
 
-- Average agents per user: > 10 (vs 5 in v2.0)
-- Custom agent creation rate: > 20% of users
-- Collaboration sessions per week: > 3 per active team
-- NLU usage: > 50% of commands via natural language
-
-### 5.3 Technical Metrics
-
-- Database query p95: < 100ms
-- WebSocket message latency p95: < 100ms
-- IDE performance (Lighthouse): > 90 score
-- System uptime: > 99.5%
+**Success Metrics:** 30% bug reduction, <2 days average blocking time
 
 ---
 
-## 6. Risks & Mitigations
+## 5. Release Plan
 
-### 6.1 Technical Risks
+**Phase 1 (Q2 2026):** Priority 0 - 8 weeks
+**Phase 2 (Q3 2026):** Priority 1 Part 1 - 8 weeks
+**Phase 3 (Q3 2026):** Priority 1 Part 2 - 8 weeks  
+**Phase 4 (Q4 2026):** Priority 2 - 4 weeks
+**Phase 5 (Q1 2027):** Beta testing & polish - 8 weeks
 
-**R1: Database Performance**
-
-- Risk: Slow queries with 10+ concurrent users
-- Impact: High
-- Mitigation: Connection pooling, query optimization, caching layer
-
-**R2: WebSocket Scaling**
-
-- Risk: Connection limits with many users
-- Impact: High
-- Mitigation: Redis adapter for Socket.io, horizontal scaling
-
-**R3: CRDT Complexity**
-
-- Risk: Merge conflicts in edge cases
-- Impact: Medium
-- Mitigation: Thorough testing, fallback to manual merge
-
-**R4: NLU Accuracy**
-
-- Risk: Poor intent recognition frustrates users
-- Impact: Medium
-- Mitigation: Extensive training data, graceful fallbacks
-
-### 6.2 Product Risks
-
-**R5: Feature Bloat**
-
-- Risk: Too many features overwhelm users
-- Impact: High
-- Mitigation: Progressive disclosure, excellent onboarding
-
-**R6: Migration Complexity**
-
-- Risk: Users struggle to migrate from v2.0
-- Impact: Medium
-- Mitigation: Automated migration tool, clear documentation
+**Total:** 207 points, 32 weeks development + 8 weeks beta
 
 ---
 
-## 7. Release Plan
+## 6. Epic Summary
 
-### 7.1 Phase 1: Alpha (Q1 2026)
-
-- **Duration:** 3 months
-- **Goal:** Core infrastructure and database migration
-- **Deliverables:**
-  - PostgreSQL schema and Prisma setup
-  - Dynamic agent management (CRUD)
-  - Database-backed configuration
-  - Migration tool from v2.0
-  - Basic WebSocket server
-
-### 7.2 Phase 2: Beta (Q2-Q3 2026)
-
-- **Duration:** 6 months
-- **Goal:** Feature completion and testing
-- **Deliverables:**
-  - NLU integration (Dialogflow)
-  - Persistent agent memory
-  - CLI REPL and TUI dashboard
-  - Monaco Editor integration
-  - Real-time collaboration (shared cursors)
-  - Multi-user authentication
-
-### 7.3 Phase 3: Stable (Q4 2026)
-
-- **Duration:** 3 months
-- **Goal:** Production readiness
-- **Deliverables:**
-  - Performance optimization
-  - Security hardening
-  - Comprehensive testing
-  - Documentation and tutorials
-  - Migration guides from v2.0
-
-**Total Timeline:** 12 months (Q1-Q4 2026)
+| Epic | Feature | Priority | Points | Weeks | Q |
+|------|---------|----------|--------|-------|---|
+| EPIC-V3-001 | Scale-Adaptive Router | P0 | 34 | 3 | Q2 2026 |
+| EPIC-V3-002 | Universal Status Checker | P0 | 21 | 2 | Q2 2026 |
+| EPIC-V3-003 | JIT Tech Specs | P1 | 21 | 2 | Q2 2026 |
+| EPIC-V3-004 | Story-Context Workflow | P1 | 34 | 3 | Q3 2026 |
+| EPIC-V3-005 | Brownfield Analysis | P1 | 34 | 3 | Q3 2026 |
+| EPIC-V3-006 | Agent Sidecars | P1 | 21 | 2 | Q3 2026 |
+| EPIC-V3-007 | Enhanced Setup Wizard | P1 | 21 | 2 | Q3 2026 |
+| EPIC-V3-008 | Story Lifecycle | P2 | 21 | 2 | Q4 2026 |
+| **Total** | **8 Epics** | **P0-P2** | **207** | **19** | **Q2-Q4 2026** |
 
 ---
 
-## 8. Open Questions
+## 7. Related Documents
 
-1. **Database Choice:** PostgreSQL vs MySQL? (Recommendation: PostgreSQL for pgvector)
-2. **NLU Provider:** Dialogflow vs Rasa? (Recommendation: Dialogflow for faster setup)
-3. **Deployment Model:** Self-hosted only or also offer cloud hosting?
-4. **Pricing:** Remain open-source or introduce commercial tier for collaboration features?
-5. **Mobile:** Support mobile browsers in v3.0 or defer to v3.1?
-
----
-
-## 9. Appendix
-
-### 9.1 Glossary
-
-- **CRDT:** Conflict-free Replicated Data Type (enables real-time collaboration)
-- **NLU:** Natural Language Understanding
-- **pgvector:** PostgreSQL extension for vector similarity search
-- **TUI:** Text-based User Interface (terminal dashboard)
-- **REPL:** Read-Eval-Print Loop (interactive command shell)
-
-### 9.2 References
-
-- [ROADMAP-V3-FUTURE-VISION.md](../../ROADMAP-V3-FUTURE-VISION.md) - Original v3.0 vision
-- [ARCHITECTURE-V3-FUTURE.md](../../ARCHITECTURE-V3-FUTURE.md) - Technical proposals
-- [PRD.md](../../PRD.md) - v2.0 PRD (authoritative)
-- [CLAUDE.md](../../CLAUDE.md) - Development guidelines
+- [SCALE-ASSESSMENT.md](./SCALE-ASSESSMENT.md) - Scale assessment report (Level 3-4)
+- [PRD-V3-UPGRADE-FROM-BMAD.md](./PRD-V3-UPGRADE-FROM-BMAD.md) - BMAD analysis (1,077 lines)
+- [ARCHITECTURE-V3-FUTURE.md](../../ARCHITECTURE-V3-FUTURE.md) - Technical architecture (624 lines)
+- [PRD-V3-FUTURE-VISION-ORIGINAL.md](./PRD-V3-FUTURE-VISION-ORIGINAL.md) - v3.1+ features (database, NLU, Web IDE)
+- [Epics-V3.md](./Epics-V3.md) - Detailed epic breakdown
 
 ---
 
-**Document Status:** Draft for Review
-**Next Steps:** Review with team → Create Epics → Begin architecture design
-**Review Date:** 2025-11-01
+**Document Status:** Draft - Pending Stakeholder Review  
+**Next Steps:** Epic breakdown → Story generation → Priority 0 development kickoff
+
+**Approvals Required:**
+- [ ] Product Owner (User/Team Lead)
+- [ ] Technical Architect
+- [ ] Development Team
+- [ ] QA Lead
+
+---
+
+**Last Updated:** 2025-10-24  
+**Version:** 1.0 (BMAD-focused v3.0)
