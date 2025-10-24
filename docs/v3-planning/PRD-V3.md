@@ -9,7 +9,7 @@
 **Timeline:** 12 months (Q2 2026 - Q1 2027)
 
 > **📋 MADACE-Method Applied:** This PRD follows MAM (MADACE Agile Method) guidelines for Level 3-4 projects
-> 
+>
 > **🎯 Key Decision:** v3.0 focuses on BMAD-inspired workflow intelligence features. Database-backed agents, NLU, Web IDE, and real-time collaboration are **deferred to v3.1+ (2027)**.
 
 ---
@@ -49,6 +49,7 @@ MADACE v3.0 integrates **8 proven innovations from BMAD v6** while maintaining M
 **Rationale:** File-based agents with sidecar customization provide sufficient flexibility without the complexity of database migration. Focus on workflow intelligence delivers immediate value to users.
 
 ### Success Criteria
+
 - **Adoption:** 1,000+ projects using v3.0 within 6 months of GA
 - **Retention:** 70%+ of v2.0 users upgrade to v3.0
 - **Performance:** Scale-Adaptive Router reduces planning time by 50% for simple projects
@@ -62,6 +63,7 @@ MADACE v3.0 integrates **8 proven innovations from BMAD v6** while maintaining M
 ### 1.1 Evolution from v2.0
 
 MADACE v2.0 Alpha (218 points delivered) successfully validated:
+
 - ✅ Next.js 15 full-stack architecture
 - ✅ Multi-provider LLM integration (Gemini, Claude, OpenAI, Local)
 - ✅ Agent-based workflows (5 MAM agents)
@@ -70,6 +72,7 @@ MADACE v2.0 Alpha (218 points delivered) successfully validated:
 - ✅ Docker deployment (production + development)
 
 **v3.0 Addresses v2.0 Limitations:**
+
 - ❌ One-size-fits-all workflows (now: scale-adaptive routing)
 - ❌ Stale upfront tech specs (now: JIT tech specs)
 - ❌ Generic agent responses (now: story-context workflow)
@@ -81,18 +84,19 @@ MADACE v2.0 Alpha (218 points delivered) successfully validated:
 
 ### 1.2 Competitive Positioning
 
-| Feature | MADACE v3.0 | BMAD v6 | GitHub Copilot | Cursor IDE |
-|---------|-------------|---------|----------------|------------|
-| **Scale-Adaptive Planning** | ✅ Levels 0-4 | ✅ Levels 0-4 | ❌ | ❌ |
-| **Multi-Provider LLM** | ✅ 4 providers | ❌ Fixed | ✅ 2 | ✅ Multiple |
-| **Web-First Interface** | ✅ Next.js UI | ❌ CLI-only | ❌ IDE-only | ❌ IDE-only |
-| **Brownfield Analysis** | ✅ Automated | ✅ Automated | ❌ Manual | ❌ Manual |
-| **Agent Customization** | ✅ Sidecars | ✅ Sidecars | ❌ | ❌ |
-| **Visual Kanban Board** | ✅ Web UI | ❌ CLI only | ❌ | ❌ |
-| **Story-Context Generation** | ✅ Automated | ✅ Automated | ❌ Manual | ❌ Manual |
-| **JIT Tech Specs** | ✅ On-demand | ✅ On-demand | ❌ | ❌ |
+| Feature                      | MADACE v3.0    | BMAD v6       | GitHub Copilot | Cursor IDE  |
+| ---------------------------- | -------------- | ------------- | -------------- | ----------- |
+| **Scale-Adaptive Planning**  | ✅ Levels 0-4  | ✅ Levels 0-4 | ❌             | ❌          |
+| **Multi-Provider LLM**       | ✅ 4 providers | ❌ Fixed      | ✅ 2           | ✅ Multiple |
+| **Web-First Interface**      | ✅ Next.js UI  | ❌ CLI-only   | ❌ IDE-only    | ❌ IDE-only |
+| **Brownfield Analysis**      | ✅ Automated   | ✅ Automated  | ❌ Manual      | ❌ Manual   |
+| **Agent Customization**      | ✅ Sidecars    | ✅ Sidecars   | ❌             | ❌          |
+| **Visual Kanban Board**      | ✅ Web UI      | ❌ CLI only   | ❌             | ❌          |
+| **Story-Context Generation** | ✅ Automated   | ✅ Automated  | ❌ Manual      | ❌ Manual   |
+| **JIT Tech Specs**           | ✅ On-demand   | ✅ On-demand  | ❌             | ❌          |
 
 **MADACE v3.0 = Best of Both Worlds:**
+
 - MADACE: Web-first, visual Kanban, multi-provider LLM, Docker-native
 - BMAD: Workflow intelligence, customization system, universal status checker
 
@@ -112,11 +116,13 @@ MADACE v2.0 Alpha (218 points delivered) successfully validated:
 **Solution:** Dynamic workflow routing that assesses project complexity (Levels 0-4) and automatically selects appropriate planning workflows.
 
 **User Stories:**
+
 1. As a developer starting a simple script, I want minimal documentation so I can start coding in <5 minutes
 2. As a PM planning an enterprise system, I want comprehensive documentation so nothing is missed
 3. As a team lead, I want the system to recommend the right planning level based on project characteristics
 
 **Acceptance Criteria:**
+
 - Complexity assessment with 8 criteria (team size, codebase size, integrations, security, duration, user base)
 - Level determination algorithm (0-4) with clear thresholds and scoring
 - Workflow routing YAML with conditional paths per level
@@ -126,6 +132,7 @@ MADACE v2.0 Alpha (218 points delivered) successfully validated:
 - Web UI integration in enhanced setup wizard (auto-assessment on project creation)
 
 **Technical Specifications:**
+
 - Assessment interface: `ComplexityAssessment` (TypeScript)
 - Workflow file: `workflows/route-workflow.yaml`
 - Routing step: `action: route` with level-based paths
@@ -133,6 +140,7 @@ MADACE v2.0 Alpha (218 points delivered) successfully validated:
 - API route: `POST /api/workflows/assess-scale`
 
 **Success Metrics:**
+
 - Level 0: <5 min from start to first story
 - Level 4: Complete docs in <2 hours
 - User satisfaction: 90%+ feel workflows match needs
@@ -152,11 +160,13 @@ MADACE v2.0 Alpha (218 points delivered) successfully validated:
 **Solution:** Single command interface to check status of any workflow entity with intelligent context detection.
 
 **User Stories:**
+
 1. As a developer, I want to check story status with one command instead of opening status files
 2. As a PM, I want to see epic completion percentage without manual calculation
 3. As a team, we want real-time workflow status in our terminal and Web UI
 
 **Acceptance Criteria:**
+
 - Context-aware entity detection (epic → story → workflow → state machine)
 - Status provider interface: `IStatusProvider` with implementations for each entity type
 - Multiple output formats: `--format=table` (default), `--format=json`, `--format=markdown`
@@ -167,6 +177,7 @@ MADACE v2.0 Alpha (218 points delivered) successfully validated:
 - Web UI status dashboard page (`/status`)
 
 **Technical Specifications:**
+
 - Provider interface: `IStatusProvider` with `getStatus(entityId?: string)` method
 - Providers: `EpicStatusProvider`, `StoryStatusProvider`, `WorkflowStatusProvider`, `StateMachineStatusProvider`
 - CLI integration: `lib/cli/commands/status.ts`
@@ -174,6 +185,7 @@ MADACE v2.0 Alpha (218 points delivered) successfully validated:
 - WebSocket message type: `{ type: 'status_update', entity, data }`
 
 **Success Metrics:**
+
 - Command usage: 50+ invocations per project
 - Coverage: 100% of workflow entities supported
 - Response time: <100ms (95th percentile)
@@ -265,17 +277,17 @@ Extended state machine: BACKLOG → TODO → IN_PROGRESS → REVIEW → TESTING 
 
 ## 6. Epic Summary
 
-| Epic | Feature | Priority | Points | Weeks | Q |
-|------|---------|----------|--------|-------|---|
-| EPIC-V3-001 | Scale-Adaptive Router | P0 | 34 | 3 | Q2 2026 |
-| EPIC-V3-002 | Universal Status Checker | P0 | 21 | 2 | Q2 2026 |
-| EPIC-V3-003 | JIT Tech Specs | P1 | 21 | 2 | Q2 2026 |
-| EPIC-V3-004 | Story-Context Workflow | P1 | 34 | 3 | Q3 2026 |
-| EPIC-V3-005 | Brownfield Analysis | P1 | 34 | 3 | Q3 2026 |
-| EPIC-V3-006 | Agent Sidecars | P1 | 21 | 2 | Q3 2026 |
-| EPIC-V3-007 | Enhanced Setup Wizard | P1 | 21 | 2 | Q3 2026 |
-| EPIC-V3-008 | Story Lifecycle | P2 | 21 | 2 | Q4 2026 |
-| **Total** | **8 Epics** | **P0-P2** | **207** | **19** | **Q2-Q4 2026** |
+| Epic        | Feature                  | Priority  | Points  | Weeks  | Q              |
+| ----------- | ------------------------ | --------- | ------- | ------ | -------------- |
+| EPIC-V3-001 | Scale-Adaptive Router    | P0        | 34      | 3      | Q2 2026        |
+| EPIC-V3-002 | Universal Status Checker | P0        | 21      | 2      | Q2 2026        |
+| EPIC-V3-003 | JIT Tech Specs           | P1        | 21      | 2      | Q2 2026        |
+| EPIC-V3-004 | Story-Context Workflow   | P1        | 34      | 3      | Q3 2026        |
+| EPIC-V3-005 | Brownfield Analysis      | P1        | 34      | 3      | Q3 2026        |
+| EPIC-V3-006 | Agent Sidecars           | P1        | 21      | 2      | Q3 2026        |
+| EPIC-V3-007 | Enhanced Setup Wizard    | P1        | 21      | 2      | Q3 2026        |
+| EPIC-V3-008 | Story Lifecycle          | P2        | 21      | 2      | Q4 2026        |
+| **Total**   | **8 Epics**              | **P0-P2** | **207** | **19** | **Q2-Q4 2026** |
 
 ---
 
@@ -293,6 +305,7 @@ Extended state machine: BACKLOG → TODO → IN_PROGRESS → REVIEW → TESTING 
 **Next Steps:** Epic breakdown → Story generation → Priority 0 development kickoff
 
 **Approvals Required:**
+
 - [ ] Product Owner (User/Team Lead)
 - [ ] Technical Architect
 - [ ] Development Team

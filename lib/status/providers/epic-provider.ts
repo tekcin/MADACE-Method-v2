@@ -7,11 +7,7 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import type {
-  IStatusProvider,
-  StatusResult,
-  StatusFormat,
-} from '../types';
+import type { IStatusProvider, StatusResult, StatusFormat } from '../types';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Epic Data Types
@@ -82,16 +78,14 @@ export class EpicStatusProvider implements IStatusProvider {
     try {
       // Check if directory exists
       await fs.access(this.epicsDirectory);
-    } catch (error) {
+    } catch {
       return {
         entityType: 'epic',
         entityId,
         data: {},
         timestamp: new Date().toISOString(),
         metadata: {
-          errors: [
-            `Epic directory not found: ${this.epicsDirectory}`,
-          ],
+          errors: [`Epic directory not found: ${this.epicsDirectory}`],
         },
       };
     }
@@ -404,9 +398,15 @@ export class EpicStatusProvider implements IStatusProvider {
       }
 
       const rows: string[] = [];
-      rows.push('┌──────────────┬──────────────────────────────────┬──────────┬────────┬─────────┬────────────┐');
-      rows.push('│ Epic ID      │ Name                             │ Priority │ Points │ Stories │ Status     │');
-      rows.push('├──────────────┼──────────────────────────────────┼──────────┼────────┼─────────┼────────────┤');
+      rows.push(
+        '┌──────────────┬──────────────────────────────────┬──────────┬────────┬─────────┬────────────┐'
+      );
+      rows.push(
+        '│ Epic ID      │ Name                             │ Priority │ Points │ Stories │ Status     │'
+      );
+      rows.push(
+        '├──────────────┼──────────────────────────────────┼──────────┼────────┼─────────┼────────────┤'
+      );
 
       for (const epic of epics) {
         const id = epic.id.padEnd(12);
@@ -419,7 +419,9 @@ export class EpicStatusProvider implements IStatusProvider {
         rows.push(`│ ${id} │ ${name} │ ${priority} │ ${points} │ ${stories} │ ${status} │`);
       }
 
-      rows.push('└──────────────┴──────────────────────────────────┴──────────┴────────┴─────────┴────────────┘');
+      rows.push(
+        '└──────────────┴──────────────────────────────────┴──────────┴────────┴─────────┴────────────┘'
+      );
       rows.push('');
       rows.push(`Total: ${epics.length} epics`);
 
@@ -433,7 +435,9 @@ export class EpicStatusProvider implements IStatusProvider {
       rows.push(`│ Epic ID         │ ${epic.id.padEnd(46)} │`);
       rows.push(`│ Name            │ ${this.truncate(epic.name, 46).padEnd(46)} │`);
       rows.push(`│ Priority        │ ${epic.priority.padEnd(46)} │`);
-      rows.push(`│ Effort          │ ${epic.effort} points${' '.repeat(46 - String(epic.effort).length - 7)} │`);
+      rows.push(
+        `│ Effort          │ ${epic.effort} points${' '.repeat(46 - String(epic.effort).length - 7)} │`
+      );
       rows.push(`│ Quarter         │ ${epic.quarter.padEnd(46)} │`);
       rows.push(`│ Owner           │ ${epic.owner.padEnd(46)} │`);
       rows.push(`│ Status          │ ${epic.status.padEnd(46)} │`);
@@ -491,7 +495,9 @@ export class EpicStatusProvider implements IStatusProvider {
 
       const rows: string[] = [];
       rows.push(`# ${statusEmoji} ${epic.id}: ${epic.name}\n`);
-      rows.push(`**Priority:** ${epic.priority} | **Effort:** ${epic.effort} points | **Quarter:** ${epic.quarter}\n`);
+      rows.push(
+        `**Priority:** ${epic.priority} | **Effort:** ${epic.effort} points | **Quarter:** ${epic.quarter}\n`
+      );
       rows.push(`## Details\n`);
       rows.push(`- **Owner:** ${epic.owner}`);
       rows.push(`- **Status:** ${epic.status}`);

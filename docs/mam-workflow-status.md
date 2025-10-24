@@ -56,30 +56,30 @@ All critical stories completed! Milestone 1.8 finished on 2025-10-22.
 
 **EPIC-V3-001: Scale-Adaptive Workflow Router** (10 stories, 34 points)
 
--  [STORY-V3-001] Implement Complexity Scoring Algorithm [5 pts]
--  [STORY-V3-002] Create Assessment Report Template [3 pts]
--  [STORY-V3-003] Interactive Assessment CLI [3 pts]
--  [STORY-V3-004] Create Route-Workflow YAML [5 pts]
--  [STORY-V3-005] Implement Routing Action in Executor [5 pts]
--  [STORY-V3-006] User Override System [5 pts]
--  [STORY-V3-007] CLI Command `madace assess-scale` [3 pts]
--  [STORY-V3-008] Integrate Assessment into Setup Wizard [2 pts]
--  [STORY-V3-009] Assessment Dashboard Page [2 pts]
--  [STORY-V3-010] E2E Testing for Scale Router [1 pt]
+- [STORY-V3-001] Implement Complexity Scoring Algorithm [5 pts]
+- [STORY-V3-002] Create Assessment Report Template [3 pts]
+- [STORY-V3-003] Interactive Assessment CLI [3 pts]
+- [STORY-V3-004] Create Route-Workflow YAML [5 pts]
+- [STORY-V3-005] Implement Routing Action in Executor [5 pts]
+- [STORY-V3-006] User Override System [5 pts]
+- [STORY-V3-007] CLI Command `madace assess-scale` [3 pts]
+- [STORY-V3-008] Integrate Assessment into Setup Wizard [2 pts]
+- [STORY-V3-009] Assessment Dashboard Page [2 pts]
+- [STORY-V3-010] E2E Testing for Scale Router [1 pt]
 
 **EPIC-V3-002: Universal Workflow Status Checker** (11 stories, 21 points)
 
--  [STORY-V3-011] Create IStatusProvider Interface [2 pts]
--  [STORY-V3-012] Implement StoryStatusProvider [3 pts]
--  [STORY-V3-013] Implement EpicStatusProvider [2 pts]
--  [STORY-V3-014] Implement WorkflowStatusProvider [3 pts]
--  [STORY-V3-015] Implement StateMachineStatusProvider [3 pts]
--  [STORY-V3-016] Create `madace status` CLI Command [3 pts]
--  [STORY-V3-017] API Route GET /api/status [1 pt]
--  [STORY-V3-018] Multiple Output Formats [2 pts]
--  [STORY-V3-019] Watch Mode (--watch flag) [1 pt]
--  [STORY-V3-020] Integrate WebSocket for Real-time Updates [2 pts]
--  [STORY-V3-021] Create Web UI Status Dashboard Page [2 pts]
+- [STORY-V3-011] Create IStatusProvider Interface [2 pts]
+- [STORY-V3-012] Implement StoryStatusProvider [3 pts]
+- [STORY-V3-013] Implement EpicStatusProvider [2 pts]
+- [STORY-V3-014] Implement WorkflowStatusProvider [3 pts]
+- [STORY-V3-015] Implement StateMachineStatusProvider [3 pts]
+- [STORY-V3-016] Create `madace status` CLI Command [3 pts]
+- [STORY-V3-017] API Route GET /api/status [1 pt]
+- [STORY-V3-018] Multiple Output Formats [2 pts]
+- [STORY-V3-019] Watch Mode (--watch flag) [1 pt]
+- [STORY-V3-020] Integrate WebSocket for Real-time Updates [2 pts]
+- [STORY-V3-021] Create Web UI Status Dashboard Page [2 pts]
 
 **Story Details:** See [docs/v3-planning/stories/PRIORITY-0-STORIES.md](./v3-planning/stories/PRIORITY-0-STORIES.md)
 

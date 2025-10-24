@@ -109,10 +109,7 @@ export async function waitForNetworkIdle(page: Page, timeout = 5000): Promise<vo
 /**
  * Wait for specific API call to complete and return response
  */
-export async function waitForAPICall(
-  page: Page,
-  urlPattern: string | RegExp
-): Promise<void> {
+export async function waitForAPICall(page: Page, urlPattern: string | RegExp): Promise<void> {
   await page.waitForResponse(
     (response) =>
       (typeof urlPattern === 'string'

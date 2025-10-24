@@ -22,18 +22,21 @@
 ## Business Value
 
 **Problem:**
+
 - Current workflows are flat (no nesting capability)
 - Complex workflows become monolithic and hard to maintain
 - No reusability of workflow components
 - Duplication of common workflow sequences
 
 **Solution:**
+
 - Enable workflows to call other workflows as sub-workflows
 - Support context inheritance from parent to child
 - Independent state tracking for each workflow level
 - Resume functionality works across nested workflows
 
 **Impact:**
+
 - **Modularity:** Break complex workflows into manageable pieces
 - **Reusability:** Common sequences can be extracted into sub-workflows
 - **Maintainability:** Easier to update and test individual components
@@ -51,26 +54,27 @@
 
 ```yaml
 workflow:
-  name: "Complex Workflow"
-  description: "Parent workflow with sub-workflow calls"
+  name: 'Complex Workflow'
+  description: 'Parent workflow with sub-workflow calls'
   steps:
-    - name: "Setup"
+    - name: 'Setup'
       action: guide
-      prompt: "Initialize the project"
+      prompt: 'Initialize the project'
 
-    - name: "Run Data Processing"
+    - name: 'Run Data Processing'
       action: sub-workflow
-      workflow_path: "workflows/data-processing.workflow.yaml"
+      workflow_path: 'workflows/data-processing.workflow.yaml'
       context_vars:
-        input_file: "${PROJECT_OUTPUT}/raw-data.csv"
-        output_dir: "${PROJECT_OUTPUT}/processed"
+        input_file: '${PROJECT_OUTPUT}/raw-data.csv'
+        output_dir: '${PROJECT_OUTPUT}/processed'
 
-    - name: "Finalize"
+    - name: 'Finalize'
       action: guide
-      prompt: "Complete the workflow"
+      prompt: 'Complete the workflow'
 ```
 
 **Validation:**
+
 - ✅ `sub-workflow` action type recognized
 - ✅ `workflow_path` required field (relative to workflows directory)
 - ✅ `context_vars` optional field for passing context to child
@@ -84,6 +88,7 @@ workflow:
 **Then** it inherits parent context and can define additional variables
 
 **Parent Context:**
+
 ```typescript
 {
   PROJECT_NAME: "MyProject",
@@ -93,6 +98,7 @@ workflow:
 ```
 
 **Sub-Workflow Receives:**
+
 ```typescript
 {
   // Inherited from parent
@@ -111,6 +117,7 @@ workflow:
 ```
 
 **Validation:**
+
 - ✅ Parent context variables accessible in child
 - ✅ `context_vars` from parent override defaults
 - ✅ Child can define its own local variables
@@ -124,6 +131,7 @@ workflow:
 **Then** each workflow level maintains independent state
 
 **State File Structure:**
+
 ```json
 // .complex-workflow.state.json (parent)
 {
@@ -162,6 +170,7 @@ workflow:
 ```
 
 **Validation:**
+
 - ✅ Parent workflow tracks child workflows in `childWorkflows` array
 - ✅ Child workflow references parent in `parentWorkflow` field
 - ✅ Each workflow has independent `currentStep` tracking
@@ -200,6 +209,7 @@ workflow:
    - Parent continues to next step
 
 **Validation:**
+
 - ✅ Parent waits for child to complete before proceeding
 - ✅ Child errors propagate to parent
 - ✅ Context from child available to parent after completion
@@ -212,17 +222,20 @@ workflow:
 **Then** the correct workflow level resumes at the correct step
 
 **Scenario 1: Parent interrupted**
+
 ```json
 // .complex-workflow.state.json
 {
-  "currentStep": 1,  // Parent at step 1
+  "currentStep": 1, // Parent at step 1
   "status": "paused",
-  "childWorkflows": []  // No children started yet
+  "childWorkflows": [] // No children started yet
 }
 ```
+
 **Expected:** Resume parent at step 1
 
 **Scenario 2: Child interrupted**
+
 ```json
 // .complex-workflow.state.json (parent)
 {
@@ -239,9 +252,11 @@ workflow:
   "status": "paused"
 }
 ```
+
 **Expected:** Resume child at step 2, then parent continues
 
 **Validation:**
+
 - ✅ Resume command detects active child workflows
 - ✅ Resumes deepest nested workflow first (LIFO - stack-based)
 - ✅ Completes child before resuming parent
@@ -250,6 +265,7 @@ workflow:
 ### AC6: API Endpoints for Sub-Workflows
 
 **GET /api/workflows/[name]/hierarchy**
+
 - Returns workflow hierarchy tree
 - Shows all child workflows and their status
 
@@ -274,10 +290,12 @@ workflow:
 ```
 
 **POST /api/workflows/[name]/execute-substep**
+
 - Execute next step in active child workflow
 - Auto-detects which workflow level needs execution
 
 **Validation:**
+
 - ✅ Hierarchy endpoint returns correct tree structure
 - ✅ Execute endpoint finds correct active workflow
 - ✅ Error handling for missing/invalid sub-workflows
@@ -289,6 +307,7 @@ workflow:
 **Then** the UI shows nested workflow hierarchy
 
 **Workflow Status Page:**
+
 ```
 Complex Workflow (Step 2/3) ✅ Running
 ├─ Step 1: Setup ✅ Done
@@ -302,6 +321,7 @@ Complex Workflow (Step 2/3) ✅ Running
 ```
 
 **Validation:**
+
 - ✅ Indentation shows nesting levels
 - ✅ Status icons for each step (✅ Done, ⏸️ Running, ⏹️ Pending)
 - ✅ Expandable/collapsible child workflows
@@ -323,12 +343,12 @@ export type WorkflowAction =
   | 'guide'
   | 'template'
   | 'validate'
-  | 'sub-workflow';  // NEW
+  | 'sub-workflow'; // NEW
 
 export interface SubWorkflowStep extends BaseWorkflowStep {
   action: 'sub-workflow';
-  workflow_path: string;  // Required: path to child workflow
-  context_vars?: Record<string, string>;  // Optional: variables to pass
+  workflow_path: string; // Required: path to child workflow
+  context_vars?: Record<string, string>; // Optional: variables to pass
 }
 
 export interface WorkflowState {
@@ -378,10 +398,10 @@ export class WorkflowExecutor {
 
     // 3. Prepare child context
     const childContext = {
-      ...parentContext,  // Inherit parent
-      ...step.context_vars,  // Override with context_vars
+      ...parentContext, // Inherit parent
+      ...step.context_vars, // Override with context_vars
       PARENT_WORKFLOW: this.workflowName,
-      WORKFLOW_DEPTH: (parentContext.WORKFLOW_DEPTH || 0) + 1
+      WORKFLOW_DEPTH: (parentContext.WORKFLOW_DEPTH || 0) + 1,
     };
 
     // 4. Create child executor
@@ -397,10 +417,7 @@ export class WorkflowExecutor {
     await this.markChildWorkflowComplete(step.workflow_path);
   }
 
-  private detectCircularDependency(
-    childPath: string,
-    context: Record<string, any>
-  ): void {
+  private detectCircularDependency(childPath: string, context: Record<string, any>): void {
     const visitedWorkflows = context._VISITED_WORKFLOWS || [];
     if (visitedWorkflows.includes(childPath)) {
       throw new WorkflowError(
@@ -414,9 +431,7 @@ export class WorkflowExecutor {
     const state = await this.loadState();
 
     // Check if any child workflows are active
-    const activeChild = state.childWorkflows?.find(
-      child => child.status === 'running'
-    );
+    const activeChild = state.childWorkflows?.find((child) => child.status === 'running');
 
     if (activeChild) {
       // Resume child first
@@ -452,20 +467,15 @@ export class WorkflowStateManager {
     state.childWorkflows.push({
       ...childWorkflow,
       status: 'running',
-      startedAt: new Date().toISOString()
+      startedAt: new Date().toISOString(),
     });
     await this.saveState(parentStateFile, state);
   }
 
   // Mark child as complete in parent state
-  async markChildComplete(
-    parentStateFile: string,
-    childWorkflowPath: string
-  ): Promise<void> {
+  async markChildComplete(parentStateFile: string, childWorkflowPath: string): Promise<void> {
     const state = await this.loadState(parentStateFile);
-    const child = state.childWorkflows?.find(
-      c => c.workflowPath === childWorkflowPath
-    );
+    const child = state.childWorkflows?.find((c) => c.workflowPath === childWorkflowPath);
     if (child) {
       child.status = 'completed';
       child.completedAt = new Date().toISOString();
@@ -490,7 +500,7 @@ export class WorkflowStateManager {
       currentStep: state.currentStep,
       totalSteps: state.totalSteps,
       depth: state.context.WORKFLOW_DEPTH || 0,
-      children
+      children,
     };
   }
 }
@@ -510,20 +520,14 @@ interface WorkflowHierarchy {
 **File:** `app/api/workflows/[name]/hierarchy/route.ts`
 
 ```typescript
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { name: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { name: string } }) {
   try {
     const stateManager = new WorkflowStateManager();
     const hierarchy = await stateManager.getHierarchy(params.name);
 
     return NextResponse.json(hierarchy);
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to get workflow hierarchy' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to get workflow hierarchy' }, { status: 500 });
   }
 }
 ```
@@ -595,12 +599,14 @@ test('displays workflow hierarchy in UI', async ({ page }) => {
 ## Implementation Plan
 
 ### Phase 1: Schema & Core Logic (3 points)
+
 - [ ] Update workflow schema with `sub-workflow` action type
 - [ ] Add child workflow tracking to state schema
 - [ ] Implement circular dependency detection
 - [ ] Write unit tests for schema validation
 
 ### Phase 2: Executor Enhancements (5 points)
+
 - [ ] Implement `executeSubWorkflow()` method
 - [ ] Add context inheritance logic
 - [ ] Update state management for parent-child tracking
@@ -608,12 +614,14 @@ test('displays workflow hierarchy in UI', async ({ page }) => {
 - [ ] Write unit tests for executor
 
 ### Phase 3: State Management & Hierarchy (3 points)
+
 - [ ] Implement state tracking for nested workflows
 - [ ] Create `getHierarchy()` method
 - [ ] Add child workflow state updates
 - [ ] Write unit tests for state manager
 
 ### Phase 4: API & UI (2 points)
+
 - [ ] Create `/api/workflows/[name]/hierarchy` endpoint
 - [ ] Update workflow status page to show hierarchy
 - [ ] Add expandable tree view component
@@ -633,15 +641,19 @@ test('displays workflow hierarchy in UI', async ({ page }) => {
 ## Risks & Mitigations
 
 **Risk 1: Infinite Recursion**
+
 - **Mitigation:** Circular dependency detection, max depth limit (e.g., 10 levels)
 
 **Risk 2: Context Pollution**
+
 - **Mitigation:** Immutable context inheritance, clear scoping rules
 
 **Risk 3: State File Conflicts**
+
 - **Mitigation:** Unique state files per workflow instance, atomic file writes
 
 **Risk 4: Performance with Deep Nesting**
+
 - **Mitigation:** Lazy loading of child states, hierarchy caching
 
 ---

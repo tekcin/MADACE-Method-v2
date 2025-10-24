@@ -21,6 +21,7 @@ Single command interface to check status of any workflow entity (epic, story, wo
 ## Problem Statement
 
 **Current State (v2.0):**
+
 - No unified status checking system
 - Users manually open `mam-workflow-status.md` to check story status
 - Epic progress requires manual calculation
@@ -28,6 +29,7 @@ Single command interface to check status of any workflow entity (epic, story, wo
 - No CLI command for quick status queries
 
 **Pain Points:**
+
 - Developer: "What's the status of story F11?" → Opens editor, searches status file
 - PM: "How complete is Epic 003?" → Manually counts completed vs total stories
 - Team: "Is the workflow still running?" → Checks file system for state files
@@ -56,11 +58,13 @@ Single command interface to check status of any workflow entity (epic, story, wo
 ## User Stories
 
 ### US-001: Check Story Status
+
 **As a** developer  
 **I want** to check story status with one CLI command  
 **So that** I don't need to open and search status files
 
 **Acceptance Criteria:**
+
 - `madace status F11-SUB-WORKFLOWS` returns story state (TODO/IN_PROGRESS/DONE)
 - Shows: story ID, title, points, assigned agent, started date, milestone
 - Response time: <100ms
@@ -69,11 +73,13 @@ Single command interface to check status of any workflow entity (epic, story, wo
 ---
 
 ### US-002: Check Epic Progress
+
 **As a** PM  
 **I want** to see epic completion percentage  
 **So that** I can track progress without manual calculation
 
 **Acceptance Criteria:**
+
 - `madace status epic-003` returns:
   - Epic title and description
   - Total stories vs completed stories
@@ -85,11 +91,13 @@ Single command interface to check status of any workflow entity (epic, story, wo
 ---
 
 ### US-003: Watch Mode for Real-time Updates
+
 **As a** team  
 **I want** real-time status updates in my terminal  
 **So that** I can monitor workflow progress continuously
 
 **Acceptance Criteria:**
+
 - `madace status --watch` polls every 2 seconds
 - Updates display inline (no scroll spam)
 - Shows: IN_PROGRESS stories, active workflows, recent state changes
@@ -120,7 +128,7 @@ export class StoryStatusProvider implements IStatusProvider {
   async getStatus(storyId: string): Promise<StatusResult> {
     const statusFile = await loadStatusFile('mam-workflow-status.md');
     const story = findStory(statusFile, storyId);
-    
+
     return {
       entityType: 'story',
       entityId: story.id,
@@ -130,15 +138,16 @@ export class StoryStatusProvider implements IStatusProvider {
         points: story.points,
         assignedTo: story.assignedTo,
         startedAt: story.startedAt,
-        milestone: story.milestone
+        milestone: story.milestone,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 }
 ```
 
 **CLI Integration:**
+
 ```bash
 # Check specific entity
 madace status F11-SUB-WORKFLOWS    # Auto-detects story
@@ -162,6 +171,7 @@ madace status F11 --format=markdown # Doc-ready
 ## Implementation Plan
 
 ### Phase 1: Status Provider System (Week 1)
+
 - STORY-V3-011: Create IStatusProvider interface
 - STORY-V3-012: Implement StoryStatusProvider
 - STORY-V3-013: Implement EpicStatusProvider
@@ -169,6 +179,7 @@ madace status F11 --format=markdown # Doc-ready
 - STORY-V3-015: Implement StateMachineStatusProvider
 
 ### Phase 2: CLI & API Integration (Week 2)
+
 - STORY-V3-016: Create `madace status` CLI command
 - STORY-V3-017: Add context-aware entity detection
 - STORY-V3-018: Implement watch mode with polling

@@ -50,12 +50,12 @@ To make the agents more dynamic, intelligent, and easier to interact with, we pr
     ```yaml
     # pm.override.yaml - customize PM agent
     metadata:
-      name: "Project Manager Pro" # Override display name
+      name: 'Project Manager Pro' # Override display name
     persona:
-      communication_style: "concise" # Override style
-      language: "es" # Spanish communication
+      communication_style: 'concise' # Override style
+      language: 'es' # Spanish communication
     prompts:
-      plan_project: "Custom PRD template..." # Override specific prompt
+      plan_project: 'Custom PRD template...' # Override specific prompt
     ```
   - **Merge Strategy:**
     1. Load base agent from `madace/mam/agents/pm.agent.yaml`
@@ -97,38 +97,40 @@ To make the agents more dynamic, intelligent, and easier to interact with, we pr
   - **Context Workflow:** `workflows/story-context.workflow.yaml`
   - **Trigger:** Automatically runs before story implementation begins
   - **Context Sources:**
+
     ```yaml
     context_layers:
-      - layer: "story_requirements"
-        source: "${PROJECT_OUTPUT}/stories/${STORY_ID}.md"
+      - layer: 'story_requirements'
+        source: '${PROJECT_OUTPUT}/stories/${STORY_ID}.md'
 
-      - layer: "related_code"
-        source: "codebase_search"
+      - layer: 'related_code'
+        source: 'codebase_search'
         queries:
-          - "files modified in epic"
-          - "similar feature implementations"
-          - "API endpoints mentioned in story"
+          - 'files modified in epic'
+          - 'similar feature implementations'
+          - 'API endpoints mentioned in story'
 
-      - layer: "dependencies"
-        source: "dependency_graph"
+      - layer: 'dependencies'
+        source: 'dependency_graph'
         include:
-          - "imported modules"
-          - "shared utilities"
-          - "database models"
+          - 'imported modules'
+          - 'shared utilities'
+          - 'database models'
 
-      - layer: "testing_context"
-        source: "test_files"
+      - layer: 'testing_context'
+        source: 'test_files'
         patterns:
-          - "**/*${FEATURE_NAME}*.test.ts"
-          - "**/*${FEATURE_NAME}*.spec.ts"
+          - '**/*${FEATURE_NAME}*.test.ts'
+          - '**/*${FEATURE_NAME}*.spec.ts'
 
-      - layer: "architectural_constraints"
-        source: "${PROJECT_OUTPUT}/architecture.md"
+      - layer: 'architectural_constraints'
+        source: '${PROJECT_OUTPUT}/architecture.md'
         sections:
-          - "relevant technology stack"
-          - "coding standards"
-          - "security requirements"
+          - 'relevant technology stack'
+          - 'coding standards'
+          - 'security requirements'
     ```
+
   - **Output:** `${PROJECT_OUTPUT}/story-context/${STORY_ID}-context.md`
   - **Benefits:**
     - **Precision:** Only relevant files, not entire codebase
@@ -158,6 +160,7 @@ To make the CLI a more powerful and user-friendly tool, we suggest the following
 - **Implementation:**
   - **Command:** `madace status [entity]` or `madace check [entity]`
   - **Context Detection:**
+
     ```bash
     # Epic status
     madace status epic-001
@@ -175,6 +178,7 @@ To make the CLI a more powerful and user-friendly tool, we suggest the following
     madace status
     # Output: Kanban view (BACKLOG/TODO/IN_PROGRESS/DONE counts)
     ```
+
   - **Status Providers:**
     - **Epic Provider:** Reads `docs/epics/${epic-id}.md`, tech specs, stories
     - **Story Provider:** Reads `docs/mam-workflow-status.md` for current state
@@ -329,29 +333,48 @@ Advanced workflow capabilities that adapt to project complexity and automate doc
     }
     ```
   - **Router Logic:**
+
     ```yaml
     # workflows/route-workflow.yaml
     steps:
-      - name: "Assess Project Complexity"
+      - name: 'Assess Project Complexity'
         action: elicit
         prompt: |
           Based on project details, determine complexity level (0-4).
           Consider: team size, codebase size, integrations, timeline, security needs.
 
-      - name: "Select Workflow Path"
+      - name: 'Select Workflow Path'
         action: route
         routing:
           level_0:
-            workflows: ["create-stories"]
+            workflows: ['create-stories']
           level_1:
-            workflows: ["plan-project-light", "create-stories"]
+            workflows: ['plan-project-light', 'create-stories']
           level_2:
-            workflows: ["plan-project", "create-architecture-basic", "create-epics", "create-stories"]
+            workflows:
+              ['plan-project', 'create-architecture-basic', 'create-epics', 'create-stories']
           level_3:
-            workflows: ["plan-project", "create-tech-specs", "create-architecture", "create-epics", "create-stories"]
+            workflows:
+              [
+                'plan-project',
+                'create-tech-specs',
+                'create-architecture',
+                'create-epics',
+                'create-stories',
+              ]
           level_4:
-            workflows: ["plan-project", "create-tech-specs", "create-architecture", "create-security-spec", "create-devops-spec", "create-epics", "create-stories"]
+            workflows:
+              [
+                'plan-project',
+                'create-tech-specs',
+                'create-architecture',
+                'create-security-spec',
+                'create-devops-spec',
+                'create-epics',
+                'create-stories',
+              ]
     ```
+
   - **Benefits:**
     - **Efficiency:** Don't over-engineer simple projects
     - **Thoroughness:** Don't under-plan complex systems
@@ -366,36 +389,38 @@ Advanced workflow capabilities that adapt to project complexity and automate doc
   - **Trigger:** When epic transitions from BACKLOG to TODO
   - **Workflow:** `workflows/generate-tech-spec.workflow.yaml`
   - **Process:**
+
     ```yaml
     steps:
-      - name: "Load Epic Details"
+      - name: 'Load Epic Details'
         action: load_state_machine
-        entity: "epic"
-        entity_id: "${EPIC_ID}"
+        entity: 'epic'
+        entity_id: '${EPIC_ID}'
 
-      - name: "Gather Technical Context"
+      - name: 'Gather Technical Context'
         action: sub-workflow
-        workflow_path: "workflows/tech-context.workflow.yaml"
+        workflow_path: 'workflows/tech-context.workflow.yaml'
         context_vars:
-          epic_file: "${PROJECT_OUTPUT}/epics/${EPIC_ID}.md"
-          architecture_file: "${PROJECT_OUTPUT}/architecture.md"
+          epic_file: '${PROJECT_OUTPUT}/epics/${EPIC_ID}.md'
+          architecture_file: '${PROJECT_OUTPUT}/architecture.md'
 
-      - name: "Web Research" # If needed
+      - name: 'Web Research' # If needed
         action: elicit
         prompt: |
           Are there external technologies, APIs, or standards we need to research?
           Examples: Payment gateways, auth protocols, cloud services
 
-      - name: "Generate Tech Spec"
+      - name: 'Generate Tech Spec'
         action: template
-        template: "tech-spec.hbs"
-        output: "${PROJECT_OUTPUT}/tech-specs/${EPIC_ID}-spec.md"
+        template: 'tech-spec.hbs'
+        output: '${PROJECT_OUTPUT}/tech-specs/${EPIC_ID}-spec.md'
         vars:
-          epic_id: "${EPIC_ID}"
-          epic_title: "${EPIC_TITLE}"
-          context: "${TECH_CONTEXT}"
-          research: "${RESEARCH_RESULTS}"
+          epic_id: '${EPIC_ID}'
+          epic_title: '${EPIC_TITLE}'
+          context: '${TECH_CONTEXT}'
+          research: '${RESEARCH_RESULTS}'
     ```
+
   - **Tech Spec Contents:**
     - Technical approach and architecture decisions
     - Data models and schemas
@@ -419,24 +444,25 @@ Advanced workflow capabilities that adapt to project complexity and automate doc
   - **Trigger:** User selects "Existing codebase" in setup wizard
   - **Workflow:** `workflows/brownfield-analysis.workflow.yaml`
   - **Process:**
+
     ```yaml
     steps:
-      - name: "Codebase Scan"
+      - name: 'Codebase Scan'
         action: analyze_codebase
         scan_types:
-          - "file_structure" # Directory tree, file counts
-          - "technology_stack" # Languages, frameworks, libraries
-          - "entry_points" # Main files, server.ts, index.ts
-          - "api_routes" # REST endpoints, GraphQL schemas
-          - "data_models" # Database schemas, TypeScript interfaces
-          - "dependencies" # package.json, requirements.txt
-          - "test_coverage" # Test files, coverage reports
+          - 'file_structure' # Directory tree, file counts
+          - 'technology_stack' # Languages, frameworks, libraries
+          - 'entry_points' # Main files, server.ts, index.ts
+          - 'api_routes' # REST endpoints, GraphQL schemas
+          - 'data_models' # Database schemas, TypeScript interfaces
+          - 'dependencies' # package.json, requirements.txt
+          - 'test_coverage' # Test files, coverage reports
 
-      - name: "Dependency Graph"
+      - name: 'Dependency Graph'
         action: build_dependency_graph
-        output: "${PROJECT_OUTPUT}/brownfield/dependency-graph.json"
+        output: '${PROJECT_OUTPUT}/brownfield/dependency-graph.json'
 
-      - name: "Architecture Inference"
+      - name: 'Architecture Inference'
         action: elicit
         prompt: |
           Based on the codebase scan, infer the current architecture:
@@ -445,25 +471,26 @@ Advanced workflow capabilities that adapt to project complexity and automate doc
           - Key modules and their responsibilities
           - External integrations
 
-      - name: "Generate Brownfield Report"
+      - name: 'Generate Brownfield Report'
         action: template
-        template: "brownfield-report.hbs"
-        output: "${PROJECT_OUTPUT}/brownfield/analysis-report.md"
+        template: 'brownfield-report.hbs'
+        output: '${PROJECT_OUTPUT}/brownfield/analysis-report.md'
         sections:
-          - "Executive Summary"
-          - "Technology Stack Analysis"
-          - "Architecture Overview"
-          - "Code Quality Metrics"
-          - "Technical Debt Assessment"
-          - "Recommended Refactoring Priorities"
-          - "Integration Points for New Features"
+          - 'Executive Summary'
+          - 'Technology Stack Analysis'
+          - 'Architecture Overview'
+          - 'Code Quality Metrics'
+          - 'Technical Debt Assessment'
+          - 'Recommended Refactoring Priorities'
+          - 'Integration Points for New Features'
 
-      - name: "Create MADACE-Compatible Docs"
+      - name: 'Create MADACE-Compatible Docs'
         action: template
-        template: "brownfield-architecture.hbs"
-        output: "${PROJECT_OUTPUT}/architecture.md"
-        format: "madace_standard"
+        template: 'brownfield-architecture.hbs'
+        output: '${PROJECT_OUTPUT}/architecture.md'
+        format: 'madace_standard'
     ```
+
   - **Analysis Tools:**
     - **Static Analysis:** AST parsing for code structure
     - **Dependency Analysis:** npm/pip/cargo dependency trees
@@ -503,8 +530,8 @@ Advanced workflow capabilities that adapt to project complexity and automate doc
     ```yaml
     - id: STORY-F11
       state: IN_PROGRESS
-      assigned_to: "DEV Agent"
-      started_at: "2025-10-22T10:00:00Z"
+      assigned_to: 'DEV Agent'
+      started_at: '2025-10-22T10:00:00Z'
       blocked_reason: null
       blocker_details: null
       reviewer: null
@@ -537,10 +564,12 @@ Advanced workflow capabilities that adapt to project complexity and automate doc
 ## 6. Implementation Roadmap
 
 ### Priority 0 (Critical - Q2 2026):
+
 - **Scale-Adaptive Workflow Router** (5.1)
 - **Universal Workflow Status Checker** (3.2)
 
 ### Priority 1 (High - Q2-Q3 2026):
+
 - **Just-In-Time Tech Specs** (5.2)
 - **Story-Context Workflow** (2.5)
 - **Brownfield Analysis** (5.3)
@@ -548,9 +577,11 @@ Advanced workflow capabilities that adapt to project complexity and automate doc
 - **Enhanced Setup Wizard** (4.2)
 
 ### Priority 2 (Medium - Q4 2026):
+
 - **Story Lifecycle Enhancements** (5.4)
 
 ### Deferred to v3.1+ (2027):
+
 - **Dynamic Agent Management** (2.1)
 - **Conversational Interaction** (2.3)
 - **Persistent Agent Memory** (2.4)
@@ -566,26 +597,31 @@ Advanced workflow capabilities that adapt to project complexity and automate doc
 ## 7. Success Metrics
 
 ### Scale-Adaptive Router:
+
 - Level 0 projects: <5 min from start to first story
 - Level 4 projects: Complete documentation suite in <2 hours
 - User satisfaction: 90%+ feel workflows match project needs
 
 ### Story-Context Workflow:
+
 - Token reduction: 80-95% vs full codebase (measured)
 - Implementation quality: 40% fewer revision requests
 - Time savings: 30% faster story completion
 
 ### Brownfield Analysis:
+
 - Analysis time: <10 minutes for 50k LOC codebase
 - Documentation accuracy: 85%+ match manual assessment
 - Adoption: 60%+ of brownfield projects use this workflow
 
 ### Universal Status Checker:
+
 - Command usage: 50+ invocations per project
 - Coverage: 100% of workflow entities supported
 - Response time: <100ms for status queries
 
 ### JIT Tech Specs:
+
 - Spec freshness: 100% based on current requirements
 - Time savings: 50% reduction in spec creation time
 - Relevance: 90%+ of generated specs used during implementation
@@ -595,18 +631,22 @@ Advanced workflow capabilities that adapt to project complexity and automate doc
 ## 8. Risk Mitigation
 
 ### Complexity Risk:
+
 - **Issue:** Scale-Adaptive Router adds complexity
 - **Mitigation:** Extensive testing at each level (0-4), user override option, clear documentation
 
 ### Performance Risk:
+
 - **Issue:** Brownfield Analysis may be slow for large codebases
 - **Mitigation:** Incremental analysis, caching, parallel processing, timeout limits
 
 ### Adoption Risk:
+
 - **Issue:** Users may not understand new workflows
 - **Mitigation:** Interactive tutorials, default presets, gradual rollout, migration guides
 
 ### Maintenance Risk:
+
 - **Issue:** More features = more maintenance burden
 - **Mitigation:** Comprehensive test coverage, modular architecture, automated CI/CD
 
@@ -619,6 +659,7 @@ This enhanced v3.0 architecture integrates proven innovations from BMAD v6 while
 By combining MADACE's strengths (scale-adaptive planning, visual Kanban, multi-provider LLM) with BMAD's innovations (workflow intelligence, customization system, universal status), v3.0 will deliver a world-class AI-driven development methodology.
 
 **Key Differentiators:**
+
 - **MADACE:** Web-first, multi-provider LLM, visual Kanban, Docker-native
 - **BMAD:** CLI-first, extensive customization, game development focus
 - **v3.0:** Best of both worlds, production-ready, enterprise-scale

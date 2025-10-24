@@ -115,7 +115,7 @@ export class StoryStatusProvider implements IStatusProvider {
       // If entity ID provided, find specific story
       if (entityId) {
         const story = parseResult.stories.find(
-          (s) => s.id.toLowerCase() === entityId.toLowerCase(),
+          (s) => s.id.toLowerCase() === entityId.toLowerCase()
         );
 
         if (!story) {
@@ -308,11 +308,7 @@ export class StoryStatusProvider implements IStatusProvider {
    * @param milestone - Current milestone (if in BACKLOG)
    * @returns Parsed story or null if not a valid story line
    */
-  private parseStoryLine(
-    line: string,
-    status: StoryState,
-    milestone?: string,
-  ): Story | null {
+  private parseStoryLine(line: string, status: StoryState, milestone?: string): Story | null {
     // Extract checkbox status
     const completedMatch = line.match(/^-\s+\[([x ])\]/i);
     if (!completedMatch?.[1]) return null;
@@ -397,17 +393,15 @@ export class StoryStatusProvider implements IStatusProvider {
       lines.push(`│ Story ID        │ ${this.padRight(String(result.data.id), 38)} │`);
       lines.push(`│ Title           │ ${this.padRight(String(result.data.title || ''), 38)} │`);
       lines.push(`│ Status          │ ${this.padRight(String(result.data.status || ''), 38)} │`);
+      lines.push(`│ Points          │ ${this.padRight(String(result.data.points || 'N/A'), 38)} │`);
       lines.push(
-        `│ Points          │ ${this.padRight(String(result.data.points || 'N/A'), 38)} │`,
+        `│ Assignee        │ ${this.padRight(String(result.data.assignee || 'N/A'), 38)} │`
       );
       lines.push(
-        `│ Assignee        │ ${this.padRight(String(result.data.assignee || 'N/A'), 38)} │`,
+        `│ Milestone       │ ${this.padRight(String(result.data.milestone || 'N/A'), 38)} │`
       );
       lines.push(
-        `│ Milestone       │ ${this.padRight(String(result.data.milestone || 'N/A'), 38)} │`,
-      );
-      lines.push(
-        `│ Completed       │ ${this.padRight(String(result.data.completed ?? false), 38)} │`,
+        `│ Completed       │ ${this.padRight(String(result.data.completed ?? false), 38)} │`
       );
       lines.push('└─────────────────┴────────────────────────────────────────┘');
       return lines.join('\n');
@@ -424,17 +418,25 @@ export class StoryStatusProvider implements IStatusProvider {
       }>;
 
       const lines: string[] = [];
-      lines.push('┌─────────────┬──────────────────────────────┬──────────────┬────────┬───────────┐');
-      lines.push('│ ID          │ Title                        │ Status       │ Points │ Assignee  │');
-      lines.push('├─────────────┼──────────────────────────────┼──────────────┼────────┼───────────┤');
+      lines.push(
+        '┌─────────────┬──────────────────────────────┬──────────────┬────────┬───────────┐'
+      );
+      lines.push(
+        '│ ID          │ Title                        │ Status       │ Points │ Assignee  │'
+      );
+      lines.push(
+        '├─────────────┼──────────────────────────────┼──────────────┼────────┼───────────┤'
+      );
 
       for (const story of stories) {
         lines.push(
-          `│ ${this.padRight(story.id, 11)} │ ${this.padRight(this.truncate(story.title, 28), 28)} │ ${this.padRight(story.status, 12)} │ ${this.padRight(String(story.points || 'N/A'), 6)} │ ${this.padRight(story.assignee || 'N/A', 9)} │`,
+          `│ ${this.padRight(story.id, 11)} │ ${this.padRight(this.truncate(story.title, 28), 28)} │ ${this.padRight(story.status, 12)} │ ${this.padRight(String(story.points || 'N/A'), 6)} │ ${this.padRight(story.assignee || 'N/A', 9)} │`
         );
       }
 
-      lines.push('└─────────────┴──────────────────────────────┴──────────────┴────────┴───────────┘');
+      lines.push(
+        '└─────────────┴──────────────────────────────┴──────────────┴────────┴───────────┘'
+      );
       lines.push(`\nTotal: ${stories.length} stories`);
 
       return lines.join('\n');
@@ -498,7 +500,7 @@ export class StoryStatusProvider implements IStatusProvider {
         lines.push('');
         for (const story of statusStories) {
           lines.push(
-            `- **[${story.id}]** ${story.title} | ${story.points || 'N/A'} points${story.assignee ? ` | @${story.assignee}` : ''}`,
+            `- **[${story.id}]** ${story.title} | ${story.points || 'N/A'} points${story.assignee ? ` | @${story.assignee}` : ''}`
           );
         }
         lines.push('');
@@ -545,8 +547,6 @@ export class StoryStatusProvider implements IStatusProvider {
  * console.log(provider.formatOutput(status, 'table'));
  * ```
  */
-export function createStoryStatusProvider(
-  statusFilePath?: string,
-): StoryStatusProvider {
+export function createStoryStatusProvider(statusFilePath?: string): StoryStatusProvider {
   return new StoryStatusProvider(statusFilePath);
 }

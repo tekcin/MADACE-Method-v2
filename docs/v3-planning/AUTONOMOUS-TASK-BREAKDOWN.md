@@ -13,6 +13,7 @@
 ### Batch 1A: Complexity Assessment Core (3 tasks, can run in parallel)
 
 **TASK-001: Create Complexity Assessment Types**
+
 - **File**: `lib/workflows/complexity-types.ts`
 - **Work**: Define TypeScript interfaces for complexity assessment
 - **Interfaces**: `ComplexityAssessment`, `ComplexityResult`, `ComplexityLevel`, `ProjectInput`
@@ -21,6 +22,7 @@
 - **Dependencies**: None
 
 **TASK-002: Implement Scoring Algorithm**
+
 - **File**: `lib/workflows/complexity-assessment.ts`
 - **Work**: Create `assessComplexity()` function with 8-criteria scoring
 - **Logic**: Project size (0-5), team size (0-5), codebase (0-5), integrations (0-5), users (0-5), security (0-5), duration (0-5), existing code (0-5)
@@ -30,6 +32,7 @@
 - **Dependencies**: TASK-001
 
 **TASK-003: Create Assessment Unit Tests**
+
 - **File**: `__tests__/lib/workflows/complexity-assessment.test.ts`
 - **Work**: 10+ test cases covering all boundary conditions
 - **Tests**: Level 0 (0-5), Level 1 (6-12), Level 2 (13-20), Level 3 (21-30), Level 4 (31-40)
@@ -43,6 +46,7 @@
 ### Batch 1B: Assessment Report Generation (2 tasks, can run in parallel after 1A)
 
 **TASK-004: Create Assessment Report Template**
+
 - **File**: `lib/templates/assessment-report.hbs`
 - **Work**: Handlebars template for `docs/scale-assessment.md`
 - **Sections**: Summary, criteria breakdown, level determination, workflow routing
@@ -52,6 +56,7 @@
 - **Dependencies**: TASK-001
 
 **TASK-005: Create Report Generator Function**
+
 - **File**: `lib/workflows/assessment-report.ts`
 - **Work**: `generateAssessmentReport()` function using template engine
 - **Input**: ComplexityResult object
@@ -65,6 +70,7 @@
 ### Batch 1C: Interactive Assessment CLI (3 tasks, sequential)
 
 **TASK-006: Create CLI Prompt Definitions**
+
 - **File**: `lib/cli/assessment-prompts.ts`
 - **Work**: Define inquirer.js prompts for 8 assessment criteria
 - **Prompts**: List selections, number inputs, confirmation prompts
@@ -74,6 +80,7 @@
 - **Dependencies**: TASK-001
 
 **TASK-007: Implement Interactive Assessment**
+
 - **File**: `lib/cli/assess-scale.ts`
 - **Work**: CLI command handler using inquirer prompts + assessment function
 - **Flow**: Prompt user → Calculate score → Generate report → Save file
@@ -83,6 +90,7 @@
 - **Dependencies**: TASK-002, TASK-005, TASK-006
 
 **TASK-008: Add CLI Command Registration**
+
 - **File**: Update existing CLI entry point (find with grep)
 - **Work**: Register `madace assess-scale` command
 - **Integration**: Wire up TASK-007 handler
@@ -96,6 +104,7 @@
 ### Batch 1D: Workflow Routing Logic (3 tasks, can run in parallel after 1A)
 
 **TASK-009: Create Route-Workflow YAML**
+
 - **File**: `madace/mam/workflows/route-workflow.yaml`
 - **Work**: Conditional routing workflow with 5 levels
 - **Logic**: If level 0 → minimal, level 1 → basic, level 2 → standard, level 3 → comprehensive, level 4 → enterprise
@@ -105,6 +114,7 @@
 - **Dependencies**: TASK-001
 
 **TASK-010: Implement Routing Action**
+
 - **File**: `lib/workflows/actions/route.ts`
 - **Work**: New workflow action type `action: route`
 - **Logic**: Evaluate condition, determine target workflow, pass context
@@ -114,6 +124,7 @@
 - **Dependencies**: TASK-009
 
 **TASK-011: Create Routing Unit Tests**
+
 - **File**: `__tests__/lib/workflows/actions/route.test.ts`
 - **Work**: Test all 5 routing paths
 - **Tests**: Correct workflow selected per level, context inheritance
@@ -126,6 +137,7 @@
 ### Batch 1E: User Override System (2 tasks, sequential)
 
 **TASK-012: Add Override to Assessment**
+
 - **File**: Update `lib/workflows/complexity-assessment.ts`
 - **Work**: Add `overrideLevel(assessment, newLevel, reason)` function
 - **Logic**: Allow manual level override with reason tracking
@@ -135,6 +147,7 @@
 - **Dependencies**: TASK-002
 
 **TASK-013: Add Override to CLI**
+
 - **File**: Update `lib/cli/assess-scale.ts`
 - **Work**: Add `--override <level>` flag and `--reason <text>` flag
 - **Prompt**: If flags present, confirm override with reason prompt
@@ -148,6 +161,7 @@
 ### Batch 1F: Web UI Integration (3 tasks, can run in parallel after 1D)
 
 **TASK-014: Create Assessment Form Component**
+
 - **File**: `components/features/AssessmentForm.tsx`
 - **Work**: React form with 8 assessment criteria inputs
 - **UI**: Dropdowns, sliders, number inputs per criterion
@@ -157,6 +171,7 @@
 - **Dependencies**: TASK-001
 
 **TASK-015: Create Assessment Dashboard Page**
+
 - **File**: `app/assess-scale/page.tsx`
 - **Work**: Page with form + results display
 - **Flow**: Fill form → Calculate → Show results → Download report
@@ -166,6 +181,7 @@
 - **Dependencies**: TASK-002, TASK-014
 
 **TASK-016: Add Assessment API Route**
+
 - **File**: `app/api/assess-scale/route.ts`
 - **Work**: POST endpoint accepting assessment input
 - **Logic**: Call `assessComplexity()`, return result JSON
@@ -179,6 +195,7 @@
 ### Batch 1G: Setup Wizard Integration (1 task)
 
 **TASK-017: Integrate Assessment into Setup Wizard**
+
 - **File**: Update `app/setup/page.tsx`
 - **Work**: Add assessment as optional step 1.5 (between project info and LLM)
 - **UI**: "Calculate Recommended Level" button
@@ -192,6 +209,7 @@
 ### Batch 1H: E2E Testing for Scale Router (1 task)
 
 **TASK-018: Create Scale Router E2E Tests**
+
 - **File**: `e2e-tests/scale-router.spec.ts`
 - **Work**: Playwright tests for all 5 routing levels
 - **Tests**: CLI assessment, API assessment, UI assessment, override, setup wizard
@@ -206,6 +224,7 @@
 ### Batch 2A: Status Provider System (4 tasks, can run in parallel)
 
 **TASK-019: Create IStatusProvider Interface**
+
 - **File**: `lib/status/types.ts`
 - **Work**: Define status provider interface and result types
 - **Interfaces**: `IStatusProvider`, `StatusResult`, `EntityType`, `StatusFormat`
@@ -215,6 +234,7 @@
 - **Dependencies**: None
 
 **TASK-020: Implement StoryStatusProvider**
+
 - **File**: `lib/status/providers/story.ts`
 - **Work**: Provider for story status from `mam-workflow-status.md`
 - **Logic**: Parse file, find story by ID, return state + metadata
@@ -224,6 +244,7 @@
 - **Dependencies**: TASK-019
 
 **TASK-021: Implement EpicStatusProvider**
+
 - **File**: `lib/status/providers/epic.ts`
 - **Work**: Provider for epic status from epic files
 - **Logic**: Read epic markdown, parse status, count stories
@@ -233,6 +254,7 @@
 - **Dependencies**: TASK-019
 
 **TASK-022: Implement WorkflowStatusProvider**
+
 - **File**: `lib/status/providers/workflow.ts`
 - **Work**: Provider for workflow execution status
 - **Logic**: Read `.{workflow}.state.json`, return current step
@@ -246,6 +268,7 @@
 ### Batch 2B: Status Provider Implementation (2 tasks, can run in parallel after 2A)
 
 **TASK-023: Implement StateMachineStatusProvider**
+
 - **File**: `lib/status/providers/state-machine.ts`
 - **Work**: Provider for overall state machine status
 - **Logic**: Parse `mam-workflow-status.md`, return counts per state
@@ -255,6 +278,7 @@
 - **Dependencies**: TASK-019
 
 **TASK-024: Create Status Provider Registry**
+
 - **File**: `lib/status/registry.ts`
 - **Work**: Registry pattern to manage all providers
 - **Methods**: `registerProvider()`, `detectEntityType()`, `getStatus()`
@@ -268,6 +292,7 @@
 ### Batch 2C: CLI Status Command (3 tasks, sequential)
 
 **TASK-025: Create Status CLI Handler**
+
 - **File**: `lib/cli/status.ts`
 - **Work**: CLI command handler for `madace status [entity]`
 - **Logic**: Optional entity ID, use registry to detect/fetch
@@ -277,6 +302,7 @@
 - **Dependencies**: TASK-024
 
 **TASK-026: Implement Multiple Output Formats**
+
 - **File**: `lib/status/formatters.ts`
 - **Work**: Status output formatters (table, json, markdown)
 - **Formats**: Table (cli-table3), JSON (pretty), Markdown (GitHub)
@@ -286,6 +312,7 @@
 - **Dependencies**: TASK-025
 
 **TASK-027: Add Watch Mode**
+
 - **File**: Update `lib/cli/status.ts`
 - **Work**: Add `--watch` flag for real-time updates
 - **Logic**: Poll every 2 seconds, clear console, re-display
@@ -299,6 +326,7 @@
 ### Batch 2D: API Integration (2 tasks, can run in parallel after 2B)
 
 **TASK-028: Create Status API Route**
+
 - **File**: `app/api/status/route.ts`
 - **Work**: GET endpoint for status queries
 - **Query**: `?entity=<id>&format=<format>`
@@ -308,6 +336,7 @@
 - **Dependencies**: TASK-024
 
 **TASK-029: Add WebSocket Status Updates**
+
 - **File**: Update `lib/sync/websocket-server.ts`
 - **Work**: Broadcast status changes on entity updates
 - **Events**: `status:story`, `status:epic`, `status:workflow`, `status:state`
@@ -321,6 +350,7 @@
 ### Batch 2E: Web UI Dashboard (2 tasks, sequential)
 
 **TASK-030: Create Status Dashboard Component**
+
 - **File**: `components/features/StatusDashboard.tsx`
 - **Work**: Component displaying all entity statuses
 - **Layout**: Grid with story/epic/workflow cards
@@ -330,6 +360,7 @@
 - **Dependencies**: TASK-028, TASK-029
 
 **TASK-031: Create Status Dashboard Page**
+
 - **File**: `app/status/page.tsx`
 - **Work**: Page with search + dashboard component
 - **UI**: Search bar, filter dropdown, status cards
@@ -343,6 +374,7 @@
 ### Batch 2F: E2E Testing for Status Checker (1 task)
 
 **TASK-032: Create Status Checker E2E Tests**
+
 - **File**: `e2e-tests/status-checker.spec.ts`
 - **Work**: Playwright tests for all status providers
 - **Tests**: CLI status, API status, Web UI status, watch mode, real-time
@@ -357,6 +389,7 @@
 ### Batch 3A: E2E Test Setup (2 tasks, sequential)
 
 **TASK-033: Enhance Playwright Configuration**
+
 - **File**: `playwright.config.ts`
 - **Work**: Add projects for chromium, firefox, webkit
 - **Config**: Screenshots, videos, trace on failure
@@ -366,6 +399,7 @@
 - **Dependencies**: None
 
 **TASK-034: Create E2E Test Helpers**
+
 - **File**: `e2e-tests/utils/test-helpers.ts`
 - **Work**: Reusable helpers for common E2E patterns
 - **Helpers**: Login, navigation, wait for element, screenshot compare
@@ -378,6 +412,7 @@
 ### Batch 3B: Core User Journey Tests (5 tasks, can run in parallel after 3A)
 
 **TASK-035: Setup Wizard E2E Test**
+
 - **File**: `e2e-tests/setup-wizard.spec.ts`
 - **Work**: Complete setup wizard flow test
 - **Steps**: Fill all 4 steps, save config, verify files
@@ -386,6 +421,7 @@
 - **Dependencies**: TASK-034
 
 **TASK-036: Kanban Board E2E Test**
+
 - **File**: `e2e-tests/kanban.spec.ts`
 - **Work**: Test Kanban board functionality
 - **Tests**: Load board, verify columns, check story counts, refresh
@@ -394,6 +430,7 @@
 - **Dependencies**: TASK-034
 
 **TASK-037: Agent Management E2E Test**
+
 - **File**: `e2e-tests/agents.spec.ts`
 - **Work**: Test agent listing and detail pages
 - **Tests**: List agents, click agent, view detail, back navigation
@@ -402,6 +439,7 @@
 - **Dependencies**: TASK-034
 
 **TASK-038: LLM Test Page E2E Test**
+
 - **File**: `e2e-tests/llm-test.spec.ts`
 - **Work**: Test LLM connection testing flow
 - **Tests**: Select provider, enter key, test connection (mock)
@@ -410,6 +448,7 @@
 - **Dependencies**: TASK-034
 
 **TASK-039: Settings Page E2E Test**
+
 - **File**: `e2e-tests/settings.spec.ts`
 - **Work**: Test settings update flow
 - **Tests**: Load settings, modify fields, save, verify persistence
@@ -422,6 +461,7 @@
 ### Batch 3C: Visual Regression Testing (2 tasks, can run in parallel after 3B)
 
 **TASK-040: Setup Visual Regression**
+
 - **File**: `e2e-tests/utils/visual-regression.ts`
 - **Work**: Helper for screenshot comparison testing
 - **Library**: Use Playwright's built-in screenshot comparison
@@ -431,6 +471,7 @@
 - **Dependencies**: TASK-034
 
 **TASK-041: Add Visual Tests for All Pages**
+
 - **File**: `e2e-tests/visual-regression.spec.ts`
 - **Work**: Screenshot tests for all pages (light + dark mode)
 - **Pages**: Home, Kanban, Agents, Workflows, Settings, LLM Test, Status
@@ -443,6 +484,7 @@
 ### Batch 3D: CI/CD Integration (1 task)
 
 **TASK-042: Add GitHub Actions E2E Workflow**
+
 - **File**: `.github/workflows/e2e-tests.yml`
 - **Work**: CI workflow running E2E tests on PR
 - **Jobs**: Install deps, build, run Playwright, upload artifacts
@@ -456,6 +498,7 @@
 ## 📊 Execution Plan
 
 ### Total Tasks: 42 autonomous tasks
+
 - **Phase 1 (Scale Router)**: 18 tasks | ~25 hours
 - **Phase 2 (Status Checker)**: 14 tasks | ~20 hours
 - **Phase 3 (E2E Testing)**: 10 tasks | ~14 hours
@@ -464,32 +507,41 @@
 ### Parallel Execution Strategy
 
 **Wave 1** (7 parallel tasks, 0 dependencies):
+
 - TASK-001, TASK-019, TASK-033
 
 **Wave 2** (12 parallel tasks, depends on Wave 1):
+
 - TASK-002, TASK-004, TASK-006, TASK-009, TASK-020, TASK-021, TASK-022, TASK-034
 
 **Wave 3** (10 parallel tasks, depends on Wave 2):
+
 - TASK-003, TASK-005, TASK-007, TASK-010, TASK-014, TASK-023, TASK-024, TASK-035, TASK-036, TASK-037
 
 **Wave 4** (8 parallel tasks, depends on Wave 3):
+
 - TASK-008, TASK-011, TASK-015, TASK-016, TASK-025, TASK-038, TASK-039, TASK-040
 
 **Wave 5** (5 parallel tasks, depends on Wave 4):
+
 - TASK-012, TASK-017, TASK-026, TASK-028, TASK-041
 
 **Wave 6** (5 parallel tasks, depends on Wave 5):
+
 - TASK-013, TASK-018, TASK-027, TASK-029, TASK-042
 
 **Wave 7** (3 parallel tasks, depends on Wave 6):
+
 - TASK-030, TASK-032
 
 **Wave 8** (1 task, depends on Wave 7):
+
 - TASK-031
 
 ### Execution Time Estimate
 
 With **10 parallel sub-agents**:
+
 - Sequential execution: ~59 hours
 - Parallel execution (10 agents): ~12-15 hours
 - **Speedup**: ~4x faster

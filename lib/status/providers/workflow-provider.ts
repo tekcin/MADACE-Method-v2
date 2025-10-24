@@ -7,11 +7,7 @@
 
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import type {
-  IStatusProvider,
-  StatusResult,
-  StatusFormat,
-} from '../types';
+import type { IStatusProvider, StatusResult, StatusFormat } from '../types';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Workflow State Types
@@ -157,9 +153,7 @@ export class WorkflowStatusProvider implements IStatusProvider {
             : { workflows: [], totalWorkflows: 0 },
           timestamp,
           metadata: {
-            warnings: [
-              `Workflow state directory not found: ${this.stateDirectory}`,
-            ],
+            warnings: [`Workflow state directory not found: ${this.stateDirectory}`],
           },
         };
       }
@@ -186,8 +180,7 @@ export class WorkflowStatusProvider implements IStatusProvider {
         };
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
       return {
         entityType: 'workflow',
@@ -232,28 +225,20 @@ export class WorkflowStatusProvider implements IStatusProvider {
    * @returns Parsed workflow data
    * @throws Error if file not found or invalid JSON
    */
-  private async readWorkflowState(
-    workflowName: string
-  ): Promise<WorkflowData> {
-    const stateFilePath = path.resolve(
-      this.stateDirectory,
-      `.${workflowName}.state.json`
-    );
+  private async readWorkflowState(workflowName: string): Promise<WorkflowData> {
+    const stateFilePath = path.resolve(this.stateDirectory, `.${workflowName}.state.json`);
 
     try {
       const fileContent = await fs.readFile(stateFilePath, 'utf-8');
       const state: WorkflowState = JSON.parse(fileContent);
 
       // Calculate progress percentage
-      const completedSteps = state.steps.filter(
-        (step) => step.status === 'completed'
-      ).length;
+      const completedSteps = state.steps.filter((step) => step.status === 'completed').length;
       const progress = Math.round((completedSteps / state.totalSteps) * 100);
 
       // Get current step name
       const currentStepIndex = state.currentStep - 1; // 1-indexed to 0-indexed
-      const currentStepName =
-        state.steps[currentStepIndex]?.id || 'unknown';
+      const currentStepName = state.steps[currentStepIndex]?.id || 'unknown';
 
       return {
         workflow: state.workflow,
@@ -268,11 +253,7 @@ export class WorkflowStatusProvider implements IStatusProvider {
         steps: state.steps,
       };
     } catch (error) {
-      if (
-        error instanceof Error &&
-        'code' in error &&
-        error.code === 'ENOENT'
-      ) {
+      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
         throw new Error(`Workflow not found: ${workflowName}`);
       }
       throw error;
@@ -337,25 +318,29 @@ export class WorkflowStatusProvider implements IStatusProvider {
       }
 
       const lines: string[] = [];
-      lines.push('┌─────────────────────────┬──────────────┬──────────┬──────────┬────────────────────┐');
-      lines.push('│ Workflow                │ Status       │ Step     │ Progress │ Last Updated       │');
-      lines.push('├─────────────────────────┼──────────────┼──────────┼──────────┼────────────────────┤');
+      lines.push(
+        '┌─────────────────────────┬──────────────┬──────────┬──────────┬────────────────────┐'
+      );
+      lines.push(
+        '│ Workflow                │ Status       │ Step     │ Progress │ Last Updated       │'
+      );
+      lines.push(
+        '├─────────────────────────┼──────────────┼──────────┼──────────┼────────────────────┤'
+      );
 
       for (const workflow of workflows) {
         const name = workflow.workflow.padEnd(23);
         const status = workflow.status.padEnd(12);
         const step = `${workflow.currentStep}/${workflow.totalSteps}`.padEnd(8);
         const progress = `${workflow.progress}%`.padEnd(8);
-        const updated = new Date(workflow.lastUpdated)
-          .toLocaleString()
-          .padEnd(18);
+        const updated = new Date(workflow.lastUpdated).toLocaleString().padEnd(18);
 
-        lines.push(
-          `│ ${name} │ ${status} │ ${step} │ ${progress} │ ${updated} │`
-        );
+        lines.push(`│ ${name} │ ${status} │ ${step} │ ${progress} │ ${updated} │`);
       }
 
-      lines.push('└─────────────────────────┴──────────────┴──────────┴──────────┴────────────────────┘');
+      lines.push(
+        '└─────────────────────────┴──────────────┴──────────┴──────────┴────────────────────┘'
+      );
 
       return lines.join('\n');
     } else {
@@ -365,9 +350,7 @@ export class WorkflowStatusProvider implements IStatusProvider {
       lines.push('┌─────────────────┬────────────────────────────────────────┐');
       lines.push(`│ Workflow        │ ${workflow.workflow.padEnd(38)} │`);
       lines.push(`│ Status          │ ${workflow.status.padEnd(38)} │`);
-      lines.push(
-        `│ Current Step    │ ${workflow.currentStepName.padEnd(38)} │`
-      );
+      lines.push(`│ Current Step    │ ${workflow.currentStepName.padEnd(38)} │`);
       lines.push(
         `│ Progress        │ ${`${workflow.currentStep}/${workflow.totalSteps} (${workflow.progress}%)`.padEnd(38)} │`
       );
@@ -447,12 +430,8 @@ export class WorkflowStatusProvider implements IStatusProvider {
           `**Progress:** ${workflow.currentStep}/${workflow.totalSteps} (${workflow.progress}%)`
         );
         lines.push(`${progressBar}`);
-        lines.push(
-          `**Current Step:** ${workflow.currentStepName}`
-        );
-        lines.push(
-          `**Last Updated:** ${new Date(workflow.lastUpdated).toLocaleString()}`
-        );
+        lines.push(`**Current Step:** ${workflow.currentStepName}`);
+        lines.push(`**Last Updated:** ${new Date(workflow.lastUpdated).toLocaleString()}`);
         lines.push('');
       }
 
@@ -470,12 +449,8 @@ export class WorkflowStatusProvider implements IStatusProvider {
       );
       lines.push(`${progressBar}`);
       lines.push(`**Current Step:** ${workflow.currentStepName}`);
-      lines.push(
-        `**Started At:** ${new Date(workflow.startedAt).toLocaleString()}`
-      );
-      lines.push(
-        `**Last Updated:** ${new Date(workflow.lastUpdated).toLocaleString()}`
-      );
+      lines.push(`**Started At:** ${new Date(workflow.startedAt).toLocaleString()}`);
+      lines.push(`**Last Updated:** ${new Date(workflow.lastUpdated).toLocaleString()}`);
       lines.push('');
 
       // Add steps list

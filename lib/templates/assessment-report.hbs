@@ -1,297 +1,161 @@
-# Complexity Assessment Report
+# Complexity Assessment Report **Project:**
+{{projectName}}
+**Date:**
+{{timestamp}}
+**Complexity Level:**
+{{level}}
+-
+{{interpretation}}
+**Score:**
+{{totalScore}}/{{maxScore}}
 
-**Project:** {{projectName}}
-**Date:** {{timestamp}}
-**Complexity Level:** {{level}} - {{interpretation}}
-**Score:** {{totalScore}}/{{maxScore}}
+--- ## Criteria Breakdown | Criterion | Score | Max | Description |
+|---------------------|-------|-----|-------------| | Project Size |
+{{breakdown.projectSize}}
+| 5 | Team composition and scale | | Team Size |
+{{breakdown.teamSize}}
+| 5 | Number of team members | | Codebase |
+{{breakdown.codebase}}
+| 5 | Existing code complexity | | Integrations |
+{{breakdown.integrations}}
+| 5 | External system dependencies | | User Base |
+{{breakdown.userBase}}
+| 5 | Expected user volume | | Security |
+{{breakdown.security}}
+| 5 | Compliance requirements | | Duration |
+{{breakdown.duration}}
+| 5 | Project timeline | | Risk |
+{{breakdown.risk}}
+| 5 | Business impact level | **Total Score:**
+{{totalScore}}/{{maxScore}}
 
----
-
-## Criteria Breakdown
-
-| Criterion           | Score | Max | Description |
-|---------------------|-------|-----|-------------|
-| Project Size        | {{breakdown.projectSize}} | 5 | Team composition and scale |
-| Team Size           | {{breakdown.teamSize}} | 5 | Number of team members |
-| Codebase            | {{breakdown.codebase}} | 5 | Existing code complexity |
-| Integrations        | {{breakdown.integrations}} | 5 | External system dependencies |
-| User Base           | {{breakdown.userBase}} | 5 | Expected user volume |
-| Security            | {{breakdown.security}} | 5 | Compliance requirements |
-| Duration            | {{breakdown.duration}} | 5 | Project timeline |
-| Risk                | {{breakdown.risk}} | 5 | Business impact level |
-
-**Total Score:** {{totalScore}}/{{maxScore}}
-
----
-
-## Level Interpretation
+--- ## Level Interpretation
 
 {{#if (eq level 0)}}
-### Level 0: Minimal Complexity
-
-Your project falls into the **minimal complexity** category. This typically indicates:
-- Small, personal, or learning projects
-- Individual contributor or very small team
-- Short timeline (days to weeks)
-- Limited external dependencies
-- No critical security or compliance requirements
-
-This level is suitable for prototypes, tutorials, and simple applications.
+  ### Level 0: Minimal Complexity Your project falls into the **minimal complexity** category. This
+  typically indicates: - Small, personal, or learning projects - Individual contributor or very
+  small team - Short timeline (days to weeks) - Limited external dependencies - No critical security
+  or compliance requirements This level is suitable for prototypes, tutorials, and simple
+  applications.
 {{/if}}
 
 {{#if (eq level 1)}}
-### Level 1: Simple Complexity
-
-Your project falls into the **simple complexity** category. This typically indicates:
-- Small team projects (2-5 developers)
-- Moderate timeline (weeks to months)
-- Few external integrations
-- Basic security requirements
-- Limited user base
-
-This level is suitable for internal tools, MVPs, and straightforward applications.
+  ### Level 1: Simple Complexity Your project falls into the **simple complexity** category. This
+  typically indicates: - Small team projects (2-5 developers) - Moderate timeline (weeks to months)
+  - Few external integrations - Basic security requirements - Limited user base This level is
+  suitable for internal tools, MVPs, and straightforward applications.
 {{/if}}
 
 {{#if (eq level 2)}}
-### Level 2: Standard Complexity
-
-Your project falls into the **standard complexity** category. This typically indicates:
-- Medium-sized teams (5-10 developers)
-- Multiple modules or services
-- Several external integrations
-- Moderate security and compliance needs
-- Growing user base
-
-This level is suitable for most production applications and business systems.
+  ### Level 2: Standard Complexity Your project falls into the **standard complexity** category.
+  This typically indicates: - Medium-sized teams (5-10 developers) - Multiple modules or services -
+  Several external integrations - Moderate security and compliance needs - Growing user base This
+  level is suitable for most production applications and business systems.
 {{/if}}
 
 {{#if (eq level 3)}}
-### Level 3: Comprehensive Complexity
-
-Your project falls into the **comprehensive complexity** category. This typically indicates:
-- Large teams (10-20 developers)
-- Complex architecture with multiple systems
-- Many external integrations
-- Significant security and compliance requirements
-- Large or critical user base
-
-This level is suitable for enterprise applications and mission-critical systems.
+  ### Level 3: Comprehensive Complexity Your project falls into the **comprehensive complexity**
+  category. This typically indicates: - Large teams (10-20 developers) - Complex architecture with
+  multiple systems - Many external integrations - Significant security and compliance requirements -
+  Large or critical user base This level is suitable for enterprise applications and
+  mission-critical systems.
 {{/if}}
 
 {{#if (eq level 4)}}
-### Level 4: Enterprise Complexity
-
-Your project falls into the **enterprise complexity** category. This typically indicates:
-- Very large teams (20+ developers)
-- Highly complex distributed systems
-- Extensive integration ecosystem
-- Strict security, compliance, and regulatory requirements
-- Massive user base or critical business operations
-
-This level is suitable for large-scale enterprise platforms and regulated industries.
+  ### Level 4: Enterprise Complexity Your project falls into the **enterprise complexity** category.
+  This typically indicates: - Very large teams (20+ developers) - Highly complex distributed systems
+  - Extensive integration ecosystem - Strict security, compliance, and regulatory requirements -
+  Massive user base or critical business operations This level is suitable for large-scale
+  enterprise platforms and regulated industries.
 {{/if}}
 
----
-
-## Recommended Path
-
-Based on **Level {{level}}** complexity, we recommend the **{{recommendedPath}}** workflow path.
+--- ## Recommended Path Based on **Level
+{{level}}** complexity, we recommend the **{{recommendedPath}}** workflow path.
 
 {{#if (eq level 0)}}
-### Minimal Path
-
-The minimal path provides:
-- Quick tutorial-style documentation
-- Basic project structure guidance
-- Essential setup instructions
-- Lightweight development workflow
-
-**Workflow Steps:**
-1. Project initialization
-2. Basic requirements capture
-3. Simple implementation guide
-4. Quick deployment checklist
-
-**Estimated Time:** 1-2 hours
+  ### Minimal Path The minimal path provides: - Quick tutorial-style documentation - Basic project
+  structure guidance - Essential setup instructions - Lightweight development workflow **Workflow
+  Steps:** 1. Project initialization 2. Basic requirements capture 3. Simple implementation guide 4.
+  Quick deployment checklist **Estimated Time:** 1-2 hours
 {{/if}}
 
 {{#if (eq level 1)}}
-### Simple Path
-
-The simple path provides:
-- Basic PRD generation
-- Core user stories
-- Essential architecture decisions
-- Streamlined development workflow
-
-**Workflow Steps:**
-1. Requirements elicitation
-2. User story creation
-3. Basic architecture design
-4. Implementation planning
-5. Testing strategy
-
-**Estimated Time:** 1-2 days
+  ### Simple Path The simple path provides: - Basic PRD generation - Core user stories - Essential
+  architecture decisions - Streamlined development workflow **Workflow Steps:** 1. Requirements
+  elicitation 2. User story creation 3. Basic architecture design 4. Implementation planning 5.
+  Testing strategy **Estimated Time:** 1-2 days
 {{/if}}
 
 {{#if (eq level 2)}}
-### Standard Path
-
-The standard path provides:
-- Comprehensive PRD
-- Detailed user stories with acceptance criteria
-- Architecture design and technical decisions
-- Full development workflow with sprint planning
-- Testing and quality assurance strategy
-
-**Workflow Steps:**
-1. Stakeholder interviews
-2. Requirements analysis
-3. User story breakdown
-4. Architecture design
-5. Sprint planning
-6. Implementation guidance
-7. Testing and validation
-8. Deployment planning
-
-**Estimated Time:** 1-2 weeks
+  ### Standard Path The standard path provides: - Comprehensive PRD - Detailed user stories with
+  acceptance criteria - Architecture design and technical decisions - Full development workflow with
+  sprint planning - Testing and quality assurance strategy **Workflow Steps:** 1. Stakeholder
+  interviews 2. Requirements analysis 3. User story breakdown 4. Architecture design 5. Sprint
+  planning 6. Implementation guidance 7. Testing and validation 8. Deployment planning **Estimated
+  Time:** 1-2 weeks
 {{/if}}
 
 {{#if (eq level 3)}}
-### Comprehensive Path
-
-The comprehensive path provides:
-- Detailed PRD with multiple stakeholder perspectives
-- Epic and story breakdown with dependencies
-- Comprehensive architecture with ADRs
-- Multi-phase development workflow
-- Advanced testing strategies (integration, performance, security)
-- Risk management and mitigation plans
-
-**Workflow Steps:**
-1. Multi-stakeholder requirements gathering
-2. Business analysis and modeling
-3. Epic and story mapping
-4. Architecture design with decision records
-5. Technical specification creation
-6. Multi-sprint planning
-7. Implementation with code reviews
-8. Comprehensive testing (unit, integration, E2E, performance)
-9. Security and compliance validation
-10. Staged deployment planning
-
-**Estimated Time:** 1-3 months
+  ### Comprehensive Path The comprehensive path provides: - Detailed PRD with multiple stakeholder
+  perspectives - Epic and story breakdown with dependencies - Comprehensive architecture with ADRs -
+  Multi-phase development workflow - Advanced testing strategies (integration, performance,
+  security) - Risk management and mitigation plans **Workflow Steps:** 1. Multi-stakeholder
+  requirements gathering 2. Business analysis and modeling 3. Epic and story mapping 4. Architecture
+  design with decision records 5. Technical specification creation 6. Multi-sprint planning 7.
+  Implementation with code reviews 8. Comprehensive testing (unit, integration, E2E, performance) 9.
+  Security and compliance validation 10. Staged deployment planning **Estimated Time:** 1-3 months
 {{/if}}
 
 {{#if (eq level 4)}}
-### Enterprise Path
-
-The enterprise path provides:
-- Executive-level PRD with business case
-- Complete epic breakdown with roadmap
-- Enterprise architecture with governance
-- Multi-team coordination workflow
-- Full QA/QC with automation
-- Compliance and audit documentation
-- Change management and rollout planning
-
-**Workflow Steps:**
-1. Executive stakeholder alignment
-2. Business case development
-3. Enterprise requirements analysis
-4. Portfolio and roadmap planning
-5. Multi-team epic breakdown
-6. Enterprise architecture design
-7. Governance and compliance planning
-8. Security architecture and threat modeling
-9. Multi-phase implementation coordination
-10. Comprehensive testing strategy (all levels)
-11. Performance and scalability validation
-12. Compliance audit preparation
-13. Change management planning
-14. Phased rollout with monitoring
-
-**Estimated Time:** 3-12 months
+  ### Enterprise Path The enterprise path provides: - Executive-level PRD with business case -
+  Complete epic breakdown with roadmap - Enterprise architecture with governance - Multi-team
+  coordination workflow - Full QA/QC with automation - Compliance and audit documentation - Change
+  management and rollout planning **Workflow Steps:** 1. Executive stakeholder alignment 2. Business
+  case development 3. Enterprise requirements analysis 4. Portfolio and roadmap planning 5.
+  Multi-team epic breakdown 6. Enterprise architecture design 7. Governance and compliance planning
+  8. Security architecture and threat modeling 9. Multi-phase implementation coordination 10.
+  Comprehensive testing strategy (all levels) 11. Performance and scalability validation 12.
+  Compliance audit preparation 13. Change management planning 14. Phased rollout with monitoring
+  **Estimated Time:** 3-12 months
 {{/if}}
 
----
-
-## Next Steps
-
-### 1. Review This Assessment
-
-- Share this report with key stakeholders
-- Validate the complexity level assessment
-- Discuss resource allocation and timeline expectations
-- Confirm the recommended workflow path is appropriate
-
-### 2. Initialize MADACE Workflow
-
-Run the recommended workflow:
-
-```bash
-madace workflow {{recommendedPath}}
-```
-
-This will start the **{{recommendedPath}}** workflow appropriate for Level {{level}} complexity.
-
-### 3. Configure Project Settings
-
-Ensure your `madace/core/config.yaml` has the correct settings:
-
-```yaml
-project_name: {{projectName}}
-complexity_level: {{level}}
-workflow_path: {{recommendedPath}}
-output_folder: "docs"
-```
-
-### 4. Begin Planning Phase
-
-The workflow will guide you through:
-- Requirements gathering
-- Stakeholder interviews
-- User story creation
-- Architecture design
-- Implementation planning
-
-### 5. Engage the Appropriate Agents
+--- ## Next Steps ### 1. Review This Assessment - Share this report with key stakeholders - Validate
+the complexity level assessment - Discuss resource allocation and timeline expectations - Confirm
+the recommended workflow path is appropriate ### 2. Initialize MADACE Workflow Run the recommended
+workflow: ```bash madace workflow
+{{recommendedPath}}
+``` This will start the **{{recommendedPath}}** workflow appropriate for Level
+{{level}}
+complexity. ### 3. Configure Project Settings Ensure your `madace/core/config.yaml` has the correct
+settings: ```yaml project_name:
+{{projectName}}
+complexity_level:
+{{level}}
+workflow_path:
+{{recommendedPath}}
+output_folder: "docs" ``` ### 4. Begin Planning Phase The workflow will guide you through: -
+Requirements gathering - Stakeholder interviews - User story creation - Architecture design -
+Implementation planning ### 5. Engage the Appropriate Agents
 
 {{#if (lte level 1)}}
-For minimal/simple projects, you'll primarily work with:
-- **PM Agent**: Basic requirements and planning
-- **DEV Agent**: Implementation guidance
+  For minimal/simple projects, you'll primarily work with: - **PM Agent**: Basic requirements and
+  planning - **DEV Agent**: Implementation guidance
 {{/if}}
 
 {{#if (and (gte level 2) (lte level 3))}}
-For standard/comprehensive projects, you'll work with:
-- **PM Agent**: Project planning and coordination
-- **Analyst Agent**: Requirements analysis
-- **Architect Agent**: Technical design
-- **SM Agent**: Sprint planning and tracking
-- **DEV Agent**: Implementation guidance
+  For standard/comprehensive projects, you'll work with: - **PM Agent**: Project planning and
+  coordination - **Analyst Agent**: Requirements analysis - **Architect Agent**: Technical design -
+  **SM Agent**: Sprint planning and tracking - **DEV Agent**: Implementation guidance
 {{/if}}
 
 {{#if (eq level 4)}}
-For enterprise projects, you'll engage all agents plus external expertise:
-- **PM Agent**: Multi-team coordination
-- **Analyst Agent**: Enterprise requirements
-- **Architect Agent**: Enterprise architecture
-- **SM Agent**: Multi-sprint coordination
-- **DEV Agent**: Implementation standards
-- **External Experts**: Security, compliance, performance specialists
+  For enterprise projects, you'll engage all agents plus external expertise: - **PM Agent**:
+  Multi-team coordination - **Analyst Agent**: Enterprise requirements - **Architect Agent**:
+  Enterprise architecture - **SM Agent**: Multi-sprint coordination - **DEV Agent**: Implementation
+  standards - **External Experts**: Security, compliance, performance specialists
 {{/if}}
 
----
-
-## Additional Resources
-
-- **MADACE Documentation**: See `docs/` folder for detailed guides
-- **Workflow Templates**: Available in `madace/mam/workflows/`
-- **Agent Definitions**: Located in `madace/mam/agents/`
-- **Configuration Guide**: Review `madace/core/config.yaml.example`
-
----
-
-**Generated by MADACE v2.0**
-*Methodology for AI-Driven Agile Collaboration Engine*
+--- ## Additional Resources - **MADACE Documentation**: See `docs/` folder for detailed guides -
+**Workflow Templates**: Available in `madace/mam/workflows/` - **Agent Definitions**: Located in
+`madace/mam/agents/` - **Configuration Guide**: Review `madace/core/config.yaml.example` ---
+**Generated by MADACE v2.0** *Methodology for AI-Driven Agile Collaboration Engine*

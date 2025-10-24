@@ -22,17 +22,20 @@ BMAD-METHOD v6-alpha represents a mature evolution of AI-driven software develop
 ### 1.1 Scale-Adaptive Workflow Engine™
 
 **BMAD Implementation:**
+
 - Dynamic routing based on project complexity (Levels 0-4)
 - Automatic artifact selection (tech-spec only vs PRD + Epics)
 - Phase skipping for simple projects (L0-1 skip solutioning)
 - Workflow orchestration based on context
 
 **MADACE v2.0 Current State:**
+
 - Static scale assessment (Levels 0-4 defined but not adaptive)
 - Manual workflow selection
 - No automatic phase routing
 
 **Recommendation for MADACE v3.0:**
+
 ```
 INTEGRATE: Scale-Adaptive Workflow Router
 Priority: P0 (Critical)
@@ -56,17 +59,20 @@ Implementation:
 ### 1.2 Just-In-Time (JIT) Technical Specifications
 
 **BMAD Innovation:**
+
 - Tech specs created ONE epic at a time during implementation
 - Prevents over-engineering and analysis paralysis
 - Incorporates learning from previous epics
 - Reduces upfront planning overhead
 
 **MADACE v2.0 Current State:**
+
 - No tech spec concept yet
 - All planning done upfront
 - No epic-specific technical guidance
 
 **Recommendation for MADACE v3.0:**
+
 ```
 INTEGRATE: Just-In-Time Epic Tech Specs
 Priority: P1 (High)
@@ -95,17 +101,20 @@ Benefits:
 ### 1.3 Story-Context Workflow (Dynamic Expertise Injection)
 
 **BMAD Innovation:**
+
 - `story-context` workflow generates targeted technical guidance per story
 - Replaces static documentation with contextual expertise
 - Provides codebase-specific implementation hints
 - XML-based context injection for LLM agents
 
 **MADACE v2.0 Current State:**
+
 - No story-level context generation
 - Agents work from static PRD/Epics
 - No dynamic expertise injection
 
 **Recommendation for MADACE v3.0:**
+
 ```
 INTEGRATE: Story-Context Workflow
 Priority: P1 (High)
@@ -146,6 +155,7 @@ Example Output:
 ### 1.4 Universal Workflow Status Checker
 
 **BMAD Innovation:**
+
 - `workflow-status` as universal entry point for all workflows
 - Checks for existing status file, displays progress
 - Guides new users to appropriate workflow
@@ -153,11 +163,13 @@ Example Output:
 - Provides next-action recommendations
 
 **MADACE v2.0 Current State:**
+
 - mam-workflow-status.md as single source of truth ✅
 - No universal status checker workflow
 - Manual status determination
 
 **Recommendation for MADACE v3.0:**
+
 ```
 INTEGRATE: Universal Status Checker
 Priority: P0 (Critical)
@@ -193,17 +205,20 @@ Benefits:
 ### 1.5 Brownfield Project Analysis
 
 **BMAD Innovation:**
+
 - Explicit brownfield handling in plan-project
 - Halts planning if codebase not documented
 - Requires `brownfield-analysis` workflow first
 - Documents existing architecture before changes
 
 **MADACE v2.0 Current State:**
+
 - No brownfield-specific workflows
 - No codebase analysis tooling
 - Assumes greenfield or manually documented projects
 
 **Recommendation for MADACE v3.0:**
+
 ```
 INTEGRATE: Brownfield Analysis Workflow
 Priority: P1 (High)
@@ -241,9 +256,11 @@ Benefits:
 ### 1.6 Four-State Story Lifecycle
 
 **BMAD Innovation:**
+
 ```
 BACKLOG → TODO → IN PROGRESS → DONE
 ```
+
 - Explicit state machine with transition rules
 - Only 1 story in TODO at a time
 - Only 1 story in IN PROGRESS at a time
@@ -251,11 +268,13 @@ BACKLOG → TODO → IN PROGRESS → DONE
 - Story file Status field mirrors state machine
 
 **MADACE v2.0 Current State:**
+
 - Similar 4-state model already implemented ✅
 - TODO and IN_PROGRESS limited to 1 story ✅
 - Single source of truth (mam-workflow-status.md) ✅
 
 **Recommendation for MADACE v3.0:**
+
 ```
 ENHANCE: Story Lifecycle (Minor improvements)
 Priority: P2 (Medium)
@@ -282,6 +301,7 @@ MADACE Advantage:
 ### 1.7 Agent Customization System (Sidecar Files)
 
 **BMAD Innovation:**
+
 - Sidecar files in `bmad/_cfg/agents/` for customization
 - Update-safe customizations (persist through upgrades)
 - Full agent modification without editing originals
@@ -289,11 +309,13 @@ MADACE Advantage:
 - Technical level adaptation (beginner to advanced)
 
 **MADACE v2.0 Current State:**
+
 - Static agent YAML files
 - No customization without editing originals
 - Single language (English)
 
 **Recommendation for MADACE v3.0:**
+
 ```
 INTEGRATE: Agent Sidecar Customization
 Priority: P1 (High)
@@ -331,6 +353,7 @@ Benefits:
 ### 1.8 Intelligent Installer
 
 **BMAD Innovation:**
+
 - Interactive installer with guided prompts
 - User name configuration (how agents address you)
 - Communication language preference
@@ -339,6 +362,7 @@ Benefits:
 - IDE-specific enhancements (e.g., Claude Code sub-agents)
 
 **MADACE v2.0 Current State:**
+
 - Basic setup wizard (4 steps) ✅
 - Project configuration ✅
 - LLM selection ✅
@@ -348,6 +372,7 @@ Benefits:
 - No technical level
 
 **Recommendation for MADACE v3.0:**
+
 ```
 ENHANCE: Setup Wizard with User Preferences
 Priority: P1 (High)
@@ -383,17 +408,20 @@ Storage:
 ### 1.9 Unified Installation Directory
 
 **BMAD Innovation:**
+
 - Single `bmad/` folder for all modules
 - Clean, organized structure
 - No scattered root folders
 - Shared resources in central location
 
 **MADACE v2.0 Current State:**
+
 - `madace/` folder structure ✅
 - Module organization (mam, mab, cis) ✅
 - Already clean and organized ✅
 
 **Recommendation for MADACE v3.0:**
+
 ```
 MAINTAIN: Current Structure (Already Good)
 Priority: N/A
@@ -415,17 +443,20 @@ This matches BMAD's vision. Keep it.
 ### 1.10 Party Mode & Agent Consolidation
 
 **BMAD Innovation:**
+
 - Unified agent party when modules installed
 - Party-mode in IDEs for multi-agent simulation
 - Efficient agent switching
 - Cross-module agent collaboration
 
 **MADACE v2.0 Current State:**
+
 - Individual agent files
 - No party mode concept
 - No cross-module agent awareness
 
 **Recommendation for MADACE v3.0:**
+
 ```
 CONSIDER: Agent Party Mode (Future)
 Priority: P3 (Nice-to-have)
@@ -455,6 +486,7 @@ Focus on core v3.0 features first
 **BMAD:** Heavy investment in game development workflows (GDD, game types, narrative design)
 
 **MADACE Decision:** ❌ Do not adopt
+
 - MADACE focuses on general software development
 - Game development is niche
 - Resources better spent on core features
@@ -464,6 +496,7 @@ Focus on core v3.0 features first
 **BMAD:** Compiles agents for ChatGPT, Gemini Gems, web deployment
 
 **MADACE Decision:** ❌ Do not adopt initially
+
 - MADACE v3.0 focuses on local/CLI integration
 - Web bundle is v3.1+ feature
 - Complexity outweighs benefits for alpha
@@ -473,6 +506,7 @@ Focus on core v3.0 features first
 **BMAD:** Separate module (BMB) for creating agents/workflows/modules
 
 **MADACE Decision:** ✅ Adopt concept as MAB
+
 - MADACE already has MAB (MADACE Builder) planned
 - Similar vision, different implementation
 - Keep as core v3.0 feature
@@ -483,19 +517,19 @@ Focus on core v3.0 features first
 
 ### Priority Matrix
 
-| Feature                          | Priority | Complexity | Impact | Adopt? |
-| -------------------------------- | -------- | ---------- | ------ | ------ |
-| Scale-Adaptive Workflow Router   | P0       | High       | High   | ✅ Yes |
-| Universal Workflow Status        | P0       | Low        | High   | ✅ Yes |
-| Just-In-Time Tech Specs          | P1       | Medium     | High   | ✅ Yes |
-| Story-Context Workflow           | P1       | Medium     | High   | ✅ Yes |
-| Brownfield Analysis              | P1       | High       | High   | ✅ Yes |
-| Agent Sidecar Customization      | P1       | Medium     | Medium | ✅ Yes |
-| Enhanced Setup Wizard            | P1       | Medium     | Medium | ✅ Yes |
-| Story Lifecycle Enhancements     | P2       | Low        | Low    | ✅ Yes |
-| Agent Party Mode                 | P3       | High       | Low    | ⏭️ v3.1+ |
-| Game Development Workflows       | P3       | High       | Low    | ❌ No  |
-| Web Bundle Compilation           | P3       | High       | Medium | ⏭️ v3.1+ |
+| Feature                        | Priority | Complexity | Impact | Adopt?   |
+| ------------------------------ | -------- | ---------- | ------ | -------- |
+| Scale-Adaptive Workflow Router | P0       | High       | High   | ✅ Yes   |
+| Universal Workflow Status      | P0       | Low        | High   | ✅ Yes   |
+| Just-In-Time Tech Specs        | P1       | Medium     | High   | ✅ Yes   |
+| Story-Context Workflow         | P1       | Medium     | High   | ✅ Yes   |
+| Brownfield Analysis            | P1       | High       | High   | ✅ Yes   |
+| Agent Sidecar Customization    | P1       | Medium     | Medium | ✅ Yes   |
+| Enhanced Setup Wizard          | P1       | Medium     | Medium | ✅ Yes   |
+| Story Lifecycle Enhancements   | P2       | Low        | Low    | ✅ Yes   |
+| Agent Party Mode               | P3       | High       | Low    | ⏭️ v3.1+ |
+| Game Development Workflows     | P3       | High       | Low    | ❌ No    |
+| Web Bundle Compilation         | P3       | High       | Medium | ⏭️ v3.1+ |
 
 ---
 
@@ -504,6 +538,7 @@ Focus on core v3.0 features first
 ### Phase 1: Foundation (Weeks 1-12)
 
 **Q1 2026: Database + Core Infrastructure**
+
 - V3-E2: Database Infrastructure (6 weeks)
 - V3-E8: Migration & Compatibility (4 weeks)
 - V3-E9: Multi-User Authentication (3 weeks)
@@ -515,6 +550,7 @@ Focus on core v3.0 features first
 ### Phase 2: Workflow Intelligence (Weeks 13-24)
 
 **Q2 2026: Scale-Adaptive Workflows + Agent System**
+
 - V3-E1: Dynamic Agent Management (8 weeks)
   - **+ Agent Sidecar Customization** (from BMAD)
   - **+ Enhanced Setup Wizard** (from BMAD)
@@ -525,6 +561,7 @@ Focus on core v3.0 features first
 - V3-E3: Agent Memory System (5 weeks)
 
 **BMAD Integrations:**
+
 1. **Week 13-14**: Agent Sidecar System
    - Implement sidecar file loading
    - Merge logic (original + sidecar)
@@ -545,15 +582,16 @@ Focus on core v3.0 features first
 ### Phase 3: Adaptive Workflows (Weeks 25-36)
 
 **Q3 2026: Scale-Adaptive Engine + Brownfield**
+
 - V3-E4: Conversational Interaction (NLU) (6 weeks)
 - V3-E6: Integrated Web IDE (8 weeks)
 
-**BMAD Integrations:**
-4. **Week 25-26**: Scale-Adaptive Workflow Router
-   - Implement scale detection algorithm
-   - Dynamic routing based on Levels 0-4
-   - Phase skipping logic
-   - Artifact generation matching
+**BMAD Integrations:** 4. **Week 25-26**: Scale-Adaptive Workflow Router
+
+- Implement scale detection algorithm
+- Dynamic routing based on Levels 0-4
+- Phase skipping logic
+- Artifact generation matching
 
 5. **Week 27-28**: Just-In-Time Tech Specs
    - Epic-specific tech spec workflow
@@ -576,15 +614,16 @@ Focus on core v3.0 features first
 ### Phase 4: Polish & Optimization (Weeks 37-48)
 
 **Q4 2026: Collaboration + Performance**
+
 - V3-E7: Real-Time Collaboration (10 weeks)
 - V3-E10: Performance & Optimization (6 weeks)
 
-**BMAD Integrations:**
-8. **Week 43-44**: Story Lifecycle Enhancements
-   - Add Status field to story files
-   - Implement story-ready workflow
-   - Implement story-done workflow
-   - Explicit state transitions
+**BMAD Integrations:** 8. **Week 43-44**: Story Lifecycle Enhancements
+
+- Add Status field to story files
+- Implement story-ready workflow
+- Implement story-done workflow
+- Explicit state transitions
 
 **All BMAD features integrated by end of Q4 2026!**
 
@@ -597,6 +636,7 @@ Focus on core v3.0 features first
 **Location:** `lib/workflows/scale-router.ts`
 
 **Interface:**
+
 ```typescript
 interface ScaleAssessment {
   level: 0 | 1 | 2 | 3 | 4;
@@ -612,9 +652,9 @@ interface ScaleAssessment {
 
 interface WorkflowRoute {
   phase1: string[]; // Analysis workflows
-  phase2: string[];  // Planning workflows
-  phase3: string[];  // Solutioning workflows (may be empty for L0-1)
-  phase4: string[];  // Implementation workflows
+  phase2: string[]; // Planning workflows
+  phase3: string[]; // Solutioning workflows (may be empty for L0-1)
+  phase4: string[]; // Implementation workflows
   artifacts: string[]; // Expected outputs
 }
 
@@ -626,6 +666,7 @@ class ScaleAdaptiveRouter {
 ```
 
 **Scale Detection Algorithm:**
+
 ```typescript
 function assessScale(project: Project): number {
   let level = 0;
@@ -654,11 +695,12 @@ function assessScale(project: Project): number {
 **Location:** `lib/workflows/jit-tech-spec.ts`
 
 **Workflow Definition:**
+
 ```yaml
 workflow:
-  name: "generate-tech-spec"
-  description: "Generate epic-specific technical specification"
-  trigger: "epic_ready_for_implementation"
+  name: 'generate-tech-spec'
+  description: 'Generate epic-specific technical specification'
+  trigger: 'epic_ready_for_implementation'
 
   inputs:
     - epic_id: string
@@ -670,17 +712,17 @@ workflow:
     - tech-spec-epic-${epic_id}.md
 
   steps:
-    - name: "Load Context"
-      action: "gather"
+    - name: 'Load Context'
+      action: 'gather'
       sources:
         - PRD.md
         - Epics.md (specific epic section)
         - Completed epics (tech specs + retrospectives)
         - Architecture.md (if exists)
 
-    - name: "Generate Tech Spec"
-      action: "elicit"
-      agent: "architect"
+    - name: 'Generate Tech Spec'
+      action: 'elicit'
+      agent: 'architect'
       prompt: |
         Generate technical specification for Epic ${epic_id}.
 
@@ -697,13 +739,14 @@ workflow:
         - Testing strategy
         - Risks and mitigation
 
-    - name: "Save Tech Spec"
-      action: "template"
-      template: "tech-spec-template.md"
-      output: "tech-spec-epic-${epic_id}.md"
+    - name: 'Save Tech Spec'
+      action: 'template'
+      template: 'tech-spec-template.md'
+      output: 'tech-spec-epic-${epic_id}.md'
 ```
 
 **Benefits:**
+
 - Reduces wasted upfront planning
 - Incorporates real learning
 - More accurate specifications
@@ -716,6 +759,7 @@ workflow:
 **Location:** `lib/workflows/story-context.ts`
 
 **XML Context Format:**
+
 ```xml
 <story-context story-id="${story_id}">
   <implementation-hints>
@@ -762,6 +806,7 @@ workflow:
 ```
 
 **Generation Logic:**
+
 ```typescript
 async function generateStoryContext(story: Story): Promise<string> {
   // 1. Analyze story requirements
@@ -785,7 +830,7 @@ async function generateStoryContext(story: Story): Promise<string> {
     relevantFiles,
     patterns,
     dependencies,
-    notes
+    notes,
   });
 }
 ```
@@ -797,6 +842,7 @@ async function generateStoryContext(story: Story): Promise<string> {
 **Location:** `lib/workflows/workflow-status.ts`
 
 **CLI Command:**
+
 ```bash
 madace pm workflow-status
 madace sm workflow-status
@@ -804,6 +850,7 @@ madace dev workflow-status
 ```
 
 **Status Display:**
+
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   MADACE Workflow Status
@@ -841,6 +888,7 @@ Would you like to:
 **Location:** `lib/workflows/brownfield-analysis.ts`
 
 **Workflow Steps:**
+
 1. **Code Discovery**
    - Scan directory structure
    - Identify technology stack
@@ -875,6 +923,7 @@ Would you like to:
    - refactoring-opportunities.md
 
 **Tools to Use:**
+
 - TypeScript AST parser (ts-morph)
 - Dependency graph generator (madge)
 - Code complexity analyzer (jscpd, complexity-report)
@@ -887,27 +936,28 @@ Would you like to:
 **Location:** `madace/_cfg/agents/`
 
 **Sidecar File Format:**
+
 ```yaml
 # madace/_cfg/agents/pm.sidecar.yaml
-version: "1.0"
-agent_name: "pm"
+version: '1.0'
+agent_name: 'pm'
 customizations:
   persona:
     communication_style: |
       Communicate in Japanese with formal, respectful tone.
       Use business-appropriate keigo (敬語).
-    technical_level: "beginner"
-    greeting: "こんにちは！プロジェクトマネージャーの山田です。"
+    technical_level: 'beginner'
+    greeting: 'こんにちは！プロジェクトマネージャーの山田です。'
 
   menu:
     custom_commands:
-      - trigger: "status-ja"
-        action: "workflow-status"
-        description: "ワークフローの状態を表示"
+      - trigger: 'status-ja'
+        action: 'workflow-status'
+        description: 'ワークフローの状態を表示'
 
   prompts:
     override:
-      - name: "plan-project"
+      - name: 'plan-project'
         content: |
           プロジェクト計画を作成します。
           スケールレベル: ${scale_level}
@@ -915,27 +965,20 @@ customizations:
 ```
 
 **Merge Logic:**
+
 ```typescript
-function mergeAgentWithSidecar(
-  originalAgent: Agent,
-  sidecar: AgentSidecar
-): Agent {
+function mergeAgentWithSidecar(originalAgent: Agent, sidecar: AgentSidecar): Agent {
   return {
     ...originalAgent,
     persona: {
       ...originalAgent.persona,
-      ...sidecar.customizations.persona
+      ...sidecar.customizations.persona,
     },
-    menu: [
-      ...originalAgent.menu,
-      ...sidecar.customizations.menu.custom_commands
-    ],
-    prompts: originalAgent.prompts.map(prompt => {
-      const override = sidecar.customizations.prompts.override.find(
-        o => o.name === prompt.name
-      );
+    menu: [...originalAgent.menu, ...sidecar.customizations.menu.custom_commands],
+    prompts: originalAgent.prompts.map((prompt) => {
+      const override = sidecar.customizations.prompts.override.find((o) => o.name === prompt.name);
       return override ? { ...prompt, content: override.content } : prompt;
-    })
+    }),
   };
 }
 ```
@@ -947,11 +990,13 @@ function mergeAgentWithSidecar(
 ### 6.1 Compatibility
 
 **MADACE v3.0 should maintain compatibility with:**
+
 - MADACE v2.0 file structure ✅
 - Existing workflow definitions ✅
 - Agent YAML format ✅
 
 **New features from BMAD should be:**
+
 - Optional (don't break existing setups)
 - Backward compatible
 - Gradual adoption
@@ -959,6 +1004,7 @@ function mergeAgentWithSidecar(
 ### 6.2 User Migration Path
 
 **For existing MADACE v2.0 users:**
+
 ```
 v2.0.0-alpha (current)
   ↓
@@ -980,16 +1026,19 @@ v3.0.0-beta (BMAD features integrated)
 ### 7.1 Adoption Metrics
 
 **Scale-Adaptive Routing:**
+
 - 80%+ of projects correctly routed to appropriate workflows
 - 50% reduction in wasted planning for simple projects
 - 30% improvement in planning accuracy for complex projects
 
 **Story-Context Generation:**
+
 - 40% reduction in developer questions during implementation
 - 25% faster story completion time
 - 60% of stories have relevant context identified
 
 **Brownfield Analysis:**
+
 - 90% of brownfield projects documented before planning
 - 50% reduction in unexpected technical debt discovery
 - 70% more accurate effort estimates
@@ -997,6 +1046,7 @@ v3.0.0-beta (BMAD features integrated)
 ### 7.2 User Satisfaction
 
 **Target Scores (1-5):**
+
 - Ease of workflow navigation: 4.5+
 - Appropriateness of generated artifacts: 4.3+
 - Agent personalization: 4.0+
@@ -1008,12 +1058,12 @@ v3.0.0-beta (BMAD features integrated)
 
 ### 8.1 Risks
 
-| Risk                            | Probability | Impact | Mitigation                          |
-| ------------------------------- | ----------- | ------ | ----------------------------------- |
-| Over-engineering from BMAD      | Medium      | High   | Adopt selectively, prioritize       |
+| Risk                            | Probability | Impact | Mitigation                           |
+| ------------------------------- | ----------- | ------ | ------------------------------------ |
+| Over-engineering from BMAD      | Medium      | High   | Adopt selectively, prioritize        |
 | User confusion with new options | Medium      | Medium | Clear documentation, gradual rollout |
-| Breaking v2.0 compatibility     | Low         | High   | Strict backward compatibility tests |
-| Implementation complexity       | High        | Medium | Phased rollout, extensive testing   |
+| Breaking v2.0 compatibility     | Low         | High   | Strict backward compatibility tests  |
+| Implementation complexity       | High        | Medium | Phased rollout, extensive testing    |
 
 ### 8.2 Mitigation Strategies
 
@@ -1049,6 +1099,7 @@ v3.0.0-beta (BMAD features integrated)
 **BMAD-METHOD v6-alpha represents a mature, battle-tested implementation of many features MADACE v3.0 will need.**
 
 **Recommended Action Plan:**
+
 1. ✅ **Adopt** scale-adaptive routing, JIT tech specs, story-context, brownfield analysis, agent sidecars, universal status checker
 2. ❌ **Skip** game development focus, web bundle compilation (defer to v3.1+)
 3. 📋 **Plan** phased integration across Q2-Q4 2026
@@ -1061,6 +1112,7 @@ v3.0.0-beta (BMAD features integrated)
 ---
 
 **Next Steps:**
+
 1. Review this PRD with MADACE core team
 2. Prioritize features for v3.0 vs v3.1+
 3. Update v3.0 epics with BMAD-inspired features
