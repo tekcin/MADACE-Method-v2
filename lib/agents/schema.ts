@@ -5,8 +5,8 @@ export const AgentMetadataSchema = z.object({
   name: z.string(),
   title: z.string(),
   icon: z.string(),
-  module: z.string(),
-  version: z.string(),
+  module: z.string().optional(), // Optional for core agents
+  version: z.string().optional(), // Optional field
 });
 
 export const AgentPersonaSchema = z.object({
@@ -18,7 +18,9 @@ export const AgentPersonaSchema = z.object({
 
 export const AgentMenuItemSchema = z.object({
   trigger: z.string(),
-  action: z.string(),
+  action: z.string().optional(), // Optional - MAM format
+  workflow: z.string().optional(), // Optional - workflow reference
+  exec: z.string().optional(), // Optional - execution command
   description: z.string(),
 });
 
@@ -32,9 +34,9 @@ export const AgentSchema = z.object({
   metadata: AgentMetadataSchema,
   persona: AgentPersonaSchema,
   critical_actions: z.array(z.string()).optional(),
-  menu: z.array(AgentMenuItemSchema),
+  menu: z.array(AgentMenuItemSchema).optional(), // Optional for agents without menu
   load_always: z.array(z.string()).optional(),
-  prompts: z.array(AgentPromptSchema),
+  prompts: z.array(AgentPromptSchema).optional(), // Optional field
 });
 
 export const AgentFileSchema = z.object({

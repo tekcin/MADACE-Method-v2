@@ -56,7 +56,21 @@ All critical stories completed! Milestone 1.8 finished on 2025-10-22.
 
 Story ready for drafting (only ONE at a time):
 
-(Empty - UI-006 moved to IN_PROGRESS)
+### Milestone 2.0: Post-MVP Features
+
+- **[F11-SUB-WORKFLOWS]** Sub-Workflow Support (Milestone 2.0) [Points: 13]
+  **Status:** TODO - Ready for implementation
+  **Description:** Enable workflows to nest other workflows as sub-workflows with context inheritance and independent state tracking
+  **Story File:** docs/story-F11-SUB-WORKFLOWS.md
+  **Acceptance Criteria:**
+  - Sub-workflow YAML schema with `sub-workflow` action type
+  - Context inheritance from parent to child workflows
+  - Independent state tracking for nested workflows
+  - Parent-child workflow linking in state files
+  - Sub-workflow execution with resume support
+  - API endpoint for workflow hierarchy visualization
+  - UI for nested workflow display
+  - Circular dependency detection
 
 ---
 
@@ -1393,5 +1407,7 @@ Two deployment modes available:
 
 ---
 
-**Status:** ✅ Ready to begin implementation using MADACE workflow
-**Next Action:** Load SM agent → Run `*create-story` → Move [NEXT-001] from BACKLOG to TODO
+**Status:** ✅ Milestone 2.0 In Progress - Sub-Workflow Support
+**Current Story:** [F11-SUB-WORKFLOWS] Sub-Workflow Support (13 points)
+**Last Updated:** 2025-10-24
+**Next Action:** Begin implementing sub-workflow YAML schema and execution logic
