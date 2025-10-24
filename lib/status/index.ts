@@ -12,3 +12,8 @@ export type {
   StatusProviderEntry,
   StatusQueryOptions,
 } from './types';
+
+export {
+  StateMachineStatusProvider,
+  createStateMachineStatusProvider,
+} from './providers/state-machine-provider';
