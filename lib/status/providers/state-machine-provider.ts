@@ -12,7 +12,7 @@
  * - Supports multiple output formats (table, json, markdown)
  */
 
-import fs from 'fs/promises';
+import { readFile } from 'fs/promises';
 import type { IStatusProvider, StatusResult, StatusFormat } from '../types';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -132,7 +132,7 @@ export class StateMachineStatusProvider implements IStatusProvider {
    */
   async getStatus(_entityId?: string): Promise<StatusResult> {
     try {
-      const content = await fs.readFile(this.statusFilePath, 'utf-8');
+      const content = await readFile(this.statusFilePath, 'utf-8');
       const status = this.parseStatusFile(content);
 
       return {

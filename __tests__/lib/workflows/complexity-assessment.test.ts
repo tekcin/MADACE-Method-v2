@@ -218,9 +218,9 @@ describe('Complexity Assessment', () => {
         codebaseComplexity: CodebaseComplexity.MODERATE, // 2
         integrations: IntegrationsCount.SOME, // 2
         userBase: UserBase.MEDIUM, // 3
-        security: SecurityLevel.MODERATE, // 2
+        security: SecurityLevel.HIGH, // 3
         duration: ProjectDuration.MEDIUM, // 2
-        existingCode: ExistingCodebase.MASSIVE, // 5
+        existingCode: ExistingCodebase.LEGACY_MODERNIZATION, // 4
       };
 
       const result = assessComplexity(input);
@@ -362,7 +362,7 @@ describe('Complexity Assessment', () => {
         codebaseComplexity: CodebaseComplexity.MODERATE, // 2
         integrations: IntegrationsCount.SOME, // 2
         userBase: UserBase.MEDIUM, // 3
-        security: SecurityLevel.MODERATE, // 2
+        security: SecurityLevel.HIGH, // 3
         duration: ProjectDuration.MEDIUM, // 2
         existingCode: ExistingCodebase.MAJOR_REFACTOR, // 3
       };
@@ -378,9 +378,9 @@ describe('Complexity Assessment', () => {
         codebaseComplexity: CodebaseComplexity.MODERATE, // 2
         integrations: IntegrationsCount.SOME, // 2
         userBase: UserBase.MEDIUM, // 3
-        security: SecurityLevel.MODERATE, // 2
+        security: SecurityLevel.HIGH, // 3
         duration: ProjectDuration.MEDIUM, // 2
-        existingCode: ExistingCodebase.MASSIVE, // 5
+        existingCode: ExistingCodebase.LEGACY_MODERNIZATION, // 4
       };
 
       const result21 = assessComplexity(input21);
