@@ -200,12 +200,32 @@ export async function fillFormField(
 
 /**
  * Click element with retry and wait for navigation if needed
+ * Accepts both Locator and Page + selector pattern
  */
 export async function clickAndWait(
-  locator: Locator,
-  options: { waitForNavigation?: boolean; timeout?: number } = {}
+  target: Locator | Page,
+  selectorOrOptions?: string | { waitForNavigation?: boolean; timeout?: number },
+  options?: { waitForNavigation?: boolean; timeout?: number }
 ): Promise<void> {
-  const { waitForNavigation = false, timeout = 5000 } = options;
+  let locator: Locator;
+  let actualOptions: { waitForNavigation?: boolean; timeout?: number } = {};
+
+  // Handle overloaded parameters - check if it has page() method (Locator has it, Page doesn't)
+  if ('page' in target && typeof target.page === 'function') {
+    // target is Locator
+    locator = target as Locator;
+    actualOptions =
+      typeof selectorOrOptions === 'object' ? selectorOrOptions : { waitForNavigation: false };
+  } else {
+    // target is Page
+    if (typeof selectorOrOptions !== 'string') {
+      throw new Error('Selector must be provided when first argument is Page');
+    }
+    locator = (target as Page).locator(selectorOrOptions);
+    actualOptions = options || { waitForNavigation: false };
+  }
+
+  const { waitForNavigation = false, timeout = 5000 } = actualOptions;
 
   await retryAction(
     async () => {
@@ -222,15 +242,44 @@ export async function clickAndWait(
 
 /**
  * Select dropdown option with retry
+ * Supports both native select and custom dropdowns
  */
-export async function selectDropdown(locator: Locator, value: string): Promise<void> {
+export async function selectDropdown(
+  target: Locator | Page,
+  valueOrSelector?: string,
+  value?: string
+): Promise<void> {
+  let locator: Locator;
+  let actualValue: string;
+
+  // Handle overloaded parameters - check if it has page() method (Locator has it, Page doesn't)
+  if ('page' in target && typeof target.page === 'function') {
+    // target is Locator
+    locator = target as Locator;
+    actualValue = valueOrSelector!;
+  } else {
+    // target is Page
+    if (!valueOrSelector || !value) {
+      throw new Error('Both selector and value must be provided when first argument is Page');
+    }
+    locator = (target as Page).locator(valueOrSelector);
+    actualValue = value;
+  }
+
   await retryAction(
     async () => {
-      await locator.selectOption(value);
-      // Verify selection
-      await expect(locator).toHaveValue(value);
+      // Try native select first
+      try {
+        await locator.selectOption(actualValue);
+        await expect(locator).toHaveValue(actualValue);
+      } catch {
+        // Fallback to custom dropdown (click to open, then select option)
+        await locator.click();
+        const page = locator.page();
+        await page.click(`[data-value="${actualValue}"]`);
+      }
     },
-    { errorMessage: `Failed to select dropdown value: ${value}` }
+    { errorMessage: `Failed to select dropdown value: ${actualValue}` }
   );
 }
 
