@@ -17,3 +17,7 @@ export * from './gemini';
 
 // Configuration generator
 export * from './config-generator';
+
+// CLI commands
+export * from './prompts';
+export * from './assess-scale';
