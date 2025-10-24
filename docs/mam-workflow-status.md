@@ -2,11 +2,11 @@
 
 **MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
 
-**Project:** MADACE-Method v2.0 - Experimental Next.js Full-Stack Implementation
-**Current Phase:** Milestone 1.8 Complete ✅ - Testing & Documentation (Alpha MVP Ready!)
-**Last Updated:** 2025-10-22 (DOC-011 completed - Deployment guide)
+**Project:** MADACE-Method v2.0 → v3.0 Roadmap
+**Current Phase:** v2.0 Alpha MVP Complete ✅ | v3.0 Planning Complete ✅
+**Last Updated:** 2025-10-24 (v3.0 roadmap finalized - 8 BMAD-inspired epics)
 **Methodology:** Using official MADACE-METHOD to build this experimental implementation
-**Architecture:** Next.js 15 Full-Stack TypeScript
+**Architecture:** Next.js 15 Full-Stack TypeScript → Enhanced with BMAD v6 innovations
 
 ---
 
@@ -49,6 +49,114 @@ All stories completed! Milestone 1.7 finished on 2025-10-22.
 All critical stories completed! Milestone 1.8 finished on 2025-10-22.
 
 **Note:** [TEST-011] E2E tests deferred to future milestone. Testing infrastructure, documentation, and unit tests complete.
+
+### Milestone 2.1: Priority 0 - Scale Router & Status Checker (Q2 2026)
+
+**Timeline:** 5 weeks development + 3 weeks testing | **Points:** 55 | **Dependencies:** v2.0 Alpha complete
+
+**EPIC-V3-001: Scale-Adaptive Workflow Router** (10 stories, 34 points)
+
+-  [STORY-V3-001] Implement Complexity Scoring Algorithm [5 pts]
+-  [STORY-V3-002] Create Assessment Report Template [3 pts]
+-  [STORY-V3-003] Interactive Assessment CLI [3 pts]
+-  [STORY-V3-004] Create Route-Workflow YAML [5 pts]
+-  [STORY-V3-005] Implement Routing Action in Executor [5 pts]
+-  [STORY-V3-006] User Override System [5 pts]
+-  [STORY-V3-007] CLI Command `madace assess-scale` [3 pts]
+-  [STORY-V3-008] Integrate Assessment into Setup Wizard [2 pts]
+-  [STORY-V3-009] Assessment Dashboard Page [2 pts]
+-  [STORY-V3-010] E2E Testing for Scale Router [1 pt]
+
+**EPIC-V3-002: Universal Workflow Status Checker** (11 stories, 21 points)
+
+-  [STORY-V3-011] Create IStatusProvider Interface [2 pts]
+-  [STORY-V3-012] Implement StoryStatusProvider [3 pts]
+-  [STORY-V3-013] Implement EpicStatusProvider [2 pts]
+-  [STORY-V3-014] Implement WorkflowStatusProvider [3 pts]
+-  [STORY-V3-015] Implement StateMachineStatusProvider [3 pts]
+-  [STORY-V3-016] Create `madace status` CLI Command [3 pts]
+-  [STORY-V3-017] API Route GET /api/status [1 pt]
+-  [STORY-V3-018] Multiple Output Formats [2 pts]
+-  [STORY-V3-019] Watch Mode (--watch flag) [1 pt]
+-  [STORY-V3-020] Integrate WebSocket for Real-time Updates [2 pts]
+-  [STORY-V3-021] Create Web UI Status Dashboard Page [2 pts]
+
+**Story Details:** See [docs/v3-planning/stories/PRIORITY-0-STORIES.md](./v3-planning/stories/PRIORITY-0-STORIES.md)
+
+### Milestone 2.2: Priority 1 Part 1 - JIT Tech Specs & Story-Context (Q2-Q3 2026)
+
+**Timeline:** 5 weeks | **Points:** 55 | **Dependencies:** Milestone 2.1 complete
+
+**EPIC-V3-003: Just-In-Time Tech Specs** (21 points)
+
+- Tech spec template with story context
+- On-demand generation when epic transitions to IN_PROGRESS
+- Architecture integration and API documentation
+- Reduces upfront planning overhead by 60-70%
+
+**EPIC-V3-004: Story-Context Workflow** (34 points)
+
+- 5-layer context extraction system (story → epic → architecture → domain → codebase)
+- 80-95% token reduction for LLM operations
+- Smart caching and dependency tracking
+- Significantly improves LLM response quality and speed
+
+**Epic Details:** See [docs/v3-planning/epics/](./v3-planning/epics/)
+
+### Milestone 2.3: Priority 1 Part 2 - Brownfield, Sidecars & Setup (Q3 2026)
+
+**Timeline:** 7 weeks | **Points:** 76 | **Dependencies:** Milestone 2.2 complete
+
+**EPIC-V3-005: Brownfield Analysis Workflow** (34 points)
+
+- Automated codebase documentation for existing projects
+- 7 scan types: file structure, tech stack, entry points, API routes, data models, dependencies, test coverage
+- <10 min analysis for 50k LOC
+- Generates architecture.md, tech-debt.md, dependency-graph.json
+
+**EPIC-V3-006: Agent Sidecar Customization System** (21 points)
+
+- Update-safe agent overrides via sidecar YAML files
+- Deep merge strategy with runtime composition
+- Web UI editor with live preview and validation
+- Customize agent style, language, prompts without losing changes on updates
+
+**EPIC-V3-007: Enhanced Setup Wizard** (21 points)
+
+- 6-step wizard capturing user preferences (profile, communication, project, LLM, modules, IDE)
+- Technical level, language, communication style preferences
+- Auto-generates agent sidecars based on preferences
+- Smart defaults with auto-detection
+
+**Epic Details:** See [docs/v3-planning/epics/](./v3-planning/epics/)
+
+### Milestone 2.4: Priority 2 - Story Lifecycle Enhancements (Q4 2026)
+
+**Timeline:** 2 weeks | **Points:** 21 | **Dependencies:** Milestone 2.3 complete
+
+**EPIC-V3-008: Story Lifecycle Enhancements** (21 points)
+
+- Extended state machine: BACKLOG → TODO → IN_PROGRESS → REVIEW → TESTING → DONE
+- BLOCKED state (can transition from TODO/IN_PROGRESS/REVIEW/TESTING)
+- 6-column Kanban board with blocker visualization
+- Time-in-state tracking for velocity metrics
+- Metadata: assigned_to, started_at, blocked_reason, blocker_details, reviewer, test_results
+
+**Epic Details:** See [docs/v3-planning/epics/EPIC-V3-008-story-lifecycle.md](./v3-planning/epics/EPIC-V3-008-story-lifecycle.md)
+
+### Milestone 3.0: Beta Release & Integration (Q1 2027)
+
+**Timeline:** 4 weeks | **Points:** 34 (estimated) | **Dependencies:** All v3.0 epics complete
+
+**Integration & Polish**
+
+- Integration testing across all 8 BMAD features
+- Performance optimization and bug fixes
+- Complete documentation and migration guides
+- Beta release and user feedback collection
+- Production deployment readiness
+
+**Total v3.0 Effort:** 207 points across 8 epics | **Duration:** 12 months (Q2 2026 - Q1 2027)
 
 ---
 
@@ -1303,49 +1411,63 @@ Completed stories with dates and points:
 
 ## Current Status Summary
 
-**Phase:** Milestone 1.8 Complete ✅ - Testing & Documentation (Alpha MVP Ready!)
+**Phase:** v2.0 Alpha MVP Complete ✅ | v3.0 Planning Complete ✅
 
-**What's Done:**
+**v2.0 Alpha MVP (COMPLETED):**
 
-- ✅ Architecture decided and documented (Next.js full-stack TypeScript)
-- ✅ Feasibility validated (all critical components tested)
-- ✅ Docker deployment ready (production + development containers)
-- ✅ LLM selection system designed
-- ✅ All documentation updated and consistent
-- ✅ Development environment ready (zero-setup with Docker)
-- ✅ **Milestone 1.1 Complete:** Next.js 15 project foundation
-- ✅ **Milestone 1.2 Complete:** Setup wizard & configuration system
-- ✅ **Milestone 1.3 Complete:** Core TypeScript modules
-- ✅ **Milestone 1.4 Complete:** LLM Integration (all 4 providers + multi-provider client)
-- ✅ **Milestone 1.5 Complete:** Frontend Components (5/5 stories complete)
-- ✅ **Milestone 1.6 Complete:** API Routes (5/5 stories complete)
-- ✅ **Milestone 1.7 Complete:** CLI Integration (4/4 stories complete)
-- ✅ **Milestone 1.8 Complete:** Testing & Documentation (4/5 stories complete) 🎉
+- ✅ 40 stories completed | 218 points delivered
+- ✅ 8 milestones completed (1.1 through 1.8)
+- ✅ Architecture (Next.js 15 full-stack TypeScript)
+- ✅ Core modules (Agents, Workflows, State Machine, Templates, Config)
+- ✅ LLM Integration (all 4 providers: Gemini, Claude, OpenAI, Local)
+- ✅ Frontend Components (Home, Kanban, Agents, Workflows, Settings, LLM Test)
+- ✅ API Routes (47 endpoints documented)
+- ✅ CLI Integration (Claude CLI, Gemini CLI, WebSocket sync)
+- ✅ Testing & Documentation (Jest, 20+ tests, comprehensive docs)
+- ✅ Docker deployment (production + development containers)
+- ✅ **Production ready - v2.0.0-alpha release!** 🚀
 
-**Alpha MVP Status:**
+**v3.0 Planning (COMPLETED - 2025-10-24):**
 
-- 40 stories completed | 218 points delivered
-- 8 milestones completed (1.1 through 1.8)
-- Complete API documentation (47 endpoints)
-- Complete component documentation (20+ components)
-- Complete deployment guide (Docker, Kubernetes, Cloud)
-- Testing infrastructure ready (Jest + 20+ tests)
-- Production deployment ready
-- **Ready for v2.0.0-alpha release!** 🚀
+- ✅ Scale assessment complete (Level 3-4 complexity)
+- ✅ PRD created with 8 BMAD-inspired epics (207 points)
+- ✅ Epic breakdown complete (8 epics documented)
+- ✅ Priority 0 stories generated (21 stories, 55 points)
+- ✅ 5 milestones defined (2.1 through 3.0)
+- ✅ 12-month roadmap finalized (Q2 2026 - Q1 2027)
+- ✅ **Ready for v3.0 implementation in Q2 2026!** 🎯
+
+**v3.0 Scope:**
+
+- **Milestone 2.1** (Q2 2026): Scale Router + Status Checker (55 points)
+- **Milestone 2.2** (Q2-Q3 2026): JIT Tech Specs + Story-Context (55 points)
+- **Milestone 2.3** (Q3 2026): Brownfield + Sidecars + Setup (76 points)
+- **Milestone 2.4** (Q4 2026): Story Lifecycle (21 points)
+- **Milestone 3.0** (Q1 2027): Beta Release & Integration (34 points)
+- **Total:** 207 points across 8 BMAD-inspired epics
+
+**v3.0 Key Features:**
+
+1. 🎯 **Scale-Adaptive Router** - Project complexity assessment (Levels 0-4)
+2. 🔍 **Universal Status Checker** - Unified status interface for all entities
+3. 📝 **JIT Tech Specs** - On-demand spec generation (60-70% overhead reduction)
+4. 🧠 **Story-Context Workflow** - 80-95% token reduction for LLM ops
+5. 🏗️ **Brownfield Analysis** - <10 min for 50k LOC codebases
+6. 🎨 **Agent Sidecars** - Update-safe agent customization
+7. 🚀 **Enhanced Setup** - 6-step wizard with preferences
+8. 📊 **Lifecycle Enhancement** - 6 states + BLOCKED state
 
 **Next Steps:**
 
-1. **Option 1:** Tag v2.0.0-alpha release and deploy
-2. **Option 2:** Add E2E tests (TEST-011) before release
-3. **Option 3:** Begin Milestone 2.0 features (advanced workflows, real-time collaboration)
+1. **Tag v2.0.0-alpha release** and deploy to production
+2. **Optional:** Add E2E tests (TEST-011) before Q2 2026
+3. **Q2 2026:** Begin Milestone 2.1 (Priority 0 features)
 
 **Velocity:**
 
-- Week 1 completed: 24 points (planning phase)
-- Week 2 completed: 194 points (Core modules + LLM + Frontend + API + CLI + Testing + Docs)
-- Target velocity: 15-20 points/week (implementation phase)
-- **Actual velocity: 97 points/week** (significantly exceeded expectations!)
-- Alpha MVP completed in 2 weeks (planned: 4 weeks)
+- v2.0 Alpha: 218 points in 2 weeks (97 points/week, 4.8x target)
+- v3.0 Target: 17 points/week over 12 months
+- v3.0 Total: 207 points (12 months, Q2 2026 - Q1 2027)
 
 ---
 
@@ -1407,7 +1529,8 @@ Two deployment modes available:
 
 ---
 
-**Status:** ✅ Milestone 2.0 In Progress - Sub-Workflow Support
-**Current Story:** [F11-SUB-WORKFLOWS] Sub-Workflow Support (13 points)
+**Status:** ✅ v2.0 Alpha MVP Complete | ✅ v3.0 Planning Complete
+**Current Milestone:** Milestone 2.0 (Sub-Workflow Support - 13 points)
+**Next Milestone:** Milestone 2.1 (Priority 0 - Q2 2026 - 55 points)
 **Last Updated:** 2025-10-24
-**Next Action:** Begin implementing sub-workflow YAML schema and execution logic
+**Next Action:** Tag v2.0.0-alpha release OR begin Priority 0 implementation (Q2 2026)
