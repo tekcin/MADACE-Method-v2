@@ -169,7 +169,7 @@ export class StateMachineStatusProvider implements IStatusProvider {
    * @returns Formatted string
    */
   formatOutput(result: StatusResult, format: StatusFormat): string {
-    const status = result.data as StateMachineStatus;
+    const status = result.data as unknown as StateMachineStatus;
 
     if (format === 'json') {
       return JSON.stringify(status, null, 2);

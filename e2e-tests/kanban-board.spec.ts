@@ -124,7 +124,7 @@ test.describe('Kanban Board', () => {
 
     // Extract count
     const countMatch = todoText?.match(/(\d+)/);
-    if (countMatch) {
+    if (countMatch && countMatch[1]) {
       const todoCount = parseInt(countMatch[1]);
 
       if (todoCount > 1) {
@@ -151,7 +151,7 @@ test.describe('Kanban Board', () => {
 
     // Extract count
     const countMatch = inProgressText?.match(/(\d+)/);
-    if (countMatch) {
+    if (countMatch && countMatch[1]) {
       const inProgressCount = parseInt(countMatch[1]);
 
       if (inProgressCount > 1) {
@@ -459,7 +459,7 @@ test.describe('Kanban Board', () => {
     const doneText = await doneHeader.textContent();
     const donePointsMatch = doneText?.match(/(\d+) pts/);
 
-    if (donePointsMatch) {
+    if (donePointsMatch && donePointsMatch[1]) {
       const donePoints = parseInt(donePointsMatch[1]);
       expect(points).toBe(donePoints);
     }
