@@ -35,13 +35,13 @@ test.describe('Agent Management', () => {
     const mamCount = await agentsPage.getAgentCount();
     expect(mamCount).toBe(5);
 
-    // ACT & ASSERT - Filter by BMAD
-    await agentsPage.filterByModule('bmad');
-    const bmadCount = await agentsPage.getAgentCount();
-    expect(bmadCount).toBe(10);
+    // ACT & ASSERT - Filter by MADACE
+    await agentsPage.filterByModule('madace');
+    const madaceCount = await agentsPage.getAgentCount();
+    expect(madaceCount).toBe(10);
 
-    // ACT & ASSERT - Filter by BMAD v6 BMM
-    await agentsPage.filterByModule('bmad-v6-bmm');
+    // ACT & ASSERT - Filter by MADACE v6 BMM
+    await agentsPage.filterByModule('madace-v6-bmm');
     const bmmCount = await agentsPage.getAgentCount();
     expect(bmmCount).toBe(10);
   });
@@ -105,21 +105,21 @@ test.describe('Agent Management', () => {
     }
   });
 
-  test('BMAD module contains all 10 v4 agents', async ({ page }) => {
+  test('MADACE module contains all 10 v4 agents', async ({ page }) => {
     // ARRANGE
     await agentsPage.goto();
-    await agentsPage.filterByModule('bmad');
+    await agentsPage.filterByModule('madace');
 
-    // ACT & ASSERT - Verify BMAD agents loaded
-    await agentsPage.expectBMADAgentsLoaded();
+    // ACT & ASSERT - Verify MADACE agents loaded
+    await agentsPage.expectMADACEAgentsLoaded();
   });
 
-  test('BMAD v6 modules contain all agents', async ({ page }) => {
+  test('MADACE v6 modules contain all agents', async ({ page }) => {
     // ARRANGE
     await agentsPage.goto();
 
     // ACT & ASSERT
-    await agentsPage.expectBMADv6AgentsLoaded();
+    await agentsPage.expectMADACEv6AgentsLoaded();
   });
 
   test('navigation from home to agents works', async ({ page }) => {

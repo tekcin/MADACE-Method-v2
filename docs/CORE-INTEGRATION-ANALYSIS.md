@@ -1,7 +1,7 @@
-# MADACE vs BMAD v6-Alpha Core Integration Analysis
+# MADACE vs MADACE v6-Alpha Core Integration Analysis
 
 **Created**: 2025-10-23
-**Purpose**: Compare MADACE and BMAD v6-Alpha core agents to create best-of-both integration
+**Purpose**: Compare MADACE and MADACE v6-Alpha core agents to create best-of-both integration
 
 ---
 
@@ -13,7 +13,7 @@
 - Focus: Scale-adaptive workflow (Levels 0-4)
 - Strengths: Adaptive planning, minimal documentation approach, workflow orchestration
 
-**BMAD v6-Alpha Core (BMM Module)**:
+**MADACE v6-Alpha Core (BMM Module)**:
 
 - 10+ agents: PM, Analyst, Architect, SM, DEV + UX-Expert, TEA, Game agents
 - Focus: Complete ground-up rewrite, critical_actions, sidecar files
@@ -25,7 +25,7 @@
 
 ### 1. Product Manager (PM)
 
-| Aspect               | MADACE PM                                                       | BMAD v6-Alpha PM                                      | Best Practice                                            |
+| Aspect               | MADACE PM                                                       | MADACE v6-Alpha PM                                      | Best Practice                                            |
 | -------------------- | --------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------- |
 | **Name**             | PM                                                              | John                                                  | **Use role-based naming** (PM) - more flexible           |
 | **Title**            | Product Manager - Scale-Adaptive Planning Expert                | Product Manager                                       | **Combine both** - "Product Manager & Strategic Planner" |
@@ -35,13 +35,13 @@
 | **Critical Actions** | check-config, validate-installation                             | Standard module config loading                        | **MADACE better** - explicit validation                  |
 | **Unique Feature**   | Scale detection, fast-track planning                            | Course correction analysis, validation                | **Integrate both**                                       |
 
-**Recommendation**: **Enhance MADACE PM with BMAD's validation + course correction**
+**Recommendation**: **Enhance MADACE PM with MADACE's validation + course correction**
 
 ---
 
 ### 2. Business Analyst
 
-| Aspect             | MADACE Analyst                                    | BMAD v6-Alpha Analyst                          | Best Practice                             |
+| Aspect             | MADACE Analyst                                    | MADACE v6-Alpha Analyst                          | Best Practice                             |
 | ------------------ | ------------------------------------------------- | ---------------------------------------------- | ----------------------------------------- |
 | **Name**           | Analyst                                           | Alex                                           | **Use role-based** (Analyst)              |
 | **Title**          | Business Analyst - Discovery & Research Expert    | Business Analyst                               | **MADACE title** more descriptive         |
@@ -49,13 +49,13 @@
 | **Menu Actions**   | 7 workflows (research, brainstorm, product-brief) | 6 workflows (workflow-status, brief, research) | **MADACE slightly better** - more options |
 | **Unique Feature** | Brownfield documentation                          | Deep research workflows                        | **Integrate both**                        |
 
-**Recommendation**: **Keep MADACE Analyst, add BMAD's deep research workflows**
+**Recommendation**: **Keep MADACE Analyst, add MADACE's deep research workflows**
 
 ---
 
 ### 3. Architect
 
-| Aspect             | MADACE Architect                                  | BMAD v6-Alpha Architect                         | Best Practice                  |
+| Aspect             | MADACE Architect                                  | MADACE v6-Alpha Architect                         | Best Practice                  |
 | ------------------ | ------------------------------------------------- | ----------------------------------------------- | ------------------------------ |
 | **Name**           | Architect                                         | Sarah                                           | **Use role-based** (Architect) |
 | **Title**          | System Architect - Adaptive Design Expert         | Architect                                       | **MADACE title** better        |
@@ -63,27 +63,27 @@
 | **Menu Actions**   | 6 workflows (architecture, tech-spec, api-design) | 6 workflows (architecture, tech-spec, validate) | **Similar**                    |
 | **Unique Feature** | Scale-adaptive design                             | Epic tech specs, validation                     | **Add validation** to MADACE   |
 
-**Recommendation**: **Keep MADACE Architect, add BMAD's validation workflows**
+**Recommendation**: **Keep MADACE Architect, add MADACE's validation workflows**
 
 ---
 
 ### 4. Scrum Master (SM)
 
-| Aspect             | MADACE SM                                         | BMAD v6-Alpha SM                                    | Best Practice                      |
+| Aspect             | MADACE SM                                         | MADACE v6-Alpha SM                                    | Best Practice                      |
 | ------------------ | ------------------------------------------------- | --------------------------------------------------- | ---------------------------------- |
 | **Name**           | SM                                                | Mike                                                | **Use role-based** (SM)            |
 | **Title**          | Scrum Master - Story Engineering Specialist       | Scrum Master                                        | **MADACE title** more descriptive  |
 | **Identity**       | Story context engineering, sprint facilitation    | Story decomposition, blocker removal                | **Combine both**                   |
-| **Menu Actions**   | 5 workflows (create-story, story-context, sprint) | 7 workflows (create-story, story-context, validate) | **BMAD stronger** - more workflows |
+| **Menu Actions**   | 5 workflows (create-story, story-context, sprint) | 7 workflows (create-story, story-context, validate) | **MADACE stronger** - more workflows |
 | **Unique Feature** | Story context engineering (game-changer)          | Story refinement, task breakdown                    | **MADACE innovation** better       |
 
-**Recommendation**: **Keep MADACE SM story-context innovation, add BMAD's refinement workflows**
+**Recommendation**: **Keep MADACE SM story-context innovation, add MADACE's refinement workflows**
 
 ---
 
 ### 5. Developer (DEV)
 
-| Aspect             | MADACE DEV                                       | BMAD v6-Alpha DEV                         | Best Practice            |
+| Aspect             | MADACE DEV                                       | MADACE v6-Alpha DEV                         | Best Practice            |
 | ------------------ | ------------------------------------------------ | ----------------------------------------- | ------------------------ |
 | **Name**           | DEV                                              | Dev                                       | **Either works**         |
 | **Title**          | Full Stack Developer - Implementation Specialist | Developer Agent                           | **MADACE title** better  |
@@ -91,11 +91,11 @@
 | **Menu Actions**   | 6 workflows (implement, test, review, refactor)  | 5 workflows (implement, review, validate) | **MADACE more complete** |
 | **Unique Feature** | Comprehensive testing, refactoring               | Senior dev review integration             | **Both valuable**        |
 
-**Recommendation**: **Keep MADACE DEV comprehensive approach, add BMAD's review workflows**
+**Recommendation**: **Keep MADACE DEV comprehensive approach, add MADACE's review workflows**
 
 ---
 
-## New Agents in BMAD v6-Alpha (Missing from MADACE)
+## New Agents in MADACE v6-Alpha (Missing from MADACE)
 
 ### 6. **UX Expert** 🎨
 
@@ -118,7 +118,7 @@
 
 ---
 
-## MADACE Unique Strengths (Missing from BMAD v6-Alpha)
+## MADACE Unique Strengths (Missing from MADACE v6-Alpha)
 
 ### Scale-Adaptive System (Levels 0-4)
 
@@ -142,7 +142,7 @@
 
 ---
 
-## BMAD v6-Alpha Unique Strengths (Missing from MADACE)
+## MADACE v6-Alpha Unique Strengths (Missing from MADACE)
 
 ### Critical Actions System
 
@@ -179,7 +179,7 @@
 
 ```yaml
 # Keep MADACE's scale-adaptive approach
-# Add BMAD's validation + course correction
+# Add MADACE's validation + course correction
 
 menu:
   - trigger: '*workflow-status' # MADACE ✅
@@ -189,8 +189,8 @@ menu:
   - trigger: '*tech-spec' # Both
   - trigger: '*fast-track' # MADACE ✅ (unique!)
   - trigger: '*prd' # Both
-  - trigger: '*validate' # BMAD ✅ (add!)
-  - trigger: '*correct-course' # BMAD ✅ (add!)
+  - trigger: '*validate' # MADACE ✅ (add!)
+  - trigger: '*correct-course' # MADACE ✅ (add!)
   - trigger: '*brainstorm' # MADACE ✅
   - trigger: '*init-status' # MADACE ✅
 ```
@@ -199,14 +199,14 @@ menu:
 
 ```yaml
 # Keep MADACE's story-context innovation
-# Add BMAD's refinement workflows
+# Add MADACE's refinement workflows
 
 menu:
   - trigger: '*create-story' # Both
   - trigger: '*story-context' # MADACE ✅ (game-changer!)
-  - trigger: '*refine-story' # BMAD ✅ (add!)
-  - trigger: '*task-breakdown' # BMAD ✅ (add!)
-  - trigger: '*validate' # BMAD ✅ (add!)
+  - trigger: '*refine-story' # MADACE ✅ (add!)
+  - trigger: '*task-breakdown' # MADACE ✅ (add!)
+  - trigger: '*validate' # MADACE ✅ (add!)
   - trigger: '*sprint-planning' # MADACE ✅
   - trigger: '*workflow-status' # MADACE ✅
 ```
@@ -225,14 +225,14 @@ critical_actions:
 
 #### 2.1 UX Expert 🎨
 
-- **Source**: BMAD v6-Alpha ux-expert.agent.yaml
+- **Source**: MADACE v6-Alpha ux-expert.agent.yaml
 - **Reason**: Critical missing capability in MADACE
 - **Integration**: Add to `madace/mam/agents/`
 - **Priority**: **HIGH**
 
 #### 2.2 TEA (Test Architect) 🧪
 
-- **Source**: BMAD v6-Alpha tea.agent.yaml
+- **Source**: MADACE v6-Alpha tea.agent.yaml
 - **Reason**: Replaces missing QA agent, more comprehensive
 - **Integration**: Add to `madace/mam/agents/`
 - **Priority**: **HIGH**
@@ -267,24 +267,24 @@ critical_actions:
 ### Core Agents (7 total)
 
 1. **PM** 📋 - Product Manager & Strategic Planner
-   - MADACE scale-adaptive + BMAD validation/correction
+   - MADACE scale-adaptive + MADACE validation/correction
 
 2. **Analyst** 📊 - Business Analyst & Research Specialist
-   - MADACE discovery + BMAD deep research
+   - MADACE discovery + MADACE deep research
 
 3. **Architect** 🏗️ - System Architect & Design Expert
-   - MADACE adaptive architecture + BMAD validation
+   - MADACE adaptive architecture + MADACE validation
 
 4. **SM** 🏃 - Scrum Master & Story Engineering Specialist
-   - MADACE story-context + BMAD refinement
+   - MADACE story-context + MADACE refinement
 
 5. **DEV** 💻 - Full Stack Developer & Implementation Specialist
-   - MADACE comprehensive testing + BMAD review
+   - MADACE comprehensive testing + MADACE review
 
-6. **UX** 🎨 - UX Expert (NEW from BMAD)
+6. **UX** 🎨 - UX Expert (NEW from MADACE)
    - User research, wireframes, design systems
 
-7. **TEA** 🧪 - Master Test Architect (NEW from BMAD)
+7. **TEA** 🧪 - Master Test Architect (NEW from MADACE)
    - Test strategies, automation, quality assurance
 
 ### Optional Agents (3 total)
@@ -314,11 +314,11 @@ cp -r madace/mam/agents madace/mam/agents.backup
 ### Step 2: Add New Agents
 
 ```bash
-# Copy from BMAD v6-Alpha
-cp /tmp/BMAD-METHOD-v6/src/modules/bmm/agents/ux-expert.agent.yaml \
+# Copy from MADACE v6-Alpha
+cp /tmp/MADACE-METHOD-v6/src/modules/bmm/agents/ux-expert.agent.yaml \
    madace/mam/agents/ux.agent.yaml
 
-cp /tmp/BMAD-METHOD-v6/src/modules/bmm/agents/tea.agent.yaml \
+cp /tmp/MADACE-METHOD-v6/src/modules/bmm/agents/tea.agent.yaml \
    madace/mam/agents/tea.agent.yaml
 ```
 
@@ -356,7 +356,7 @@ cp /tmp/BMAD-METHOD-v6/src/modules/bmm/agents/tea.agent.yaml \
 4. **Role-based naming** - more flexible than personal names
 5. **Comprehensive menu options** - more workflows available
 
-### ✅ Adopt from BMAD v6-Alpha
+### ✅ Adopt from MADACE v6-Alpha
 
 1. **Critical Actions** - pre-execution validation
 2. **Validation Workflows** - quality gates
@@ -410,9 +410,9 @@ cp /tmp/BMAD-METHOD-v6/src/modules/bmm/agents/tea.agent.yaml \
 
 ## Conclusion
 
-The best integration strategy is to **enhance MADACE's core agents** with BMAD v6-Alpha's validation, quality gates, and course correction capabilities, while **adding the missing UX and TEA agents**. This creates a more comprehensive agent lineup while preserving MADACE's unique innovations (scale-adaptive planning and story context engineering).
+The best integration strategy is to **enhance MADACE's core agents** with MADACE v6-Alpha's validation, quality gates, and course correction capabilities, while **adding the missing UX and TEA agents**. This creates a more comprehensive agent lineup while preserving MADACE's unique innovations (scale-adaptive planning and story context engineering).
 
-**Result**: Best of both worlds - MADACE's adaptive intelligence + BMAD's validation rigor.
+**Result**: Best of both worlds - MADACE's adaptive intelligence + MADACE's validation rigor.
 
 ---
 

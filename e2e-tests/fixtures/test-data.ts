@@ -62,11 +62,11 @@ export const testModuleConfigs = {
 
 export const testAgents = {
   mam: ['pm', 'analyst', 'architect', 'sm', 'dev'],
-  bmad: [
+  madace: [
     'analyst',
     'architect',
-    'bmad-master',
-    'bmad-orchestrator',
+    'madace-master',
+    'madace-orchestrator',
     'dev',
     'pm',
     'po',
@@ -74,7 +74,7 @@ export const testAgents = {
     'sm',
     'ux-expert',
   ],
-  bmadv6bmm: [
+  madacev6bmm: [
     'analyst',
     'architect',
     'dev-impl',

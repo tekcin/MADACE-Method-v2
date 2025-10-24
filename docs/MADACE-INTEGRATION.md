@@ -1,35 +1,35 @@
-# BMAD-METHOD Integration Guide
+# MADACE-METHOD Integration Guide
 
-**Status**: ✅ Complete - 30 BMAD Agents Imported (10 v4 + 20 v6-Alpha)
+**Status**: ✅ Complete - 30 MADACE Agents Imported (10 v4 + 20 v6-Alpha)
 
-This document describes the integration of BMAD-METHOD agents into MADACE-Method v2.0.
+This document describes the integration of MADACE-METHOD agents into MADACE-Method v2.0.
 
 ---
 
 ## Overview
 
-[BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) (BMad Core - Collaboration Optimized Reflection Engine) is a universal AI agent framework that provides specialized agents for software development and beyond. We've successfully integrated agents from both BMAD v4 (main branch) and v6-alpha branches into MADACE.
+[MADACE-METHOD](https://github.com/bmad-code-org/MADACE-METHOD) (BMad Core - Collaboration Optimized Reflection Engine) is a universal AI agent framework that provides specialized agents for software development and beyond. We've successfully integrated agents from both MADACE v4 (main branch) and v6-alpha branches into MADACE.
 
-### BMAD Versions
+### MADACE Versions
 
-**BMAD v4** (Main Branch):
+**MADACE v4** (Main Branch):
 
 - 10 core agents
 - Markdown + YAML format
 - Stable production release
-- Module: `bmad`
+- Module: `madace`
 
-**BMAD v6-Alpha** (Alpha Branch):
+**MADACE v6-Alpha** (Alpha Branch):
 
 - 20 production agents across 5 modules
 - Pure YAML format
 - Complete ground-up rewrite
 - Advanced features: critical_actions, sidecar files, scale-adaptive workflows
-- Modules: `bmad-v6-core`, `bmad-v6-bmm`, `bmad-v6-bmb`, `bmad-v6-cis`, `bmad-v6-bmd`
+- Modules: `madace-v6-core`, `madace-v6-bmm`, `madace-v6-bmb`, `madace-v6-cis`, `madace-v6-bmd`
 
-### What is BMAD-METHOD?
+### What is MADACE-METHOD?
 
-BMAD-METHOD provides:
+MADACE-METHOD provides:
 
 - **Agentic Planning**: Dedicated agents (Analyst, PM, Architect) collaborate to create detailed PRDs and Architecture documents
 - **Context-Engineered Development**: Scrum Master agent transforms plans into hyper-detailed development stories
@@ -39,29 +39,29 @@ BMAD-METHOD provides:
 
 ## Imported Agents
 
-### ✅ BMAD v4 Agents (10/10)
+### ✅ MADACE v4 Agents (10/10)
 
-| Icon | Agent ID            | Title                            | Module | When to Use                                                                                    |
-| ---- | ------------------- | -------------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
-| 📊   | `analyst`           | Business Analyst                 | bmad   | Market research, brainstorming, competitive analysis, project briefs, brownfield documentation |
-| 🏗️   | `architect`         | Architect                        | bmad   | System architecture, technical design, API specifications, data modeling, deployment planning  |
-| 🧙   | `bmad-master`       | BMad Master Task Executor        | bmad   | Executing specific tasks from the BMAD workflow system                                         |
-| 🎭   | `bmad-orchestrator` | BMad Master Orchestrator         | bmad   | Workflow coordination, multi-agent tasks, role switching guidance                              |
-| 💻   | `dev`               | Full Stack Developer             | bmad   | Feature implementation, bug fixes, code reviews, technical debt reduction                      |
-| 📋   | `pm`                | Product Manager                  | bmad   | PRDs, product strategy, feature prioritization, roadmap planning, stakeholder communication    |
-| 📝   | `po`                | Product Owner                    | bmad   | User story refinement, backlog management, acceptance criteria, sprint planning                |
-| 🧪   | `qa`                | Test Architect & Quality Advisor | bmad   | Test strategies, test automation, quality gates, acceptance testing                            |
-| 🏃   | `sm`                | Scrum Master                     | bmad   | Story decomposition, sprint facilitation, team coordination, removing blockers                 |
-| 🎨   | `ux-expert`         | UX Expert                        | bmad   | UX research, wireframes, prototyping, user flows, design systems                               |
+| Icon | Agent ID            | Title                            | Module  | When to Use                                                                                    |
+| ---- | ------------------- | -------------------------------- | ------- | ---------------------------------------------------------------------------------------------- |
+| 📊   | `analyst`           | Business Analyst                 | madace  | Market research, brainstorming, competitive analysis, project briefs, brownfield documentation |
+| 🏗️   | `architect`         | Architect                        | madace  | System architecture, technical design, API specifications, data modeling, deployment planning  |
+| 🧙   | `madace-master`       | MADACE Master Task Executor      | madace  | Executing specific tasks from the MADACE workflow system                                       |
+| 🎭   | `madace-orchestrator` | MADACE Master Orchestrator       | madace  | Workflow coordination, multi-agent tasks, role switching guidance                              |
+| 💻   | `dev`               | Full Stack Developer             | madace  | Feature implementation, bug fixes, code reviews, technical debt reduction                      |
+| 📋   | `pm`                | Product Manager                  | madace  | PRDs, product strategy, feature prioritization, roadmap planning, stakeholder communication    |
+| 📝   | `po`                | Product Owner                    | madace  | User story refinement, backlog management, acceptance criteria, sprint planning                |
+| 🧪   | `qa`                | Test Architect & Quality Advisor | madace  | Test strategies, test automation, quality gates, acceptance testing                            |
+| 🏃   | `sm`                | Scrum Master                     | madace  | Story decomposition, sprint facilitation, team coordination, removing blockers                 |
+| 🎨   | `ux-expert`         | UX Expert                        | madace  | UX research, wireframes, prototyping, user flows, design systems                               |
 
-### ✅ BMAD v6-Alpha Agents (20/20)
+### ✅ MADACE v6-Alpha Agents (20/20)
 
-**Core Module** (`bmad-v6-core`):
+**Core Module** (`madace-v6-core`):
 | Icon | Agent ID | Title | When to Use |
 | ---- | ------------- | ----------------------------------------------------------------- | ---------------------------------------------- |
-| 🧙 | `bmad-master` | BMad Master Executor, Knowledge Custodian, and Workflow Orchestrator | Workflow coordination, task execution, orchestration |
+| 🧙 | `madace-master` | MADACE Master Executor, Knowledge Custodian, and Workflow Orchestrator | Workflow coordination, task execution, orchestration |
 
-**BMM Module** (`bmad-v6-bmm`) - BMad Method for Software Development:
+**BMM Module** (`madace-v6-bmm`) - MADACE Method for Software Development:
 | Icon | Agent ID | Title | When to Use |
 | ---- | ----------------- | -------------------- | ------------------------------------------------------- |
 | 📊 | `analyst` | Business Analyst | Market research, project briefs, requirement gathering |
@@ -75,12 +75,12 @@ BMAD-METHOD provides:
 | 🧪 | `tea` | Master Test Architect| Test strategies, quality assurance, test automation |
 | 🎨 | `ux-expert` | UX Expert | UX research, wireframes, user flows, design systems |
 
-**BMB Module** (`bmad-v6-bmb`) - BMad Builder for Creating Custom Agents:
+**BMB Module** (`madace-v6-bmb`) - MADACE Builder for Creating Custom Agents:
 | Icon | Agent ID | Title | When to Use |
-| ---- | --------------- | ------------ | -------------------------------------------------------- |
-| 🧙 | `bmad-builder` | BMad Builder | Creating custom agents, workflows, and modules |
+| ---- | --------------- | -------------- | -------------------------------------------------------- |
+| 🧙 | `madace-builder` | MADACE Builder | Creating custom agents, workflows, and modules |
 
-**CIS Module** (`bmad-v6-cis`) - Creative Intelligence Suite:
+**CIS Module** (`madace-v6-cis`) - Creative Intelligence Suite:
 | Icon | Agent ID | Title | When to Use |
 | ---- | -------------------------- | -------------------------------- | ---------------------------------------------- |
 | 🧠 | `brainstorming-coach` | Elite Brainstorming Specialist | Brainstorming sessions, idea generation |
@@ -89,7 +89,7 @@ BMAD-METHOD provides:
 | ⚡ | `innovation-strategist` | Disruptive Innovation Oracle | Innovation strategy, breakthrough thinking |
 | 📖 | `storyteller` | Master Storyteller | Narrative creation, storytelling, communication|
 
-**BMD Module** (`bmad-v6-bmd`) - BMad Development (Internal BMAD Tools):
+**BMD Module** (`madace-v6-bmd`) - MADACE Development (Internal MADACE Tools):
 | Icon | Agent ID | Title | When to Use |
 | ---- | ---------------- | ------------------------------- | ---------------------------------------------- |
 | 🔧 | `cli-chief` | Chief CLI Tooling Officer | CLI tools, installer systems, build tooling |
@@ -102,13 +102,13 @@ BMAD-METHOD provides:
 
 ### Conversion Process
 
-BMAD agents come in two formats depending on version. We convert both to MADACE's unified database format:
+MADACE agents come in two formats depending on version. We convert both to MADACE's unified database format:
 
-#### BMAD v4 Format (Markdown + YAML)
+#### MADACE v4 Format (Markdown + YAML)
 
-BMAD v4 agents are stored in Markdown files with embedded YAML blocks:
+MADACE v4 agents are stored in Markdown files with embedded YAML blocks:
 
-**BMAD v4 Format** (Markdown + YAML):
+**MADACE v4 Format** (Markdown + YAML):
 
 ````markdown
 # agent-name
@@ -138,11 +138,11 @@ dependencies:
 ```
 ````
 
-#### BMAD v6-Alpha Format (Pure YAML)
+#### MADACE v6-Alpha Format (Pure YAML)
 
-BMAD v6-alpha agents use a pure YAML format with new advanced features:
+MADACE v6-alpha agents use a pure YAML format with new advanced features:
 
-**BMAD v6-Alpha Format** (Pure YAML):
+**MADACE v6-Alpha Format** (Pure YAML):
 
 ```yaml
 agent:
@@ -186,7 +186,7 @@ Both v4 and v6-alpha agents are converted to a unified database format:
   name: "pm",
   title: "Product Manager",
   icon: "📋",
-  module: "bmad",  // BMAD module
+  module: "madace",  // MADACE module
   version: "1.0.0",
   persona: {
     role: "Investigative Product Strategist",
@@ -201,27 +201,27 @@ Both v4 and v6-alpha agents are converted to a unified database format:
   ],
   prompts: [
     { name: "system", content: "You are John, a Product Manager..." },
-    { name: "bmad-metadata", content: "{\"dependencies\": {...}}" }
+    { name: "madace-metadata", content: "{\"dependencies\": {...}}" }
   ]
 }
 ```
 
 ### Database Storage
 
-All BMAD agents are stored in the `Agent` table with module-based filtering:
+All MADACE agents are stored in the `Agent` table with module-based filtering:
 
-**BMAD v4 Agents**:
+**MADACE v4 Agents**:
 
-- `module = "bmad"` for easy filtering
+- `module = "madace"` for easy filtering
 - All 10 agents from main branch
 
-**BMAD v6-Alpha Agents**:
+**MADACE v6-Alpha Agents**:
 
-- `module = "bmad-v6-core"` (1 agent)
-- `module = "bmad-v6-bmm"` (10 agents)
-- `module = "bmad-v6-bmb"` (1 agent)
-- `module = "bmad-v6-cis"` (5 agents)
-- `module = "bmad-v6-bmd"` (3 agents)
+- `module = "madace-v6-core"` (1 agent)
+- `module = "madace-v6-bmm"` (10 agents)
+- `module = "madace-v6-bmb"` (1 agent)
+- `module = "madace-v6-cis"` (5 agents)
+- `module = "madace-v6-bmd"` (3 agents)
 
 **Common Fields**:
 
@@ -231,21 +231,21 @@ All BMAD agents are stored in the `Agent` table with module-based filtering:
 
 ---
 
-## Using BMAD Agents in MADACE
+## Using MADACE Agents in MADACE
 
 ### Via Web UI
 
 1. **Browse Agents**: Navigate to http://localhost:3000/agents
-2. **Filter by Module**: Select "BMAD" from the module filter dropdown
-3. **View Agent**: Click on any BMAD agent to see details
+2. **Filter by Module**: Select "MADACE" from the module filter dropdown
+3. **View Agent**: Click on any MADACE agent to see details
 4. **Agent Commands**: Each agent's menu shows available commands with descriptions
 
 ### Via API
 
-**List all BMAD agents:**
+**List all MADACE agents:**
 
 ```bash
-curl http://localhost:3000/api/v3/agents?module=bmad
+curl http://localhost:3000/api/v3/agents?module=madace
 ```
 
 **Get specific agent:**
@@ -262,7 +262,7 @@ curl http://localhost:3000/api/v3/agents/search?q=product
 
 ---
 
-## BMAD Workflow in MADACE
+## MADACE Workflow in MADACE
 
 ### Planning Phase
 
@@ -279,43 +279,43 @@ curl http://localhost:3000/api/v3/agents/search?q=product
 
 ### Orchestration
 
-8. **Workflow Coordination** → Use **BMad Orchestrator** (🎭) to coordinate multiple agents
-9. **Task Execution** → Use **BMad Master** (🧙) for specific workflow tasks
+8. **Workflow Coordination** → Use **MADACE Orchestrator** (🎭) to coordinate multiple agents
+9. **Task Execution** → Use **MADACE Master** (🧙) for specific workflow tasks
 
 ---
 
 ## Re-Importing or Updating Agents
 
-### BMAD v4 (Main Branch)
+### MADACE v4 (Main Branch)
 
-To re-import BMAD v4 agents:
+To re-import MADACE v4 agents:
 
 ```bash
-# Clone or update BMAD-METHOD v4
+# Clone or update MADACE-METHOD v4
 cd /tmp
-git clone https://github.com/bmad-code-org/BMAD-METHOD.git
+git clone https://github.com/bmad-code-org/MADACE-METHOD.git
 
 # Run v4 import script
 cd /Users/nimda/MADACE-Method-v2.0
-npm run import-bmad /tmp/BMAD-METHOD
+npm run import-madace /tmp/MADACE-METHOD
 ```
 
-### BMAD v6-Alpha
+### MADACE v6-Alpha
 
-To import or update BMAD v6-alpha agents:
+To import or update MADACE v6-alpha agents:
 
 ```bash
 # Clone v6-alpha branch
 cd /tmp
-git clone --branch v6-alpha https://github.com/bmad-code-org/BMAD-METHOD.git BMAD-METHOD-v6
+git clone --branch v6-alpha https://github.com/bmad-code-org/MADACE-METHOD.git MADACE-METHOD-v6
 
 # Or update existing clone
-cd /tmp/BMAD-METHOD-v6
+cd /tmp/MADACE-METHOD-v6
 git pull origin v6-alpha
 
 # Run v6-alpha import script
 cd /Users/nimda/MADACE-Method-v2.0
-npm run import-bmad-v6 /tmp/BMAD-METHOD-v6
+npm run import-madace-v6 /tmp/MADACE-METHOD-v6
 ```
 
 ### Import Behavior
@@ -333,27 +333,27 @@ Both importers will:
 
 ### Import Scripts
 
-#### BMAD v4 Importer
+#### MADACE v4 Importer
 
-**Location**: `scripts/import-bmad-agents.ts`
+**Location**: `scripts/import-madace-agents.ts`
 
 **Features:**
 
 - Extracts YAML from Markdown files
-- Converts BMAD v4 structure to MADACE format
+- Converts MADACE v4 structure to MADACE format
 - Handles both array and object command formats
-- Stores BMAD-specific metadata in prompts
+- Stores MADACE-specific metadata in prompts
 - Updates existing agents or creates new ones
 
 **Running:**
 
 ```bash
-npm run import-bmad [path-to-BMAD-METHOD]
+npm run import-madace [path-to-MADACE-METHOD]
 ```
 
-#### BMAD v6-Alpha Importer
+#### MADACE v6-Alpha Importer
 
-**Location**: `scripts/import-bmad-v6-agents.ts`
+**Location**: `scripts/import-madace-v6-agents.ts`
 
 **Features:**
 
@@ -361,18 +361,18 @@ npm run import-bmad [path-to-BMAD-METHOD]
 - Handles v6-alpha structure: metadata, critical_actions, menu triggers
 - Converts workflow/exec paths to MADACE menu format
 - Stores v6-specific metadata (critical_actions, module, type)
-- Module-aware naming: `bmad-v6-{module}`
+- Module-aware naming: `madace-v6-{module}`
 - Organizes agents by module (core, bmm, bmb, cis, bmd)
 
 **Running:**
 
 ```bash
-npm run import-bmad-v6 [path-to-BMAD-METHOD-v6]
+npm run import-madace-v6 [path-to-MADACE-METHOD-v6]
 ```
 
 ### Database Schema
 
-BMAD agents use the existing `Agent` model:
+MADACE agents use the existing `Agent` model:
 
 ```prisma
 model Agent {
@@ -380,12 +380,12 @@ model Agent {
   name        String   @unique
   title       String
   icon        String
-  module      String   // "bmad" for BMAD agents
+  module      String   // "madace" for MADACE agents
   version     String
   persona     Json     // Role, identity, style, principles, focus
   menu        Json     // Array of commands
-  prompts     Json     // System prompt + BMAD metadata
-  createdBy   String?  // "bmad-importer"
+  prompts     Json     // System prompt + MADACE metadata
+  createdBy   String?  // "madace-importer"
   // ... other fields
 }
 ```
@@ -396,17 +396,17 @@ model Agent {
 
 ### Planned Features
 
-- [ ] **BMAD Workflows**: Import BMAD workflow definitions
-- [ ] **BMAD Templates**: Import document templates (PRD, Architecture, etc.)
-- [ ] **BMAD Tasks**: Import task definitions for agent execution
-- [ ] **BMAD Checklists**: Import quality gates and checklists
+- [ ] **MADACE Workflows**: Import MADACE workflow definitions
+- [ ] **MADACE Templates**: Import document templates (PRD, Architecture, etc.)
+- [ ] **MADACE Tasks**: Import task definitions for agent execution
+- [ ] **MADACE Checklists**: Import quality gates and checklists
 - [ ] **Agent Commands**: Make commands executable in MADACE UI
 - [ ] **Multi-Agent Orchestration**: Enable agent-to-agent communication
-- [ ] **BMAD Expansion Packs**: Support game dev, DevOps, infrastructure packs
+- [ ] **MADACE Expansion Packs**: Support game dev, DevOps, infrastructure packs
 
 ### Compatibility
 
-BMAD agents are fully compatible with MADACE's:
+MADACE agents are fully compatible with MADACE's:
 
 - ✅ Agent memory system
 - ✅ LLM client (Gemini, Claude, OpenAI, Local)
@@ -422,7 +422,7 @@ BMAD agents are fully compatible with MADACE's:
 
 **Error**: `commands is not iterable`
 
-- **Cause**: BMAD agent uses object format for commands (e.g., bmad-orchestrator)
+- **Cause**: MADACE agent uses object format for commands (e.g., madace-orchestrator)
 - **Fix**: Import script handles both array and object formats automatically
 
 **Error**: `No YAML block found`
@@ -435,20 +435,20 @@ BMAD agents are fully compatible with MADACE's:
 **Duplicate agents**:
 
 ```bash
-# Remove all BMAD agents
-npx prisma studio  # Delete agents with module="bmad"
+# Remove all MADACE agents
+npx prisma studio  # Delete agents with module="madace"
 
 # Re-import
-npm run import-bmad /tmp/BMAD-METHOD
+npm run import-madace /tmp/MADACE-METHOD
 ```
 
 ---
 
 ## References
 
-- **BMAD-METHOD GitHub**: https://github.com/bmad-code-org/BMAD-METHOD
-- **BMAD Documentation**: https://github.com/bmad-code-org/BMAD-METHOD/blob/main/docs/user-guide.md
-- **BMAD Discord**: https://discord.gg/gk8jAdXWmj
+- **MADACE-METHOD GitHub**: https://github.com/bmad-code-org/MADACE-METHOD
+- **MADACE Documentation**: https://github.com/bmad-code-org/MADACE-METHOD/blob/main/docs/user-guide.md
+- **MADACE Discord**: https://discord.gg/gk8jAdXWmj
 - **MADACE v3 Architecture**: [ARCHITECTURE-V3.md](../ARCHITECTURE-V3.md)
 - **MADACE Agent System**: [ARCHITECTURE-V3-COMPONENTS.md](../ARCHITECTURE-V3-COMPONENTS.md)
 
@@ -456,7 +456,7 @@ npm run import-bmad /tmp/BMAD-METHOD
 
 ## License
 
-BMAD-METHOD™ is a trademark of BMad Code, LLC (MIT License).
+MADACE-METHOD™ is a trademark of BMad Code, LLC (MIT License).
 MADACE-Method v2.0 is licensed under MIT License.
 
 Integration code is part of MADACE-Method v2.0 and follows the MIT License.
@@ -466,12 +466,12 @@ Integration code is part of MADACE-Method v2.0 and follows the MIT License.
 **Last Updated**: 2025-10-23
 **Import Status**:
 
-- ✅ BMAD v4: 10/10 agents successfully imported
-- ✅ BMAD v6-Alpha: 20/20 agents successfully imported
-- ✅ Total: 30 BMAD agents in database
+- ✅ MADACE v4: 10/10 agents successfully imported
+- ✅ MADACE v6-Alpha: 20/20 agents successfully imported
+- ✅ Total: 30 MADACE agents in database
 
 **MADACE Version**: v2.0.0-alpha
-**BMAD Versions**:
+**MADACE Versions**:
 
 - v4 (main branch) - 10 agents
 - v6-alpha (alpha branch) - 20 agents across 5 modules

@@ -123,25 +123,25 @@ export class AgentsPage {
   }
 
   /**
-   * Verify BMAD agents are loaded (10 v4 agents)
+   * Verify MADACE agents are loaded (10 v4 agents)
    */
-  async expectBMADAgentsLoaded() {
-    await this.filterByModule('bmad');
+  async expectMADACEAgentsLoaded() {
+    await this.filterByModule('madace');
     const count = await this.getAgentCount();
     expect(count).toBe(10);
   }
 
   /**
-   * Verify BMAD v6 agents are loaded (20 agents)
+   * Verify MADACE v6 agents are loaded (20 agents)
    */
-  async expectBMADv6AgentsLoaded() {
+  async expectMADACEv6AgentsLoaded() {
     // Check BMM module (10 agents)
-    await this.filterByModule('bmad-v6-bmm');
+    await this.filterByModule('madace-v6-bmm');
     let count = await this.getAgentCount();
     expect(count).toBe(10);
 
     // Check CIS module (5 agents)
-    await this.filterByModule('bmad-v6-cis');
+    await this.filterByModule('madace-v6-cis');
     count = await this.getAgentCount();
     expect(count).toBe(5);
   }
