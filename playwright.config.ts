@@ -35,6 +35,7 @@ export default defineConfig({
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
     ['json', { outputFile: 'test-results.json' }],
+    ['github'], // GitHub Actions reporter for CI/CD integration
   ],
 
   // Shared settings for all the projects below
@@ -42,7 +43,7 @@ export default defineConfig({
     // Base URL to use in actions like `await page.goto('/')`
     baseURL: 'http://localhost:3000',
 
-    // Collect trace when retrying the failed test
+    // Collect trace on failure for comprehensive debugging
     trace: 'on-first-retry',
 
     // Take screenshot on failure
