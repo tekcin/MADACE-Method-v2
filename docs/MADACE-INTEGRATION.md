@@ -25,7 +25,7 @@ This document describes the integration of MADACE-METHOD agents into MADACE-Meth
 - Pure YAML format
 - Complete ground-up rewrite
 - Advanced features: critical_actions, sidecar files, scale-adaptive workflows
-- Modules: `madace-v6-core`, `madace-v6-bmm`, `madace-v6-bmb`, `madace-v6-cis`, `madace-v6-bmd`
+- Modules: `madace-v3-core`, `madace-v3-bmm`, `madace-v3-bmb`, `madace-v3-cis`, `madace-v3-bmd`
 
 ### What is MADACE-METHOD?
 
@@ -56,12 +56,12 @@ MADACE-METHOD provides:
 
 ### ✅ MADACE v6-Alpha Agents (20/20)
 
-**Core Module** (`madace-v6-core`):
+**Core Module** (`madace-v3-core`):
 | Icon | Agent ID | Title | When to Use |
 | ---- | ------------- | ----------------------------------------------------------------- | ---------------------------------------------- |
 | 🧙 | `madace-master` | MADACE Master Executor, Knowledge Custodian, and Workflow Orchestrator | Workflow coordination, task execution, orchestration |
 
-**BMM Module** (`madace-v6-bmm`) - MADACE Method for Software Development:
+**BMM Module** (`madace-v3-bmm`) - MADACE Method for Software Development:
 | Icon | Agent ID | Title | When to Use |
 | ---- | ----------------- | -------------------- | ------------------------------------------------------- |
 | 📊 | `analyst` | Business Analyst | Market research, project briefs, requirement gathering |
@@ -75,12 +75,12 @@ MADACE-METHOD provides:
 | 🧪 | `tea` | Master Test Architect| Test strategies, quality assurance, test automation |
 | 🎨 | `ux-expert` | UX Expert | UX research, wireframes, user flows, design systems |
 
-**BMB Module** (`madace-v6-bmb`) - MADACE Builder for Creating Custom Agents:
+**BMB Module** (`madace-v3-bmb`) - MADACE Builder for Creating Custom Agents:
 | Icon | Agent ID | Title | When to Use |
 | ---- | --------------- | -------------- | -------------------------------------------------------- |
 | 🧙 | `madace-builder` | MADACE Builder | Creating custom agents, workflows, and modules |
 
-**CIS Module** (`madace-v6-cis`) - Creative Intelligence Suite:
+**CIS Module** (`madace-v3-cis`) - Creative Intelligence Suite:
 | Icon | Agent ID | Title | When to Use |
 | ---- | -------------------------- | -------------------------------- | ---------------------------------------------- |
 | 🧠 | `brainstorming-coach` | Elite Brainstorming Specialist | Brainstorming sessions, idea generation |
@@ -89,7 +89,7 @@ MADACE-METHOD provides:
 | ⚡ | `innovation-strategist` | Disruptive Innovation Oracle | Innovation strategy, breakthrough thinking |
 | 📖 | `storyteller` | Master Storyteller | Narrative creation, storytelling, communication|
 
-**BMD Module** (`madace-v6-bmd`) - MADACE Development (Internal MADACE Tools):
+**BMD Module** (`madace-v3-bmd`) - MADACE Development (Internal MADACE Tools):
 | Icon | Agent ID | Title | When to Use |
 | ---- | ---------------- | ------------------------------- | ---------------------------------------------- |
 | 🔧 | `cli-chief` | Chief CLI Tooling Officer | CLI tools, installer systems, build tooling |
@@ -217,11 +217,11 @@ All MADACE agents are stored in the `Agent` table with module-based filtering:
 
 **MADACE v6-Alpha Agents**:
 
-- `module = "madace-v6-core"` (1 agent)
-- `module = "madace-v6-bmm"` (10 agents)
-- `module = "madace-v6-bmb"` (1 agent)
-- `module = "madace-v6-cis"` (5 agents)
-- `module = "madace-v6-bmd"` (3 agents)
+- `module = "madace-v3-core"` (1 agent)
+- `module = "madace-v3-bmm"` (10 agents)
+- `module = "madace-v3-bmb"` (1 agent)
+- `module = "madace-v3-cis"` (5 agents)
+- `module = "madace-v3-bmd"` (3 agents)
 
 **Common Fields**:
 
@@ -307,15 +307,15 @@ To import or update MADACE v6-alpha agents:
 ```bash
 # Clone v6-alpha branch
 cd /tmp
-git clone --branch v6-alpha https://github.com/bmad-code-org/MADACE-METHOD.git MADACE-METHOD-v6
+git clone --branch v6-alpha https://github.com/bmad-code-org/MADACE-METHOD.git MADACE-METHOD-v3
 
 # Or update existing clone
-cd /tmp/MADACE-METHOD-v6
+cd /tmp/MADACE-METHOD-v3
 git pull origin v6-alpha
 
 # Run v6-alpha import script
 cd /Users/nimda/MADACE-Method-v2.0
-npm run import-madace-v6 /tmp/MADACE-METHOD-v6
+npm run import-madace-v3 /tmp/MADACE-METHOD-v3
 ```
 
 ### Import Behavior
@@ -353,7 +353,7 @@ npm run import-madace [path-to-MADACE-METHOD]
 
 #### MADACE v6-Alpha Importer
 
-**Location**: `scripts/import-madace-v6-agents.ts`
+**Location**: `scripts/import-madace-v3-agents.ts`
 
 **Features:**
 
@@ -361,13 +361,13 @@ npm run import-madace [path-to-MADACE-METHOD]
 - Handles v6-alpha structure: metadata, critical_actions, menu triggers
 - Converts workflow/exec paths to MADACE menu format
 - Stores v6-specific metadata (critical_actions, module, type)
-- Module-aware naming: `madace-v6-{module}`
+- Module-aware naming: `madace-v3-{module}`
 - Organizes agents by module (core, bmm, bmb, cis, bmd)
 
 **Running:**
 
 ```bash
-npm run import-madace-v6 [path-to-MADACE-METHOD-v6]
+npm run import-madace-v3 [path-to-MADACE-METHOD-v3]
 ```
 
 ### Database Schema

@@ -315,10 +315,10 @@ cp -r madace/mam/agents madace/mam/agents.backup
 
 ```bash
 # Copy from MADACE v6-Alpha
-cp /tmp/MADACE-METHOD-v6/src/modules/bmm/agents/ux-expert.agent.yaml \
+cp /tmp/MADACE-METHOD-v3/src/modules/bmm/agents/ux-expert.agent.yaml \
    madace/mam/agents/ux.agent.yaml
 
-cp /tmp/MADACE-METHOD-v6/src/modules/bmm/agents/tea.agent.yaml \
+cp /tmp/MADACE-METHOD-v3/src/modules/bmm/agents/tea.agent.yaml \
    madace/mam/agents/tea.agent.yaml
 ```
 

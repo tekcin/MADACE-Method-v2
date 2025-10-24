@@ -30,7 +30,7 @@
     "db:push": "prisma db push",
     "db:reset": "prisma migrate reset",
     "import-madace": "tsx scripts/import-madace-agents.ts",
-    "import-madace-v6": "tsx scripts/import-madace-v6-agents.ts"
+    "import-madace-v3": "tsx scripts/import-madace-v3-agents.ts"
   },
   "dependencies": {
     "@heroicons/react": "2.2.0",

@@ -41,7 +41,7 @@ test.describe('Agent Management', () => {
     expect(madaceCount).toBe(10);
 
     // ACT & ASSERT - Filter by MADACE v6 BMM
-    await agentsPage.filterByModule('madace-v6-bmm');
+    await agentsPage.filterByModule('madace-v3-bmm');
     const bmmCount = await agentsPage.getAgentCount();
     expect(bmmCount).toBe(10);
   });

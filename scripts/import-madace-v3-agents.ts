@@ -5,7 +5,7 @@
  * Converts BMAD v6-alpha agents (pure YAML) to MADACE format and imports them into the database.
  *
  * Usage:
- *   npm run import-bmad-v6 /path/to/BMAD-METHOD-v6
+ *   npm run import-bmad-v3 /path/to/BMAD-METHOD-v3
  */
 
 import fs from 'fs/promises';
@@ -88,7 +88,7 @@ function convertBMADv6ToMADACE(bmadAgent: BMADv6Agent, sourceFile: string) {
 
   // Store v6-specific metadata
   prompts.push({
-    name: 'bmad-v6-metadata',
+    name: 'bmad-v3-metadata',
     content: JSON.stringify({
       id: metadata.id,
       module: metadata.module,
@@ -108,12 +108,12 @@ function convertBMADv6ToMADACE(bmadAgent: BMADv6Agent, sourceFile: string) {
     name: agentId,
     title: metadata.title,
     icon: metadata.icon,
-    module: `bmad-v6-${metadata.module || 'core'}`, // e.g., "bmad-v6-bmm", "bmad-v6-core"
+    module: `bmad-v3-${metadata.module || 'core'}`, // e.g., "bmad-v3-bmm", "bmad-v3-core"
     version: '6.0.0-alpha',
     persona: madacePersona,
     menu,
     prompts,
-    createdBy: 'bmad-v6-importer',
+    createdBy: 'bmad-v3-importer',
   };
 }
 
@@ -191,7 +191,7 @@ async function findProductionAgents(bmadPath: string): Promise<string[]> {
 
 async function main() {
   const args = process.argv.slice(2);
-  const bmadPath = args[0] || '/tmp/BMAD-METHOD-v6';
+  const bmadPath = args[0] || '/tmp/BMAD-METHOD-v3';
 
   console.log('🚀 BMAD-METHOD v6-Alpha Agent Importer');
   console.log('=====================================\n');
@@ -235,7 +235,7 @@ async function main() {
     const allAgents = await prisma.agent.findMany({
       where: {
         module: {
-          startsWith: 'bmad-v6-',
+          startsWith: 'bmad-v3-',
         },
       },
       select: { name: true, title: true, icon: true, module: true },

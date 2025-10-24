@@ -136,12 +136,12 @@ export class AgentsPage {
    */
   async expectMADACEv6AgentsLoaded() {
     // Check BMM module (10 agents)
-    await this.filterByModule('madace-v6-bmm');
+    await this.filterByModule('madace-v3-bmm');
     let count = await this.getAgentCount();
     expect(count).toBe(10);
 
     // Check CIS module (5 agents)
-    await this.filterByModule('madace-v6-cis');
+    await this.filterByModule('madace-v3-cis');
     count = await this.getAgentCount();
     expect(count).toBe(5);
   }
