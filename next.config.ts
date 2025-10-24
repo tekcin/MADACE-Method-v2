@@ -1,9 +1,10 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    root: __dirname,
-  },
+  // Turbopack disabled due to clientReferenceManifest issues
+  // turbopack: {
+  //   root: __dirname,
+  // },
 };
 
 export default nextConfig;

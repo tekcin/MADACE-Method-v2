@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
-import { loadMAMAgents } from '@/lib/agents';
+import { loadAllAgents } from '@/lib/agents';
 
 export async function GET() {
   try {
-    const agents = await loadMAMAgents();
+    const agents = await loadAllAgents();
     return NextResponse.json({
       agents: agents.map((agent) => ({
         id: agent.metadata.id,
         name: agent.metadata.name,
         title: agent.metadata.title,
         icon: agent.metadata.icon,
-        module: agent.metadata.module,
+        module: agent.metadata.module || 'core', // Default to 'core' if not specified
       })),
     });
   } catch (error) {

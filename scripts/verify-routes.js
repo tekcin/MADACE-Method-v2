@@ -53,11 +53,13 @@ const nameParams = findNameParams(appDir);
 
 if (nameParams.length > 0) {
   console.log('❌ Found conflicting [name] route parameters:');
-  nameParams.forEach(p => {
+  nameParams.forEach((p) => {
     console.log(`   ${p.replace(process.cwd(), '.')}`);
   });
   console.log('\n   All dynamic routes should use [id] instead of [name]');
-  console.log('   This will cause: "You cannot use different slug names for the same dynamic path"');
+  console.log(
+    '   This will cause: "You cannot use different slug names for the same dynamic path"'
+  );
   process.exit(1);
 }
 

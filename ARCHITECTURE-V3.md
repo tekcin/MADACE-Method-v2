@@ -562,6 +562,7 @@ https://www.ssllabs.com/ssltest/analyze.html?d=madace.yourdomain.com
 **Cross-Platform Cleanup System:**
 
 1. **cleanup-dev-servers.js** (Cross-platform Node.js)
+
    ```javascript
    // Features:
    - Kill processes on port 3000
@@ -572,6 +573,7 @@ https://www.ssllabs.com/ssltest/analyze.html?d=madace.yourdomain.com
    ```
 
 2. **cleanup-dev-servers.sh** (Enhanced Unix/Linux)
+
    ```bash
    # Additional features:
    - More thorough process cleanup
@@ -580,6 +582,7 @@ https://www.ssllabs.com/ssltest/analyze.html?d=madace.yourdomain.com
    ```
 
 3. **verify-routes.js** (Route Structure Validation)
+
    ```javascript
    // Validation checks:
    - Detect nested MADACE directories
@@ -610,6 +613,7 @@ https://www.ssllabs.com/ssltest/analyze.html?d=madace.yourdomain.com
   4. Added route structure validation to test workflow
 
 **Routes Fixed:**
+
 ```
 app/api/agents/[name] → app/api/agents/[id]
 app/api/workflows/[name] → app/api/workflows/[id]
@@ -617,6 +621,7 @@ app/agents/[name] → (removed - conflicting directory)
 ```
 
 **Error Prevented:**
+
 ```
 Error: You cannot use different slug names for the same dynamic path ('id' !== 'name').
 ```
@@ -664,6 +669,7 @@ export class SetupWizardPage {
 ```
 
 **Benefits:**
+
 - Centralized element selectors
 - Reusable page interactions
 - Easier maintenance when UI changes
@@ -720,6 +726,7 @@ npm run cleanup
 ```
 
 **GitHub Actions Ready:**
+
 - Automated browser installation
 - Parallel test execution
 - Test result reporting
@@ -794,6 +801,7 @@ Features:
 - **Parallel Execution**: 5 workers for faster execution
 
 **Known Test Status:**
+
 - ✅ Core functionality tests passing
 - ⚠️ Some tests expect unimplemented features (expected)
 - ⚠️ Selector refinement needed for dynamic content
@@ -850,6 +858,7 @@ Features:
 - **Clean Environment**: Automated cleanup prevents test pollution
 
 **Production Readiness:**
+
 - ✅ Zero-configuration setup
 - ✅ Cross-platform compatibility
 - ✅ CI/CD ready

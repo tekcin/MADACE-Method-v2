@@ -46,6 +46,11 @@ export interface AgentSelectorProps {
    * Show select all / clear all buttons (only for multi mode)
    */
   showBulkActions?: boolean;
+
+  /**
+   * Filter agents by module (optional)
+   */
+  moduleFilter?: string;
 }
 
 export function AgentSelector({
@@ -55,11 +60,16 @@ export function AgentSelector({
   onAgentClick,
   agents: providedAgents,
   showBulkActions = false,
+  moduleFilter = 'all',
 }: AgentSelectorProps) {
   const [agents, setAgents] = useState<AgentCardData[]>(providedAgents || []);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(initialSelection));
   const [loading, setLoading] = useState(!providedAgents);
   const [error, setError] = useState<string | null>(null);
+
+  // Filter agents by module
+  const filteredAgents =
+    moduleFilter === 'all' ? agents : agents.filter((agent) => agent.module === moduleFilter);
 
   // Fetch agents from API if not provided
   useEffect(() => {
@@ -115,7 +125,7 @@ export function AgentSelector({
   };
 
   const handleSelectAll = () => {
-    const allIds = new Set(agents.map((a) => a.id));
+    const allIds = new Set(filteredAgents.map((a) => a.id));
     setSelectedIds(allIds);
     onSelectionChange?.(Array.from(allIds));
   };
@@ -166,10 +176,14 @@ export function AgentSelector({
     );
   }
 
-  if (agents.length === 0) {
+  if (filteredAgents.length === 0) {
     return (
       <div className="rounded-lg border-2 border-gray-300 bg-gray-50 p-6 text-center dark:border-gray-600 dark:bg-gray-800">
-        <p className="text-gray-600 dark:text-gray-400">No agents available</p>
+        <p className="text-gray-600 dark:text-gray-400">
+          {moduleFilter === 'all'
+            ? 'No agents available'
+            : `No agents found in ${moduleFilter} module`}
+        </p>
       </div>
     );
   }
@@ -180,12 +194,12 @@ export function AgentSelector({
       {mode === 'multi' && showBulkActions && (
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {selectedIds.size} of {agents.length} selected
+            {selectedIds.size} of {filteredAgents.length} selected
           </p>
           <div className="flex space-x-2">
             <button
               onClick={handleSelectAll}
-              disabled={selectedIds.size === agents.length}
+              disabled={selectedIds.size === filteredAgents.length}
               className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               Select All
@@ -202,8 +216,11 @@ export function AgentSelector({
       )}
 
       {/* Agent grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {agents.map((agent) => (
+      <div
+        data-testid="agent-list"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      >
+        {filteredAgents.map((agent) => (
           <AgentCard
             key={agent.id}
             agent={agent}

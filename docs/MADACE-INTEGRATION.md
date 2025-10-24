@@ -41,18 +41,18 @@ MADACE-METHOD provides:
 
 ### ✅ MADACE v4 Agents (10/10)
 
-| Icon | Agent ID            | Title                            | Module  | When to Use                                                                                    |
-| ---- | ------------------- | -------------------------------- | ------- | ---------------------------------------------------------------------------------------------- |
-| 📊   | `analyst`           | Business Analyst                 | madace  | Market research, brainstorming, competitive analysis, project briefs, brownfield documentation |
-| 🏗️   | `architect`         | Architect                        | madace  | System architecture, technical design, API specifications, data modeling, deployment planning  |
-| 🧙   | `madace-master`       | MADACE Master Task Executor      | madace  | Executing specific tasks from the MADACE workflow system                                       |
-| 🎭   | `madace-orchestrator` | MADACE Master Orchestrator       | madace  | Workflow coordination, multi-agent tasks, role switching guidance                              |
-| 💻   | `dev`               | Full Stack Developer             | madace  | Feature implementation, bug fixes, code reviews, technical debt reduction                      |
-| 📋   | `pm`                | Product Manager                  | madace  | PRDs, product strategy, feature prioritization, roadmap planning, stakeholder communication    |
-| 📝   | `po`                | Product Owner                    | madace  | User story refinement, backlog management, acceptance criteria, sprint planning                |
-| 🧪   | `qa`                | Test Architect & Quality Advisor | madace  | Test strategies, test automation, quality gates, acceptance testing                            |
-| 🏃   | `sm`                | Scrum Master                     | madace  | Story decomposition, sprint facilitation, team coordination, removing blockers                 |
-| 🎨   | `ux-expert`         | UX Expert                        | madace  | UX research, wireframes, prototyping, user flows, design systems                               |
+| Icon | Agent ID              | Title                            | Module | When to Use                                                                                    |
+| ---- | --------------------- | -------------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
+| 📊   | `analyst`             | Business Analyst                 | madace | Market research, brainstorming, competitive analysis, project briefs, brownfield documentation |
+| 🏗️   | `architect`           | Architect                        | madace | System architecture, technical design, API specifications, data modeling, deployment planning  |
+| 🧙   | `madace-master`       | MADACE Master Task Executor      | madace | Executing specific tasks from the MADACE workflow system                                       |
+| 🎭   | `madace-orchestrator` | MADACE Master Orchestrator       | madace | Workflow coordination, multi-agent tasks, role switching guidance                              |
+| 💻   | `dev`                 | Full Stack Developer             | madace | Feature implementation, bug fixes, code reviews, technical debt reduction                      |
+| 📋   | `pm`                  | Product Manager                  | madace | PRDs, product strategy, feature prioritization, roadmap planning, stakeholder communication    |
+| 📝   | `po`                  | Product Owner                    | madace | User story refinement, backlog management, acceptance criteria, sprint planning                |
+| 🧪   | `qa`                  | Test Architect & Quality Advisor | madace | Test strategies, test automation, quality gates, acceptance testing                            |
+| 🏃   | `sm`                  | Scrum Master                     | madace | Story decomposition, sprint facilitation, team coordination, removing blockers                 |
+| 🎨   | `ux-expert`           | UX Expert                        | madace | UX research, wireframes, prototyping, user flows, design systems                               |
 
 ### ✅ MADACE v3-Alpha Agents (20/20)
 

@@ -25,7 +25,7 @@
 
 ### 1. Product Manager (PM)
 
-| Aspect               | MADACE PM                                                       | MADACE v3-Alpha PM                                      | Best Practice                                            |
+| Aspect               | MADACE PM                                                       | MADACE v3-Alpha PM                                    | Best Practice                                            |
 | -------------------- | --------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------- |
 | **Name**             | PM                                                              | John                                                  | **Use role-based naming** (PM) - more flexible           |
 | **Title**            | Product Manager - Scale-Adaptive Planning Expert                | Product Manager                                       | **Combine both** - "Product Manager & Strategic Planner" |
@@ -41,7 +41,7 @@
 
 ### 2. Business Analyst
 
-| Aspect             | MADACE Analyst                                    | MADACE v3-Alpha Analyst                          | Best Practice                             |
+| Aspect             | MADACE Analyst                                    | MADACE v3-Alpha Analyst                        | Best Practice                             |
 | ------------------ | ------------------------------------------------- | ---------------------------------------------- | ----------------------------------------- |
 | **Name**           | Analyst                                           | Alex                                           | **Use role-based** (Analyst)              |
 | **Title**          | Business Analyst - Discovery & Research Expert    | Business Analyst                               | **MADACE title** more descriptive         |
@@ -55,7 +55,7 @@
 
 ### 3. Architect
 
-| Aspect             | MADACE Architect                                  | MADACE v3-Alpha Architect                         | Best Practice                  |
+| Aspect             | MADACE Architect                                  | MADACE v3-Alpha Architect                       | Best Practice                  |
 | ------------------ | ------------------------------------------------- | ----------------------------------------------- | ------------------------------ |
 | **Name**           | Architect                                         | Sarah                                           | **Use role-based** (Architect) |
 | **Title**          | System Architect - Adaptive Design Expert         | Architect                                       | **MADACE title** better        |
@@ -69,13 +69,13 @@
 
 ### 4. Scrum Master (SM)
 
-| Aspect             | MADACE SM                                         | MADACE v3-Alpha SM                                    | Best Practice                      |
-| ------------------ | ------------------------------------------------- | --------------------------------------------------- | ---------------------------------- |
-| **Name**           | SM                                                | Mike                                                | **Use role-based** (SM)            |
-| **Title**          | Scrum Master - Story Engineering Specialist       | Scrum Master                                        | **MADACE title** more descriptive  |
-| **Identity**       | Story context engineering, sprint facilitation    | Story decomposition, blocker removal                | **Combine both**                   |
+| Aspect             | MADACE SM                                         | MADACE v3-Alpha SM                                  | Best Practice                        |
+| ------------------ | ------------------------------------------------- | --------------------------------------------------- | ------------------------------------ |
+| **Name**           | SM                                                | Mike                                                | **Use role-based** (SM)              |
+| **Title**          | Scrum Master - Story Engineering Specialist       | Scrum Master                                        | **MADACE title** more descriptive    |
+| **Identity**       | Story context engineering, sprint facilitation    | Story decomposition, blocker removal                | **Combine both**                     |
 | **Menu Actions**   | 5 workflows (create-story, story-context, sprint) | 7 workflows (create-story, story-context, validate) | **MADACE stronger** - more workflows |
-| **Unique Feature** | Story context engineering (game-changer)          | Story refinement, task breakdown                    | **MADACE innovation** better       |
+| **Unique Feature** | Story context engineering (game-changer)          | Story refinement, task breakdown                    | **MADACE innovation** better         |
 
 **Recommendation**: **Keep MADACE SM story-context innovation, add MADACE's refinement workflows**
 
@@ -83,7 +83,7 @@
 
 ### 5. Developer (DEV)
 
-| Aspect             | MADACE DEV                                       | MADACE v3-Alpha DEV                         | Best Practice            |
+| Aspect             | MADACE DEV                                       | MADACE v3-Alpha DEV                       | Best Practice            |
 | ------------------ | ------------------------------------------------ | ----------------------------------------- | ------------------------ |
 | **Name**           | DEV                                              | Dev                                       | **Either works**         |
 | **Title**          | Full Stack Developer - Implementation Specialist | Developer Agent                           | **MADACE title** better  |

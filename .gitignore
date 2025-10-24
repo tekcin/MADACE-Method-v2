@@ -54,6 +54,10 @@ dist/
 # Testing
 coverage/
 *.lcov
+test-results/
+test-results.json
+playwright-report/
+e2e-tests/**/*-snapshots/
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # IDEs and Editors

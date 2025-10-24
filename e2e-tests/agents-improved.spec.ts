@@ -201,9 +201,7 @@ test.describe('Agent Management - Improved', () => {
 
         // ASSERT
         const count = await agentsPage.getAgentCount();
-        expect(count, `Search "${searchTerm}" should return results`).toBeGreaterThan(
-          0
-        );
+        expect(count, `Search "${searchTerm}" should return results`).toBeGreaterThan(0);
       }
     });
 

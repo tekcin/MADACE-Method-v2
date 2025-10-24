@@ -16,10 +16,7 @@ export async function waitForNetworkIdle(page: Page, timeout = 5000): Promise<vo
 /**
  * Wait for element to be visible and stable (not animating)
  */
-export async function waitForStableElement(
-  locator: Locator,
-  timeout = 5000
-): Promise<void> {
+export async function waitForStableElement(locator: Locator, timeout = 5000): Promise<void> {
   await locator.waitFor({ state: 'visible', timeout });
   await locator.waitFor({ state: 'attached', timeout });
   // Wait for animations to complete
@@ -93,10 +90,7 @@ export async function clickAndWait(
     async () => {
       if (waitForNavigation) {
         const page = locator.page();
-        await Promise.all([
-          page.waitForLoadState('networkidle', { timeout }),
-          locator.click(),
-        ]);
+        await Promise.all([page.waitForLoadState('networkidle', { timeout }), locator.click()]);
       } else {
         await locator.click();
       }
@@ -108,10 +102,7 @@ export async function clickAndWait(
 /**
  * Select dropdown option with retry
  */
-export async function selectDropdown(
-  locator: Locator,
-  value: string
-): Promise<void> {
+export async function selectDropdown(locator: Locator, value: string): Promise<void> {
   await retryAction(
     async () => {
       await locator.selectOption(value);
@@ -145,9 +136,7 @@ export async function waitForAPIResponse<T = any>(
   );
 
   if (!response.ok()) {
-    throw new Error(
-      `API request failed: ${response.status()} ${response.statusText()}`
-    );
+    throw new Error(`API request failed: ${response.status()} ${response.statusText()}`);
   }
 
   return await response.json();
@@ -215,10 +204,7 @@ export async function isVisible(locator: Locator, timeout = 1000): Promise<boole
 /**
  * Get all visible elements matching selector
  */
-export async function getVisibleElements(
-  page: Page,
-  selector: string
-): Promise<Locator[]> {
+export async function getVisibleElements(page: Page, selector: string): Promise<Locator[]> {
   const elements = await page.locator(selector).all();
   const visible = [];
   for (const element of elements) {
@@ -252,11 +238,7 @@ export async function scrollIntoView(locator: Locator): Promise<void> {
 /**
  * Type text with human-like delays
  */
-export async function typeSlowly(
-  locator: Locator,
-  text: string,
-  delayMs = 50
-): Promise<void> {
+export async function typeSlowly(locator: Locator, text: string, delayMs = 50): Promise<void> {
   await locator.focus();
   for (const char of text) {
     await locator.type(char, { delay: delayMs });
@@ -327,11 +309,7 @@ export async function clearBrowserData(page: Page): Promise<void> {
 /**
  * Set local storage item
  */
-export async function setLocalStorage(
-  page: Page,
-  key: string,
-  value: any
-): Promise<void> {
+export async function setLocalStorage(page: Page, key: string, value: any): Promise<void> {
   await page.evaluate(
     ({ key, value }) => {
       localStorage.setItem(key, JSON.stringify(value));

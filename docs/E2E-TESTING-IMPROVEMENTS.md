@@ -19,12 +19,14 @@ Comprehensive improvements to the Playwright E2E testing infrastructure for MADA
 Comprehensive helper functions for common testing operations:
 
 **Network & Loading:**
+
 - `waitForNetworkIdle()` - Wait for all network requests to complete
 - `waitForStableElement()` - Wait for element visibility and animation completion
 - `waitForImages()` - Wait for all images to load
 - `waitForElementCount()` - Wait for specific number of elements
 
 **Actions:**
+
 - `retryAction()` - Retry operations with configurable attempts and delays
 - `fillFormField()` - Fill forms with retry and verification
 - `clickAndWait()` - Click elements with optional navigation wait
@@ -33,23 +35,28 @@ Comprehensive helper functions for common testing operations:
 - `scrollIntoView()` - Scroll elements into view with animation wait
 
 **API Integration:**
+
 - `waitForAPIResponse()` - Wait for and capture API responses
 - `mockAPIResponse()` - Mock API responses for testing
 
 **Utilities:**
+
 - `takeScreenshot()` - Custom named screenshots
 - `getTextContent()` - Safely get element text
 - `isVisible()` - Check visibility without throwing
 - `getVisibleElements()` - Get all visible elements matching selector
 
 **Browser Data:**
+
 - `clearBrowserData()` - Clear cookies and storage
 - `setLocalStorage()` / `getLocalStorage()` - Manage local storage
 
 **Test Data:**
+
 - `generateTestData()` - Generate unique test data with timestamps
 
 **Accessibility:**
+
 - `checkAccessibility()` - Basic ARIA attribute verification
 
 ---
@@ -59,17 +66,20 @@ Comprehensive helper functions for common testing operations:
 Utilities for testing API endpoints directly within E2E tests:
 
 **Core Functions:**
+
 - `apiRequest()` - Generic API request with typed responses
 - `testGET()` / `testPOST()` / `testPUT()` / `testDELETE()` - HTTP method helpers
 - `testAPIWithRetry()` - Retry failed API requests
 
 **Advanced Testing:**
+
 - `validateResponseSchema()` - Validate API response structure
 - `testPaginatedEndpoint()` - Test paginated endpoints
 - `testAPIError()` - Test error responses
 - `testCRUDOperations()` - Complete CRUD operation testing
 
 **Integration:**
+
 - `interceptAPI()` - Intercept and modify API requests
 - `waitForMultipleAPICalls()` - Wait for multiple API calls
 - `measureAPIPerformance()` - Measure API response times
@@ -82,11 +92,13 @@ Utilities for testing API endpoints directly within E2E tests:
 Comprehensive visual testing utilities using Playwright's screenshot comparison:
 
 **Core Functions:**
+
 - `comparePageSnapshot()` - Compare full page screenshots
 - `compareElementSnapshot()` - Compare specific element screenshots
 - `preparePageForVisualTest()` - Prepare page for consistent screenshots
 
 **Advanced Comparisons:**
+
 - `compareResponsiveSnapshots()` - Test across multiple viewports
 - `compareThemeSnapshots()` - Compare light/dark modes
 - `compareHoverSnapshot()` - Compare hover states
@@ -96,11 +108,13 @@ Comprehensive visual testing utilities using Playwright's screenshot comparison:
 - `compareComponentStates()` - Compare component in different states
 
 **Utilities:**
+
 - `disableAnimations()` - Disable CSS animations for consistent screenshots
 - `waitForFonts()` - Wait for fonts to load
 - `maskDynamicContent()` - Mask dynamic elements (dates, IDs, etc.)
 
 **Presets:**
+
 - `VIEWPORTS` - Common viewport sizes (mobile, tablet, desktop, desktop HD)
 - `DYNAMIC_CONTENT_SELECTORS` - Common selectors for dynamic content
 
@@ -166,34 +180,40 @@ Enhanced test suite with comprehensive coverage:
 ## Key Features
 
 ### ✅ Test Organization
+
 - Logical grouping with `test.describe()`
 - Clear AAA pattern (Arrange, Act, Assert)
 - Descriptive test names
 - Comprehensive comments
 
 ### ✅ Reliability
+
 - Retry mechanisms for flaky operations
 - Network idle waits
 - Element stability checks
 - API verification
 
 ### ✅ Performance Testing
+
 - Load time budgets
 - Response time measurements
 - Simple load testing utilities
 
 ### ✅ Visual Regression
+
 - Screenshot comparison
 - Multi-viewport testing
 - Theme comparison (light/dark)
 - Animation disabling for consistency
 
 ### ✅ Accessibility Testing
+
 - ARIA attribute verification
 - Keyboard navigation testing
 - WCAG compliance checks
 
 ### ✅ API Integration
+
 - Direct API endpoint testing
 - Response schema validation
 - CRUD operation testing
@@ -241,11 +261,7 @@ test('visual test', async ({ page }) => {
   await page.goto('/agents');
   await preparePageForVisualTest(page);
 
-  await compareResponsiveSnapshots(
-    page,
-    'agents-page',
-    [VIEWPORTS.mobile, VIEWPORTS.desktop]
-  );
+  await compareResponsiveSnapshots(page, 'agents-page', [VIEWPORTS.mobile, VIEWPORTS.desktop]);
 });
 ```
 
@@ -254,26 +270,31 @@ test('visual test', async ({ page }) => {
 ## Running Tests
 
 ### Run All E2E Tests
+
 ```bash
 npm run test:e2e
 ```
 
 ### Run Specific Test File
+
 ```bash
 npx playwright test e2e-tests/agents-improved.spec.ts
 ```
 
 ### Run with UI Mode (Interactive)
+
 ```bash
 npx playwright test --ui
 ```
 
 ### Run in Debug Mode
+
 ```bash
 npx playwright test --debug
 ```
 
 ### Run Specific Browser
+
 ```bash
 npx playwright test --project=chromium
 npx playwright test --project=firefox
@@ -281,12 +302,14 @@ npx playwright test --project=webkit
 ```
 
 ### Generate HTML Report
+
 ```bash
 npx playwright test --reporter=html
 npx playwright show-report
 ```
 
 ### Update Visual Snapshots
+
 ```bash
 npx playwright test --update-snapshots
 ```
@@ -298,6 +321,7 @@ npx playwright test --update-snapshots
 ### Playwright Config (`playwright.config.ts`)
 
 **Current Settings:**
+
 - **Timeout**: 30s per test
 - **Retries**: 2 attempts on failure
 - **Workers**: Auto-scaled (1 in CI, unlimited locally)
@@ -307,6 +331,7 @@ npx playwright test --update-snapshots
 - **Video**: Retained on failure
 
 **Browsers Tested:**
+
 - Desktop: Chromium, Firefox, WebKit
 - Mobile: Mobile Chrome (Pixel 5), Mobile Safari (iPhone 12)
 - Tablet: iPad Safari (iPad Pro)
@@ -316,6 +341,7 @@ npx playwright test --update-snapshots
 ## Best Practices
 
 ### 1. **Use Helpers for Common Operations**
+
 ```typescript
 // ❌ Don't
 await page.locator('input').fill('value');
@@ -325,6 +351,7 @@ await fillFormField(page.locator('input'), 'value');
 ```
 
 ### 2. **Wait for Network Idle**
+
 ```typescript
 // ❌ Don't
 await page.goto('/page');
@@ -337,6 +364,7 @@ await waitForNetworkIdle(page);
 ```
 
 ### 3. **Use Retry for Flaky Operations**
+
 ```typescript
 // ❌ Don't
 await element.click();
@@ -346,6 +374,7 @@ await retryAction(() => element.click());
 ```
 
 ### 4. **Prepare Pages for Visual Tests**
+
 ```typescript
 // ❌ Don't
 await page.goto('/page');
@@ -358,6 +387,7 @@ await comparePageSnapshot(page, 'snapshot-name');
 ```
 
 ### 5. **Test API and UI Together**
+
 ```typescript
 test('comprehensive test', async ({ page, request }) => {
   // Verify API
@@ -405,23 +435,23 @@ e2e-tests/
 
 ### Test Coverage Improvement
 
-| Category | Before | After | Improvement |
-|----------|--------|-------|-------------|
-| **Agent Tests** | 10 tests | 29 tests | +190% |
-| **Helper Functions** | 0 | 32 functions | ✨ NEW |
-| **API Helpers** | 0 | 16 functions | ✨ NEW |
-| **Visual Utilities** | 0 | 15 functions | ✨ NEW |
-| **Test LOC** | ~170 LOC | ~1,340 LOC | +688% |
+| Category             | Before   | After        | Improvement |
+| -------------------- | -------- | ------------ | ----------- |
+| **Agent Tests**      | 10 tests | 29 tests     | +190%       |
+| **Helper Functions** | 0        | 32 functions | ✨ NEW      |
+| **API Helpers**      | 0        | 16 functions | ✨ NEW      |
+| **Visual Utilities** | 0        | 15 functions | ✨ NEW      |
+| **Test LOC**         | ~170 LOC | ~1,340 LOC   | +688%       |
 
 ### Code Quality
 
-| Metric | Value |
-|--------|-------|
-| **TypeScript Strict Mode** | ✅ Enabled |
-| **Type Safety** | ✅ 100% |
-| **Documentation** | ✅ JSDoc comments |
-| **Error Handling** | ✅ Comprehensive |
-| **Reusability** | ⭐⭐⭐⭐⭐ High |
+| Metric                     | Value             |
+| -------------------------- | ----------------- |
+| **TypeScript Strict Mode** | ✅ Enabled        |
+| **Type Safety**            | ✅ 100%           |
+| **Documentation**          | ✅ JSDoc comments |
+| **Error Handling**         | ✅ Comprehensive  |
+| **Reusability**            | ⭐⭐⭐⭐⭐ High   |
 
 ---
 
@@ -437,18 +467,21 @@ e2e-tests/
 ## Future Enhancements
 
 ### Short-term (Week 1-2)
+
 - [ ] Generate baseline visual regression images
 - [ ] Add more page object models
 - [ ] Create workflow-specific tests
 - [ ] Add settings page tests
 
 ### Medium-term (Month 1)
+
 - [ ] Integrate axe-core for comprehensive a11y testing
 - [ ] Add API contract testing
 - [ ] Performance budgets in CI/CD
 - [ ] Parallel test execution optimization
 
 ### Long-term (Quarter 1)
+
 - [ ] Cross-browser visual regression
 - [ ] Mobile app testing (if applicable)
 - [ ] Load testing with k6 integration
@@ -459,12 +492,14 @@ e2e-tests/
 ## Troubleshooting
 
 ### Tests Timeout
+
 ```bash
 # Increase timeout in playwright.config.ts
 timeout: 60000, // 60 seconds
 ```
 
 ### Visual Regression Fails
+
 ```bash
 # Update snapshots
 npx playwright test --update-snapshots
@@ -474,6 +509,7 @@ npx playwright show-report
 ```
 
 ### Dev Server Not Running
+
 ```bash
 # Start dev server first
 npm run dev
@@ -483,6 +519,7 @@ npx playwright test
 ```
 
 ### Flaky Tests
+
 ```bash
 # Increase retries
 retries: 3, // in playwright.config.ts

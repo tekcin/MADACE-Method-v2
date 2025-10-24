@@ -271,10 +271,7 @@ export async function compareScrollSnapshot(
 /**
  * Mask dynamic content (dates, times, IDs, etc.)
  */
-export async function maskDynamicContent(
-  page: Page,
-  selectors: string[]
-): Promise<Locator[]> {
+export async function maskDynamicContent(page: Page, selectors: string[]): Promise<Locator[]> {
   const masks: Locator[] = [];
   for (const selector of selectors) {
     const elements = await page.locator(selector).all();

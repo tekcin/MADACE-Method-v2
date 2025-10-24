@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Check if state file exists
     const statePath = path.join(process.cwd(), 'madace-data', 'workflow-states');
-    const stateFile = path.join(statePath, `.${name}.state.json`);
+    const stateFile = path.join(statePath, `.${id}.state.json`);
 
     try {
       const content = await fs.readFile(stateFile, 'utf-8');
@@ -97,7 +97,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           error: 'Workflow not found',
-          message: `No workflow found with name: ${name}`,
+          message: `No workflow found with name: ${id}`,
         },
         { status: 404 }
       );
@@ -112,7 +112,7 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: `Workflow state for '${name}' has been reset`,
+      message: `Workflow state for '${id}' has been reset`,
     });
   } catch (error) {
     console.error('Error resetting workflow state:', error);
