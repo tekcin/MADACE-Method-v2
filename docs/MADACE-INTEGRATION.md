@@ -1,6 +1,6 @@
 # MADACE-METHOD Integration Guide
 
-**Status**: ✅ Complete - 30 MADACE Agents Imported (10 v4 + 20 v6-Alpha)
+**Status**: ✅ Complete - 30 MADACE Agents Imported (10 v4 + 20 v3-Alpha)
 
 This document describes the integration of MADACE-METHOD agents into MADACE-Method v2.0.
 
@@ -8,7 +8,7 @@ This document describes the integration of MADACE-METHOD agents into MADACE-Meth
 
 ## Overview
 
-[MADACE-METHOD](https://github.com/bmad-code-org/MADACE-METHOD) (BMad Core - Collaboration Optimized Reflection Engine) is a universal AI agent framework that provides specialized agents for software development and beyond. We've successfully integrated agents from both MADACE v4 (main branch) and v6-alpha branches into MADACE.
+[MADACE-METHOD](https://github.com/bmad-code-org/MADACE-METHOD) (BMad Core - Collaboration Optimized Reflection Engine) is a universal AI agent framework that provides specialized agents for software development and beyond. We've successfully integrated agents from both MADACE v4 (main branch) and v3-alpha branches into MADACE.
 
 ### MADACE Versions
 
@@ -19,7 +19,7 @@ This document describes the integration of MADACE-METHOD agents into MADACE-Meth
 - Stable production release
 - Module: `madace`
 
-**MADACE v6-Alpha** (Alpha Branch):
+**MADACE v3-Alpha** (Alpha Branch):
 
 - 20 production agents across 5 modules
 - Pure YAML format
@@ -54,7 +54,7 @@ MADACE-METHOD provides:
 | 🏃   | `sm`                | Scrum Master                     | madace  | Story decomposition, sprint facilitation, team coordination, removing blockers                 |
 | 🎨   | `ux-expert`         | UX Expert                        | madace  | UX research, wireframes, prototyping, user flows, design systems                               |
 
-### ✅ MADACE v6-Alpha Agents (20/20)
+### ✅ MADACE v3-Alpha Agents (20/20)
 
 **Core Module** (`madace-v3-core`):
 | Icon | Agent ID | Title | When to Use |
@@ -138,11 +138,11 @@ dependencies:
 ```
 ````
 
-#### MADACE v6-Alpha Format (Pure YAML)
+#### MADACE v3-Alpha Format (Pure YAML)
 
-MADACE v6-alpha agents use a pure YAML format with new advanced features:
+MADACE v3-alpha agents use a pure YAML format with new advanced features:
 
-**MADACE v6-Alpha Format** (Pure YAML):
+**MADACE v3-Alpha Format** (Pure YAML):
 
 ```yaml
 agent:
@@ -177,7 +177,7 @@ agent:
 
 #### Unified MADACE Format (Prisma Database)
 
-Both v4 and v6-alpha agents are converted to a unified database format:
+Both v4 and v3-alpha agents are converted to a unified database format:
 
 **MADACE Format** (Prisma Database):
 
@@ -215,7 +215,7 @@ All MADACE agents are stored in the `Agent` table with module-based filtering:
 - `module = "madace"` for easy filtering
 - All 10 agents from main branch
 
-**MADACE v6-Alpha Agents**:
+**MADACE v3-Alpha Agents**:
 
 - `module = "madace-v3-core"` (1 agent)
 - `module = "madace-v3-bmm"` (10 agents)
@@ -300,20 +300,20 @@ cd /Users/nimda/MADACE-Method-v2.0
 npm run import-madace /tmp/MADACE-METHOD
 ```
 
-### MADACE v6-Alpha
+### MADACE v3-Alpha
 
-To import or update MADACE v6-alpha agents:
+To import or update MADACE v3-alpha agents:
 
 ```bash
-# Clone v6-alpha branch
+# Clone v3-alpha branch
 cd /tmp
-git clone --branch v6-alpha https://github.com/bmad-code-org/MADACE-METHOD.git MADACE-METHOD-v3
+git clone --branch v3-alpha https://github.com/bmad-code-org/MADACE-METHOD.git MADACE-METHOD-v3
 
 # Or update existing clone
 cd /tmp/MADACE-METHOD-v3
-git pull origin v6-alpha
+git pull origin v3-alpha
 
-# Run v6-alpha import script
+# Run v3-alpha import script
 cd /Users/nimda/MADACE-Method-v2.0
 npm run import-madace-v3 /tmp/MADACE-METHOD-v3
 ```
@@ -351,16 +351,16 @@ Both importers will:
 npm run import-madace [path-to-MADACE-METHOD]
 ```
 
-#### MADACE v6-Alpha Importer
+#### MADACE v3-Alpha Importer
 
 **Location**: `scripts/import-madace-v3-agents.ts`
 
 **Features:**
 
 - Parses pure YAML format (no Markdown extraction)
-- Handles v6-alpha structure: metadata, critical_actions, menu triggers
+- Handles v3-alpha structure: metadata, critical_actions, menu triggers
 - Converts workflow/exec paths to MADACE menu format
-- Stores v6-specific metadata (critical_actions, module, type)
+- Stores v3-specific metadata (critical_actions, module, type)
 - Module-aware naming: `madace-v3-{module}`
 - Organizes agents by module (core, bmm, bmb, cis, bmd)
 
@@ -467,11 +467,11 @@ Integration code is part of MADACE-Method v2.0 and follows the MIT License.
 **Import Status**:
 
 - ✅ MADACE v4: 10/10 agents successfully imported
-- ✅ MADACE v6-Alpha: 20/20 agents successfully imported
+- ✅ MADACE v3-Alpha: 20/20 agents successfully imported
 - ✅ Total: 30 MADACE agents in database
 
 **MADACE Version**: v2.0.0-alpha
 **MADACE Versions**:
 
 - v4 (main branch) - 10 agents
-- v6-alpha (alpha branch) - 20 agents across 5 modules
+- v3-alpha (alpha branch) - 20 agents across 5 modules

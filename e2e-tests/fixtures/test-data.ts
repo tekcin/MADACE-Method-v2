@@ -74,7 +74,7 @@ export const testAgents = {
     'sm',
     'ux-expert',
   ],
-  madacev6bmm: [
+  madacev3bmm: [
     'analyst',
     'architect',
     'dev-impl',

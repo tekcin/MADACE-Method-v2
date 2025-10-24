@@ -132,9 +132,9 @@ export class AgentsPage {
   }
 
   /**
-   * Verify MADACE v6 agents are loaded (20 agents)
+   * Verify MADACE v3 agents are loaded (20 agents)
    */
-  async expectMADACEv6AgentsLoaded() {
+  async expectMADACEv3AgentsLoaded() {
     // Check BMM module (10 agents)
     await this.filterByModule('madace-v3-bmm');
     let count = await this.getAgentCount();

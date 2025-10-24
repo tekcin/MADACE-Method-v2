@@ -1,8 +1,8 @@
 #!/usr/bin/env tsx
 /**
- * BMAD-METHOD v6-Alpha Agent Importer
+ * BMAD-METHOD v3-Alpha Agent Importer
  *
- * Converts BMAD v6-alpha agents (pure YAML) to MADACE format and imports them into the database.
+ * Converts BMAD v3-alpha agents (pure YAML) to MADACE format and imports them into the database.
  *
  * Usage:
  *   npm run import-bmad-v3 /path/to/BMAD-METHOD-v3
@@ -15,7 +15,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-interface BMADv6Agent {
+interface BMADv3Agent {
   agent: {
     metadata: {
       id: string;
@@ -46,7 +46,7 @@ interface BMADv6Agent {
   };
 }
 
-function convertBMADv6ToMADACE(bmadAgent: BMADv6Agent, sourceFile: string) {
+function convertBMADv3ToMADACE(bmadAgent: BMADv3Agent, sourceFile: string) {
   const agent = bmadAgent.agent;
   const metadata = agent.metadata;
   const persona = agent.persona;
@@ -59,7 +59,7 @@ function convertBMADv6ToMADACE(bmadAgent: BMADv6Agent, sourceFile: string) {
     principles: persona.principles,
   };
 
-  // Build MADACE menu from v6-alpha triggers
+  // Build MADACE menu from v3-alpha triggers
   const menu =
     agent.menu?.map((item) => ({
       label: item.trigger
@@ -75,7 +75,7 @@ function convertBMADv6ToMADACE(bmadAgent: BMADv6Agent, sourceFile: string) {
   // Build MADACE prompts
   const prompts: any[] = [];
 
-  // Add custom prompts from v6
+  // Add custom prompts from v3
   if (agent.prompts && agent.prompts.length > 0) {
     for (const prompt of agent.prompts) {
       prompts.push({
@@ -86,7 +86,7 @@ function convertBMADv6ToMADACE(bmadAgent: BMADv6Agent, sourceFile: string) {
     }
   }
 
-  // Store v6-specific metadata
+  // Store v3-specific metadata
   prompts.push({
     name: 'bmad-v3-metadata',
     content: JSON.stringify({
@@ -117,19 +117,19 @@ function convertBMADv6ToMADACE(bmadAgent: BMADv6Agent, sourceFile: string) {
   };
 }
 
-async function importBMADv6Agent(agentFile: string): Promise<boolean> {
+async function importBMADv3Agent(agentFile: string): Promise<boolean> {
   try {
     console.log(`\nProcessing: ${path.basename(agentFile)}`);
 
     const content = await fs.readFile(agentFile, 'utf-8');
-    const bmadAgent = yaml.load(content) as BMADv6Agent;
+    const bmadAgent = yaml.load(content) as BMADv3Agent;
 
     if (!bmadAgent.agent || !bmadAgent.agent.metadata || !bmadAgent.agent.persona) {
       console.error(`  ❌ Invalid agent structure in ${agentFile}`);
       return false;
     }
 
-    const madaceAgent = convertBMADv6ToMADACE(bmadAgent, agentFile);
+    const madaceAgent = convertBMADv3ToMADACE(bmadAgent, agentFile);
 
     console.log(`  📝 Converting: ${madaceAgent.name} (${madaceAgent.title})`);
     console.log(`  📦 Module: ${madaceAgent.module}`);
@@ -163,7 +163,7 @@ async function importBMADv6Agent(agentFile: string): Promise<boolean> {
 async function findProductionAgents(bmadPath: string): Promise<string[]> {
   const agentFiles: string[] = [];
 
-  // Production agent locations in v6-alpha
+  // Production agent locations in v3-alpha
   const locations = [
     'src/core/agents',
     'src/modules/bmm/agents',
@@ -193,7 +193,7 @@ async function main() {
   const args = process.argv.slice(2);
   const bmadPath = args[0] || '/tmp/BMAD-METHOD-v3';
 
-  console.log('🚀 BMAD-METHOD v6-Alpha Agent Importer');
+  console.log('🚀 BMAD-METHOD v3-Alpha Agent Importer');
   console.log('=====================================\n');
   console.log(`📂 BMAD Path: ${bmadPath}`);
 
@@ -217,7 +217,7 @@ async function main() {
     let failureCount = 0;
 
     for (const file of agentFiles) {
-      const success = await importBMADv6Agent(file);
+      const success = await importBMADv3Agent(file);
       if (success) {
         successCount++;
       } else {
@@ -231,7 +231,7 @@ async function main() {
     console.log(`  ❌ Failed: ${failureCount}`);
     console.log(`  📈 Total: ${agentFiles.length}`);
 
-    // List all v6 agents in database grouped by module
+    // List all v3 agents in database grouped by module
     const allAgents = await prisma.agent.findMany({
       where: {
         module: {
@@ -242,7 +242,7 @@ async function main() {
       orderBy: [{ module: 'asc' }, { name: 'asc' }],
     });
 
-    console.log('\n🎭 BMAD v6-Alpha Agents in Database:');
+    console.log('\n🎭 BMAD v3-Alpha Agents in Database:');
 
     // Group by module
     const agentsByModule = allAgents.reduce(

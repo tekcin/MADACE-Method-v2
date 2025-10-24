@@ -40,7 +40,7 @@ test.describe('Agent Management', () => {
     const madaceCount = await agentsPage.getAgentCount();
     expect(madaceCount).toBe(10);
 
-    // ACT & ASSERT - Filter by MADACE v6 BMM
+    // ACT & ASSERT - Filter by MADACE v3 BMM
     await agentsPage.filterByModule('madace-v3-bmm');
     const bmmCount = await agentsPage.getAgentCount();
     expect(bmmCount).toBe(10);
@@ -114,12 +114,12 @@ test.describe('Agent Management', () => {
     await agentsPage.expectMADACEAgentsLoaded();
   });
 
-  test('MADACE v6 modules contain all agents', async ({ page }) => {
+  test('MADACE v3 modules contain all agents', async ({ page }) => {
     // ARRANGE
     await agentsPage.goto();
 
     // ACT & ASSERT
-    await agentsPage.expectMADACEv6AgentsLoaded();
+    await agentsPage.expectMADACEv3AgentsLoaded();
   });
 
   test('navigation from home to agents works', async ({ page }) => {

@@ -1,7 +1,7 @@
-# MADACE vs MADACE v6-Alpha Core Integration Analysis
+# MADACE vs MADACE v3-Alpha Core Integration Analysis
 
 **Created**: 2025-10-23
-**Purpose**: Compare MADACE and MADACE v6-Alpha core agents to create best-of-both integration
+**Purpose**: Compare MADACE and MADACE v3-Alpha core agents to create best-of-both integration
 
 ---
 
@@ -13,7 +13,7 @@
 - Focus: Scale-adaptive workflow (Levels 0-4)
 - Strengths: Adaptive planning, minimal documentation approach, workflow orchestration
 
-**MADACE v6-Alpha Core (BMM Module)**:
+**MADACE v3-Alpha Core (BMM Module)**:
 
 - 10+ agents: PM, Analyst, Architect, SM, DEV + UX-Expert, TEA, Game agents
 - Focus: Complete ground-up rewrite, critical_actions, sidecar files
@@ -25,7 +25,7 @@
 
 ### 1. Product Manager (PM)
 
-| Aspect               | MADACE PM                                                       | MADACE v6-Alpha PM                                      | Best Practice                                            |
+| Aspect               | MADACE PM                                                       | MADACE v3-Alpha PM                                      | Best Practice                                            |
 | -------------------- | --------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------- |
 | **Name**             | PM                                                              | John                                                  | **Use role-based naming** (PM) - more flexible           |
 | **Title**            | Product Manager - Scale-Adaptive Planning Expert                | Product Manager                                       | **Combine both** - "Product Manager & Strategic Planner" |
@@ -41,7 +41,7 @@
 
 ### 2. Business Analyst
 
-| Aspect             | MADACE Analyst                                    | MADACE v6-Alpha Analyst                          | Best Practice                             |
+| Aspect             | MADACE Analyst                                    | MADACE v3-Alpha Analyst                          | Best Practice                             |
 | ------------------ | ------------------------------------------------- | ---------------------------------------------- | ----------------------------------------- |
 | **Name**           | Analyst                                           | Alex                                           | **Use role-based** (Analyst)              |
 | **Title**          | Business Analyst - Discovery & Research Expert    | Business Analyst                               | **MADACE title** more descriptive         |
@@ -55,7 +55,7 @@
 
 ### 3. Architect
 
-| Aspect             | MADACE Architect                                  | MADACE v6-Alpha Architect                         | Best Practice                  |
+| Aspect             | MADACE Architect                                  | MADACE v3-Alpha Architect                         | Best Practice                  |
 | ------------------ | ------------------------------------------------- | ----------------------------------------------- | ------------------------------ |
 | **Name**           | Architect                                         | Sarah                                           | **Use role-based** (Architect) |
 | **Title**          | System Architect - Adaptive Design Expert         | Architect                                       | **MADACE title** better        |
@@ -69,7 +69,7 @@
 
 ### 4. Scrum Master (SM)
 
-| Aspect             | MADACE SM                                         | MADACE v6-Alpha SM                                    | Best Practice                      |
+| Aspect             | MADACE SM                                         | MADACE v3-Alpha SM                                    | Best Practice                      |
 | ------------------ | ------------------------------------------------- | --------------------------------------------------- | ---------------------------------- |
 | **Name**           | SM                                                | Mike                                                | **Use role-based** (SM)            |
 | **Title**          | Scrum Master - Story Engineering Specialist       | Scrum Master                                        | **MADACE title** more descriptive  |
@@ -83,7 +83,7 @@
 
 ### 5. Developer (DEV)
 
-| Aspect             | MADACE DEV                                       | MADACE v6-Alpha DEV                         | Best Practice            |
+| Aspect             | MADACE DEV                                       | MADACE v3-Alpha DEV                         | Best Practice            |
 | ------------------ | ------------------------------------------------ | ----------------------------------------- | ------------------------ |
 | **Name**           | DEV                                              | Dev                                       | **Either works**         |
 | **Title**          | Full Stack Developer - Implementation Specialist | Developer Agent                           | **MADACE title** better  |
@@ -95,7 +95,7 @@
 
 ---
 
-## New Agents in MADACE v6-Alpha (Missing from MADACE)
+## New Agents in MADACE v3-Alpha (Missing from MADACE)
 
 ### 6. **UX Expert** 🎨
 
@@ -118,7 +118,7 @@
 
 ---
 
-## MADACE Unique Strengths (Missing from MADACE v6-Alpha)
+## MADACE Unique Strengths (Missing from MADACE v3-Alpha)
 
 ### Scale-Adaptive System (Levels 0-4)
 
@@ -142,7 +142,7 @@
 
 ---
 
-## MADACE v6-Alpha Unique Strengths (Missing from MADACE)
+## MADACE v3-Alpha Unique Strengths (Missing from MADACE)
 
 ### Critical Actions System
 
@@ -225,14 +225,14 @@ critical_actions:
 
 #### 2.1 UX Expert 🎨
 
-- **Source**: MADACE v6-Alpha ux-expert.agent.yaml
+- **Source**: MADACE v3-Alpha ux-expert.agent.yaml
 - **Reason**: Critical missing capability in MADACE
 - **Integration**: Add to `madace/mam/agents/`
 - **Priority**: **HIGH**
 
 #### 2.2 TEA (Test Architect) 🧪
 
-- **Source**: MADACE v6-Alpha tea.agent.yaml
+- **Source**: MADACE v3-Alpha tea.agent.yaml
 - **Reason**: Replaces missing QA agent, more comprehensive
 - **Integration**: Add to `madace/mam/agents/`
 - **Priority**: **HIGH**
@@ -314,7 +314,7 @@ cp -r madace/mam/agents madace/mam/agents.backup
 ### Step 2: Add New Agents
 
 ```bash
-# Copy from MADACE v6-Alpha
+# Copy from MADACE v3-Alpha
 cp /tmp/MADACE-METHOD-v3/src/modules/bmm/agents/ux-expert.agent.yaml \
    madace/mam/agents/ux.agent.yaml
 
@@ -356,7 +356,7 @@ cp /tmp/MADACE-METHOD-v3/src/modules/bmm/agents/tea.agent.yaml \
 4. **Role-based naming** - more flexible than personal names
 5. **Comprehensive menu options** - more workflows available
 
-### ✅ Adopt from MADACE v6-Alpha
+### ✅ Adopt from MADACE v3-Alpha
 
 1. **Critical Actions** - pre-execution validation
 2. **Validation Workflows** - quality gates
@@ -410,7 +410,7 @@ cp /tmp/MADACE-METHOD-v3/src/modules/bmm/agents/tea.agent.yaml \
 
 ## Conclusion
 
-The best integration strategy is to **enhance MADACE's core agents** with MADACE v6-Alpha's validation, quality gates, and course correction capabilities, while **adding the missing UX and TEA agents**. This creates a more comprehensive agent lineup while preserving MADACE's unique innovations (scale-adaptive planning and story context engineering).
+The best integration strategy is to **enhance MADACE's core agents** with MADACE v3-Alpha's validation, quality gates, and course correction capabilities, while **adding the missing UX and TEA agents**. This creates a more comprehensive agent lineup while preserving MADACE's unique innovations (scale-adaptive planning and story context engineering).
 
 **Result**: Best of both worlds - MADACE's adaptive intelligence + MADACE's validation rigor.
 
