@@ -793,7 +793,7 @@ describe('Complexity Assessment', () => {
         security: SecurityLevel.NONE,
         duration: ProjectDuration.VERY_SHORT,
         existingCode: ExistingCodebase.GREENFIELD,
-      } as ProjectInput;
+      } as unknown as ProjectInput;
 
       expect(() => assessComplexity(invalidInput)).toThrow(
         'Invalid projectSize: 10. Must be between 0 and 5.'
@@ -810,7 +810,7 @@ describe('Complexity Assessment', () => {
         security: SecurityLevel.NONE,
         duration: ProjectDuration.VERY_SHORT,
         existingCode: ExistingCodebase.GREENFIELD,
-      } as ProjectInput;
+      } as unknown as ProjectInput;
 
       expect(() => assessComplexity(invalidInput)).toThrow(
         'Invalid teamSize: -1. Must be between 0 and 5.'

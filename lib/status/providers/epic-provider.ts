@@ -557,3 +557,24 @@ export class EpicStatusProvider implements IStatusProvider {
     return lines.join('\n');
   }
 }
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Factory Function
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/**
+ * Create an epic status provider instance
+ *
+ * @param epicsDirectory - Optional path to epics directory
+ * @returns EpicStatusProvider instance
+ *
+ * @example
+ * ```typescript
+ * const provider = createEpicStatusProvider();
+ * const status = await provider.getStatus('EPIC-V3-001');
+ * console.log(provider.formatOutput(status, 'table'));
+ * ```
+ */
+export function createEpicStatusProvider(epicsDirectory?: string): EpicStatusProvider {
+  return new EpicStatusProvider(epicsDirectory);
+}

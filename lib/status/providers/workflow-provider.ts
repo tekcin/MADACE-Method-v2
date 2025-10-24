@@ -501,3 +501,26 @@ export class WorkflowStatusProvider implements IStatusProvider {
     return `[${filled}${empty}] ${progress}%`;
   }
 }
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Factory Function
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/**
+ * Create a workflow status provider instance
+ *
+ * @param stateDirectory - Optional path to workflow state files directory
+ * @returns WorkflowStatusProvider instance
+ *
+ * @example
+ * ```typescript
+ * const provider = createWorkflowStatusProvider();
+ * const status = await provider.getStatus('pm-planning');
+ * console.log(provider.formatOutput(status, 'table'));
+ * ```
+ */
+export function createWorkflowStatusProvider(
+  stateDirectory?: string
+): WorkflowStatusProvider {
+  return new WorkflowStatusProvider(stateDirectory);
+}

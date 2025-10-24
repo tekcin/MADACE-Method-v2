@@ -291,9 +291,8 @@ export class StateMachineStatusProvider implements IStatusProvider {
       }
 
       // Count stories in current state
-      // Story format: - [x] **[STORY-ID]** Story Title (Points: X) [Status: ...]
-      // Or: - [ ] **[STORY-ID]** Story Title (Points: X) [Status: ...]
-      if (currentState && line.match(/^-\s+\[(x| )\]\s+\*\*\[/)) {
+      // Story format: - **[STORY-ID]** Story Title (Points: X) [Status: ...]
+      if (currentState && line.match(/^-\s+\*\*\[/)) {
         counts[currentState]++;
       }
     }
