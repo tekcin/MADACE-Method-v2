@@ -1,0 +1,28 @@
+# Example Parent Workflow - Complex Project Workflow
+# Demonstrates sub-workflow execution with context inheritance
+
+workflow:
+  name: 'complex-workflow'
+  description: 'Parent workflow demonstrating sub-workflow support'
+  agent: 'pm'
+  phase: 1
+  steps:
+    - name: 'Setup Project'
+      action: guide
+      prompt: 'Initializing project structure and configuration'
+
+    - name: 'Process Project Data'
+      action: sub-workflow
+      workflow_path: 'madace/mam/workflows/examples/data-processing.workflow.yaml'
+      context_vars:
+        input_file: 'docs/raw-data.csv'
+        output_dir: 'docs/processed'
+        data_valid: 'true'
+
+    - name: 'Generate Reports'
+      action: guide
+      prompt: 'Generating project reports based on processed data'
+
+    - name: 'Finalize Project'
+      action: guide
+      prompt: 'Finalizing project deliverables'

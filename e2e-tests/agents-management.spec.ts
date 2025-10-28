@@ -170,7 +170,12 @@ test.describe('Agent Management - Selector Page', () => {
     const moduleFilter = page.locator('#moduleFilter');
 
     if (await isVisible(moduleFilter)) {
-      await moduleFilter.selectOption({ label: /MAM.*5 agents/i });
+      // Select MAM option (exact match or first option containing MAM)
+      const options = await moduleFilter.locator('option').allTextContents();
+      const mamOption = options.find(opt => opt.toLowerCase().includes('mam'));
+      if (mamOption) {
+        await moduleFilter.selectOption({ label: mamOption });
+      }
       await waitForNetworkIdle(page);
 
       // Verify 5 agents are displayed

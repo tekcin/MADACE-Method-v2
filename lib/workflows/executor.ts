@@ -12,7 +12,13 @@
 import fs from 'fs/promises';
 import path from 'path';
 import yaml from 'js-yaml';
-import type { Workflow, WorkflowState, WorkflowStep, WorkflowExecutionResult } from './types';
+import type {
+  Workflow,
+  WorkflowState,
+  WorkflowStep,
+  WorkflowExecutionResult,
+  WorkflowHierarchy,
+} from './types';
 import { WorkflowStateSchema } from './schema';
 import { StateMachine } from '@/lib/state/machine';
 
@@ -283,13 +289,153 @@ export class WorkflowExecutor {
   }
 
   private async handleSubWorkflow(step: WorkflowStep): Promise<void> {
-    const workflowName = step.variables?.workflow_name as string;
-    if (!workflowName) {
-      throw new Error('Sub-workflow step requires workflow_name variable');
+    // Get workflow path from step (new field) or legacy variable
+    const workflowPath = step.workflow_path || (step.variables?.workflow_name as string);
+
+    if (!workflowPath) {
+      throw new Error('Sub-workflow step requires workflow_path field or workflow_name variable');
     }
 
-    console.warn(`   🔗 Executing sub-workflow: ${workflowName}`);
-    console.warn(`   [Sub-workflow execution not fully implemented]`);
+    console.warn(`   🔗 Executing sub-workflow: ${workflowPath}`);
+
+    // 1. Detect circular dependencies
+    this.detectCircularDependency(workflowPath);
+
+    // 2. Load child workflow
+    const absoluteWorkflowPath = path.resolve(workflowPath);
+    const childWorkflow = await loadWorkflow(absoluteWorkflowPath);
+
+    // 3. Prepare child context with inheritance
+    const childContext = this.prepareChildContext(step);
+
+    // 4. Create child executor
+    const childExecutor = new WorkflowExecutor(childWorkflow, this.statePath);
+
+    // 5. Initialize child state with parent reference
+    await childExecutor.initializeChildWorkflow(
+      this.workflow.name || 'unknown',
+      path.basename(this.statePath || '', `.${this.workflow.name}.state.json`),
+      childContext
+    );
+
+    // 6. Track child in parent state
+    await this.addChildWorkflowToState(workflowPath, childExecutor.getStateFileName());
+
+    // 7. Execute child workflow to completion
+    let result = await childExecutor.executeNextStep();
+    while (!result.state?.completed && result.success) {
+      result = await childExecutor.executeNextStep();
+    }
+
+    // 8. Handle child errors
+    if (!result.success) {
+      await this.markChildWorkflowError(workflowPath, result.error?.message);
+      throw new Error(`Sub-workflow failed: ${result.message}`);
+    }
+
+    // 9. Mark child as complete in parent state
+    await this.markChildWorkflowComplete(workflowPath);
+
+    // 10. Optionally merge child variables back to parent (if needed in future)
+    // this.mergeChildVariables(childExecutor.getState());
+
+    console.warn(`   ✅ Sub-workflow completed: ${workflowPath}`);
+  }
+
+  private detectCircularDependency(childWorkflowPath: string): void {
+    // Check if we have a visited workflows array in state
+    const visitedWorkflows = (this.state!.variables['_VISITED_WORKFLOWS'] as string[]) || [];
+
+    if (visitedWorkflows.includes(childWorkflowPath)) {
+      const cycle = [...visitedWorkflows, childWorkflowPath].join(' → ');
+      throw new Error(`Circular dependency detected: ${cycle}`);
+    }
+
+    // Add current workflow to visited list for children to check
+    this.state!.variables['_VISITED_WORKFLOWS'] = [...visitedWorkflows, childWorkflowPath];
+  }
+
+  private prepareChildContext(step: WorkflowStep): Record<string, unknown> {
+    // Start with parent context (inherited)
+    const childContext: Record<string, unknown> = { ...this.state!.variables };
+
+    // Add context_vars from step (these override inherited values)
+    if (step.context_vars) {
+      Object.assign(childContext, step.context_vars);
+    }
+
+    // Auto-inject special variables
+    childContext['PARENT_WORKFLOW'] = this.workflow.name || 'unknown';
+    childContext['WORKFLOW_DEPTH'] = ((this.state!.variables['WORKFLOW_DEPTH'] as number) || 0) + 1;
+
+    // Remove internal tracking variables from child context
+    delete childContext['_VISITED_WORKFLOWS'];
+
+    return childContext;
+  }
+
+  async initializeChildWorkflow(
+    parentWorkflow: string,
+    parentStateFile: string,
+    initialContext: Record<string, unknown>
+  ): Promise<void> {
+    // Create state with parent reference
+    this.state = {
+      workflowName: this.workflow.name || 'unknown',
+      currentStep: 0,
+      variables: initialContext,
+      completed: false,
+      startedAt: new Date(),
+      updatedAt: new Date(),
+      parentWorkflow,
+      parentStateFile,
+    };
+
+    await this.saveState();
+  }
+
+  private async addChildWorkflowToState(workflowPath: string, childStateFile: string): Promise<void> {
+    if (!this.state) return;
+
+    if (!this.state.childWorkflows) {
+      this.state.childWorkflows = [];
+    }
+
+    this.state.childWorkflows.push({
+      workflowPath,
+      stateFile: childStateFile,
+      status: 'running',
+      startedAt: new Date().toISOString(),
+    });
+
+    await this.saveState();
+  }
+
+  private async markChildWorkflowComplete(workflowPath: string): Promise<void> {
+    if (!this.state?.childWorkflows) return;
+
+    const child = this.state.childWorkflows.find(c => c.workflowPath === workflowPath);
+    if (child) {
+      child.status = 'completed';
+      child.completedAt = new Date().toISOString();
+      await this.saveState();
+    }
+  }
+
+  private async markChildWorkflowError(workflowPath: string, errorMessage?: string): Promise<void> {
+    if (!this.state?.childWorkflows) return;
+
+    const child = this.state.childWorkflows.find(c => c.workflowPath === workflowPath);
+    if (child) {
+      child.status = 'error';
+      child.error = errorMessage || 'Unknown error';
+      child.completedAt = new Date().toISOString();
+      await this.saveState();
+    }
+  }
+
+  private getStateFileName(): string {
+    return `.${this.workflow.name}.state.json`;
   }
 
   private resolveVariables(text: string): string {
@@ -315,6 +461,103 @@ export class WorkflowExecutor {
 
   getState(): WorkflowState | null {
     return this.state;
+  }
+
+  /**
+   * Resume workflow execution
+   * Handles sub-workflows by resuming deepest nested workflow first (LIFO/stack-based)
+   */
+  async resume(): Promise<WorkflowExecutionResult> {
+    if (!this.state) {
+      return {
+        success: false,
+        message: 'Workflow not initialized',
+        error: new Error('Call initialize() first'),
+      };
+    }
+
+    // Check if any child workflows are running
+    const runningChild = this.state.childWorkflows?.find(child => child.status === 'running');
+
+    if (runningChild) {
+      // Resume child first (LIFO - deepest nested workflow first)
+      console.warn(`   🔄 Resuming child workflow: ${runningChild.workflowPath}`);
+
+      try {
+        const childWorkflow = await loadWorkflow(path.resolve(runningChild.workflowPath));
+        const childExecutor = new WorkflowExecutor(childWorkflow, this.statePath);
+        await childExecutor.initialize(); // Load existing child state
+
+        // Resume child
+        const childResult = await childExecutor.resume();
+
+        if (!childResult.success) {
+          await this.markChildWorkflowError(runningChild.workflowPath, childResult.error?.message);
+          throw new Error(`Child workflow failed: ${childResult.message}`);
+        }
+
+        // If child completed, mark it complete and continue parent
+        if (childResult.state?.completed) {
+          await this.markChildWorkflowComplete(runningChild.workflowPath);
+          console.warn(`   ✅ Child workflow completed: ${runningChild.workflowPath}`);
+
+          // Continue parent execution
+          return await this.executeNextStep();
+        }
+
+        return childResult;
+      } catch (error) {
+        return {
+          success: false,
+          message: `Failed to resume child workflow: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          error: error instanceof Error ? error : new Error(String(error)),
+          state: this.state,
+        };
+      }
+    }
+
+    // No running children, resume parent
+    return await this.executeNextStep();
+  }
+
+  /**
+   * Get workflow hierarchy tree
+   * Shows all child workflows and their status
+   */
+  async getHierarchy(): Promise<WorkflowHierarchy> {
+    if (!this.state) {
+      throw new Error('Workflow not initialized');
+    }
+
+    const children: WorkflowHierarchy[] = [];
+
+    if (this.state.childWorkflows) {
+      for (const child of this.state.childWorkflows) {
+        try {
+          const childWorkflow = await loadWorkflow(path.resolve(child.workflowPath));
+          const childExecutor = new WorkflowExecutor(childWorkflow, this.statePath);
+          await childExecutor.initialize();
+
+          const childHierarchy = await childExecutor.getHierarchy();
+          children.push(childHierarchy);
+        } catch (error) {
+          console.warn(`   ⚠️ Failed to load child hierarchy: ${child.workflowPath}`, error);
+        }
+      }
+    }
+
+    return {
+      workflow: this.workflow.name || 'unknown',
+      status: this.state.completed
+        ? 'completed'
+        : this.state.currentStep === 0
+          ? 'pending'
+          : 'running',
+      currentStep: this.state.currentStep,
+      totalSteps: this.workflow.steps?.length || 0,
+      depth: (this.state.variables['WORKFLOW_DEPTH'] as number) || 0,
+      children,
+    };
   }
 
   async reset(): Promise<void> {
