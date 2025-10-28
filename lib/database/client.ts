@@ -11,7 +11,7 @@ import { PrismaClient } from '@prisma/client';
 
 declare global {
   // Allow global `var` declarations for Prisma singleton
-  // eslint-disable-next-line no-var, vars-on-top
+
   var prisma: PrismaClient | undefined;
 }
 

@@ -16,6 +16,146 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 >
 > The **official MADACE-METHOD** is Node.js CLI-based. See: https://github.com/tekcin/MADACE-METHOD
 
+## Quick Reference
+
+**Most Common Commands:**
+
+```bash
+# Development
+npm run dev                # Start dev server at http://localhost:3000
+npm run check-all          # Run all quality checks (MUST pass before commit)
+npm run build              # Production build (verify before commit)
+
+# Quality Checks
+npm run type-check         # TypeScript type checking
+npm run lint               # ESLint check
+npm run format             # Format with Prettier
+npm test                   # Run Jest tests
+
+# Docker
+docker-compose up -d                          # Production deployment
+docker-compose -f docker-compose.dev.yml up -d  # Development with IDEs
+docker-compose down                           # Stop containers
+```
+
+**Key File Locations:**
+
+- **Business Logic**: `lib/` (TypeScript modules)
+- **API Routes**: `app/api/` (Next.js App Router)
+- **UI Components**: `components/features/` and `app/*/page.tsx`
+- **Agent Definitions**: `madace/mam/agents/*.agent.yaml`
+- **State Machine**: `docs/mam-workflow-status.md` (single source of truth)
+- **Types**: `lib/types/` (TypeScript interfaces)
+
+**Environment:**
+
+- Node.js v24.10.0 (v20+ required)
+- Next.js 15.5.6 with React 19.2.0
+- TypeScript 5.9.3 (strict mode)
+
+## ⚠️ CRITICAL: Version Locking Policy
+
+**MADACE-Method v2.0 uses EXACT versions for all dependencies. NO version ranges allowed.**
+
+### Locked Core Tech Stack (DO NOT CHANGE)
+
+```json
+{
+  "next": "15.5.6",      // LOCKED - NO upgrades without team approval
+  "react": "19.2.0",     // LOCKED - Must match react-dom
+  "react-dom": "19.2.0", // LOCKED - Must match react
+  "typescript": "5.9.3"  // LOCKED - Strict mode enabled
+}
+```
+
+### Why Exact Versions?
+
+1. **Consistency** - Same behavior across all environments (dev/staging/prod)
+2. **Reproducibility** - `npm ci` installs exact versions from package-lock.json
+3. **No Surprises** - Version ranges can introduce breaking changes silently
+4. **MADACE Compliance** - Official requirement for v2.0-alpha release
+
+### Version Validation
+
+**Before any commit, run:**
+
+```bash
+npm run validate-versions  # Checks all version requirements
+npm run check-all          # Includes version validation + quality checks
+```
+
+**The validation script checks:**
+- ✅ Next.js is exactly 15.5.6
+- ✅ React is exactly 19.2.0
+- ✅ React DOM is exactly 19.2.0
+- ✅ TypeScript is exactly 5.9.3
+- ✅ Node.js is >= 20.0.0 (recommended: 24.10.0)
+- ✅ No version ranges in package.json (no ^, ~, >, <)
+- ✅ Installed versions match package.json
+
+### Enforced by Configuration
+
+```bash
+# .nvmrc - Node.js version lock
+24.10.0
+
+# .npmrc - npm configuration
+save-exact=true        # Always save exact versions
+engine-strict=true     # Enforce engine requirements
+package-lock=true      # Use lockfile for reproducibility
+
+# package.json - Engine requirements
+"engines": {
+  "node": ">=20.0.0",
+  "npm": ">=9.0.0"
+}
+```
+
+### Rules for Dependencies
+
+1. **NEVER use version ranges** (^, ~, >=, <=, >, <)
+2. **ALWAYS use exact versions** (e.g., "15.5.6", not "^15.5.6")
+3. **RUN validation before committing** (`npm run validate-versions`)
+4. **USE `npm ci`** instead of `npm install` in CI/CD
+5. **COMMIT package-lock.json** to git (required)
+
+### Upgrading Dependencies
+
+**⚠️ Core packages (Next.js, React, TypeScript) require team approval.**
+
+**Process for non-core packages:**
+
+```bash
+# 1. Check current version
+npm list <package-name>
+
+# 2. Update to specific version (no ranges!)
+npm install <package-name>@<exact-version>
+
+# 3. Validate
+npm run validate-versions
+npm run check-all
+
+# 4. Test thoroughly
+npm run build
+npm test
+
+# 5. Commit with explanation
+git add package.json package-lock.json
+git commit -m "deps: update <package> to <version> - <reason>"
+```
+
+### When to Upgrade Core Packages
+
+**DO NOT upgrade unless:**
+- ✅ Critical security vulnerability
+- ✅ Team consensus on upgrade path
+- ✅ All tests pass with new version
+- ✅ Migration guide reviewed
+- ✅ Breaking changes documented
+
+**For v2.0-alpha: Core packages are FROZEN until beta release.**
+
 ## Project Overview
 
 This repository (MADACE-Method v2.0) is a **proof-of-concept** implementation with a simplified Next.js full-stack architecture:
@@ -958,6 +1098,88 @@ See [`docs/LLM-SELECTION.md`](./docs/LLM-SELECTION.md) for detailed guide.
 - **[ADR-001](./docs/adrs/ADR-001-multi-tier-architecture.md)** - Multi-Tier Architecture (Superseded)
 - **[ADR-002](./docs/adrs/ADR-002-ffi-strategy.md)** - FFI Strategy (Superseded)
 - **[ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)** - Architecture Simplification ✅
+
+## Troubleshooting
+
+### Common Issues
+
+**TypeScript Errors After `npm install`:**
+
+```bash
+# Clear Next.js cache and rebuild
+rm -rf .next
+npm run build
+```
+
+**Port Already in Use (3000):**
+
+```bash
+# Find process using port 3000
+lsof -ti:3000 | xargs kill -9
+
+# Or use a different port
+PORT=3001 npm run dev
+```
+
+**Docker Container Won't Start:**
+
+```bash
+# Check logs
+docker-compose logs -f
+
+# Clean rebuild
+docker-compose down
+docker-compose up -d --build
+```
+
+**ESLint/Prettier Conflicts:**
+
+```bash
+# Format all files
+npm run format
+
+# Fix auto-fixable issues
+npm run lint:fix
+```
+
+**State Machine Validation Errors:**
+
+- Check `docs/mam-workflow-status.md` - only ONE story in TODO and ONE in IN_PROGRESS
+- Ensure proper state format: `[STORY-ID] Title (filename.md) [Status: ...] [Points: N]`
+- Never manually edit the status file - use state transition methods
+
+**Agent YAML Not Loading:**
+
+- Verify YAML syntax with a validator
+- Check file path is correct relative to project root
+- Ensure all required fields are present (metadata, persona, menu)
+- Check Zod validation errors in console for specific issues
+
+**LLM API Errors:**
+
+- Verify API key is set in `.env` file
+- Check API key has correct permissions
+- For local models, ensure Ollama is running: `ollama serve`
+- Test connection: http://localhost:3000/llm-test
+
+### Performance Issues
+
+**Slow Development Server:**
+
+```bash
+# Clear Next.js cache
+rm -rf .next
+
+# Reduce log verbosity
+export NODE_ENV=production
+npm run build && npm start
+```
+
+**High Memory Usage:**
+
+- Check for memory leaks in WebSocket connections
+- Restart development server periodically
+- Use production build for testing: `npm run build && npm start`
 
 ## Getting Started
 
