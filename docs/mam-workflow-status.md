@@ -165,7 +165,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - Ready for next story)
+(No story currently in progress)
 
 ---
 
@@ -174,6 +174,130 @@ Story being implemented (only ONE at a time):
 Completed stories with dates and points:
 
 ### Phase v3.0: MADACE v3.0 Implementation (Q2 2026+)
+
+- **[STORY-V3-017]** API Route GET /api/status/:type/:id (2025-10-29) [Points: 1]
+  **Status:** COMPLETED - RESTful API endpoint for status queries with comprehensive security and testing
+  **Developer:** Claude | **Duration:** ~90 minutes | **Epic:** EPIC-V3-002 (Universal Workflow Status Checker)
+
+  **Implementation Details:**
+  - Created full REST API endpoint with Next.js 15 App Router dynamic routes
+  - Support for 4 entity types: story, epic, workflow, state-machine
+  - Comprehensive input validation and security sanitization
+  - Registry integration for auto-detection of status providers
+  - Standardized error codes with appropriate HTTP status mapping
+  - 106 comprehensive tests covering all success, error, security scenarios
+
+  **Files Created:**
+  - app/api/status/[type]/[id]/route.ts: Complete API route implementation (270 lines)
+  - __tests__/app/api/status/[type]/[id]/route.test.ts: Comprehensive test suite (1,458 lines, 106 tests)
+  - __tests__/app/api/status/TEST-PLAN-V3-017.md: Detailed test planning document
+
+  **API Structure:**
+  - ✅ **Route Pattern**: GET /api/status/:type/:id
+  - ✅ **Valid Types**: story, epic, workflow, state-machine
+  - ✅ **Response Format**: JSON with success/error structure
+  - ✅ **Error Codes**: 8 standardized error types (ENTITY_NOT_FOUND, INVALID_TYPE, etc.)
+  - ✅ **Status Codes**: Appropriate HTTP codes (200, 400, 404, 500)
+
+  **Security Features:**
+  - ✅ **Path Traversal Prevention**: Blocks ../ and ..\ patterns
+  - ✅ **SQL Injection Prevention**: Detects DROP TABLE, DELETE FROM, INSERT INTO patterns
+  - ✅ **XSS Prevention**: Blocks <script>, <iframe>, <object>, <embed> tags
+  - ✅ **Null Byte Checking**: Prevents null byte injection (\0)
+  - ✅ **Length Limits**: Maximum 1000 characters for ID parameter
+  - ✅ **Type Validation**: Strict type checking with TypeScript
+  - ✅ **Input Sanitization**: sanitizeId() function with comprehensive checks
+
+  **Test Coverage (106 tests, 100% pass rate):**
+  - **Suite 1: Successful Status Queries** (20 tests)
+    - Story queries: STORY-V3-001, STORY-V3-015, TASK-001, V3-015
+    - Epic queries: EPIC-V3-001, EPIC-V3-002, EPIC-MAM
+    - Workflow queries: pm-planning, dev-implementation, qa-testing
+    - State machine queries: state, overview, summary, status
+  - **Suite 2: Parameter Validation** (15 tests)
+    - Missing type/id parameters
+    - Invalid type (not in whitelist)
+    - Empty string validation
+    - Type case sensitivity
+  - **Suite 3: Error Handling** (20 tests)
+    - Entity not found (404)
+    - Permission denied (500)
+    - No status provider (400)
+    - Validation failed (400)
+    - Internal errors (500)
+    - Generic Error objects
+    - String errors
+    - Unknown error types
+  - **Suite 4: Response Format Validation** (10 tests)
+    - Success response structure
+    - Error response structure
+    - StatusResult field validation
+    - Timestamp ISO 8601 format
+    - Metadata structure
+  - **Suite 5: Registry Integration** (15 tests)
+    - Registry initialization
+    - getStatusResult() calls
+    - Parameter passing
+    - Error propagation
+    - Mock verification
+  - **Suite 6: Edge Cases & Security** (10 tests)
+    - Path traversal attempts (../, ..\)
+    - SQL injection patterns
+    - XSS/HTML tag injection
+    - Null byte injection
+    - Maximum length (1000 chars)
+    - Unicode characters
+    - Special characters
+  - **Suite 7: HTTP Status Codes** (6 tests)
+    - 200 OK for success
+    - 400 Bad Request for validation errors
+    - 404 Not Found for missing entities
+    - 500 Internal Server Error for system errors
+  - **Suite 8: Integration Scenarios** (10 tests)
+    - Multi-type query sequences
+    - Error recovery
+    - Concurrent requests
+    - Registry state changes
+
+  **Quality Assurance:**
+  - TypeScript type-check: PASS (0 errors)
+  - Jest tests: 106/106 PASS (100%, 0.196s execution time)
+  - ESLint: PASS (warnings only, no errors in new code)
+  - Production build: PASS (all routes compiled successfully)
+
+  **API Usage Examples:**
+  ```bash
+  # Story status
+  $ curl http://localhost:3000/api/status/story/STORY-V3-017
+  # Response: {"success":true,"result":{...}}
+
+  # Epic status
+  $ curl http://localhost:3000/api/status/epic/EPIC-V3-002
+
+  # Workflow status
+  $ curl http://localhost:3000/api/status/workflow/pm-planning
+
+  # State machine status
+  $ curl http://localhost:3000/api/status/state-machine/state
+
+  # Error example (invalid type)
+  $ curl http://localhost:3000/api/status/invalid/TEST-001
+  # Response: {"success":false,"error":"Invalid type...","code":"INVALID_TYPE"}
+
+  # Error example (missing entity)
+  $ curl http://localhost:3000/api/status/story/NOT-FOUND
+  # Response: {"success":false,"error":"...not found","code":"ENTITY_NOT_FOUND"}
+  ```
+
+  **MADACE Compliance:**
+  - ✅ Next.js 15 App Router with dynamic routes
+  - ✅ TypeScript strict mode compliance
+  - ✅ Comprehensive test coverage (106 tests, all passing)
+  - ✅ Security-first design with input sanitization
+  - ✅ Integration with status provider registry
+  - ✅ Standardized error responses with error codes
+  - ✅ RESTful API design following HTTP conventions
+  - ✅ Production-ready with successful build verification
 
 - **[STORY-V3-016]** Create `madace status` CLI Command (2025-10-29) [Points: 3]
   **Status:** COMPLETED - CLI command for context-aware status checking with comprehensive tests
