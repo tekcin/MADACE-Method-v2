@@ -30,11 +30,18 @@ export async function POST(request: Request) {
       );
     }
 
+    // For local provider, use environment variable if available (Docker network support)
+    // This allows server-side requests to use "http://ollama:11434" while browser uses "http://localhost:11434"
+    const effectiveBaseURL =
+      provider === 'local'
+        ? process.env.LOCAL_MODEL_URL || baseURL || 'http://localhost:11434'
+        : baseURL;
+
     // Create LLM client with provided configuration
     const client = createLLMClient({
       provider: provider as LLMProvider,
       apiKey,
-      baseURL,
+      baseURL: effectiveBaseURL,
       model,
     });
 

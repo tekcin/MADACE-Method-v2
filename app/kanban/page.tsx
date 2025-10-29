@@ -6,19 +6,25 @@ import type { WorkflowStatus, Story } from '@/lib/state/types';
 export default function KanbanPage() {
   const [status, setStatus] = useState<WorkflowStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadWorkflowStatus();
   }, []);
 
-  const loadWorkflowStatus = async () => {
+  const loadWorkflowStatus = async (isRefresh = false) => {
     try {
+      if (isRefresh) {
+        setRefreshing(true);
+      }
+
       const response = await fetch('/api/state');
       const data = await response.json();
 
       if (data.success) {
         setStatus(data.status);
+        setError(null); // Clear any previous errors
       } else {
         setError(data.error || 'Failed to load workflow status');
       }
@@ -26,6 +32,7 @@ export default function KanbanPage() {
       setError(err instanceof Error ? err.message : 'Failed to load workflow status');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -47,7 +54,7 @@ export default function KanbanPage() {
           <h2 className="mb-2 text-xl font-semibold text-red-600 dark:text-red-400">Error</h2>
           <p className="text-red-600 dark:text-red-400">{error}</p>
           <button
-            onClick={loadWorkflowStatus}
+            onClick={() => loadWorkflowStatus()}
             className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 rounded-lg px-4 py-2"
           >
             Retry
@@ -220,10 +227,34 @@ export default function KanbanPage() {
       {/* Refresh Button */}
       <div className="mt-6 text-center">
         <button
-          onClick={loadWorkflowStatus}
-          className="border-border bg-background hover:bg-muted rounded-lg border px-4 py-2 text-sm"
+          onClick={() => loadWorkflowStatus(true)}
+          disabled={refreshing}
+          className="border-border bg-background hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Refresh Status
+          {refreshing ? (
+            <>
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+              <span>Refreshing...</span>
+            </>
+          ) : (
+            <>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="h-4 w-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                />
+              </svg>
+              <span>Refresh Status</span>
+            </>
+          )}
         </button>
       </div>
     </div>

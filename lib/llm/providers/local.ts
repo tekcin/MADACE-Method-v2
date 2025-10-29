@@ -97,6 +97,24 @@ export const LOCAL_MODELS: Record<string, LocalModelConfig> = {
     supportsStreaming: true,
     description: 'Mistral 7B (Ollama)',
   },
+  gemma3: {
+    name: 'gemma3',
+    endpoint: 'http://localhost:11434',
+    type: 'ollama',
+    healthCheckUrl: 'http://localhost:11434',
+    maxTokens: 8192,
+    supportsStreaming: true,
+    description: 'Google Gemma 3 4B (Ollama)',
+  },
+  'gemma3:latest': {
+    name: 'gemma3:latest',
+    endpoint: 'http://localhost:11434',
+    type: 'ollama',
+    healthCheckUrl: 'http://localhost:11434',
+    maxTokens: 8192,
+    supportsStreaming: true,
+    description: 'Google Gemma 3 4B (Ollama)',
+  },
   // Docker-based models (examples - user can add more)
   'custom-docker-7b': {
     name: 'custom-docker-7b',
@@ -370,7 +388,7 @@ export class LocalProvider extends BaseLLMProvider {
           ...this.modelConfig.customHeaders,
         },
         body: JSON.stringify(data),
-        signal: AbortSignal.timeout(60000), // 60 second timeout for local models (can be slower)
+        signal: AbortSignal.timeout(120000), // 120 second timeout for local models (CPU can be slower)
       });
 
       if (!response.ok) {

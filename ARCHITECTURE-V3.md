@@ -246,17 +246,28 @@ To improve the web interface and simplify configuration management, we recommend
   - **Auto-Detection**: Intelligent classification of model types based on endpoint patterns
   - **Health Monitoring**: 30-second cached health checking proactively validates model availability
 
-### 5.2. Zero-Configuration Experience
+### 5.2. Zero-Configuration Experience with Gemma3 4B Default
+
+- **Default Model (Ships with Product):**
+  - **Gemma3 4B**: Google's efficient 4.3B parameter model (Q4_K_M quantization)
+  - **Pre-configured**: Included in Docker Compose setup via Ollama container
+  - **Production Ready**: 3.3GB model size, CPU-optimized for broad hardware compatibility
+  - **Zero Setup**: `docker-compose up -d` includes both MADACE and Ollama with Gemma3 4B pre-loaded
+  - **Free & Private**: No API keys required, complete data sovereignty
+  - **User Customizable**: Users can add/change models via Ollama (`ollama pull <model>`)
 
 - **Key Features:**
-  - **Out-of-the-Box**: Works immediately with Ollama running at default port
+  - **Out-of-the-Box**: Gemma3 4B works immediately on container startup
   - **Auto Discovery**: Automatically lists available models via `/api/tags` endpoint
   - **Smart Setup**: Auto-detects model type (Ollama vs Docker) from configuration
   - **Custom Endpoints**: Support for any HTTP-based LLM container or service
+  - **Model Management**: Users can add models: `docker exec ollama ollama pull llama3.1`
 
 - **Supported Models:**
-  - **Pre-configured Ollama**: `llama3.1`, `llama3.1:8b`, `codellama:7b`, `mistral:7b`
+  - **Default (Gemma3)**: `gemma3` (4.3B, Q4_K_M) - Ships with product ✅
+  - **Pre-configured Ollama**: `llama3.1`, `llama3.1:8b`, `codellama:7b`, `mistral:7b`, `gemma3:latest`
   - **Docker Models**: Custom endpoints (e.g., `localhost:8080`, `localhost:9000`)
+  - **User-Added**: Any Ollama-compatible model via `ollama pull <model>`
   - **Dynamic Discovery**: Real-time model listing and availability checking
 
 ### 5.3. Enterprise-Grade Features
@@ -289,10 +300,16 @@ To improve the web interface and simplify configuration management, we recommend
 - **Code Example:**
 
   ```typescript
-  // Zero-configuration Ollama setup
-  const ollamaProvider = createLLMClient({
+  // Default Gemma3 4B setup (ships with product)
+  const gemmaProvider = createLLMClient({
     provider: 'local',
-    model: 'llama3.1:8b', // Auto-detected as Ollama
+    model: 'gemma3', // Pre-loaded in Ollama container
+  });
+
+  // Alternative Ollama models (user adds via: docker exec ollama ollama pull llama3.1)
+  const llamaProvider = createLLMClient({
+    provider: 'local',
+    model: 'llama3.1:8b', // User-added model
   });
 
   // Custom Docker model setup
@@ -303,13 +320,102 @@ To improve the web interface and simplify configuration management, we recommend
   });
   ```
 
-### 5.5. Integration Benefits
+### 5.4b. Docker Compose Deployment with Gemma3 4B
 
+**Production Deployment Configuration:**
+
+```yaml
+# docker-compose.yml (ships with product)
+services:
+  madace:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - LOCAL_MODEL_URL=http://ollama:11434  # Container-to-container communication
+      - LOCAL_MODEL_NAME=gemma3              # Default model
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama-data:/root/.ollama  # Persistent model storage
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:11434/api/tags']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  ollama-data:  # Stores Gemma3 4B model (3.3GB)
+```
+
+**First-Time Setup Script:**
+
+```bash
+#!/bin/bash
+# Automated setup that ships with product
+
+# Start Docker services
+docker-compose up -d
+
+# Wait for Ollama to be healthy
+echo "Waiting for Ollama to start..."
+sleep 10
+
+# Pull Gemma3 4B model (3.3GB download, ~2-5 minutes)
+docker exec ollama ollama pull gemma3
+
+echo "✅ MADACE is ready with Gemma3 4B!"
+echo "🌐 Web UI: http://localhost:3000"
+echo "🤖 LLM Test: http://localhost:3000/llm-test"
+```
+
+**User Model Management:**
+
+```bash
+# List available models
+docker exec ollama ollama list
+
+# Add additional models (user choice)
+docker exec ollama ollama pull llama3.1
+docker exec ollama ollama pull mistral
+
+# Remove models to save space
+docker exec ollama ollama rm codellama:7b
+
+# Test model directly
+docker exec ollama ollama run gemma3 "Hello, how are you?"
+```
+
+**Environment Configuration (.env):**
+
+```bash
+# Default configuration (ships with product)
+PLANNING_LLM=local
+LOCAL_MODEL_URL=http://localhost:11434  # Browser access
+LOCAL_MODEL_NAME=gemma3                  # Default model
+
+# Optional cloud providers (user adds API keys)
+GEMINI_API_KEY=your-api-key-here
+CLAUDE_API_KEY=your-api-key-here
+OPENAI_API_KEY=your-api-key-here
+```
+
+### 5.5. Integration Benefits with Gemma3 4B Default
+
+- **Zero Setup Required**: Product ships with Gemma3 4B pre-configured, works immediately
+- **No API Keys Needed**: Complete privacy and offline capability out-of-the-box
+- **Cost-Free Operation**: No recurring costs for local AI inference
 - **Multi-Environment**: Works in development, testing, and production with local models
 - **CI/CD Ready**: Docker container support enables automated testing and deployment
 - **Privacy Focus**: Ideal for sensitive data processing and compliance requirements
-- **Cost Control**: Eliminates recurring API costs for high-volume usage
-- **Performance**: Substantially reduced latency for repetitive or batch processing
+- **User Flexibility**: Easy to add/swap models (Llama3.1, Mistral, etc.) via simple commands
+- **Performance**: Gemma3 4B optimized for CPU inference, broad hardware compatibility
+- **Lightweight**: 3.3GB model size fits on standard development machines
 
 ---
 

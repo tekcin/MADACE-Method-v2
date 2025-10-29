@@ -494,6 +494,17 @@ MADACE v3.0 will be the world's first **conversational AI-driven agile collabora
 | **Editor**    | None       | Monaco Editor              |
 | **CLI**       | Basic      | inquirer + blessed         |
 | **Auth**      | None       | NextAuth.js                |
+| **Local LLM** | Manual     | **Gemma3 4B (Ollama) ✅**  |
+
+**Local LLM Provider (✅ Implemented)**:
+
+- **Default Model**: Gemma3 4B (Q4_K_M, 3.3GB) ships with product
+- **Infrastructure**: Docker Compose with Ollama container auto-configured
+- **Zero Setup**: Works out-of-the-box, no API keys required for local AI
+- **User Flexibility**: Easy to add/change models (`docker exec ollama ollama pull <model>`)
+- **Multi-Provider**: Supports Gemini, Claude, OpenAI, and local models
+- **Privacy**: Complete data sovereignty with offline capability
+- **Cost**: Free operation, no recurring API costs
 
 ### 4.2 Database Schema
 

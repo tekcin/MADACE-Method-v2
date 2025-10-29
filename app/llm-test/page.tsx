@@ -8,7 +8,7 @@ const PROVIDER_MODELS: Record<LLMProvider, string[]> = {
   gemini: ['gemini-2.0-flash-exp', 'gemini-1.5-flash-latest', 'gemini-1.5-pro-latest'],
   claude: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
   openai: ['gpt-4o-latest', 'gpt-4o-mini', 'gpt-3.5-turbo-latest'],
-  local: ['llama3.1', 'llama3.1:8b', 'codellama:7b', 'mistral:7b', 'custom'],
+  local: ['gemma3', 'gemma3:latest', 'llama3.1', 'llama3.1:8b', 'codellama:7b', 'mistral:7b', 'custom'],
 };
 
 // Provider information
@@ -193,11 +193,11 @@ export default function LLMTestPage() {
                   id="baseURL"
                   value={baseURL}
                   onChange={(e) => setBaseURL(e.target.value)}
-                  placeholder="http://localhost:11434"
+                  placeholder="http://localhost:11434 (auto-detected in Docker)"
                   className="border-border bg-background focus:ring-primary w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
                 />
                 <p className="text-muted-foreground mt-1 text-xs">
-                  Ollama default: http://localhost:11434
+                  Local: http://localhost:11434 | Docker: Auto-detected (http://ollama:11434)
                 </p>
               </div>
             )}
