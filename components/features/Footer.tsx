@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-white py-4 dark:border-gray-800 dark:bg-gray-900">
@@ -15,9 +17,9 @@ export function Footer() {
             >
               GitHub
             </a>
-            <a href="/docs" className="hover:text-gray-700 dark:hover:text-gray-300">
+            <Link href="/docs" className="hover:text-gray-700 dark:hover:text-gray-300">
               Docs
-            </a>
+            </Link>
           </div>
         </div>
       </div>

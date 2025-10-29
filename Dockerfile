@@ -69,6 +69,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 # Copy MADACE agents/workflows (built-in templates)
 COPY --from=builder --chown=nextjs:nodejs /app/madace ./madace
 
+# Copy documentation files for docs viewer
+COPY --from=builder --chown=nextjs:nodejs /app/docs ./docs
+
 # Copy package.json for runtime
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
