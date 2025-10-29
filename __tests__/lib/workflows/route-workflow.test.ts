@@ -287,9 +287,7 @@ describe('Route Workflow YAML (STORY-V3-004)', () => {
       expect(Array.isArray(step4.follow_up)).toBe(true);
 
       // Find override follow-up
-      const overrideFollowUp = step4.follow_up.find((fu: any) =>
-        fu.condition.includes('override')
-      );
+      const overrideFollowUp = step4.follow_up.find((fu: any) => fu.condition.includes('override'));
 
       expect(overrideFollowUp).toBeDefined();
       expect(overrideFollowUp.prompts).toBeDefined();
@@ -297,9 +295,7 @@ describe('Route Workflow YAML (STORY-V3-004)', () => {
     });
 
     it('should allow level selection 0-4 for override', () => {
-      const overrideFollowUp = step4.follow_up.find((fu: any) =>
-        fu.condition.includes('override')
-      );
+      const overrideFollowUp = step4.follow_up.find((fu: any) => fu.condition.includes('override'));
       const levelPrompt = overrideFollowUp.prompts[0];
 
       expect(levelPrompt.id).toBe('manual_level');
@@ -498,9 +494,7 @@ describe('Route Workflow YAML (STORY-V3-004)', () => {
 
       expect(step4.action).toBe('elicit');
 
-      const overrideFollowUp = step4.follow_up.find((fu: any) =>
-        fu.condition.includes('override')
-      );
+      const overrideFollowUp = step4.follow_up.find((fu: any) => fu.condition.includes('override'));
       expect(overrideFollowUp).toBeDefined();
     });
 

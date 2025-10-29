@@ -206,7 +206,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
                 id="projectSize"
                 value={config.projectInfo.projectSize ?? ''}
                 onChange={(e) => updateProjectInfo('projectSize', Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 <option value="">Select size...</option>
                 <option value="0">Tiny (&lt; 1K LOC)</option>
@@ -230,7 +230,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
                 id="teamSize"
                 value={config.projectInfo.teamSize ?? ''}
                 onChange={(e) => updateProjectInfo('teamSize', Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 <option value="">Select team size...</option>
                 <option value="0">Solo (1 developer)</option>
@@ -254,7 +254,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
                 id="codebaseComplexity"
                 value={config.projectInfo.codebaseComplexity ?? ''}
                 onChange={(e) => updateProjectInfo('codebaseComplexity', Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 <option value="">Select complexity...</option>
                 <option value="0">Trivial (simple scripts)</option>
@@ -278,7 +278,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
                 id="integrations"
                 value={config.projectInfo.integrations ?? ''}
                 onChange={(e) => updateProjectInfo('integrations', Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 <option value="">Select integration count...</option>
                 <option value="0">None (standalone)</option>
@@ -302,7 +302,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
                 id="userBase"
                 value={config.projectInfo.userBase ?? ''}
                 onChange={(e) => updateProjectInfo('userBase', Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 <option value="">Select user base...</option>
                 <option value="0">Personal (&lt; 10 users)</option>
@@ -326,7 +326,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
                 id="security"
                 value={config.projectInfo.security ?? ''}
                 onChange={(e) => updateProjectInfo('security', Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 <option value="">Select security level...</option>
                 <option value="0">None (no sensitive data)</option>
@@ -350,7 +350,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
                 id="duration"
                 value={config.projectInfo.duration ?? ''}
                 onChange={(e) => updateProjectInfo('duration', Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 <option value="">Select duration...</option>
                 <option value="0">Very Short (&lt; 1 week)</option>
@@ -374,7 +374,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
                 id="existingCode"
                 value={config.projectInfo.existingCode ?? ''}
                 onChange={(e) => updateProjectInfo('existingCode', Number(e.target.value))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
               >
                 <option value="">Select...</option>
                 <option value="0">Greenfield (brand new)</option>

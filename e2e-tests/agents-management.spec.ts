@@ -172,7 +172,7 @@ test.describe('Agent Management - Selector Page', () => {
     if (await isVisible(moduleFilter)) {
       // Select MAM option (exact match or first option containing MAM)
       const options = await moduleFilter.locator('option').allTextContents();
-      const mamOption = options.find(opt => opt.toLowerCase().includes('mam'));
+      const mamOption = options.find((opt) => opt.toLowerCase().includes('mam'));
       if (mamOption) {
         await moduleFilter.selectOption({ label: mamOption });
       }

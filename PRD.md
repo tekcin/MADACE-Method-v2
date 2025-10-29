@@ -118,13 +118,13 @@ _See [VERSION-LOCK.md](./VERSION-LOCK.md) for version locking policy and enforce
 
 **Core Tech Stack (LOCKED for v2.0-alpha):**
 
-| Package      | Version | Status      | Notes                          |
-| ------------ | ------- | ----------- | ------------------------------ |
-| **next**     | 15.5.6  | ⛔ LOCKED   | NO changes without approval    |
-| **react**    | 19.2.0  | ⛔ LOCKED   | Must match react-dom           |
-| **react-dom** | 19.2.0  | ⛔ LOCKED   | Must match react               |
-| **typescript** | 5.9.3   | ⛔ LOCKED   | Strict mode enabled            |
-| **Node.js**  | 24.10.0 | ⛔ LOCKED   | Recommended (minimum 20.0.0)   |
+| Package        | Version | Status    | Notes                        |
+| -------------- | ------- | --------- | ---------------------------- |
+| **next**       | 15.5.6  | ⛔ LOCKED | NO changes without approval  |
+| **react**      | 19.2.0  | ⛔ LOCKED | Must match react-dom         |
+| **react-dom**  | 19.2.0  | ⛔ LOCKED | Must match react             |
+| **typescript** | 5.9.3   | ⛔ LOCKED | Strict mode enabled          |
+| **Node.js**    | 24.10.0 | ⛔ LOCKED | Recommended (minimum 20.0.0) |
 
 **Full-Stack:**
 
@@ -283,6 +283,7 @@ Version locking eliminates "works on my machine" problems by guaranteeing that e
 **Problem Solved:**
 
 Without exact version locking, different environments can install different versions due to semantic versioning ranges (^, ~), leading to:
+
 - Inconsistent behavior across environments
 - Breaking changes introduced automatically
 - Difficult-to-reproduce bugs
@@ -299,11 +300,13 @@ MADACE-Method v2.0 enforces exact versions through a **4-layer validation archit
 **Purpose:** Prevent version ranges from being saved in the first place
 
 **Mechanisms:**
+
 - `.npmrc` with `save-exact=true` - All `npm install` commands save exact versions
 - `.npmrc` with `engine-strict=true` - Enforce Node.js version requirements
 - `.nvmrc` with `24.10.0` - Lock Node.js version for nvm/fnm
 
 **Example:**
+
 ```bash
 # Before .npmrc
 npm install some-package
@@ -321,12 +324,14 @@ npm install some-package
 **Purpose:** Validate package.json and installed versions after installation
 
 **Checks:**
+
 1. ✅ Core packages (Next.js, React, TypeScript) match LOCKED versions exactly
 2. ✅ No version range operators (^, ~, >=, <=, >, <) in package.json
 3. ✅ Installed versions match package.json declarations
 4. ✅ Node.js version meets requirements (warns if not 24.10.0)
 
 **Usage:**
+
 ```bash
 npm run validate-versions  # Standalone validation
 npm run check-all          # Includes validation + type-check + lint + format
@@ -341,6 +346,7 @@ npm run check-all          # Includes validation + type-check + lint + format
 **Purpose:** Block commits with incorrect versions
 
 **Workflow:**
+
 ```bash
 # Developer flow
 git add .
@@ -361,20 +367,22 @@ git commit -m "..."
 **Purpose:** Final enforcement in CI/CD pipeline
 
 **Workflow:**
+
 ```yaml
 # Example GitHub Actions
 steps:
   - uses: actions/setup-node@v3
     with:
-      node-version-file: '.nvmrc'  # Uses exact 24.10.0
-  - run: npm ci                     # Uses package-lock.json (exact versions)
-  - run: npm run validate-versions  # Blocks merge if fails
+      node-version-file: '.nvmrc' # Uses exact 24.10.0
+  - run: npm ci # Uses package-lock.json (exact versions)
+  - run: npm run validate-versions # Blocks merge if fails
   - run: npm run check-all
 ```
 
 **Upgrade Process:**
 
 **Core Packages (Next.js, React, TypeScript):**
+
 - ⚠️ Requires team approval
 - Create upgrade branch
 - Test thoroughly (all major features, deprecation warnings, release notes)
@@ -382,21 +390,25 @@ steps:
 - Get code review before merge
 
 **Non-Core Packages:**
+
 - Any developer can upgrade
 - Use exact version: `npm install package@X.Y.Z`
 - Run validation: `npm run validate-versions && npm run check-all`
 - Test and commit
 
 **Security Exception:**
+
 - **CRITICAL/HIGH vulnerabilities:** Upgrade immediately (skip approval)
 - **MODERATE/LOW vulnerabilities:** Schedule for next sprint
 
 **Documentation:**
+
 - [VERSION-LOCK.md](./VERSION-LOCK.md) - Comprehensive version locking guide
 - [ADR-004](./docs/adrs/ADR-004-version-locking-enforcement.md) - Architecture decision record
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - Technical implementation details
 
 **Success Metrics:**
+
 - ✅ Zero version drift incidents
 - ✅ 100% validation pass rate
 - ✅ Reproducible builds (same input → same output)
@@ -895,13 +907,13 @@ steps:
 
 **Core Package Version Requirements:**
 
-| Package      | Exact Version | Status      | Change Policy                   |
-| ------------ | ------------- | ----------- | ------------------------------- |
-| next         | 15.5.6        | ⛔ LOCKED   | Requires team approval          |
-| react        | 19.2.0        | ⛔ LOCKED   | Requires team approval          |
-| react-dom    | 19.2.0        | ⛔ LOCKED   | Must match react version        |
-| typescript   | 5.9.3         | ⛔ LOCKED   | Requires team approval          |
-| Node.js      | 24.10.0       | ⛔ LOCKED   | Minimum 20.0.0, recommend 24.10.0 |
+| Package    | Exact Version | Status    | Change Policy                     |
+| ---------- | ------------- | --------- | --------------------------------- |
+| next       | 15.5.6        | ⛔ LOCKED | Requires team approval            |
+| react      | 19.2.0        | ⛔ LOCKED | Requires team approval            |
+| react-dom  | 19.2.0        | ⛔ LOCKED | Must match react version          |
+| typescript | 5.9.3         | ⛔ LOCKED | Requires team approval            |
+| Node.js    | 24.10.0       | ⛔ LOCKED | Minimum 20.0.0, recommend 24.10.0 |
 
 **Enforcement Mechanisms:**
 
@@ -937,6 +949,7 @@ npm run check-all          # Full quality check (includes version validation)
 **Version Update Process:**
 
 **Core Packages (Locked):**
+
 1. Create upgrade branch
 2. Get team approval
 3. Update to exact version: `npm install package@X.Y.Z`
@@ -946,22 +959,26 @@ npm run check-all          # Full quality check (includes version validation)
 7. Merge after code review
 
 **Non-Core Packages:**
+
 1. Update to exact version: `npm install package@X.Y.Z`
 2. Run validation: `npm run validate-versions && npm run check-all`
 3. Test thoroughly
 4. Commit with clear message
 
 **Security Exceptions:**
+
 - **CRITICAL/HIGH** vulnerabilities: Upgrade immediately (skip approval)
 - **MODERATE/LOW** vulnerabilities: Schedule for next sprint
 
 **Success Criteria:**
+
 - ✅ Zero version drift incidents across environments
 - ✅ 100% validation pass rate in CI/CD
 - ✅ Reproducible builds (identical results every time)
 - ✅ No debugging time wasted on version inconsistencies
 
 **Documentation:**
+
 - [VERSION-LOCK.md](./VERSION-LOCK.md) - Comprehensive guide
 - [ADR-004](./docs/adrs/ADR-004-version-locking-enforcement.md) - Architecture decision
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - Technical details
@@ -1468,10 +1485,10 @@ project-root/
 
 ### 15.3 Change Log
 
-| Version | Date       | Author      | Changes                                                                 |
-| ------- | ---------- | ----------- | ----------------------------------------------------------------------- |
+| Version | Date       | Author      | Changes                                                                                        |
+| ------- | ---------- | ----------- | ---------------------------------------------------------------------------------------------- |
 | 1.1.0   | 2025-10-28 | MADACE Team | Added version locking requirements (Section 3.3, 7.7), updated tech stack with LOCKED versions |
-| 1.0.0   | 2025-10-19 | MADACE Team | Initial comprehensive PRD                                               |
+| 1.0.0   | 2025-10-19 | MADACE Team | Initial comprehensive PRD                                                                      |
 
 ---
 

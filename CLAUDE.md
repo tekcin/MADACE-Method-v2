@@ -61,10 +61,10 @@ docker-compose down                           # Stop containers
 
 ```json
 {
-  "next": "15.5.6",      // LOCKED - NO upgrades without team approval
-  "react": "19.2.0",     // LOCKED - Must match react-dom
+  "next": "15.5.6", // LOCKED - NO upgrades without team approval
+  "react": "19.2.0", // LOCKED - Must match react-dom
   "react-dom": "19.2.0", // LOCKED - Must match react
-  "typescript": "5.9.3"  // LOCKED - Strict mode enabled
+  "typescript": "5.9.3" // LOCKED - Strict mode enabled
 }
 ```
 
@@ -85,6 +85,7 @@ npm run check-all          # Includes version validation + quality checks
 ```
 
 **The validation script checks:**
+
 - ✅ Next.js is exactly 15.5.6
 - ✅ React is exactly 19.2.0
 - ✅ React DOM is exactly 19.2.0
@@ -148,6 +149,7 @@ git commit -m "deps: update <package> to <version> - <reason>"
 ### When to Upgrade Core Packages
 
 **DO NOT upgrade unless:**
+
 - ✅ Critical security vulnerability
 - ✅ Team consensus on upgrade path
 - ✅ All tests pass with new version

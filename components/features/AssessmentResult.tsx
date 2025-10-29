@@ -40,9 +40,7 @@ export function AssessmentResult({
     <div className="space-y-6">
       {/* Result Card */}
       <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-8 dark:border-blue-700 dark:bg-blue-950">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Assessment Complete
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Assessment Complete</h2>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Based on your project characteristics
         </p>
@@ -114,9 +112,7 @@ export function AssessmentResult({
                       <span className="font-medium text-gray-700 dark:text-gray-300">
                         {labels[key]}
                       </span>
-                      <span className="font-medium text-gray-900 dark:text-white">
-                        {score}/5
-                      </span>
+                      <span className="font-medium text-gray-900 dark:text-white">{score}/5</span>
                     </div>
                     <div className="mt-1 h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
                       <div
@@ -148,12 +144,7 @@ export function AssessmentResult({
           onClick={onExportMarkdown}
           className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -169,12 +160,7 @@ export function AssessmentResult({
           onClick={onExportJSON}
           className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -190,12 +176,7 @@ export function AssessmentResult({
           onClick={onSaveToProject}
           className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
         >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

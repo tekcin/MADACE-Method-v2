@@ -78,7 +78,10 @@ describe('Scale Assessment Template', () => {
   describe('Template Rendering for All Levels', () => {
     it('should render Level 0 (Minimal) assessment', async () => {
       const result = createMockResult(ComplexityLevel.MINIMAL, 3);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('Project Complexity Assessment Report');
       expect(rendered).toContain('Level 0 - Minimal');
@@ -92,7 +95,10 @@ describe('Scale Assessment Template', () => {
 
     it('should render Level 1 (Basic) assessment', async () => {
       const result = createMockResult(ComplexityLevel.BASIC, 9);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('Project Complexity Assessment Report');
       expect(rendered).toContain('Level 1 - Basic');
@@ -106,7 +112,10 @@ describe('Scale Assessment Template', () => {
 
     it('should render Level 2 (Standard) assessment', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('Project Complexity Assessment Report');
       expect(rendered).toContain('Level 2 - Standard');
@@ -120,7 +129,10 @@ describe('Scale Assessment Template', () => {
 
     it('should render Level 3 (Comprehensive) assessment', async () => {
       const result = createMockResult(ComplexityLevel.COMPREHENSIVE, 25);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('Project Complexity Assessment Report');
       expect(rendered).toContain('Level 3 - Comprehensive');
@@ -134,7 +146,10 @@ describe('Scale Assessment Template', () => {
 
     it('should render Level 4 (Enterprise) assessment', async () => {
       const result = createMockResult(ComplexityLevel.ENTERPRISE, 35);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('Project Complexity Assessment Report');
       expect(rendered).toContain('Level 4 - Enterprise');
@@ -150,7 +165,10 @@ describe('Scale Assessment Template', () => {
   describe('Template Sections', () => {
     it('should include all required sections', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Check for all required sections
       expect(rendered).toContain('Executive Summary');
@@ -163,7 +181,10 @@ describe('Scale Assessment Template', () => {
 
     it('should include criteria breakdown table', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Check for all 8 criteria in the table
       expect(rendered).toContain('Project Size');
@@ -181,7 +202,10 @@ describe('Scale Assessment Template', () => {
 
     it('should include score distribution visualization', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('Score Distribution');
       expect(rendered).toContain('Minimal (0-5)');
@@ -195,14 +219,20 @@ describe('Scale Assessment Template', () => {
   describe('Helper Functions', () => {
     it('should use badge helper correctly', async () => {
       const result = createMockResult(ComplexityLevel.MINIMAL, 3);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('🟢'); // Green badge for Level 0
     });
 
     it('should use date helper correctly', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Should contain a formatted date (checking for year is safe)
       expect(rendered).toMatch(/\d{4}/); // Contains a year
@@ -210,7 +240,10 @@ describe('Scale Assessment Template', () => {
 
     it('should use comparison helpers correctly', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Should only show Standard level content, not others
       expect(rendered).toContain('Standard Complexity');
@@ -220,7 +253,10 @@ describe('Scale Assessment Template', () => {
 
     it('should use math helpers correctly', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Should calculate percentage: 16/40 = 40%
       expect(rendered).toContain('40%');
@@ -230,7 +266,10 @@ describe('Scale Assessment Template', () => {
   describe('Conditional Content', () => {
     it('should show appropriate content for Level 0', async () => {
       const result = createMockResult(ComplexityLevel.MINIMAL, 3);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Should show minimal planning content
       expect(rendered).toContain('Minimal Documentation');
@@ -245,7 +284,10 @@ describe('Scale Assessment Template', () => {
 
     it('should show appropriate content for Level 4', async () => {
       const result = createMockResult(ComplexityLevel.ENTERPRISE, 35);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Should show enterprise content
       expect(rendered).toContain('Comprehensive/Enterprise Documentation');
@@ -272,7 +314,10 @@ describe('Scale Assessment Template', () => {
         overriddenAt: new Date('2025-10-29T14:00:00Z'),
       };
 
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('Manual Override Applied');
       expect(rendered).toContain('Original Level: 3');
@@ -283,7 +328,10 @@ describe('Scale Assessment Template', () => {
 
     it('should not display override section when no override', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).not.toContain('Manual Override Applied');
       expect(rendered).toContain('Override Applied: No');
@@ -293,7 +341,10 @@ describe('Scale Assessment Template', () => {
   describe('Edge Cases', () => {
     it('should handle minimum score (0 points)', async () => {
       const result = createMockResult(ComplexityLevel.MINIMAL, 0);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('0/40 points');
       expect(rendered).toContain('Level 0 - Minimal');
@@ -302,7 +353,10 @@ describe('Scale Assessment Template', () => {
 
     it('should handle maximum score (40 points)', async () => {
       const result = createMockResult(ComplexityLevel.ENTERPRISE, 40);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       expect(rendered).toContain('40/40 points');
       expect(rendered).toContain('Level 4 - Enterprise');
@@ -325,7 +379,10 @@ describe('Scale Assessment Template', () => {
 
       for (const boundary of boundaries) {
         const result = createMockResult(boundary.level, boundary.score);
-        const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+        const rendered = await engine.renderFile(
+          templatePath,
+          result as unknown as Record<string, unknown>
+        );
 
         expect(rendered).toContain(`${boundary.score}/40 points`);
         expect(rendered).toContain(`Level ${boundary.level}`);
@@ -346,7 +403,10 @@ describe('Scale Assessment Template', () => {
         existingCode: 2,
       };
 
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Should show warnings for high-scoring criteria
       expect(rendered).toContain('High Scoring Criteria');
@@ -388,7 +448,10 @@ describe('Scale Assessment Template', () => {
   describe('Output Quality', () => {
     it('should produce valid Markdown', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Check for Markdown formatting
       expect(rendered).toMatch(/^#\s/m); // Starts with header
@@ -401,7 +464,10 @@ describe('Scale Assessment Template', () => {
 
     it('should have no template syntax left in output', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Should not contain any unprocessed Handlebars syntax
       expect(rendered).not.toContain('{{');
@@ -412,7 +478,10 @@ describe('Scale Assessment Template', () => {
 
     it('should produce consistent line breaks', async () => {
       const result = createMockResult(ComplexityLevel.STANDARD, 16);
-      const rendered = await engine.renderFile(templatePath, result as unknown as Record<string, unknown>);
+      const rendered = await engine.renderFile(
+        templatePath,
+        result as unknown as Record<string, unknown>
+      );
 
       // Should not have excessive blank lines
       expect(rendered).not.toMatch(/\n{5,}/); // No more than 4 consecutive newlines

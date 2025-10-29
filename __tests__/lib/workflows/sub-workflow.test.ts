@@ -155,9 +155,7 @@ describe('Sub-Workflow Execution', () => {
           description: 'Running',
           agent: 'pm',
           phase: 1,
-          steps: [
-            { name: 'Step 1', action: 'guide' as const, prompt: 'Do something' },
-          ],
+          steps: [{ name: 'Step 1', action: 'guide' as const, prompt: 'Do something' }],
         },
       };
 

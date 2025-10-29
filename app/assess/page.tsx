@@ -85,9 +85,7 @@ export default function AssessPage() {
       // TODO: Implement API endpoint to save to madace-data/docs/scale-assessment.md
       // For now, just download it
       handleExportMarkdown();
-      alert(
-        'Assessment saved! (Note: Server-side save not yet implemented, downloaded instead)'
-      );
+      alert('Assessment saved! (Note: Server-side save not yet implemented, downloaded instead)');
     } catch (error) {
       console.error('Failed to save assessment:', error);
       alert('Failed to save assessment to project');

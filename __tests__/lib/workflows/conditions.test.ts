@@ -32,10 +32,10 @@ describe('Workflow Condition Evaluator', () => {
       });
 
       it('should substitute multiple variables', () => {
-        const result = evaluateCondition(
-          '${LEVEL} === 0 && {{MODE}} === "test"',
-          { LEVEL: 0, MODE: 'test' }
-        );
+        const result = evaluateCondition('${LEVEL} === 0 && {{MODE}} === "test"', {
+          LEVEL: 0,
+          MODE: 'test',
+        });
         expect(result).toBe(true);
       });
 
@@ -62,9 +62,13 @@ describe('Workflow Condition Evaluator', () => {
       });
 
       it('should handle undefined values in non-strict mode', () => {
-        const result = evaluateCondition('${VALUE} === undefined', { VALUE: undefined }, {
-          strictMode: false,
-        });
+        const result = evaluateCondition(
+          '${VALUE} === undefined',
+          { VALUE: undefined },
+          {
+            strictMode: false,
+          }
+        );
         expect(result).toBe(true);
       });
 
@@ -139,12 +143,10 @@ describe('Workflow Condition Evaluator', () => {
       });
 
       it('should evaluate complex boolean expressions', () => {
-        expect(
-          evaluateCondition('(${C} > 5 && ${D} < 10) || ${A} === true', variables)
-        ).toBe(true);
-        expect(
-          evaluateCondition('${C} > 15 || (${D} === 5 && ${B} === false)', variables)
-        ).toBe(true);
+        expect(evaluateCondition('(${C} > 5 && ${D} < 10) || ${A} === true', variables)).toBe(true);
+        expect(evaluateCondition('${C} > 15 || (${D} === 5 && ${B} === false)', variables)).toBe(
+          true
+        );
         expect(evaluateCondition('!(${A} === true && ${B} === true)', variables)).toBe(true);
       });
     });
@@ -205,10 +207,14 @@ describe('Workflow Condition Evaluator', () => {
       });
 
       it('should return false instead of throwing when throwOnError=false', () => {
-        const result = evaluateCondition('${MISSING} === 0', {}, {
-          throwOnError: false,
-          strictMode: true,
-        });
+        const result = evaluateCondition(
+          '${MISSING} === 0',
+          {},
+          {
+            throwOnError: false,
+            strictMode: true,
+          }
+        );
         expect(result).toBe(false);
       });
 
@@ -338,7 +344,7 @@ describe('Workflow Condition Evaluator', () => {
 
     it('should format strings with quotes', () => {
       const result = substituteVariables('${NAME} === "test"', { NAME: 'test' });
-      expect(result).toBe("'test' === \"test\"");
+      expect(result).toBe('\'test\' === "test"');
     });
 
     it('should format booleans', () => {
@@ -509,10 +515,11 @@ describe('Workflow Condition Evaluator', () => {
     });
 
     it('should handle complex nested parentheses', () => {
-      const result = evaluateCondition(
-        '((${A} > 5) && (${B} < 10)) || (${C} === 20)',
-        { A: 10, B: 5, C: 20 }
-      );
+      const result = evaluateCondition('((${A} > 5) && (${B} < 10)) || (${C} === 20)', {
+        A: 10,
+        B: 5,
+        C: 20,
+      });
       expect(result).toBe(true);
     });
 
@@ -553,9 +560,9 @@ describe('Workflow Condition Evaluator', () => {
       expect(evaluateCondition('${TEAM_SIZE} > 5', workflowState)).toBe(true);
       expect(evaluateCondition('${SECURITY} === "high"', workflowState)).toBe(true);
       expect(evaluateCondition('${EXISTING_CODEBASE} === true', workflowState)).toBe(true);
-      expect(
-        evaluateCondition('${LEVEL} >= 2 && ${SECURITY} === "high"', workflowState)
-      ).toBe(true);
+      expect(evaluateCondition('${LEVEL} >= 2 && ${SECURITY} === "high"', workflowState)).toBe(
+        true
+      );
       expect(evaluateCondition('${USER_CHOICE} === "proceed"', workflowState)).toBe(true);
     });
 

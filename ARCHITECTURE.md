@@ -196,9 +196,9 @@ const agent = AgentSchema.parse(untrustedData);
 
 ```json
 {
-  "next": "15.5.6",       // ✅ Exact - no ^, ~, >=
-  "react": "19.2.0",      // ✅ Exact
-  "typescript": "5.9.3"   // ✅ Exact
+  "next": "15.5.6", // ✅ Exact - no ^, ~, >=
+  "react": "19.2.0", // ✅ Exact
+  "typescript": "5.9.3" // ✅ Exact
 }
 ```
 
@@ -241,28 +241,28 @@ See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)
 
 ### Core Stack (FROZEN for v2.0-alpha)
 
-| Component | Version | Status | Notes |
-|-----------|---------|--------|-------|
-| **Next.js** | 15.5.6 | ⛔ LOCKED | App Router, Server Components |
-| **React** | 19.2.0 | ⛔ LOCKED | Must match react-dom |
-| **React DOM** | 19.2.0 | ⛔ LOCKED | Must match react |
-| **TypeScript** | 5.9.3 | ⛔ LOCKED | Strict mode enabled |
-| **Node.js** | 24.10.0 | 🔒 Recommended | Minimum: 20.0.0 |
-| **npm** | 10.x | 🔒 Recommended | Minimum: 9.0.0 |
+| Component      | Version | Status         | Notes                         |
+| -------------- | ------- | -------------- | ----------------------------- |
+| **Next.js**    | 15.5.6  | ⛔ LOCKED      | App Router, Server Components |
+| **React**      | 19.2.0  | ⛔ LOCKED      | Must match react-dom          |
+| **React DOM**  | 19.2.0  | ⛔ LOCKED      | Must match react              |
+| **TypeScript** | 5.9.3   | ⛔ LOCKED      | Strict mode enabled           |
+| **Node.js**    | 24.10.0 | 🔒 Recommended | Minimum: 20.0.0               |
+| **npm**        | 10.x    | 🔒 Recommended | Minimum: 9.0.0                |
 
 ### Key Libraries
 
-| Library | Version | Purpose |
-|---------|---------|---------|
-| **Zod** | 4.1.12 | Runtime validation |
-| **js-yaml** | 4.1.0 | YAML parsing |
-| **Handlebars** | 4.7.8 | Template engine |
-| **Tailwind CSS** | 4.1.15 | Styling |
-| **Heroicons** | 2.2.0 | UI icons |
-| **Socket.io** | 4.8.1 | WebSocket (real-time sync) |
-| **Prisma** | 6.17.1 | Database ORM |
-| **Jest** | 30.2.0 | Testing |
-| **Playwright** | 1.56.1 | E2E testing |
+| Library          | Version | Purpose                    |
+| ---------------- | ------- | -------------------------- |
+| **Zod**          | 4.1.12  | Runtime validation         |
+| **js-yaml**      | 4.1.0   | YAML parsing               |
+| **Handlebars**   | 4.7.8   | Template engine            |
+| **Tailwind CSS** | 4.1.15  | Styling                    |
+| **Heroicons**    | 2.2.0   | UI icons                   |
+| **Socket.io**    | 4.8.1   | WebSocket (real-time sync) |
+| **Prisma**       | 6.17.1  | Database ORM               |
+| **Jest**         | 30.2.0  | Testing                    |
+| **Playwright**   | 1.56.1  | E2E testing                |
 
 **ALL versions are exact (no ranges).** See [VERSION-LOCK.md](./VERSION-LOCK.md)
 
@@ -316,6 +316,7 @@ Agent System
 ```
 
 **Key Patterns:**
+
 - ✅ Singleton with caching
 - ✅ Factory functions
 - ✅ Custom error types
@@ -353,6 +354,7 @@ Workflow Engine
 ```
 
 **State Persistence:**
+
 - Format: `.{workflow-name}.state.json`
 - Location: `madace-data/workflow-states/`
 - Atomic updates with validation
@@ -426,6 +428,7 @@ LLM Client
 ```
 
 **Features:**
+
 - ✅ Strategy pattern for providers
 - ✅ Streaming support (AsyncGenerator)
 - ✅ Rate limiting
@@ -469,6 +472,7 @@ Template Engine
 ```
 
 **Pattern Support:**
+
 - Primary: `{{variable}}`
 - Legacy: `{variable}`, `${variable}`, `%VARIABLE%`
 
@@ -500,6 +504,7 @@ Configuration Manager
 ```
 
 **Detection Priority:**
+
 1. `./madace/core/config.yaml` (standard)
 2. `./madace/config.yaml` (simplified)
 3. `./config.yaml` (fallback)
@@ -568,14 +573,14 @@ Configuration Manager
 
 ### Testing Strategy
 
-| Test Type | Framework | Coverage | Status |
-|-----------|-----------|----------|--------|
-| **Unit Tests** | Jest 30.2.0 | 85-90% | ✅ Passing |
-| **Integration Tests** | Jest | Core modules | ✅ Passing |
-| **E2E Tests** | Playwright 1.56.1 | Critical paths | ⚠️  In Progress |
-| **Type Checking** | TypeScript 5.9.3 | 100% | ✅ Passing |
-| **Linting** | ESLint 9.38.0 | 100% | ✅ Passing |
-| **Formatting** | Prettier 3.6.2 | 100% | ✅ Passing |
+| Test Type             | Framework         | Coverage       | Status         |
+| --------------------- | ----------------- | -------------- | -------------- |
+| **Unit Tests**        | Jest 30.2.0       | 85-90%         | ✅ Passing     |
+| **Integration Tests** | Jest              | Core modules   | ✅ Passing     |
+| **E2E Tests**         | Playwright 1.56.1 | Critical paths | ⚠️ In Progress |
+| **Type Checking**     | TypeScript 5.9.3  | 100%           | ✅ Passing     |
+| **Linting**           | ESLint 9.38.0     | 100%           | ✅ Passing     |
+| **Formatting**        | Prettier 3.6.2    | 100%           | ✅ Passing     |
 
 ---
 
@@ -618,6 +623,7 @@ EXPOSE 8080 8081 3000
 
 **Size:** ~2-3GB (includes IDEs)
 **Features:**
+
 - VSCode Server (http://localhost:8080)
 - Cursor IDE (http://localhost:8081)
 - Hot reload
@@ -625,13 +631,13 @@ EXPOSE 8080 8081 3000
 
 ### Deployment Options
 
-| Option | Best For | Complexity | Cost |
-|--------|----------|------------|------|
-| **Docker** | Self-hosted | Low | Free |
-| **Vercel** | Quick deploy | Very Low | Free tier |
-| **Railway** | Hobby projects | Low | $5/month |
-| **AWS ECS** | Enterprise | Medium | Variable |
-| **Kubernetes** | Large scale | High | Variable |
+| Option         | Best For       | Complexity | Cost      |
+| -------------- | -------------- | ---------- | --------- |
+| **Docker**     | Self-hosted    | Low        | Free      |
+| **Vercel**     | Quick deploy   | Very Low   | Free tier |
+| **Railway**    | Hobby projects | Low        | $5/month  |
+| **AWS ECS**    | Enterprise     | Medium     | Variable  |
+| **Kubernetes** | Large scale    | High       | Variable  |
 
 **Recommended:** Docker Compose (see [docker-compose.yml](./docker-compose.yml))
 
@@ -647,15 +653,15 @@ EXPOSE 8080 8081 3000
 
 ### Component Scores
 
-| Component | Score | Status | Notes |
-|-----------|-------|--------|-------|
-| **Agent System** | 95% | ✅ Excellent | Singleton pattern, caching, error handling |
-| **Workflow Engine** | 90% | ✅ Compliant | Template stubs pending |
-| **State Machine** | 98% | ✅ Excellent | Enforces MADACE rules perfectly |
-| **LLM Client** | 93% | ✅ Excellent | Claude provider needs completion |
-| **Config Manager** | 97% | ✅ Excellent | Official MADACE error codes |
-| **Template Engine** | 97% | ✅ Excellent | 40+ helpers, legacy support |
-| **API Routes** | 90% | ✅ Compliant | RESTful design |
+| Component           | Score | Status       | Notes                                      |
+| ------------------- | ----- | ------------ | ------------------------------------------ |
+| **Agent System**    | 95%   | ✅ Excellent | Singleton pattern, caching, error handling |
+| **Workflow Engine** | 90%   | ✅ Compliant | Template stubs pending                     |
+| **State Machine**   | 98%   | ✅ Excellent | Enforces MADACE rules perfectly            |
+| **LLM Client**      | 93%   | ✅ Excellent | Claude provider needs completion           |
+| **Config Manager**  | 97%   | ✅ Excellent | Official MADACE error codes                |
+| **Template Engine** | 97%   | ✅ Excellent | 40+ helpers, legacy support                |
+| **API Routes**      | 90%   | ✅ Compliant | RESTful design                             |
 
 ### MADACE Patterns Implemented
 
@@ -725,14 +731,14 @@ See full [MADACE Compliance Audit Report](./docs/MADACE-COMPLIANCE-AUDIT.md)
 
 ### Performance Characteristics
 
-| Operation | Time | Acceptable? |
-|-----------|------|-------------|
-| **Agent Load** | ~1-2ms | ✅ Excellent |
-| **YAML Parse** | ~1ms | ✅ Excellent |
-| **State Machine Read** | ~5ms | ✅ Good |
-| **Template Render** | ~10ms | ✅ Good |
-| **Workflow Step** | ~50-100ms | ✅ Good |
-| **LLM Call** | 1-10s | ✅ Expected |
+| Operation              | Time      | Acceptable?  |
+| ---------------------- | --------- | ------------ |
+| **Agent Load**         | ~1-2ms    | ✅ Excellent |
+| **YAML Parse**         | ~1ms      | ✅ Excellent |
+| **State Machine Read** | ~5ms      | ✅ Good      |
+| **Template Render**    | ~10ms     | ✅ Good      |
+| **Workflow Step**      | ~50-100ms | ✅ Good      |
+| **LLM Call**           | 1-10s     | ✅ Expected  |
 
 ### Optimization Strategies
 

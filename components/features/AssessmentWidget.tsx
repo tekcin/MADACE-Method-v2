@@ -68,7 +68,8 @@ export function AssessmentWidget({ assessment, manualOverride, onOverrideChange 
             {levelNames[effectiveLevel]}
           </div>
           <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Score: {assessment.totalScore}/40 points ({Math.round((assessment.totalScore / 40) * 100)}%)
+            Score: {assessment.totalScore}/40 points (
+            {Math.round((assessment.totalScore / 40) * 100)}%)
           </div>
           <div className="mt-2">
             <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
@@ -96,9 +97,11 @@ export function AssessmentWidget({ assessment, manualOverride, onOverrideChange 
             const value = e.target.value;
             onOverrideChange(value === '' ? null : Number(value));
           }}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white"
         >
-          <option value="">Use recommended (Level {assessment.level} - {levelNames[assessment.level]})</option>
+          <option value="">
+            Use recommended (Level {assessment.level} - {levelNames[assessment.level]})
+          </option>
           <option value="0">Level 0 - Minimal (Simple projects)</option>
           <option value="1">Level 1 - Basic (Small teams)</option>
           <option value="2">Level 2 - Standard (Medium projects)</option>

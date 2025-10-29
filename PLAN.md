@@ -57,6 +57,7 @@
   -  Alpha release preparation
 
 **Success Criteria:**
+
 - 10+ alpha testers
 - 3+ complete MVP builds
 - Core architecture validated
@@ -67,6 +68,7 @@
 **Goal:** Feature completeness and production readiness
 
 **Deliverables:**
+
 - All MAM agents and workflows
 - MAB and CIS modules
 - Sub-workflow support
@@ -78,6 +80,7 @@
 **Goal:** Production release and ecosystem launch
 
 **Deliverables:**
+
 - Multi-user collaboration
 - External integrations (GitHub, Jira)
 - Module marketplace
@@ -322,22 +325,26 @@ Production Deployment (100% reproducible)
 ### Layer Details
 
 **Layer 1: Pre-Install Prevention**
+
 - `.npmrc` with `save-exact=true` - Forces exact versions
 - `.nvmrc` with `24.10.0` - Locks Node.js version
 - Automatic enforcement by npm
 
 **Layer 2: Post-Install Validation**
+
 - `scripts/validate-versions.js` - Validates all versions
 - Checks core packages: Next.js, React, TypeScript
 - Detects version ranges in package.json
 - Verifies installed vs declared versions
 
 **Layer 3: Pre-Commit Quality Gates**
+
 - `npm run check-all` - Includes version validation
 - Blocks commits with wrong versions
 - Developer discipline enforced
 
 **Layer 4: CI/CD Validation**
+
 - GitHub Actions runs validation
 - Uses `npm ci` (lockfile-based)
 - Blocks merge on failure
@@ -380,17 +387,20 @@ npm run check-all && npm run build && npm test
 ### Code Quality Standards
 
 **TypeScript:**
+
 - Strict mode enabled (`tsconfig.json`)
 - No `any` types without justification
 - Zod schemas for runtime validation
 - Type inference with `z.infer<typeof Schema>`
 
 **ESLint:**
+
 - Next.js recommended config
 - Prettier integration
 - No console.log in production code (use proper logging)
 
 **Prettier:**
+
 - Consistent code formatting
 - Tailwind CSS plugin for class sorting
 - Enforce before commits
@@ -404,6 +414,7 @@ npm run check-all
 ```
 
 This runs:
+
 1. `validate-versions` - Version enforcement
 2. `type-check` - TypeScript validation (no emit)
 3. `lint` - ESLint validation
@@ -426,11 +437,13 @@ All must pass 
 > Tests define the contract. Implementation must conform to tests, NOT the other way around.
 >
 > **When tests fail:**
+>
 > - ✅ Write detailed failure report
 > - ✅ Create todo list for fixes
 > - ✅ Fix IMPLEMENTATION code
 >
 > **NEVER:**
+>
 > - ❌ Modify test scripts to make them pass
 > - ❌ Alter test procedures or assertions
 > - ❌ Comment out or skip failing tests
@@ -438,18 +451,21 @@ All must pass 
 > See [TESTING-POLICY.md](./TESTING-POLICY.md) for complete policy.
 
 **Unit Tests:**
+
 - Location: `__tests__/lib/**/*.test.ts`
 - Framework: Jest with ts-jest
 - Coverage target: 80%+
 - **Policy:** Tests are IMMUTABLE - only add new tests, never modify existing ones
 
 **Integration Tests:**
+
 - Location: `__tests__/app/api/**/*.test.ts`
 - Test API routes end-to-end
 - Mock external dependencies (LLM, fs)
 - **Policy:** Tests define API contract - implementation must conform
 
 **E2E Tests:**
+
 - Framework: Playwright (planned)
 - Test critical user flows
 - Run before major releases
@@ -489,6 +505,7 @@ npm run test:coverage   # Coverage report
 **Test Modification (Exceptions Only):**
 
 Tests can ONLY be modified if:
+
 1. Requirements officially changed (documented in ADR)
 2. Test was objectively wrong (documented in ADR)
 3. Adding NEW tests (not modifying existing ones)
@@ -502,6 +519,7 @@ All test modifications require ADR justification.
 ### PR Requirements
 
 **Before Creating PR:**
+
 -  All quality checks pass (`npm run check-all`)
 -  Build succeeds (`npm run build`)
 -  Tests pass (`npm test`)
@@ -513,29 +531,35 @@ All test modifications require ADR justification.
 
 ```markdown
 ## Summary
+
 Brief description of changes
 
 ## Changes
+
 - Bullet point list of changes
 - Link to related issues
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] Manual testing completed
 - [ ] All quality checks pass
 
 ## Version Validation
+
 - [ ] `npm run validate-versions` passes
 - [ ] No version ranges in package.json
 - [ ] Core packages unchanged (or approved)
 
 ## Documentation
+
 - [ ] CLAUDE.md updated (if needed)
 - [ ] README.md updated (if needed)
 - [ ] ADR created (if architectural change)
 
 ## Screenshots/Videos
+
 (if UI changes)
 ```
 
@@ -556,15 +580,18 @@ Brief description of changes
 ### Approval Process
 
 **Small Changes** (bug fixes, docs):
+
 - 1 approval required
 - Can merge after CI passes
 
 **Medium Changes** (features, refactors):
+
 - 1-2 approvals required
 - Must pass all quality checks
 - Version validation must pass
 
 **Large Changes** (architecture, core packages):
+
 - 2+ approvals required
 - Team discussion required
 - ADR created and approved
@@ -646,13 +673,13 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version-file: '.nvmrc'  # 24.10.0
+          node-version-file: '.nvmrc' # 24.10.0
 
       - name: Install dependencies
-        run: npm ci  # Uses package-lock.json
+        run: npm ci # Uses package-lock.json
 
       - name: Validate versions
-        run: npm run validate-versions  # CRITICAL
+        run: npm run validate-versions # CRITICAL
 
       - name: Quality checks
         run: npm run check-all
@@ -691,6 +718,7 @@ jobs:
 ### Sprint Goals
 
 **Week 1 (Oct 20-26):**  **COMPLETED**
+
 - Architecture simplification
 - Next.js initialization
 - Setup wizard
@@ -698,18 +726,21 @@ jobs:
 - Docker deployment
 
 **Week 2 (Oct 27 - Nov 2):** **CURRENT**
+
 - Configuration persistence
 - Settings page
 - Workflow engine
 - State machine
 
 **Week 3 (Nov 3-9):**
+
 - Template engine
 - LLM integration completion
 - API routes completion
 - E2E testing
 
 **Week 4 (Nov 10-16):**
+
 - Documentation
 - Bug fixes
 - Performance optimization
@@ -718,12 +749,14 @@ jobs:
 ### Story Workflow
 
 **States:**
+
 - **BACKLOG** - Ordered list of stories
 - **TODO** - Single story ready for drafting
 - **IN PROGRESS** - Single story being implemented
 - **DONE** - Completed stories
 
 **Rules:**
+
 - Only ONE story in TODO at a time
 - Only ONE story in IN PROGRESS at a time
 - State machine enforces rules automatically

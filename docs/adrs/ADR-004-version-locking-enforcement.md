@@ -24,6 +24,7 @@ MADACE-Method v2.0 is built on a specific tech stack (Next.js 15.5.6, React 19.2
 ## Decision Drivers
 
 ### Must-Have Requirements:
+
 - ✅ **Consistency** - Same versions everywhere (dev, CI/CD, prod)
 - ✅ **Reproducibility** - Builds must be identical
 - ✅ **No Surprises** - Version updates must be intentional
@@ -31,6 +32,7 @@ MADACE-Method v2.0 is built on a specific tech stack (Next.js 15.5.6, React 19.2
 - ✅ **Clear Rules** - Developers know what's allowed
 
 ### Nice-to-Have:
+
 - Documentation of why certain versions are locked
 - Upgrade path when needed
 - Security vulnerability handling process
@@ -43,18 +45,20 @@ MADACE-Method v2.0 is built on a specific tech stack (Next.js 15.5.6, React 19.2
 
 ```json
 {
-  "next": "^15.5.6",      // Can install 15.6.0, 15.7.0, etc.
-  "react": "~19.2.0",     // Can install 19.2.1, 19.2.2, etc.
+  "next": "^15.5.6", // Can install 15.6.0, 15.7.0, etc.
+  "react": "~19.2.0", // Can install 19.2.1, 19.2.2, etc.
   "typescript": ">=5.9.0" // Can install any 5.9.x or higher
 }
 ```
 
 **Pros:**
+
 - Get bug fixes automatically
 - Stay "up to date"
 - Common npm practice
 
 **Cons:**
+
 - ❌ Unpredictable builds - Different versions across team
 - ❌ Breaking changes can sneak in
 - ❌ Hard to debug version-specific issues
@@ -66,17 +70,19 @@ MADACE-Method v2.0 is built on a specific tech stack (Next.js 15.5.6, React 19.2
 
 ```json
 {
-  "next": "15.5.6",       // Exact version
-  "react": "^19.2.0",     // But ranges for other packages
-  "some-lib": "~2.1.0"    // Mixed approach
+  "next": "15.5.6", // Exact version
+  "react": "^19.2.0", // But ranges for other packages
+  "some-lib": "~2.1.0" // Mixed approach
 }
 ```
 
 **Pros:**
+
 - Core packages locked
 - Flexibility for less critical packages
 
 **Cons:**
+
 - ❌ Still has version drift problem
 - ❌ Inconsistent strategy - confusing
 - ❌ Hard to validate
@@ -87,15 +93,16 @@ MADACE-Method v2.0 is built on a specific tech stack (Next.js 15.5.6, React 19.2
 
 ```json
 {
-  "next": "15.5.6",       // Exact - no range operators
-  "react": "19.2.0",      // Exact - no range operators
-  "react-dom": "19.2.0",  // Exact - no range operators
-  "typescript": "5.9.3",  // Exact - no range operators
-  "zod": "4.1.12"         // Exact - ALL packages
+  "next": "15.5.6", // Exact - no range operators
+  "react": "19.2.0", // Exact - no range operators
+  "react-dom": "19.2.0", // Exact - no range operators
+  "typescript": "5.9.3", // Exact - no range operators
+  "zod": "4.1.12" // Exact - ALL packages
 }
 ```
 
 **Pros:**
+
 - ✅ 100% reproducible builds
 - ✅ Same versions everywhere
 - ✅ Intentional upgrades only
@@ -103,6 +110,7 @@ MADACE-Method v2.0 is built on a specific tech stack (Next.js 15.5.6, React 19.2
 - ✅ Debuggable - same foundation
 
 **Cons:**
+
 - Need manual upgrades (but that's a GOOD thing)
 - Requires discipline (but automation helps)
 
@@ -119,13 +127,13 @@ MADACE-Method v2.0 is built on a specific tech stack (Next.js 15.5.6, React 19.2
 ```json
 {
   "dependencies": {
-    "next": "15.5.6",      // ✅ Exact
-    "react": "19.2.0",     // ✅ Exact
-    "zod": "4.1.12"        // ✅ Exact
+    "next": "15.5.6", // ✅ Exact
+    "react": "19.2.0", // ✅ Exact
+    "zod": "4.1.12" // ✅ Exact
   },
   "devDependencies": {
     "typescript": "5.9.3", // ✅ Exact
-    "prettier": "3.6.2"    // ✅ Exact
+    "prettier": "3.6.2" // ✅ Exact
   }
 }
 ```
@@ -134,12 +142,12 @@ MADACE-Method v2.0 is built on a specific tech stack (Next.js 15.5.6, React 19.2
 
 These versions are **FROZEN** and require team approval to change:
 
-| Package | Version | Status |
-|---------|---------|--------|
-| **next** | 15.5.6 | ⛔ LOCKED |
-| **react** | 19.2.0 | ⛔ LOCKED |
-| **react-dom** | 19.2.0 | ⛔ LOCKED |
-| **typescript** | 5.9.3 | ⛔ LOCKED |
+| Package        | Version | Status    |
+| -------------- | ------- | --------- |
+| **next**       | 15.5.6  | ⛔ LOCKED |
+| **react**      | 19.2.0  | ⛔ LOCKED |
+| **react-dom**  | 19.2.0  | ⛔ LOCKED |
+| **typescript** | 5.9.3   | ⛔ LOCKED |
 
 **Rationale:** These form the foundation. Changes have wide-reaching impact.
 
@@ -152,12 +160,12 @@ These versions are **FROZEN** and require team approval to change:
 ```json
 {
   "dependencies": {
-    "next": "15.5.6",           // NO ^, ~, >=, <=, >, <
+    "next": "15.5.6", // NO ^, ~, >=, <=, >, <
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "engines": {
-    "node": ">=20.0.0",         // Minimum requirement
+    "node": ">=20.0.0", // Minimum requirement
     "npm": ">=9.0.0"
   }
 }
@@ -180,6 +188,7 @@ audit=true
 ```
 
 **Effect:**
+
 ```bash
 # Before .npmrc
 npm install some-package
@@ -197,6 +206,7 @@ npm install some-package
 ```
 
 **Usage:**
+
 ```bash
 nvm use    # Auto-switches to Node.js 24.10.0
 fnm use    # Also works with fnm
@@ -207,12 +217,14 @@ fnm use    # Also works with fnm
 **File:** `scripts/validate-versions.js`
 
 **Checks:**
+
 1. ✅ Core packages are exact versions
 2. ✅ No version ranges in package.json
 3. ✅ Installed versions match package.json
 4. ✅ Node.js version meets requirements
 
 **Integration:**
+
 ```json
 {
   "scripts": {
@@ -232,10 +244,10 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version-file: '.nvmrc'  # Uses exact version
+          node-version-file: '.nvmrc' # Uses exact version
 
       - name: Install exact versions
-        run: npm ci  # Uses package-lock.json
+        run: npm ci # Uses package-lock.json
 
       - name: Validate versions
         run: npm run validate-versions
@@ -421,6 +433,7 @@ npm ci
 ### Risk 1: Missing Security Updates
 
 **Mitigation:**
+
 - Run `npm audit` regularly (weekly)
 - Critical/High vulnerabilities get immediate attention
 - Security is the ONE exception to approval process
@@ -428,6 +441,7 @@ npm ci
 ### Risk 2: Developer Friction
 
 **Mitigation:**
+
 - Automated validation catches mistakes early
 - Clear documentation explains "why"
 - Upgrade process is well-documented
@@ -436,6 +450,7 @@ npm ci
 ### Risk 3: Falling Behind
 
 **Mitigation:**
+
 - Core packages reviewed quarterly
 - Non-core packages upgraded as needed
 - Security updates prioritized
@@ -554,11 +569,13 @@ In software development, **reproducibility is a superpower**:
 ### The Trade-off
 
 Yes, we give up:
+
 - Automatic bug fixes
 - "Latest and greatest" bragging rights
 - Some automation convenience
 
 But we gain:
+
 - **Predictability**
 - **Reliability**
 - **Debuggability**
@@ -593,6 +610,7 @@ Like ADR-003's "boring architecture" philosophy, version locking is **intentiona
 ### Quarterly Review
 
 Every 3 months:
+
 1. Review core package versions
 2. Check for security updates
 3. Evaluate new features in updates
@@ -602,6 +620,7 @@ Every 3 months:
 ### Emergency Upgrades
 
 Critical security vulnerabilities:
+
 1. Upgrade immediately
 2. Skip approval process
 3. Document in commit message

@@ -21,10 +21,10 @@ This document explains the version locking strategy for MADACE-Method v2.0 and w
 
 ```json
 {
-  "next": "15.5.6",      // ⛔ LOCKED - NO changes
-  "react": "19.2.0",     // ⛔ LOCKED - NO changes
+  "next": "15.5.6", // ⛔ LOCKED - NO changes
+  "react": "19.2.0", // ⛔ LOCKED - NO changes
   "react-dom": "19.2.0", // ⛔ LOCKED - NO changes
-  "typescript": "5.9.3"  // ⛔ LOCKED - NO changes
+  "typescript": "5.9.3" // ⛔ LOCKED - NO changes
 }
 ```
 
@@ -32,12 +32,13 @@ This document explains the version locking strategy for MADACE-Method v2.0 and w
 
 ```json
 {
-  "node": ">=20.0.0",    // Minimum: 20.0.0
-  "npm": ">=9.0.0"       // Minimum: 9.0.0
+  "node": ">=20.0.0", // Minimum: 20.0.0
+  "npm": ">=9.0.0" // Minimum: 9.0.0
 }
 ```
 
 **Recommended versions:**
+
 - **Node.js**: 24.10.0 (locked in `.nvmrc`)
 - **npm**: 10.x or higher
 
@@ -63,6 +64,7 @@ This document explains the version locking strategy for MADACE-Method v2.0 and w
 ```
 
 **With exact versions:**
+
 ```bash
 # Everyone
 "next": "15.5.6"  → installs 15.5.6
@@ -108,20 +110,21 @@ All dependencies use exact versions (no `^`, `~`, `>`, `<`):
 ```json
 {
   "dependencies": {
-    "next": "15.5.6",           // ✅ Exact
-    "react": "19.2.0",          // ✅ Exact
-    "zod": "4.1.12"             // ✅ Exact
+    "next": "15.5.6", // ✅ Exact
+    "react": "19.2.0", // ✅ Exact
+    "zod": "4.1.12" // ✅ Exact
   }
 }
 ```
 
 ❌ **Invalid:**
+
 ```json
 {
   "dependencies": {
-    "next": "^15.5.6",    // ❌ Range operator
-    "react": "~19.2.0",   // ❌ Range operator
-    "zod": ">=4.0.0"      // ❌ Range operator
+    "next": "^15.5.6", // ❌ Range operator
+    "react": "~19.2.0", // ❌ Range operator
+    "zod": ">=4.0.0" // ❌ Range operator
   }
 }
 ```
@@ -140,6 +143,7 @@ package-lock=true
 ```
 
 **Effect:**
+
 ```bash
 # Before .npmrc
 npm install some-package
@@ -157,6 +161,7 @@ npm install some-package
 ```
 
 **Usage:**
+
 ```bash
 # With nvm
 nvm use           # Switches to 24.10.0
@@ -190,6 +195,7 @@ With `engine-strict=true` in `.npmrc`, npm will **refuse to install** if you're 
 **Location:** `scripts/validate-versions.js`
 
 **What it checks:**
+
 1. ✅ Next.js version is exactly 15.5.6
 2. ✅ React version is exactly 19.2.0
 3. ✅ React DOM version is exactly 19.2.0
@@ -273,13 +279,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version-file: '.nvmrc'  # Uses 24.10.0
+          node-version-file: '.nvmrc' # Uses 24.10.0
 
       - name: Install dependencies
-        run: npm ci  # Uses exact versions from package-lock.json
+        run: npm ci # Uses exact versions from package-lock.json
 
       - name: Validate versions
-        run: npm run validate-versions  # Enforces version lock
+        run: npm run validate-versions # Enforces version lock
 
       - name: Run tests
         run: npm run check-all
@@ -296,6 +302,7 @@ jobs:
 **Process:**
 
 1. **Security Check**
+
    ```bash
    npm audit
    # Check for critical vulnerabilities in core packages
@@ -307,11 +314,13 @@ jobs:
    - Get consensus from team lead
 
 3. **Create Upgrade Branch**
+
    ```bash
    git checkout -b upgrade/next-15.6.0
    ```
 
 4. **Update Versions**
+
    ```bash
    # Example: Upgrading Next.js
    npm install next@15.6.0 --save-exact
@@ -319,6 +328,7 @@ jobs:
    ```
 
 5. **Validate**
+
    ```bash
    npm run validate-versions  # Should pass with new versions
    npm run check-all          # All quality checks
@@ -454,6 +464,7 @@ npm run validate-versions
 ```
 
 Fix it:
+
 ```bash
 npm install some-package@1.2.3  # Exact version
 npm run validate-versions       # Should pass now
@@ -475,6 +486,7 @@ npm run validate-versions       # Should pass now
 **NO - not for v2.0-alpha release.**
 
 Wait for:
+
 1. Next.js 16 stable release (not RC/beta)
 2. Community adoption (1-2 months)
 3. Team approval and testing
@@ -487,6 +499,7 @@ For v2.0-alpha: **Next.js 15.5.6 is FROZEN.**
 ## 📝 Summary
 
 ### ✅ DO:
+
 - Use exact versions in package.json
 - Run `npm run validate-versions` before commits
 - Use `npm ci` in CI/CD
@@ -495,6 +508,7 @@ For v2.0-alpha: **Next.js 15.5.6 is FROZEN.**
 - Test thoroughly after upgrades
 
 ### ❌ DON'T:
+
 - Use version ranges (^, ~, >=, <=, >, <)
 - Upgrade core packages without team approval
 - Run `npm audit fix` (may use ranges)

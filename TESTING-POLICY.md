@@ -51,18 +51,21 @@
 Tests represent the **requirements** and **expected behavior** of the system. They are not suggestions or guidelines - they are the contract that the implementation must fulfill.
 
 **Analogy:**
+
 ```
 Requirements Document  →  Tests  →  Implementation
     (What to build)    (How to verify)  (Actual code)
 ```
 
 **Traditional (WRONG):**
+
 ```
 Test fails → "This test is annoying" → Modify test → Test passes ✅ (WRONG!)
 Result: Tests become meaningless. They don't verify anything.
 ```
 
 **MADACE Approach (CORRECT):**
+
 ```
 Test fails → "Implementation is wrong" → Fix code → Test passes ✅ (CORRECT!)
 Result: Tests maintain integrity. They verify requirements.
@@ -108,7 +111,7 @@ Tests document how the system is SUPPOSED to work:
 ```typescript
 // This test documents the version validation behavior
 test('should reject version ranges in package.json', () => {
-  const pkg = { dependencies: { "next": "^15.5.6" } };
+  const pkg = { dependencies: { next: '^15.5.6' } };
   expect(() => validateVersions(pkg)).toThrow('Version ranges not allowed');
 });
 
@@ -139,6 +142,7 @@ YES (1% of cases)  →  Follow Test Modification Process (ADR required)
 ### ⛔ LOCKED: Test Scripts Are Immutable
 
 **Files Covered:**
+
 ```
 __tests__/**/*.test.ts           ← Unit/Integration tests
 __tests__/**/*.spec.ts           ← Unit/Integration tests
@@ -154,6 +158,7 @@ jest.setup.js                    ← Test setup
 ### What "Immutable" Means
 
 **ALLOWED:**
+
 - ✅ Adding NEW tests (expanding coverage)
 - ✅ Adding NEW test cases to existing test suites
 - ✅ Improving test descriptions/comments
@@ -161,6 +166,7 @@ jest.setup.js                    ← Test setup
 - ✅ Updating mocks to reflect new API contracts
 
 **FORBIDDEN:**
+
 - ❌ Changing assertions to make them pass
 - ❌ Commenting out failing tests
 - ❌ Skipping tests with `.skip()` or `xit()`
@@ -177,6 +183,7 @@ jest.setup.js                    ← Test setup
 ### Standard Response Protocol
 
 **Step 1: Acknowledge Failure**
+
 ```bash
 npm test
 # ❌ FAIL __tests__/lib/agents/loader.test.ts
@@ -204,9 +211,11 @@ Create: `reports/test-failure-YYYY-MM-DD-HHMMSS.md`
 
 **Error Message:**
 ```
+
 Expected: "PM"
 Received: undefined
-```
+
+````
 
 ## Root Cause Analysis
 
@@ -236,7 +245,7 @@ return {
   ...agent,
   name: agent.metadata.name  // ✅ Correct property path
 };
-```
+````
 
 ## Fix Required
 
@@ -247,6 +256,7 @@ return {
 ## Related Tests
 
 This failure may affect:
+
 - `should load MAM agents` ← Verify after fix
 - `should cache loaded agents` ← Verify after fix
 
@@ -255,7 +265,8 @@ This failure may affect:
 **Report Status:** 🔴 OPEN
 **Assigned To:** Dev Team
 **Created By:** Testing System
-```
+
+````
 
 **Step 3: Create Todo List**
 
@@ -269,7 +280,7 @@ Update todo tracking:
 - [ ] Run full test suite `npm test`
 - [ ] Verify related tests still pass
 - [ ] Close test failure report
-```
+````
 
 **Step 4: Fix Implementation (NOT Tests)**
 
@@ -279,13 +290,13 @@ Update todo tracking:
 // BEFORE (failing test):
 return {
   ...agent,
-  name: agent.meta.name  // ❌
+  name: agent.meta.name, // ❌
 };
 
 // AFTER (passing test):
 return {
   ...agent,
-  name: agent.metadata.name  // ✅
+  name: agent.metadata.name, // ✅
 };
 ```
 
@@ -315,10 +326,10 @@ test('should load agent from YAML file', async () => {
   const agent = await loadAgent('/path/to/agent.yaml');
 
   // ❌ WRONG: Changing assertion to make it pass
-  expect(agent.meta.name).toBe('PM');  // Changed from metadata.name
+  expect(agent.meta.name).toBe('PM'); // Changed from metadata.name
 
   // ❌ WRONG: Weakening assertion
-  expect(agent.metadata?.name).toBeTruthy();  // Made it optional
+  expect(agent.metadata?.name).toBeTruthy(); // Made it optional
 
   // ❌ WRONG: Commenting out failing assertion
   // expect(agent.metadata.name).toBe('PM');
@@ -338,6 +349,7 @@ Tests can ONLY be modified in these specific cases:
 #### Exception 1: Requirements Changed
 
 **Process:**
+
 1. Requirements officially changed (documented in PRD or ADR)
 2. Create ADR documenting requirement change
 3. Update test to reflect NEW requirement
@@ -345,25 +357,29 @@ Tests can ONLY be modified in these specific cases:
 
 **Example:**
 
-```markdown
+````markdown
 # ADR-XXX: Change Agent Metadata Structure
 
 **Decision:** Rename `metadata.name` to `metadata.agentName` for consistency
 
 **Before:**
+
 ```typescript
 test('should load agent with metadata.name', () => {
   expect(agent.metadata.name).toBe('PM');
 });
 ```
+````
 
 **After (NEW REQUIREMENT):**
+
 ```typescript
 test('should load agent with metadata.agentName', () => {
-  expect(agent.metadata.agentName).toBe('PM');  // ✅ Allowed: Requirement changed
+  expect(agent.metadata.agentName).toBe('PM'); // ✅ Allowed: Requirement changed
 });
 ```
-```
+
+````
 
 #### Exception 2: Test Was Objectively Wrong
 
@@ -385,21 +401,24 @@ test('should load agent with metadata.agentName', () => {
 test('should parse agent version', () => {
   expect(agent.metadata.version).toBe(1.0);  // ❌ WRONG: version is string, not number
 });
-```
+````
 
 **Analysis:**
+
 - Schema defines version as `z.string()`
 - All agent YAML files have version as string
 - Implementation correctly returns string
 - Test expectation is objectively wrong
 
 **Fix:**
+
 ```typescript
 test('should parse agent version', () => {
-  expect(agent.metadata.version).toBe('1.0.0');  // ✅ Correct: version is string
+  expect(agent.metadata.version).toBe('1.0.0'); // ✅ Correct: version is string
 });
 ```
-```
+
+````
 
 #### Exception 3: Adding New Tests
 
@@ -420,7 +439,7 @@ test('should handle agents with multiple personas', async () => {
   const agent = await loadAgent('/multi-persona.yaml');
   expect(agent.personas).toHaveLength(3);
 });
-```
+````
 
 ---
 
@@ -441,7 +460,7 @@ test('should handle agents with multiple personas', async () => {
 
 ### ADR Template for Test Modifications
 
-```markdown
+````markdown
 # ADR-XXX: Modify Test [Test Name]
 
 **Status:** Proposed / Approved / Rejected
@@ -457,6 +476,7 @@ test('should handle agents with multiple personas', async () => {
 ```typescript
 [Current test code]
 ```
+````
 
 ## Proposed Change
 
@@ -477,13 +497,16 @@ test('should handle agents with multiple personas', async () => {
 ## Impact Analysis
 
 **Affected Files:**
+
 - Test file: [path]
 - Implementation file: [path]
 
 **Other Tests Affected:**
+
 - [List of related tests]
 
 **Risk Assessment:**
+
 - Risk: [LOW / MEDIUM / HIGH]
 - Mitigation: [How to minimize risk]
 
@@ -495,14 +518,17 @@ test('should handle agents with multiple personas', async () => {
 ## Implementation
 
 **Changes Made:**
+
 1. [List of changes]
 
 **Verification:**
+
 - [ ] New test passes
 - [ ] All other tests pass
 - [ ] Implementation updated
 - [ ] Documentation updated
-```
+
+````
 
 ---
 
@@ -536,9 +562,11 @@ test('should handle agents with multiple personas', async () => {
 **Received:** {actual value}
 
 **Error Message:**
-```
+````
+
 {full error message with stack trace}
-```
+
+````
 
 ## Environment
 
@@ -568,7 +596,7 @@ test('should handle agents with multiple personas', async () => {
 
 // Should be (CORRECT):
 {correct code}
-```
+````
 
 ## Fix Required
 
@@ -580,11 +608,13 @@ test('should handle agents with multiple personas', async () => {
 ## Related Tests
 
 **May Also Affect:**
+
 - [ ] {test 1}
 - [ ] {test 2}
 - [ ] {test 3}
 
 **Must Verify After Fix:**
+
 - [ ] Run affected test: `npm test {path}`
 - [ ] Run full test suite: `npm test`
 - [ ] Run build: `npm run build`
@@ -601,7 +631,8 @@ test('should handle agents with multiple personas', async () => {
 **Assigned To:** {developer name}
 **Created By:** {creator}
 **Last Updated:** {timestamp}
-```
+
+````
 
 ### Resolution Update Template
 
@@ -620,16 +651,18 @@ When test is fixed, update report:
 **Implementation Changes:**
 ```typescript
 {code diff or description of changes}
-```
+````
 
 **Verification:**
+
 - ✅ Affected test now passes
 - ✅ Full test suite passes
 - ✅ Build succeeds
 - ✅ No regressions
 
 **Report Status:** ✅ RESOLVED
-```
+
+````
 
 ---
 
@@ -650,34 +683,37 @@ test('should reject version ranges in package.json', () => {
 
   expect(() => validateVersions(pkg)).toThrow('Version ranges not allowed');
 });
-```
+````
 
 **Failure:**
+
 ```bash
 ❌ FAIL: Expected function to throw, but it did not
 ```
 
 **WRONG Response (FORBIDDEN):**
+
 ```typescript
 // ❌ DON'T DO THIS:
 test('should reject version ranges in package.json', () => {
   const pkg = {
     dependencies: {
-      "next": "^15.5.6"
-    }
+      next: '^15.5.6',
+    },
   };
 
   // ❌ Commenting out the assertion
   // expect(() => validateVersions(pkg)).toThrow('Version ranges not allowed');
 
   // ❌ Or weakening it
-  expect(() => validateVersions(pkg)).not.toThrow();  // WRONG!
+  expect(() => validateVersions(pkg)).not.toThrow(); // WRONG!
 });
 ```
 
 **CORRECT Response:**
 
 1. **Write Report:**
+
 ```markdown
 # Test Failure Report
 
@@ -693,6 +729,7 @@ Add range detection logic to validateVersions() function
 ```
 
 2. **Create Todo:**
+
 ```markdown
 - [ ] Add version range regex check to validate-versions.js
 - [ ] Test regex against all range operators (^, ~, >, <, >=, <=)
@@ -700,6 +737,7 @@ Add range detection logic to validateVersions() function
 ```
 
 3. **Fix Implementation:**
+
 ```javascript
 // scripts/validate-versions.js
 
@@ -716,6 +754,7 @@ function validateVersions(pkg) {
 ```
 
 4. **Verify:**
+
 ```bash
 npm test
 # ✅ PASS: should reject version ranges in package.json
@@ -724,16 +763,18 @@ npm test
 ### Example 2: Agent Loader Test Failure
 
 **Test (IMMUTABLE):**
+
 ```typescript
 test('should cache loaded agents', async () => {
   const agent1 = await loadAgent('/path/agent.yaml');
   const agent2 = await loadAgent('/path/agent.yaml');
 
-  expect(agent1).toBe(agent2);  // Same reference (cached)
+  expect(agent1).toBe(agent2); // Same reference (cached)
 });
 ```
 
 **Failure:**
+
 ```bash
 ❌ FAIL: Expected values to have the same reference
 ```
@@ -741,12 +782,14 @@ test('should cache loaded agents', async () => {
 **CORRECT Response:**
 
 1. **Report:**
+
 ```markdown
 **Root Cause:** AgentLoader creates new object on every call
 **Fix:** Implement caching with Map<string, Agent>
 ```
 
 2. **Fix Implementation:**
+
 ```typescript
 // lib/agents/loader.ts
 
@@ -793,18 +836,22 @@ export async function loadAgent(path: string): Promise<Agent> {
 ## Testing
 
 ### Test Changes
+
 - [ ] No tests modified (only implementation changed)
 - [ ] OR: Tests modified with ADR justification (link: [ADR-XXX])
 
 ### Test Failures Encountered
+
 - [ ] No test failures during development
 - [ ] OR: Test failure reports created (list reports below)
 
 **Test Failure Reports:**
+
 1. [Link to report 1]
 2. [Link to report 2]
 
 ### Test Coverage
+
 - [ ] All tests pass
 - [ ] New tests added for new functionality
 - [ ] Coverage maintained or improved
@@ -826,7 +873,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 2  # Need previous commit
+          fetch-depth: 2 # Need previous commit
 
       - name: Check test file modifications
         run: |

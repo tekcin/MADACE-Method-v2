@@ -113,14 +113,7 @@ export class StateMachineStatusProvider implements IStatusProvider {
   detectEntity(input: string): boolean {
     if (!input || input.trim() === '') return true; // Empty = state machine default
 
-    const keywords = [
-      'state',
-      'machine',
-      'status',
-      'overview',
-      'summary',
-      'all',
-    ];
+    const keywords = ['state', 'machine', 'status', 'overview', 'summary', 'all'];
     return keywords.some((keyword) => input.toLowerCase().includes(keyword));
   }
 
@@ -180,37 +173,25 @@ export class StateMachineStatusProvider implements IStatusProvider {
       lines.push('┌───────────────┬───────┬───────┐');
       lines.push('│ State         │ Count │ Limit │');
       lines.push('├───────────────┼───────┼───────┤');
+      lines.push(`│ BACKLOG       │ ${String(status.backlog).padEnd(5)} │ ∞     │`);
       lines.push(
-        `│ BACKLOG       │ ${String(status.backlog).padEnd(5)} │ ∞     │`,
+        `│ TODO          │ ${String(status.todo).padEnd(5)} │ ${status.todoLimit}     │${status.todo > status.todoLimit ? ' ⚠️' : ''}`
       );
       lines.push(
-        `│ TODO          │ ${String(status.todo).padEnd(5)} │ ${status.todoLimit}     │${status.todo > status.todoLimit ? ' ⚠️' : ''}`,
+        `│ IN PROGRESS   │ ${String(status.inProgress).padEnd(5)} │ ${status.inProgressLimit}     │${status.inProgress > status.inProgressLimit ? ' ⚠️' : ''}`
       );
-      lines.push(
-        `│ IN PROGRESS   │ ${String(status.inProgress).padEnd(5)} │ ${status.inProgressLimit}     │${status.inProgress > status.inProgressLimit ? ' ⚠️' : ''}`,
-      );
-      lines.push(
-        `│ DONE          │ ${String(status.done).padEnd(5)} │ ∞     │`,
-      );
+      lines.push(`│ DONE          │ ${String(status.done).padEnd(5)} │ ∞     │`);
       lines.push('├───────────────┼───────┼───────┤');
-      lines.push(
-        `│ TOTAL         │ ${String(status.total).padEnd(5)} │       │`,
-      );
+      lines.push(`│ TOTAL         │ ${String(status.total).padEnd(5)} │       │`);
       lines.push('└───────────────┴───────┴───────┘');
 
       if (status.velocity) {
         lines.push('');
         lines.push('Velocity Metrics:');
-        lines.push(
-          `  Stories/Week: ${status.velocity.storiesPerWeek.toFixed(1)}`,
-        );
-        lines.push(
-          `  Avg Points: ${status.velocity.averagePoints.toFixed(1)}`,
-        );
+        lines.push(`  Stories/Week: ${status.velocity.storiesPerWeek.toFixed(1)}`);
+        lines.push(`  Avg Points: ${status.velocity.averagePoints.toFixed(1)}`);
         if (status.velocity.projectedCompletion) {
-          lines.push(
-            `  Projected Completion: ${status.velocity.projectedCompletion}`,
-          );
+          lines.push(`  Projected Completion: ${status.velocity.projectedCompletion}`);
         }
       }
 
@@ -224,26 +205,20 @@ export class StateMachineStatusProvider implements IStatusProvider {
     lines.push('|-------|-------|-------|');
     lines.push(`| BACKLOG | ${status.backlog} | ∞ |`);
     lines.push(
-      `| TODO | ${status.todo} | ${status.todoLimit} |${status.todo > status.todoLimit ? ' ⚠️' : ''}`,
+      `| TODO | ${status.todo} | ${status.todoLimit} |${status.todo > status.todoLimit ? ' ⚠️' : ''}`
     );
     lines.push(
-      `| IN PROGRESS | ${status.inProgress} | ${status.inProgressLimit} |${status.inProgress > status.inProgressLimit ? ' ⚠️' : ''}`,
+      `| IN PROGRESS | ${status.inProgress} | ${status.inProgressLimit} |${status.inProgress > status.inProgressLimit ? ' ⚠️' : ''}`
     );
     lines.push(`| DONE | ${status.done} | ∞ |`);
     lines.push(`| **TOTAL** | **${status.total}** | |`);
 
     if (status.velocity) {
       lines.push('\n## Velocity Metrics\n');
-      lines.push(
-        `- Stories/Week: ${status.velocity.storiesPerWeek.toFixed(1)}`,
-      );
-      lines.push(
-        `- Average Points: ${status.velocity.averagePoints.toFixed(1)}`,
-      );
+      lines.push(`- Stories/Week: ${status.velocity.storiesPerWeek.toFixed(1)}`);
+      lines.push(`- Average Points: ${status.velocity.averagePoints.toFixed(1)}`);
       if (status.velocity.projectedCompletion) {
-        lines.push(
-          `- Projected Completion: ${status.velocity.projectedCompletion}`,
-        );
+        lines.push(`- Projected Completion: ${status.velocity.projectedCompletion}`);
       }
     }
 
@@ -259,10 +234,9 @@ export class StateMachineStatusProvider implements IStatusProvider {
    */
   private parseStatusFile(content: string): StateMachineStatus {
     const lines = content.split('\n');
-    let currentState: keyof Pick<
-      StateMachineStatus,
-      'backlog' | 'todo' | 'inProgress' | 'done'
-    > | null = null;
+    let currentState:
+      | keyof Pick<StateMachineStatus, 'backlog' | 'todo' | 'inProgress' | 'done'>
+      | null = null;
 
     const counts = {
       backlog: 0,
@@ -325,7 +299,7 @@ export class StateMachineStatusProvider implements IStatusProvider {
  * ```
  */
 export function createStateMachineStatusProvider(
-  statusFilePath?: string,
+  statusFilePath?: string
 ): StateMachineStatusProvider {
   return new StateMachineStatusProvider(statusFilePath);
 }

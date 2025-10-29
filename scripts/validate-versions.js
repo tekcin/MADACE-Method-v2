@@ -140,12 +140,7 @@ function checkInstalledVersions() {
 
   for (const [packageName, requiredVersion] of Object.entries(REQUIRED_VERSIONS)) {
     try {
-      const packageJsonPath = path.join(
-        process.cwd(),
-        'node_modules',
-        packageName,
-        'package.json'
-      );
+      const packageJsonPath = path.join(process.cwd(), 'node_modules', packageName, 'package.json');
 
       if (!fs.existsSync(packageJsonPath)) {
         log(`\n   ⚠️  ${packageName}: Not installed in node_modules`, 'yellow');

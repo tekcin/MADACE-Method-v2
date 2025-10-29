@@ -1,21 +1,24 @@
 /**
  * Workflow Hierarchy API
- * GET /api/workflows/[name]/hierarchy - Get workflow hierarchy tree
+ * GET /api/workflows/[id]/hierarchy - Get workflow hierarchy tree
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import { loadWorkflow, createWorkflowExecutor } from '@/lib/workflows/executor';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ name: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { name } = await params;
+    const { id: name } = await params;
 
     // Load workflow
-    const workflowPath = path.join(process.cwd(), 'madace', 'mam', 'workflows', `${name}.workflow.yaml`);
+    const workflowPath = path.join(
+      process.cwd(),
+      'madace',
+      'mam',
+      'workflows',
+      `${name}.workflow.yaml`
+    );
     const workflow = await loadWorkflow(workflowPath);
 
     // Create executor and initialize

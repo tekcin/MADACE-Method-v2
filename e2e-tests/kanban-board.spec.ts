@@ -25,7 +25,9 @@ test.describe('Kanban Board', () => {
     await expect(page.locator('h1')).toContainText('MADACE Workflow Status');
 
     // Verify page description
-    await expect(page.locator('p')).toContainText('Visual Kanban board for project progress tracking');
+    await expect(page.locator('p')).toContainText(
+      'Visual Kanban board for project progress tracking'
+    );
   });
 
   test('should display statistics panel with all metrics', async ({ page }) => {
@@ -286,12 +288,18 @@ test.describe('Kanban Board', () => {
       .locator('h2:has-text("BACKLOG")')
       .locator('../..')
       .locator('.rounded-lg.border-2');
-    const todoCards = page.locator('h2:has-text("TODO")').locator('../..').locator('.rounded-lg.border-2');
+    const todoCards = page
+      .locator('h2:has-text("TODO")')
+      .locator('../..')
+      .locator('.rounded-lg.border-2');
     const inProgressCards = page
       .locator('h2:has-text("IN PROGRESS")')
       .locator('../..')
       .locator('.rounded-lg.border-2');
-    const doneCards = page.locator('h2:has-text("DONE")').locator('../..').locator('.rounded-lg.border-2');
+    const doneCards = page
+      .locator('h2:has-text("DONE")')
+      .locator('../..')
+      .locator('.rounded-lg.border-2');
 
     // Check BACKLOG cards (gray border)
     const backlogCount = await backlogCards.count();

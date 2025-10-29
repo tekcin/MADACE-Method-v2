@@ -106,10 +106,7 @@ export function substituteVariables(
   result = result.replace(doublePattern, (match, varName) => {
     if (!(varName in variables)) {
       if (strictMode) {
-        throw new ConditionEvaluationError(
-          `Variable not found: ${varName}`,
-          condition
-        );
+        throw new ConditionEvaluationError(`Variable not found: ${varName}`, condition);
       }
       return 'undefined';
     }
@@ -120,10 +117,7 @@ export function substituteVariables(
   result = result.replace(singlePattern, (match, varName) => {
     if (!(varName in variables)) {
       if (strictMode) {
-        throw new ConditionEvaluationError(
-          `Variable not found: ${varName}`,
-          condition
-        );
+        throw new ConditionEvaluationError(`Variable not found: ${varName}`, condition);
       }
       return 'undefined';
     }
@@ -187,10 +181,7 @@ function sanitizeExpression(expression: string): string {
   const allowedPattern = /^[0-9a-zA-Z\s'".,!()\[\]{}=&|<>+\-*/%]+$/;
 
   if (!allowedPattern.test(trimmed)) {
-    throw new ConditionEvaluationError(
-      'Expression contains invalid characters',
-      expression
-    );
+    throw new ConditionEvaluationError('Expression contains invalid characters', expression);
   }
 
   // Check for dangerous patterns

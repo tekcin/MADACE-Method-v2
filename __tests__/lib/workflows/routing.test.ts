@@ -671,7 +671,9 @@ workflow:
       expect(state?.childWorkflows).toBeDefined();
       expect(state?.childWorkflows?.length).toBeGreaterThanOrEqual(2);
 
-      const completedChildren = state?.childWorkflows?.filter(child => child.status === 'completed');
+      const completedChildren = state?.childWorkflows?.filter(
+        (child) => child.status === 'completed'
+      );
       expect(completedChildren?.length).toBe(2);
     });
   });
@@ -982,7 +984,9 @@ workflow:
       expect(state?.childWorkflows?.length).toBeGreaterThanOrEqual(2);
 
       // ✅ Children have completed status
-      const completedChildren = state?.childWorkflows?.filter(child => child.status === 'completed');
+      const completedChildren = state?.childWorkflows?.filter(
+        (child) => child.status === 'completed'
+      );
       expect(completedChildren?.length).toBe(2);
     });
 

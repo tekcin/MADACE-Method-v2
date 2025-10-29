@@ -358,16 +358,16 @@ The validation script checks for these forbidden patterns:
 
 This table shows how version locking ensures consistency:
 
-| Environment        | Without Locking                  | With Locking (MADACE)          |
-| ------------------ | -------------------------------- | ------------------------------ |
-| Developer A Mac    | Next.js 15.5.6 (installed today) | Next.js 15.5.6 ✅             |
-| Developer B Linux  | Next.js 15.6.0 (installed later) | Next.js 15.5.6 ✅             |
-| Developer C Windows| Next.js 15.7.0 (latest)          | Next.js 15.5.6 ✅             |
-| CI/CD Pipeline     | Next.js 15.7.1 (cache cleared)   | Next.js 15.5.6 ✅             |
-| Staging Deploy     | Next.js 15.5.6 (old cache)       | Next.js 15.5.6 ✅             |
-| Production Deploy  | Next.js 15.6.0 (????)            | Next.js 15.5.6 ✅             |
-| **Result**         | **6 different versions ❌**      | **1 version everywhere ✅**    |
-| **Debugging**      | **Nightmare 🔥**                 | **Straightforward ✨**         |
+| Environment         | Without Locking                  | With Locking (MADACE)       |
+| ------------------- | -------------------------------- | --------------------------- |
+| Developer A Mac     | Next.js 15.5.6 (installed today) | Next.js 15.5.6 ✅           |
+| Developer B Linux   | Next.js 15.6.0 (installed later) | Next.js 15.5.6 ✅           |
+| Developer C Windows | Next.js 15.7.0 (latest)          | Next.js 15.5.6 ✅           |
+| CI/CD Pipeline      | Next.js 15.7.1 (cache cleared)   | Next.js 15.5.6 ✅           |
+| Staging Deploy      | Next.js 15.5.6 (old cache)       | Next.js 15.5.6 ✅           |
+| Production Deploy   | Next.js 15.6.0 (????)            | Next.js 15.5.6 ✅           |
+| **Result**          | **6 different versions ❌**      | **1 version everywhere ✅** |
+| **Debugging**       | **Nightmare 🔥**                 | **Straightforward ✨**      |
 
 ---
 
@@ -461,6 +461,7 @@ MADACE-Method-v2.0/
 ### Why 4 Layers?
 
 **Defense-in-Depth Philosophy:**
+
 - Layer 1 fails? Layer 2 catches it
 - Layer 2 skipped? Layer 3 catches it
 - Layer 3 ignored? Layer 4 catches it
@@ -469,6 +470,7 @@ MADACE-Method-v2.0/
 ### Why Exact Versions Only?
 
 **Semantic Versioning Risks:**
+
 ```bash
 # Semantic versioning promises:
 "^1.2.3" = "Compatible updates (1.2.4, 1.3.0, etc.)"
@@ -486,10 +488,10 @@ MADACE-Method-v2.0/
 
 **npm install vs npm ci:**
 
-| Command       | Behavior                                  | Use Case          |
-| ------------- | ----------------------------------------- | ----------------- |
+| Command       | Behavior                                 | Use Case          |
+| ------------- | ---------------------------------------- | ----------------- |
 | `npm install` | Installs from package.json (with ranges) | Development       |
-| `npm ci`      | Installs from package-lock.json (exact)   | CI/CD, Production |
+| `npm ci`      | Installs from package-lock.json (exact)  | CI/CD, Production |
 
 `npm ci` guarantees **byte-for-byte identical** node_modules across all environments.
 
@@ -498,11 +500,13 @@ MADACE-Method-v2.0/
 ## Success Metrics
 
 **Quantitative:**
+
 - ✅ **Zero version drift incidents** - No "works on my machine" bugs
 - ✅ **100% validation pass rate** - All environments validated
 - ✅ **Reproducible builds** - Same input → same output every time
 
 **Qualitative:**
+
 - ✅ **Developer confidence** - "If it works locally, it works everywhere"
 - ✅ **Easy onboarding** - New devs get correct versions immediately
 - ✅ **No wasted debugging time** - No hunting for version differences
