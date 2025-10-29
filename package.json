@@ -30,6 +30,7 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:reset": "prisma migrate reset",
+    "db:validate": "node scripts/validate-database.js",
     "import-madace": "tsx scripts/import-madace-agents.ts",
     "import-madace-v3": "tsx scripts/import-madace-v3-agents.ts",
     "madace": "tsx bin/madace.ts"

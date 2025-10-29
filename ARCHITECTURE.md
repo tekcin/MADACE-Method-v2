@@ -21,7 +21,7 @@
 
 **RULE 2: Development vs Production file paths**
 
-- Development files (like `docs/mam-workflow-status.md`) may NOT exist in production Docker builds
+- Development files (like `docs/workflow-status.md`) may NOT exist in production Docker builds
 - Production builds only include files in the Docker image (see `.dockerignore`)
 - API routes must handle missing development files gracefully
 

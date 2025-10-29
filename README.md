@@ -410,7 +410,7 @@ Browser:    View live progress at http://localhost:3000
 # OR
 
 Browser:    Start workflow in Web UI
-Terminal 2: Watch status with `cat docs/mam-workflow-status.md`
+Terminal 2: Watch status with `cat docs/workflow-status.md`
 ```
 
 ### CLI Integration Features

@@ -861,11 +861,11 @@ The following features are **not included** in v3.0 and deferred to future relea
 
 ### 10.2 References
 
-- [MADACE v2.0 PRD](./PRD.md)
-- [v3.0 Vision Document](./ROADMAP-V3-FUTURE-VISION.md)
-- [v3.0 Architecture Proposal](./ARCHITECTURE-V3-FUTURE.md)
-- [v2.0 Workflow Status](./docs/mam-workflow-status.md)
-- [v2.0 Release Notes](./RELEASE-NOTES.md)
+- [MADACE v3.0 Architecture](./ARCHITECTURE.md)
+- [v3.0 Development Plan](./PLAN.md)
+- [v3.0 Workflow Status](./docs/workflow-status.md)
+- [v3.0 Release Notes](./RELEASE-NOTES.md)
+- [v2.0 PRD (archived)](./archive/v2/PRD.md)
 
 ---
 
