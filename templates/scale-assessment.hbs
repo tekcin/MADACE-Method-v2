@@ -1,0 +1,660 @@
+# Project Complexity Assessment Report
+
+**Assessment Date:** {{date 'human'}}
+**Complexity Level:** {{badge level}} Level {{level}} - {{levelName}}
+**Total Score:** {{totalScore}}/40 points ({{round (multiply (divide totalScore 40) 100) 0}}%)
+
+---
+
+## Executive Summary
+
+{{#if (eq level 0)}}
+Your project has been assessed as **Minimal Complexity** (Level 0). This indicates a simple, small-scale project suitable for individual developers or very small teams with minimal planning overhead. The total complexity score of **{{totalScore}} points** suggests straightforward implementation with limited external dependencies and low risk.
+{{/if}}
+
+{{#if (eq level 1)}}
+Your project has been assessed as **Basic Complexity** (Level 1). This indicates a small team project with basic planning requirements. The total complexity score of **{{totalScore}} points** suggests a manageable scope with some structure needed for coordination and quality assurance.
+{{/if}}
+
+{{#if (eq level 2)}}
+Your project has been assessed as **Standard Complexity** (Level 2). This indicates a medium-sized project requiring structured planning and coordination. The total complexity score of **{{totalScore}} points** suggests typical business application complexity with moderate team coordination needs.
+{{/if}}
+
+{{#if (eq level 3)}}
+Your project has been assessed as **Comprehensive Complexity** (Level 3). This indicates a large-scale project requiring extensive planning, architecture design, and team coordination. The total complexity score of **{{totalScore}} points** suggests significant technical challenges and stakeholder management needs.
+{{/if}}
+
+{{#if (eq level 4)}}
+Your project has been assessed as **Enterprise Complexity** (Level 4). This indicates a mission-critical, large-scale system requiring comprehensive planning, governance, and risk management. The total complexity score of **{{totalScore}} points** suggests extensive architecture design, security considerations, and multi-team coordination.
+{{/if}}
+
+### Key Highlights
+
+- **Recommended Workflow:** `{{recommendedWorkflow}}`
+- **Complexity Score Range:** {{scoreRange}} points
+- **Assessment Timestamp:** {{assessedAt}}
+
+{{#if override}}
+⚠️ **Manual Override Applied**
+Original Level: {{override.originalLevel}} → Override Level: {{override.overrideLevel}}
+Reason: {{override.reason}}
+{{#if override.overriddenBy}}Overridden by: {{override.overriddenBy}}{{/if}}
+Override Date: {{override.overriddenAt}}
+{{/if}}
+
+---
+
+## Criteria Scores
+
+The following table shows the detailed breakdown of complexity scoring across all 8 assessment criteria. Each criterion is scored from 0-5 points, with a maximum total of 40 points.
+
+| Criterion | Score | Max | Percentage | Description |
+|-----------|-------|-----|------------|-------------|
+| 📦 Project Size | {{breakdown.projectSize}} | 5 | {{round (multiply (divide breakdown.projectSize 5) 100) 0}}% | Scale of codebase and feature set |
+| 👥 Team Size | {{breakdown.teamSize}} | 5 | {{round (multiply (divide breakdown.teamSize 5) 100) 0}}% | Number of developers and contributors |
+| 🏗️ Codebase Complexity | {{breakdown.codebaseComplexity}} | 5 | {{round (multiply (divide breakdown.codebaseComplexity 5) 100) 0}}% | Technical architecture and patterns |
+| 🔌 External Integrations | {{breakdown.integrations}} | 5 | {{round (multiply (divide breakdown.integrations 5) 100) 0}}% | Third-party APIs and services |
+| 🌐 User Base | {{breakdown.userBase}} | 5 | {{round (multiply (divide breakdown.userBase 5) 100) 0}}% | Expected number of users |
+| 🔒 Security Requirements | {{breakdown.security}} | 5 | {{round (multiply (divide breakdown.security 5) 100) 0}}% | Security, compliance, and regulations |
+| ⏱️ Project Duration | {{breakdown.duration}} | 5 | {{round (multiply (divide breakdown.duration 5) 100) 0}}% | Expected timeline to completion |
+| 📚 Existing Codebase | {{breakdown.existingCode}} | 5 | {{round (multiply (divide breakdown.existingCode 5) 100) 0}}% | Legacy code and refactoring needs |
+
+**Total Score:** {{totalScore}}/40 points
+
+### Score Distribution
+
+```
+Minimal (0-5):    [{{#if (lte totalScore 5)}}█{{else}}░{{/if}}{{#if (lte totalScore 5)}}█{{else}}░{{/if}}{{#if (lte totalScore 5)}}█{{else}}░{{/if}}{{#if (lte totalScore 5)}}█{{else}}░{{/if}}{{#if (lte totalScore 5)}}█{{else}}░{{/if}}]
+Basic (6-12):     [{{#if (and (gte totalScore 6) (lte totalScore 12))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 6) (lte totalScore 12))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 6) (lte totalScore 12))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 6) (lte totalScore 12))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 6) (lte totalScore 12))}}█{{else}}░{{/if}}]
+Standard (13-20): [{{#if (and (gte totalScore 13) (lte totalScore 20))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 13) (lte totalScore 20))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 13) (lte totalScore 20))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 13) (lte totalScore 20))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 13) (lte totalScore 20))}}█{{else}}░{{/if}}]
+Comprehensive (21-30): [{{#if (and (gte totalScore 21) (lte totalScore 30))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 21) (lte totalScore 30))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 21) (lte totalScore 30))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 21) (lte totalScore 30))}}█{{else}}░{{/if}}{{#if (and (gte totalScore 21) (lte totalScore 30))}}█{{else}}░{{/if}}]
+Enterprise (31-40): [{{#if (gte totalScore 31)}}█{{else}}░{{/if}}{{#if (gte totalScore 31)}}█{{else}}░{{/if}}{{#if (gte totalScore 31)}}█{{else}}░{{/if}}{{#if (gte totalScore 31)}}█{{else}}░{{/if}}{{#if (gte totalScore 31)}}█{{else}}░{{/if}}]
+                     └────────────────────┘
+                     Your Score: {{totalScore}}
+```
+
+---
+
+## Level Determination
+
+Based on the total complexity score of **{{totalScore}} points**, your project has been classified as **Level {{level}} ({{levelName}})**.
+
+{{#if (eq level 0)}}
+### Level 0: Minimal Complexity
+
+**Score Range:** 0-5 points
+**Typical Characteristics:**
+- Solo developer or very small team (1-2 people)
+- Simple scripts, utilities, or proof-of-concept projects
+- Minimal external dependencies and integrations
+- Short development timeline (days to weeks)
+- Personal projects or internal tools
+- No critical security or compliance requirements
+
+**Planning Approach:**
+- Lightweight documentation (README-driven development)
+- Minimal upfront planning
+- Direct story creation without formal PRD
+- Quick iteration cycles
+- Flexible architecture decisions
+
+**Development Workflow:**
+- Create stories directly from user needs
+- Implement features iteratively
+- Manual testing is often sufficient
+- Deploy frequently with minimal process
+{{/if}}
+
+{{#if (eq level 1)}}
+### Level 1: Basic Complexity
+
+**Score Range:** 6-12 points
+**Typical Characteristics:**
+- Small team (2-3 developers)
+- Simple web applications or internal tools
+- Few external integrations (1-3)
+- Moderate timeline (weeks to months)
+- Small user base (< 1,000 users)
+- Basic security requirements
+
+**Planning Approach:**
+- Lightweight PRD (2-5 pages)
+- Basic user stories with acceptance criteria
+- Simple architecture diagrams
+- Sprint planning for coordination
+- Essential documentation only
+
+**Development Workflow:**
+1. Lightweight requirements gathering
+2. User story breakdown
+3. Basic sprint planning
+4. Implementation with code reviews
+5. Essential testing (unit + integration)
+6. Deployment with basic monitoring
+{{/if}}
+
+{{#if (eq level 2)}}
+### Level 2: Standard Complexity
+
+**Score Range:** 13-20 points
+**Typical Characteristics:**
+- Medium team (4-6 developers)
+- Standard business applications
+- Multiple external integrations (3-5)
+- Standard timeline (months)
+- Growing user base (1K-10K users)
+- Moderate security and compliance needs
+
+**Planning Approach:**
+- Comprehensive PRD (10-20 pages)
+- Detailed user stories with epics
+- Architecture design with technical decisions
+- Multi-sprint planning
+- Quality assurance strategy
+- Security and performance considerations
+
+**Development Workflow:**
+1. Stakeholder requirements gathering
+2. Business analysis and modeling
+3. Epic and story breakdown
+4. Architecture design sessions
+5. Sprint planning and estimation
+6. Implementation with peer reviews
+7. Comprehensive testing (unit, integration, E2E)
+8. Staged deployment with monitoring
+{{/if}}
+
+{{#if (eq level 3)}}
+### Level 3: Comprehensive Complexity
+
+**Score Range:** 21-30 points
+**Typical Characteristics:**
+- Large team (7-15 developers)
+- Complex multi-tier systems
+- Many external integrations (6-10)
+- Extended timeline (several months)
+- Large user base (10K-100K users)
+- Significant security and compliance requirements
+
+**Planning Approach:**
+- Detailed PRD with multiple stakeholder perspectives
+- Epic breakdown with dependency mapping
+- Comprehensive architecture with ADRs
+- Multi-phase development roadmap
+- Risk management and mitigation plans
+- Advanced testing strategies
+- Security architecture and threat modeling
+
+**Development Workflow:**
+1. Multi-stakeholder requirements gathering
+2. Business analysis and domain modeling
+3. Epic mapping with dependencies
+4. Architecture design with decision records
+5. Technical specification creation
+6. Multi-sprint planning with releases
+7. Implementation with mandatory code reviews
+8. Comprehensive testing (all levels + performance)
+9. Security and compliance validation
+10. Phased deployment with rollback plans
+{{/if}}
+
+{{#if (eq level 4)}}
+### Level 4: Enterprise Complexity
+
+**Score Range:** 31-40 points
+**Typical Characteristics:**
+- Very large teams (16+ developers, multiple teams)
+- Distributed systems at scale
+- Extensive integration ecosystem (10+ systems)
+- Long-term or ongoing development
+- Massive user base (100K+ users)
+- Critical security, regulatory, and compliance requirements
+
+**Planning Approach:**
+- Executive-level PRD with business case
+- Complete epic breakdown with portfolio roadmap
+- Enterprise architecture with governance
+- Multi-team coordination framework
+- Full QA/QC with automation
+- Compliance and audit documentation
+- Change management and rollout planning
+- Disaster recovery and business continuity
+
+**Development Workflow:**
+1. Executive stakeholder alignment
+2. Business case development
+3. Enterprise requirements analysis
+4. Portfolio and roadmap planning
+5. Multi-team epic breakdown
+6. Enterprise architecture design
+7. Governance and compliance planning
+8. Security architecture and threat modeling
+9. Multi-phase implementation coordination
+10. Comprehensive testing (all levels + scale testing)
+11. Performance and scalability validation
+12. Compliance audit preparation
+13. Change management execution
+14. Phased rollout with monitoring and support
+{{/if}}
+
+---
+
+## Recommendations
+
+Based on your complexity level, we recommend the following approach:
+
+### Recommended Workflow
+
+**Workflow File:** `{{recommendedWorkflow}}`
+
+{{#if (eq level 0)}}
+This minimal workflow provides:
+- Quick project initialization
+- Direct story creation
+- Simple implementation guidance
+- Basic deployment checklist
+
+**Estimated Timeline:** 1-2 hours for planning, days for implementation
+{{/if}}
+
+{{#if (eq level 1)}}
+This basic workflow provides:
+- Lightweight PRD generation
+- Core user stories
+- Essential architecture decisions
+- Streamlined development process
+
+**Estimated Timeline:** 1-2 days for planning, weeks for implementation
+{{/if}}
+
+{{#if (eq level 2)}}
+This standard workflow provides:
+- Comprehensive PRD
+- Detailed user stories with acceptance criteria
+- Architecture design and technical decisions
+- Full development workflow with sprint planning
+- Testing and quality assurance strategy
+
+**Estimated Timeline:** 1-2 weeks for planning, months for implementation
+{{/if}}
+
+{{#if (eq level 3)}}
+This comprehensive workflow provides:
+- Detailed PRD with stakeholder perspectives
+- Epic and story breakdown with dependencies
+- Comprehensive architecture with ADRs
+- Multi-phase development workflow
+- Advanced testing strategies
+- Risk management and mitigation
+
+**Estimated Timeline:** 1-3 months for planning and implementation
+{{/if}}
+
+{{#if (eq level 4)}}
+This enterprise workflow provides:
+- Executive-level PRD with business case
+- Complete epic breakdown with roadmap
+- Enterprise architecture with governance
+- Multi-team coordination
+- Full QA/QC with automation
+- Compliance and audit documentation
+
+**Estimated Timeline:** 3-12+ months for planning and implementation
+{{/if}}
+
+### Documentation Requirements
+
+{{#if (lte level 0)}}
+**Minimal Documentation:**
+- README.md with project overview
+- Basic usage instructions
+- Simple deployment guide
+{{/if}}
+
+{{#if (eq level 1)}}
+**Basic Documentation:**
+- Lightweight PRD (2-5 pages)
+- User story list
+- Basic architecture diagram
+- Setup and deployment guide
+{{/if}}
+
+{{#if (eq level 2)}}
+**Standard Documentation:**
+- Comprehensive PRD (10-20 pages)
+- Epic and story breakdown
+- Architecture diagrams and decisions
+- API documentation
+- Testing strategy
+- Deployment and operations guide
+{{/if}}
+
+{{#if (gte level 3)}}
+**Comprehensive/Enterprise Documentation:**
+- Detailed PRD with business case
+- Epic roadmap and dependencies
+- Architecture design documents (ADDs)
+- Architecture decision records (ADRs)
+- Technical specifications
+- API and integration documentation
+- Security architecture and threat model
+- Testing and QA strategy
+- Compliance and audit documentation
+- Operations runbooks
+- Change management plans
+{{/if}}
+
+### Recommended MADACE Agents
+
+{{#if (lte level 1)}}
+For minimal/basic projects, engage:
+- **PM Agent:** Basic requirements and planning
+- **DEV Agent:** Implementation guidance
+{{/if}}
+
+{{#if (and (gte level 2) (lte level 3))}}
+For standard/comprehensive projects, engage all core agents:
+- **PM Agent:** Project planning and stakeholder coordination
+- **Analyst Agent:** Requirements analysis and modeling
+- **Architect Agent:** Technical design and architecture decisions
+- **SM Agent:** Sprint planning and workflow tracking
+- **DEV Agent:** Implementation guidance and code review
+{{/if}}
+
+{{#if (eq level 4)}}
+For enterprise projects, engage all agents plus external expertise:
+- **PM Agent:** Multi-team coordination and portfolio management
+- **Analyst Agent:** Enterprise requirements and business analysis
+- **Architect Agent:** Enterprise architecture and governance
+- **SM Agent:** Multi-sprint coordination and release planning
+- **DEV Agent:** Implementation standards and code quality
+- **External Experts:** Security, compliance, performance, and domain specialists
+{{/if}}
+
+---
+
+## Risks and Considerations
+
+{{#if (eq level 0)}}
+### Level 0 Risks
+
+**Technical Risks:**
+- ⚠️ Minimal planning may lead to rework if requirements change
+- ⚠️ Lack of architecture design may create technical debt
+
+**Mitigation:**
+- Keep scope small and well-defined
+- Be prepared to refactor as needed
+- Document key decisions in README
+
+**Business Risks:**
+- ⚠️ Limited stakeholder involvement may miss requirements
+- ⚠️ Rapid development may sacrifice quality
+
+**Mitigation:**
+- Validate assumptions early with users
+- Include basic testing before deployment
+{{/if}}
+
+{{#if (eq level 1)}}
+### Level 1 Risks
+
+**Technical Risks:**
+- ⚠️ Lightweight planning may miss edge cases
+- ⚠️ Simple architecture may not scale well
+- ⚠️ Limited testing may allow bugs to reach production
+
+**Mitigation:**
+- Include acceptance criteria in all stories
+- Review architecture before significant development
+- Implement automated testing from the start
+- Plan for refactoring as project grows
+
+**Business Risks:**
+- ⚠️ Small team may have knowledge concentration
+- ⚠️ Basic documentation may hinder onboarding
+
+**Mitigation:**
+- Document key decisions and rationale
+- Cross-train team members on critical components
+{{/if}}
+
+{{#if (eq level 2)}}
+### Level 2 Risks
+
+**Technical Risks:**
+- ⚠️ Multiple integrations increase failure points
+- ⚠️ Growing codebase may become difficult to maintain
+- ⚠️ Performance issues may emerge under load
+
+**Mitigation:**
+- Implement comprehensive error handling
+- Establish code quality standards and reviews
+- Include performance testing in QA strategy
+- Plan for monitoring and observability
+
+**Business Risks:**
+- ⚠️ Team coordination challenges with 4-6 developers
+- ⚠️ Scope creep may extend timeline
+
+**Mitigation:**
+- Establish clear sprint boundaries
+- Use agile ceremonies for coordination
+- Implement change control process
+{{/if}}
+
+{{#if (eq level 3)}}
+### Level 3 Risks
+
+**Technical Risks:**
+- ⚠️ Complex architecture may be over-engineered
+- ⚠️ Many integrations create dependency risks
+- ⚠️ Large codebase requires strong governance
+- ⚠️ Security vulnerabilities in distributed systems
+
+**Mitigation:**
+- Use ADRs to document and review architecture decisions
+- Implement circuit breakers and fallback strategies
+- Establish code review and approval processes
+- Conduct security reviews and penetration testing
+- Plan for disaster recovery
+
+**Business Risks:**
+- ⚠️ Large team coordination overhead
+- ⚠️ Extended timeline increases cost and risk
+- ⚠️ Multiple stakeholders may have conflicting requirements
+
+**Mitigation:**
+- Establish clear governance and decision-making process
+- Use agile ceremonies for alignment
+- Implement stakeholder management plan
+- Break into phases with clear milestones
+{{/if}}
+
+{{#if (eq level 4)}}
+### Level 4 Risks
+
+**Technical Risks:**
+- ⚠️ Distributed systems complexity may cause cascading failures
+- ⚠️ Scale requirements may exceed infrastructure capacity
+- ⚠️ Security breaches could have catastrophic impact
+- ⚠️ Technical debt accumulation across large codebase
+- ⚠️ Integration failures across many external systems
+
+**Mitigation:**
+- Implement comprehensive monitoring and alerting
+- Design for failure with redundancy and failover
+- Conduct regular security audits and penetration testing
+- Establish technical debt management process
+- Use service mesh and API gateways for integration resilience
+
+**Business Risks:**
+- ⚠️ Multi-team coordination may cause delays
+- ⚠️ Regulatory compliance failures could halt operations
+- ⚠️ High development costs may exceed budget
+- ⚠️ Long timeline increases market risk
+- ⚠️ Stakeholder alignment challenges across organization
+
+**Mitigation:**
+- Establish program management office (PMO)
+- Implement compliance-as-code practices
+- Use phased funding with milestone gates
+- Conduct regular risk assessments
+- Executive stakeholder steering committee
+- Implement change management framework
+{{/if}}
+
+### Complexity-Specific Considerations
+
+**High Scoring Criteria (4-5 points):**
+{{#if (gte breakdown.projectSize 4)}}
+- 📦 **Project Size:** Large codebase requires modular architecture and clear boundaries
+{{/if}}
+{{#if (gte breakdown.teamSize 4)}}
+- 👥 **Team Size:** Large team needs strong coordination, clear roles, and communication processes
+{{/if}}
+{{#if (gte breakdown.codebaseComplexity 4)}}
+- 🏗️ **Codebase Complexity:** Complex architecture requires comprehensive documentation and ADRs
+{{/if}}
+{{#if (gte breakdown.integrations 4)}}
+- 🔌 **Integrations:** Many integrations require robust error handling and monitoring
+{{/if}}
+{{#if (gte breakdown.userBase 4)}}
+- 🌐 **User Base:** Large user base requires scalability planning and performance testing
+{{/if}}
+{{#if (gte breakdown.security 4)}}
+- 🔒 **Security:** High security requirements need threat modeling and compliance validation
+{{/if}}
+{{#if (gte breakdown.duration 4)}}
+- ⏱️ **Duration:** Long timeline requires phased approach with regular deliverables
+{{/if}}
+{{#if (gte breakdown.existingCode 4)}}
+- 📚 **Existing Codebase:** Significant refactoring requires careful planning and testing
+{{/if}}
+
+---
+
+## Next Steps
+
+### 1. Review This Assessment
+
+- Share this report with key stakeholders and team members
+- Validate that the complexity level accurately reflects your project
+- Discuss resource allocation and timeline expectations
+- Confirm the recommended workflow path is appropriate for your needs
+- Consider manual override if circumstances warrant a different level
+
+### 2. Initialize MADACE Workflow
+
+Run the recommended workflow to begin planning:
+
+```bash
+madace workflow {{recommendedWorkflow}}
+```
+
+This will start the **{{levelName}}** workflow appropriate for your project complexity.
+
+### 3. Configure Project Settings
+
+Ensure your `madace/core/config.yaml` includes:
+
+```yaml
+project:
+  name: "Your Project Name"
+  complexity_level: {{level}}
+  workflow_path: "{{recommendedWorkflow}}"
+  output_folder: "docs"
+
+assessment:
+  score: {{totalScore}}
+  level: {{level}}
+  assessed_at: "{{assessedAt}}"
+```
+
+### 4. Gather Your Team
+
+{{#if (lte level 1)}}
+For minimal/basic projects:
+- Confirm team composition (1-3 developers)
+- Establish basic communication channels
+- Set up development environment
+{{/if}}
+
+{{#if (and (gte level 2) (lte level 3))}}
+For standard/comprehensive projects:
+- Assemble full development team
+- Establish agile ceremonies (standups, planning, retrospectives)
+- Set up collaboration tools (Slack, Jira, GitHub, etc.)
+- Define roles and responsibilities
+{{/if}}
+
+{{#if (eq level 4)}}
+For enterprise projects:
+- Assemble multi-team structure
+- Establish program management office
+- Set up enterprise collaboration platforms
+- Define governance and escalation processes
+- Engage external specialists as needed
+{{/if}}
+
+### 5. Begin Planning Phase
+
+The workflow will guide you through:
+
+{{#if (eq level 0)}}
+1. Quick project initialization
+2. Direct story creation
+3. Implementation guidance
+{{/if}}
+
+{{#if (eq level 1)}}
+1. Basic requirements gathering
+2. Lightweight PRD creation
+3. User story breakdown
+4. Simple architecture design
+5. Sprint planning
+{{/if}}
+
+{{#if (eq level 2)}}
+1. Stakeholder interviews
+2. Comprehensive requirements analysis
+3. PRD and user story creation
+4. Architecture design sessions
+5. Sprint planning and estimation
+6. Implementation planning
+{{/if}}
+
+{{#if (gte level 3)}}
+1. Multi-stakeholder alignment
+2. Business case development (Level 4 only)
+3. Comprehensive requirements gathering
+4. Epic and story breakdown
+5. Architecture design with ADRs
+6. Technical specification creation
+7. Multi-phase planning
+8. Risk assessment and mitigation
+9. Compliance and security planning (Level 4 only)
+{{/if}}
+
+---
+
+## Assessment Metadata
+
+**Report Generated:** {{date 'datetime'}}
+**MADACE Version:** v2.0
+**Assessment Algorithm:** Scale-Adaptive Complexity Scoring (8 criteria, 0-40 points)
+**Workflow Router:** v3.0
+
+{{#if override}}
+**Override Applied:** Yes
+**Override Date:** {{override.overriddenAt}}
+{{#if override.overriddenBy}}**Override By:** {{override.overriddenBy}}{{/if}}
+{{else}}
+**Override Applied:** No
+{{/if}}
+
+---
+
+*This assessment was generated automatically by the MADACE Complexity Assessment System. For questions or to request a manual review, consult your MADACE administrator or PM agent.*
+
+**🤖 Generated with MADACE v2.0** - *Methodology for AI-Driven Agile Collaboration Engine*
