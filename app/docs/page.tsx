@@ -103,7 +103,7 @@ export default async function DocsPage() {
                   .map((file) => (
                     <Link
                       key={file.path}
-                      href={`/docs/${encodeURIComponent(file.path)}`}
+                      href={`/docs/${file.path}`}
                       className="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600"
                     >
                       <div className="flex items-start">
