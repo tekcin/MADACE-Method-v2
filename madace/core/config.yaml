@@ -1,0 +1,69 @@
+# MADACE Core Configuration
+# This file is loaded by all agents via the load_always directive
+# Auto-generated for MADACE-Method v3.0
+
+# Project Information
+project_name: 'MADACE-Method v3.0'
+output_folder: 'docs'
+user_name: 'Developer'
+communication_language: 'en'
+
+# Module Configuration
+modules:
+  mam:
+    enabled: true
+    description: 'MADACE Agile Method - Project management and story workflow'
+  mab:
+    enabled: false
+    description: 'MADACE Agent Builder - Custom agent/workflow creation (planned for v3.1+)'
+  cis:
+    enabled: false
+    description: 'Creative Intelligence Suite - AI-powered creativity workflows (planned for v3.1+)'
+
+# LLM Provider Configuration
+llm:
+  provider: 'gemini' # Options: gemini, claude, openai, local
+  model: 'gemini-2.0-flash-exp'
+  temperature: 0.7
+  max_tokens: 2048
+
+# Workflow Engine Settings
+workflow:
+  state_file_location: 'docs/workflow-status.md'
+  auto_save: true
+  validation_level: 'strict'
+
+# State Machine Rules
+state_machine:
+  max_todo_items: 1
+  max_in_progress_items: 1
+  enforce_sequential_transitions: true
+
+# Template Engine Settings
+templates:
+  engine: 'handlebars'
+  legacy_patterns_enabled: true
+  strict_mode: false
+
+# API Configuration
+api:
+  rate_limiting: true
+  timeout_ms: 30000
+
+# Database Configuration
+database:
+  provider: 'postgresql'
+  connection_pooling: true
+  max_connections: 20
+
+# CLI Integration
+cli:
+  websocket_port: 3001
+  sync_enabled: true
+  auto_reconnect: true
+
+# Deployment Settings
+deployment:
+  environment: 'development' # Options: development, staging, production
+  logging_level: 'info' # Options: debug, info, warn, error
+  enable_metrics: true
