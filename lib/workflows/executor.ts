@@ -128,7 +128,8 @@ export class WorkflowExecutor {
     console.warn(`   Action: ${step.action}`);
 
     // STORY-V3-006: Check conditional execution
-    if (step.condition) {
+    // Note: Skip conditional evaluation for 'route' action - it uses condition differently (for level variable)
+    if (step.condition && step.action !== 'route') {
       const shouldExecute = this.evaluateStepCondition(step.condition);
       if (!shouldExecute) {
         console.warn(`   ⏭️  Skipped (condition evaluated to false)`);
@@ -397,8 +398,9 @@ export class WorkflowExecutor {
     }
 
     // Normalize workflow config to array of paths
-    const workflows =
-      Array.isArray(workflowConfig) ? workflowConfig : (workflowConfig as WorkflowRoutingPath).workflows;
+    const workflows = Array.isArray(workflowConfig)
+      ? workflowConfig
+      : (workflowConfig as WorkflowRoutingPath).workflows;
 
     if (!workflows || workflows.length === 0) {
       console.warn(`   ℹ️  No workflows to execute for level ${level}`);
@@ -482,7 +484,9 @@ export class WorkflowExecutor {
     // Also save routing decision for tracking
     this.state!.variables['routing_decision'] = routingResult;
 
-    console.warn(`   ✅ Routing complete: ${executedPaths.length}/${workflows.length} workflows executed`);
+    console.warn(
+      `   ✅ Routing complete: ${executedPaths.length}/${workflows.length} workflows executed`
+    );
   }
 
   /**
@@ -563,7 +567,10 @@ export class WorkflowExecutor {
     await this.saveState();
   }
 
-  private async addChildWorkflowToState(workflowPath: string, childStateFile: string): Promise<void> {
+  private async addChildWorkflowToState(
+    workflowPath: string,
+    childStateFile: string
+  ): Promise<void> {
     if (!this.state) return;
 
     if (!this.state.childWorkflows) {
@@ -583,7 +590,7 @@ export class WorkflowExecutor {
   private async markChildWorkflowComplete(workflowPath: string): Promise<void> {
     if (!this.state?.childWorkflows) return;
 
-    const child = this.state.childWorkflows.find(c => c.workflowPath === workflowPath);
+    const child = this.state.childWorkflows.find((c) => c.workflowPath === workflowPath);
     if (child) {
       child.status = 'completed';
       child.completedAt = new Date().toISOString();
@@ -594,7 +601,7 @@ export class WorkflowExecutor {
   private async markChildWorkflowError(workflowPath: string, errorMessage?: string): Promise<void> {
     if (!this.state?.childWorkflows) return;
 
-    const child = this.state.childWorkflows.find(c => c.workflowPath === workflowPath);
+    const child = this.state.childWorkflows.find((c) => c.workflowPath === workflowPath);
     if (child) {
       child.status = 'error';
       child.error = errorMessage || 'Unknown error';
@@ -678,7 +685,7 @@ export class WorkflowExecutor {
     }
 
     // Check if any child workflows are running
-    const runningChild = this.state.childWorkflows?.find(child => child.status === 'running');
+    const runningChild = this.state.childWorkflows?.find((child) => child.status === 'running');
 
     if (runningChild) {
       // Resume child first (LIFO - deepest nested workflow first)

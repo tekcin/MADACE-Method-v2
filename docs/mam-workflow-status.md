@@ -175,6 +175,152 @@ Completed stories with dates and points:
 
 ### Phase v3.0: MADACE v3.0 Implementation (Q2 2026+)
 
+- **[STORY-V3-005]** Implement Routing Action in Workflow Executor (2025-10-29) [Points: 8]
+  **Status:** COMPLETED - Conditional workflow routing based on complexity level with comprehensive testing
+  **Developer:** Claude | **Duration:** ~45 minutes | **Epic:** EPIC-V3-001 (Scale-Adaptive Workflow Router)
+
+  **Implementation Summary:**
+  - Found existing complete implementation of routing action in workflow executor
+  - Fixed conditional evaluation conflict (V3-006 vs route action)
+  - Verified comprehensive test suite with 24 tests (100% pass rate)
+  - All 5 routing paths tested (Level 0-4)
+
+  **Files Modified:**
+  - lib/workflows/executor.ts: Fixed conditional evaluation to skip route actions (1 line change)
+    - Added check: `if (step.condition && step.action !== 'route')`
+    - Prevents route action's level variable from being evaluated as boolean condition
+
+  **Files Already Implemented:**
+  - lib/workflows/executor.ts: Complete handleRoute() method (lines 366-489, 124 lines)
+  - __tests__/lib/workflows/routing.test.ts: Comprehensive test suite (1,171 lines, 24 tests)
+
+  **Routing Action Features:**
+  - ✅ **Level-Based Routing**: Routes to workflows based on complexity level (0-4)
+  - ✅ **Variable Extraction**: Parses level from multiple formats (direct number, "level_N", embedded)
+  - ✅ **Sequential Execution**: Executes workflows in order for each level
+  - ✅ **Parent-Child Tracking**: Maintains workflow hierarchy with state tracking
+  - ✅ **Error Handling**: Comprehensive error detection and reporting
+  - ✅ **Default Fallback**: Supports default routing when level not defined
+  - ✅ **State Updates**: Saves RoutingResult to workflow variables
+  - ✅ **Context Inheritance**: Passes parent context to child workflows
+
+  **Routing Paths (by Complexity Level):**
+  - **Level 0 (Minimal)**: 1 workflow - create-stories only
+  - **Level 1 (Basic)**: 2 workflows - plan-project-light, create-stories
+  - **Level 2 (Standard)**: 4 workflows - plan-project, create-architecture-basic, create-epics, create-stories
+  - **Level 3 (Comprehensive)**: 5 workflows - plan-project, create-tech-specs, create-architecture, create-epics, create-stories
+  - **Level 4 (Enterprise)**: 7 workflows - plan-project, create-tech-specs, create-architecture, create-security-spec, create-devops-spec, create-epics, create-stories
+
+  **Test Coverage (24 tests, 100% pass rate, 0.479s execution time):**
+  - **Suite 1: Route Action Validation** (5 tests)
+    - Missing routing configuration error
+    - Missing condition variable error
+    - Invalid level validation (negative, > 4)
+    - Missing level configuration error
+  - **Suite 2: Level Extraction** (2 tests)
+    - Direct number extraction (e.g., "2")
+    - Pattern extraction (e.g., "level_3")
+  - **Suite 3: Routing Execution** (5 tests)
+    - Level 0: 1 workflow execution
+    - Level 1: 2 workflows execution
+    - Level 2: 4 workflows execution
+    - Level 3: 5 workflows execution
+    - Level 4: 7 workflows execution
+  - **Suite 4: Default Fallback** (1 test)
+    - Falls back to default when level not defined
+  - **Suite 5: Error Handling** (2 tests)
+    - Workflow execution failure
+    - Child workflow tracking
+  - **Suite 6: Routing Result** (2 tests)
+    - Saves result to output_var
+    - Saves result to routing_decision variable
+  - **Suite 7: Acceptance Criteria Validation** (7 tests)
+    - ✅ Action: route support
+    - ✅ Conditional routing based on level variable
+    - ✅ Sequential workflow execution
+    - ✅ Parent-child relationship tracking
+    - ✅ State updates with routing information
+    - ✅ Error handling for invalid routes
+    - ✅ Integration tests for all 5 routing paths
+
+  **Quality Assurance:**
+  - TypeScript type-check: PASS (0 errors)
+  - Jest tests: 24/24 PASS (100%, 0.479s execution time)
+  - ESLint: PASS (warnings only, pre-existing)
+  - Production build: PASS (all routes compiled successfully)
+
+  **Technical Implementation:**
+  ```typescript
+  // Routing action handler (lib/workflows/executor.ts:366-489)
+  private async handleRoute(step: WorkflowStep): Promise<void> {
+    // 1. Get complexity level from condition variable
+    const levelVar = this.resolveVariables(step.condition);
+    const level = this.extractLevel(levelVar);
+
+    // 2. Get workflows for this level
+    const workflows = step.routing[`level_${level}`] || step.routing.default;
+
+    // 3. Execute workflows sequentially
+    for (const workflowPath of workflows) {
+      // Load and execute child workflow
+      const childWorkflow = await loadWorkflow(absoluteWorkflowPath);
+      const childExecutor = new WorkflowExecutor(childWorkflow, this.statePath);
+
+      // Initialize with parent context
+      await childExecutor.initializeChildWorkflow(parentWorkflow, parentStateFile, childContext);
+
+      // Track child workflow
+      await this.addChildWorkflowToState(workflowPath, childStateFile);
+
+      // Execute to completion
+      let result = await childExecutor.executeNextStep();
+      while (!result.state?.completed && result.success) {
+        result = await childExecutor.executeNextStep();
+      }
+
+      // Mark complete or handle error
+      await this.markChildWorkflowComplete(workflowPath);
+    }
+
+    // 4. Save routing result
+    const routingResult: RoutingResult = {
+      level, workflowsExecuted, workflowPaths, startedAt, completedAt, success, errors
+    };
+    this.state!.variables[step.output_var] = routingResult;
+  }
+  ```
+
+  **MADACE Compliance:**
+  - ✅ Routing action integrated into existing workflow executor
+  - ✅ Supports all 5 complexity levels from scale assessment
+  - ✅ Sequential workflow execution with parent-child tracking
+  - ✅ Comprehensive error handling and state management
+  - ✅ TypeScript strict mode compliance
+  - ✅ 100% test coverage of all routing paths
+  - ✅ Production-ready with successful build verification
+
+  **Acceptance Criteria Verification:**
+  - ✅ Add `action: route` support to workflow executor
+  - ✅ Implement conditional routing based on level variable
+  - ✅ Support sequential workflow execution per level
+  - ✅ Track parent-child workflow relationships
+  - ✅ Update workflow state with routing information
+  - ✅ Error handling for invalid routes
+  - ✅ Integration tests for all 5 routing paths (Level 0-4)
+
+  **Bug Fix:**
+  - Fixed conflict between V3-006 conditional execution and route action
+  - Route action uses `condition` field to specify level variable, not boolean expression
+  - Modified executeStep() to skip conditional evaluation for route actions
+  - Change: `if (step.condition && step.action !== 'route')` prevents route level variable from being evaluated as boolean
+
+  **Integration Points:**
+  - Works with existing workflow executor infrastructure
+  - Integrates with sub-workflow execution system
+  - Supports workflow hierarchy and state tracking
+  - Compatible with all workflow action types
+  - Enables scale-adaptive routing in route-workflow.yaml
+
 - **[STORY-V3-017]** API Route GET /api/status/:type/:id (2025-10-29) [Points: 1]
   **Status:** COMPLETED - RESTful API endpoint for status queries with comprehensive security and testing
   **Developer:** Claude | **Duration:** ~90 minutes | **Epic:** EPIC-V3-002 (Universal Workflow Status Checker)
