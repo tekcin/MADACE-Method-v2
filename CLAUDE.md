@@ -104,11 +104,11 @@ See [PRD.md](./PRD.md) and [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
 
 ```json
 {
-  "next": "15.5.6",       // LOCKED
-  "react": "19.2.0",      // LOCKED
-  "react-dom": "19.2.0",  // LOCKED
-  "typescript": "5.9.3",  // LOCKED
-  "prisma": "6.17.1"      // LOCKED
+  "next": "15.5.6", // LOCKED
+  "react": "19.2.0", // LOCKED
+  "react-dom": "19.2.0", // LOCKED
+  "typescript": "5.9.3", // LOCKED
+  "prisma": "6.17.1" // LOCKED
 }
 ```
 
@@ -227,13 +227,13 @@ const agents = await prisma.agent.findMany();
 
 // Create agent
 const agent = await prisma.agent.create({
-  data: { name: 'pm', title: 'Product Manager', /* ... */ }
+  data: { name: 'pm', title: 'Product Manager' /* ... */ },
 });
 
 // Update workflow state
 await prisma.workflowState.update({
   where: { workflowId: 'mam-workflow' },
-  data: { currentStep: 2, status: 'in-progress' }
+  data: { currentStep: 2, status: 'in-progress' },
 });
 ```
 
@@ -298,12 +298,12 @@ import { createLLMClient } from '@/lib/llm/client';
 const client = createLLMClient({
   provider: 'gemini',
   apiKey: process.env.GEMINI_API_KEY!,
-  model: 'gemini-2.0-flash-exp'
+  model: 'gemini-2.0-flash-exp',
 });
 
 // Blocking request
 const response = await client.chat({
-  messages: [{ role: 'user', content: 'Hello!' }]
+  messages: [{ role: 'user', content: 'Hello!' }],
 });
 
 // Streaming request
@@ -323,6 +323,7 @@ BACKLOG → TODO → IN_PROGRESS → DONE
 ```
 
 **Critical Rules**:
+
 - Only ONE story in TODO at a time
 - Only ONE story in IN_PROGRESS at a time
 - Single source of truth: `docs/workflow-status.md` (synced with DB)
@@ -337,11 +338,12 @@ import { renderTemplate } from '@/lib/templates/engine';
 
 const output = await renderTemplate('template-name', {
   projectName: 'My Project',
-  userName: 'John Doe'
+  userName: 'John Doe',
 });
 ```
 
 **Supported patterns**:
+
 - Handlebars: `{{variable_name}}`
 - Legacy: `{variable-name}`, `${variable}`, `%VAR%`
 
@@ -360,7 +362,7 @@ steps:
   - name: create-prd
     action: workflow:create-prd
     agent: analyst
-    condition: "complexity >= 2"
+    condition: 'complexity >= 2'
 
   - name: sub-workflow
     action: sub-workflow:epic-breakdown
@@ -370,21 +372,25 @@ steps:
 ## UI Pages
 
 **Agent Management**:
+
 - `/agents` - Agent selector and list
 - `/agents/[id]` - Agent detail view
 - `/agents/manage` - CRUD interface for agents
 
 **Workflow & Status**:
+
 - `/workflows` - Workflow list and execution
 - `/status` - Visual Kanban board (BACKLOG, TODO, IN_PROGRESS, DONE)
 - `/kanban` - Alternative Kanban view
 
 **Configuration**:
+
 - `/setup` - Initial setup wizard
 - `/settings` - System configuration
 - `/assess` - Complexity assessment tool
 
 **Development**:
+
 - `/docs` - Documentation viewer
 - `/docs/[...slug]` - Dynamic doc pages
 - `/sync-status` - Real-time sync dashboard
@@ -506,6 +512,7 @@ test('should display agent list', async ({ page }) => {
 ```
 
 **Test Guidelines**:
+
 - Unit tests for business logic
 - E2E tests for user workflows
 - Mock external dependencies (LLM APIs)
@@ -538,10 +545,7 @@ export async function GET(request: NextRequest) {
     const data = await prisma.model.findMany();
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    return NextResponse.json(
-      { success: false, error: 'Error message' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Error message' }, { status: 500 });
   }
 }
 ```
@@ -614,6 +618,7 @@ npm run test:e2e:debug       # Step through tests
 ## Documentation
 
 **Core Docs**:
+
 - [README.md](./README.md) - Project overview
 - [PRD.md](./PRD.md) - Product requirements (V3)
 - [PLAN.md](./PLAN.md) - Development roadmap
@@ -621,12 +626,14 @@ npm run test:e2e:debug       # Step through tests
 - [FEASIBILITY-REPORT.md](./FEASIBILITY-REPORT.md) - Technical feasibility
 
 **Guides**:
+
 - [DEVELOPMENT.md](./DEVELOPMENT.md) - Development container setup
 - [E2E-TESTING-GUIDE.md](./E2E-TESTING-GUIDE.md) - E2E testing guide
 - [TESTING-POLICY.md](./TESTING-POLICY.md) - Testing standards
 - [docs/HTTPS-DEPLOYMENT.md](./docs/HTTPS-DEPLOYMENT.md) - Production deployment
 
 **V2 Archive**:
+
 - [archive/v2/](./archive/v2/) - V2 documentation and code
 
 ## Project Status
@@ -634,6 +641,7 @@ npm run test:e2e:debug       # Step through tests
 **Current Phase**: V3 Alpha - Database Integration Complete
 
 **Completed**:
+
 - ✅ Prisma ORM integration
 - ✅ Database schema design
 - ✅ Agent CRUD API (V3)
@@ -643,11 +651,13 @@ npm run test:e2e:debug       # Step through tests
 - ✅ Docker deployment
 
 **In Progress**:
+
 - ⏳ Workflow engine with DB persistence
 - ⏳ State machine with DB sync
 - ⏳ NLU integration
 
 **Planned**:
+
 - 📋 Real-time collaboration features
 - 📋 Advanced agent orchestration
 - 📋 Plugin system

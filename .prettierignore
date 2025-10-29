@@ -34,3 +34,6 @@ madace-data
 # MADACE agent files (preserve YAML formatting)
 madace/mam/agents/*.yaml
 madace/mam/workflows/*.yaml
+
+# Templates (Handlebars - can't be parsed by Prettier)
+templates/*.hbs
