@@ -126,7 +126,7 @@ const ASSESSMENT_QUESTIONS = [
  * Format assessment result as table (default CLI output)
  */
 function formatAsTable(result: ComplexityResult): string {
-  const { level, levelName, totalScore, breakdown } = result;
+  const { level, levelName, totalScore, breakdown, override } = result;
 
   const lines = [
     '',
@@ -138,23 +138,33 @@ function formatAsTable(result: ComplexityResult): string {
     `  Total Score: ${totalScore}/40 points`,
     `  Score Range: ${result.scoreRange}`,
     `  Recommended Workflow: ${result.recommendedWorkflow}`,
-    '',
-    '━'.repeat(60),
-    '  CRITERIA BREAKDOWN',
-    '━'.repeat(60),
-    '',
-    `  Project Size:          ${breakdown.projectSize}/5`,
-    `  Team Size:             ${breakdown.teamSize}/5`,
-    `  Codebase Complexity:   ${breakdown.codebaseComplexity}/5`,
-    `  Integrations:          ${breakdown.integrations}/5`,
-    `  User Base:             ${breakdown.userBase}/5`,
-    `  Security:              ${breakdown.security}/5`,
-    `  Duration:              ${breakdown.duration}/5`,
-    `  Existing Code:         ${breakdown.existingCode}/5`,
-    '',
-    '━'.repeat(60),
-    '',
   ];
+
+  // Add override information if present
+  if (override) {
+    lines.push('');
+    lines.push('  ⚠️  MANUAL OVERRIDE APPLIED');
+    lines.push(`  Original Level: ${override.originalLevel} → Override Level: ${override.overrideLevel}`);
+    lines.push(`  Reason: ${override.reason}`);
+    lines.push(`  By: ${override.overriddenBy}`);
+  }
+
+  lines.push('');
+  lines.push('━'.repeat(60));
+  lines.push('  CRITERIA BREAKDOWN');
+  lines.push('━'.repeat(60));
+  lines.push('');
+  lines.push(`  Project Size:          ${breakdown.projectSize}/5`);
+  lines.push(`  Team Size:             ${breakdown.teamSize}/5`);
+  lines.push(`  Codebase Complexity:   ${breakdown.codebaseComplexity}/5`);
+  lines.push(`  Integrations:          ${breakdown.integrations}/5`);
+  lines.push(`  User Base:             ${breakdown.userBase}/5`);
+  lines.push(`  Security:              ${breakdown.security}/5`);
+  lines.push(`  Duration:              ${breakdown.duration}/5`);
+  lines.push(`  Existing Code:         ${breakdown.existingCode}/5`);
+  lines.push('');
+  lines.push('━'.repeat(60));
+  lines.push('');
 
   return lines.join('\n');
 }
@@ -170,7 +180,7 @@ function formatAsJSON(result: ComplexityResult): string {
  * Format assessment result as Markdown report
  */
 function formatAsMarkdown(result: ComplexityResult): string {
-  const { level, levelName, totalScore, breakdown } = result;
+  const { level, levelName, totalScore, breakdown, override } = result;
   const date = new Date().toISOString().split('T')[0];
 
   const lines = [
@@ -181,29 +191,42 @@ function formatAsMarkdown(result: ComplexityResult): string {
     `**Total Score:** ${totalScore}/40 points`,
     `**Score Range:** ${result.scoreRange}`,
     `**Recommended Workflow:** \`${result.recommendedWorkflow}\``,
-    '',
-    '## Criteria Breakdown',
-    '',
-    '| Criterion | Score | Max | Percentage |',
-    '|-----------|-------|-----|------------|',
-    `| Project Size | ${breakdown.projectSize} | 5 | ${Math.round((breakdown.projectSize / 5) * 100)}% |`,
-    `| Team Size | ${breakdown.teamSize} | 5 | ${Math.round((breakdown.teamSize / 5) * 100)}% |`,
-    `| Codebase Complexity | ${breakdown.codebaseComplexity} | 5 | ${Math.round((breakdown.codebaseComplexity / 5) * 100)}% |`,
-    `| Integrations | ${breakdown.integrations} | 5 | ${Math.round((breakdown.integrations / 5) * 100)}% |`,
-    `| User Base | ${breakdown.userBase} | 5 | ${Math.round((breakdown.userBase / 5) * 100)}% |`,
-    `| Security | ${breakdown.security} | 5 | ${Math.round((breakdown.security / 5) * 100)}% |`,
-    `| Duration | ${breakdown.duration} | 5 | ${Math.round((breakdown.duration / 5) * 100)}% |`,
-    `| Existing Code | ${breakdown.existingCode} | 5 | ${Math.round((breakdown.existingCode / 5) * 100)}% |`,
-    '',
-    '## Level Characteristics',
-    '',
-    getLevelDescription(level),
-    '',
-    '## Next Steps',
-    '',
-    getNextSteps(level),
-    '',
   ];
+
+  // Add override information if present
+  if (override) {
+    lines.push('');
+    lines.push('## ⚠️ Manual Override');
+    lines.push('');
+    lines.push(`- **Original Level:** ${override.originalLevel}`);
+    lines.push(`- **Override Level:** ${override.overrideLevel}`);
+    lines.push(`- **Reason:** ${override.reason}`);
+    lines.push(`- **Overridden By:** ${override.overriddenBy}`);
+    lines.push(`- **Overridden At:** ${new Date(override.overriddenAt).toLocaleString()}`);
+  }
+
+  lines.push('');
+  lines.push('## Criteria Breakdown');
+  lines.push('');
+  lines.push('| Criterion | Score | Max | Percentage |');
+  lines.push('|-----------|-------|-----|------------|');
+  lines.push(`| Project Size | ${breakdown.projectSize} | 5 | ${Math.round((breakdown.projectSize / 5) * 100)}% |`);
+  lines.push(`| Team Size | ${breakdown.teamSize} | 5 | ${Math.round((breakdown.teamSize / 5) * 100)}% |`);
+  lines.push(`| Codebase Complexity | ${breakdown.codebaseComplexity} | 5 | ${Math.round((breakdown.codebaseComplexity / 5) * 100)}% |`);
+  lines.push(`| Integrations | ${breakdown.integrations} | 5 | ${Math.round((breakdown.integrations / 5) * 100)}% |`);
+  lines.push(`| User Base | ${breakdown.userBase} | 5 | ${Math.round((breakdown.userBase / 5) * 100)}% |`);
+  lines.push(`| Security | ${breakdown.security} | 5 | ${Math.round((breakdown.security / 5) * 100)}% |`);
+  lines.push(`| Duration | ${breakdown.duration} | 5 | ${Math.round((breakdown.duration / 5) * 100)}% |`);
+  lines.push(`| Existing Code | ${breakdown.existingCode} | 5 | ${Math.round((breakdown.existingCode / 5) * 100)}% |`);
+  lines.push('');
+  lines.push('## Level Characteristics');
+  lines.push('');
+  lines.push(getLevelDescription(level));
+  lines.push('');
+  lines.push('## Next Steps');
+  lines.push('');
+  lines.push(getNextSteps(level));
+  lines.push('');
 
   return lines.join('\n');
 }
@@ -266,6 +289,48 @@ function getNextSteps(level: number): string {
 }
 
 /**
+ * Get level name for a given complexity level
+ */
+function getLevelName(level: number): string {
+  const names: Record<number, string> = {
+    0: 'Minimal',
+    1: 'Basic',
+    2: 'Standard',
+    3: 'Comprehensive',
+    4: 'Enterprise',
+  };
+  return names[level] || 'Unknown';
+}
+
+/**
+ * Get workflow name for a given complexity level
+ */
+function getWorkflowName(level: number): string {
+  const workflows: Record<number, string> = {
+    0: 'minimal-workflow.yaml',
+    1: 'basic-workflow.yaml',
+    2: 'standard-workflow.yaml',
+    3: 'comprehensive-workflow.yaml',
+    4: 'enterprise-workflow.yaml',
+  };
+  return workflows[level] || 'standard-workflow.yaml';
+}
+
+/**
+ * Get score range for a given complexity level
+ */
+function getScoreRange(level: number): string {
+  const ranges: Record<number, string> = {
+    0: '0-4 points',
+    1: '5-11 points',
+    2: '12-20 points',
+    3: '21-29 points',
+    4: '30-40 points',
+  };
+  return ranges[level] || 'Unknown';
+}
+
+/**
  * Create CLI command for complexity assessment
  */
 export function createAssessScaleCommand(): Command {
@@ -276,6 +341,8 @@ export function createAssessScaleCommand(): Command {
     .option('-f, --format <format>', 'Output format (table, json, markdown)', 'table')
     .option('-o, --output <file>', 'Save report to file')
     .option('-j, --json <data>', 'Provide assessment data as JSON (non-interactive)')
+    .option('-l, --level <level>', 'Manually override the recommended level (0-4)', parseInt)
+    .option('-r, --reason <reason>', 'Reason for manual override (required if --level is used)')
     .action(async (options) => {
       try {
         let projectInput: ProjectInput;
@@ -298,8 +365,45 @@ export function createAssessScaleCommand(): Command {
           }
         }
 
+        // Validate override options
+        if (options.level !== undefined) {
+          // Validate level is 0-4
+          if (options.level < 0 || options.level > 4 || isNaN(options.level)) {
+            console.error('❌ Invalid level: must be 0, 1, 2, 3, or 4');
+            process.exit(1);
+          }
+
+          // Require reason if level is provided
+          if (!options.reason) {
+            console.error('❌ --reason is required when using --level');
+            process.exit(1);
+          }
+        }
+
         // Run complexity assessment
-        const result = assessComplexity(projectInput);
+        let result = assessComplexity(projectInput);
+
+        // Apply manual override if specified
+        if (options.level !== undefined && options.reason) {
+          const originalLevel = result.level;
+          const overrideLevel = options.level;
+
+          // Apply override
+          result = {
+            ...result,
+            level: overrideLevel,
+            levelName: getLevelName(overrideLevel),
+            recommendedWorkflow: getWorkflowName(overrideLevel),
+            scoreRange: getScoreRange(overrideLevel),
+            override: {
+              originalLevel,
+              overrideLevel,
+              reason: options.reason,
+              overriddenBy: 'CLI User',
+              overriddenAt: new Date(),
+            },
+          };
+        }
 
         // Format output based on selected format
         let output: string;

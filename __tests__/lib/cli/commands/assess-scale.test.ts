@@ -329,4 +329,141 @@ describe('madace assess-scale CLI command', () => {
       expect(stdout).toContain('| Criterion | Score | Max | Percentage |');
     });
   });
+
+  describe('Manual Override Functionality (STORY-V3-010)', () => {
+    it('should apply manual override with --level and --reason flags', async () => {
+      const input = JSON.stringify({
+        projectSize: 2,
+        teamSize: 2,
+        codebaseComplexity: 2,
+        integrations: 2,
+        userBase: 2,
+        security: 2,
+        duration: 2,
+        existingCode: 0,
+      });
+
+      const { stdout } = await execAsync(
+        `${cliCommand} --json '${input}' --format=json --level=4 --reason="Team preference for comprehensive planning"`
+      );
+
+      const result = JSON.parse(extractJSON(stdout));
+      expect(result.level).toBe(4); // Overridden level
+      expect(result.levelName).toBe('Enterprise');
+      expect(result).toHaveProperty('override');
+      expect(result.override.originalLevel).toBe(2); // Original calculated level
+      expect(result.override.overrideLevel).toBe(4);
+      expect(result.override.reason).toBe('Team preference for comprehensive planning');
+      expect(result.override.overriddenBy).toBe('CLI User');
+      expect(result.override).toHaveProperty('overriddenAt');
+    });
+
+    it('should show override information in table format', async () => {
+      const input = JSON.stringify({
+        projectSize: 1,
+        teamSize: 1,
+        codebaseComplexity: 1,
+        integrations: 1,
+        userBase: 1,
+        security: 1,
+        duration: 1,
+        existingCode: 1,
+      });
+
+      const { stdout } = await execAsync(
+        `${cliCommand} --json '${input}' --level=3 --reason="Security requirements"`
+      );
+
+      expect(stdout).toContain('⚠️  MANUAL OVERRIDE APPLIED');
+      expect(stdout).toContain('Original Level: 1 → Override Level: 3');
+      expect(stdout).toContain('Reason: Security requirements');
+      expect(stdout).toContain('By: CLI User');
+    });
+
+    it('should show override information in markdown format', async () => {
+      const input = JSON.stringify({
+        projectSize: 0,
+        teamSize: 0,
+        codebaseComplexity: 0,
+        integrations: 0,
+        userBase: 0,
+        security: 0,
+        duration: 0,
+        existingCode: 0,
+      });
+
+      const { stdout } = await execAsync(
+        `${cliCommand} --json '${input}' --format=markdown --level=2 --reason="Business requirements"`
+      );
+
+      expect(stdout).toContain('## ⚠️ Manual Override');
+      expect(stdout).toContain('**Original Level:** 0');
+      expect(stdout).toContain('**Override Level:** 2');
+      expect(stdout).toContain('**Reason:** Business requirements');
+      expect(stdout).toContain('**Overridden By:** CLI User');
+    });
+
+    it('should require --reason when --level is used', async () => {
+      const input = JSON.stringify({
+        projectSize: 2,
+        teamSize: 2,
+        codebaseComplexity: 2,
+        integrations: 2,
+        userBase: 2,
+        security: 2,
+        duration: 2,
+        existingCode: 0,
+      });
+
+      try {
+        await execAsync(`${cliCommand} --json '${input}' --level=3`);
+        fail('Should have thrown an error');
+      } catch (error) {
+        const err = error as { stderr: string };
+        expect(err.stderr).toContain('--reason is required when using --level');
+      }
+    });
+
+    it('should validate level is between 0-4', async () => {
+      const input = JSON.stringify({
+        projectSize: 2,
+        teamSize: 2,
+        codebaseComplexity: 2,
+        integrations: 2,
+        userBase: 2,
+        security: 2,
+        duration: 2,
+        existingCode: 0,
+      });
+
+      try {
+        await execAsync(`${cliCommand} --json '${input}' --level=5 --reason="Test"`);
+        fail('Should have thrown an error');
+      } catch (error) {
+        const err = error as { stderr: string };
+        expect(err.stderr).toContain('Invalid level: must be 0, 1, 2, 3, or 4');
+      }
+    });
+
+    it('should validate level is not negative', async () => {
+      const input = JSON.stringify({
+        projectSize: 2,
+        teamSize: 2,
+        codebaseComplexity: 2,
+        integrations: 2,
+        userBase: 2,
+        security: 2,
+        duration: 2,
+        existingCode: 0,
+      });
+
+      try {
+        await execAsync(`${cliCommand} --json '${input}' --level=-1 --reason="Test"`);
+        fail('Should have thrown an error');
+      } catch (error) {
+        const err = error as { stderr: string };
+        expect(err.stderr).toContain('Invalid level: must be 0, 1, 2, 3, or 4');
+      }
+    });
+  });
 });
