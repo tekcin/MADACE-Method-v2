@@ -18,6 +18,8 @@ import type {
   WorkflowStep,
   WorkflowExecutionResult,
   WorkflowHierarchy,
+  RoutingResult,
+  WorkflowRoutingPath,
 } from './types';
 import { WorkflowStateSchema } from './schema';
 import { StateMachine } from '@/lib/state/machine';
@@ -157,6 +159,10 @@ export class WorkflowExecutor {
 
         case 'sub-workflow':
           await this.handleSubWorkflow(step);
+          break;
+
+        case 'route':
+          await this.handleRoute(step);
           break;
 
         default:
@@ -342,6 +348,158 @@ export class WorkflowExecutor {
     console.warn(`   ✅ Sub-workflow completed: ${workflowPath}`);
   }
 
+  /**
+   * Handle route action - execute workflows based on complexity level
+   * Supports STORY-V3-005: Implement Routing Action in Workflow Executor
+   */
+  private async handleRoute(step: WorkflowStep): Promise<void> {
+    if (!step.routing) {
+      throw new Error('Route step requires routing configuration');
+    }
+
+    if (!step.condition) {
+      throw new Error('Route step requires condition variable (complexity level)');
+    }
+
+    // Get complexity level from condition variable
+    const levelVar = this.resolveVariables(step.condition);
+    const level = this.extractLevel(levelVar);
+
+    if (level === null || level < 0 || level > 4) {
+      throw new Error(`Invalid routing level: ${levelVar} (must be 0-4)`);
+    }
+
+    console.warn(`   🔀 Routing to Level ${level} workflows`);
+
+    // Get workflows for this level
+    const levelKey = `level_${level}` as keyof typeof step.routing;
+    let workflowConfig = step.routing[levelKey];
+
+    // Fallback to default if level not found
+    if (!workflowConfig && step.routing.default) {
+      console.warn(`   ⚠️  Level ${level} not defined, using default routing`);
+      workflowConfig = step.routing.default;
+    }
+
+    if (!workflowConfig) {
+      throw new Error(`No routing configuration found for level ${level}`);
+    }
+
+    // Normalize workflow config to array of paths
+    const workflows =
+      Array.isArray(workflowConfig) ? workflowConfig : (workflowConfig as WorkflowRoutingPath).workflows;
+
+    if (!workflows || workflows.length === 0) {
+      console.warn(`   ℹ️  No workflows to execute for level ${level}`);
+      return;
+    }
+
+    console.warn(`   📋 Workflows to execute: ${workflows.length}`);
+    workflows.forEach((wf, index) => console.warn(`      ${index + 1}. ${wf}`));
+
+    // Execute workflows sequentially
+    const startedAt = new Date().toISOString();
+    const errors: string[] = [];
+    const executedPaths: string[] = [];
+
+    for (const workflowPath of workflows) {
+      try {
+        console.warn(`   ▶️  Executing: ${workflowPath}`);
+
+        // Resolve relative paths
+        const absoluteWorkflowPath = path.resolve(workflowPath);
+
+        // Load and execute child workflow
+        const childWorkflow = await loadWorkflow(absoluteWorkflowPath);
+        const childExecutor = new WorkflowExecutor(childWorkflow, this.statePath);
+
+        // Initialize with parent context
+        const childContext = this.prepareChildContext(step);
+        await childExecutor.initializeChildWorkflow(
+          this.workflow.name || 'unknown',
+          path.basename(this.statePath || '', `.${this.workflow.name}.state.json`),
+          childContext
+        );
+
+        // Track child workflow
+        await this.addChildWorkflowToState(workflowPath, childExecutor.getStateFileName());
+
+        // Execute to completion
+        let result = await childExecutor.executeNextStep();
+        while (!result.state?.completed && result.success) {
+          result = await childExecutor.executeNextStep();
+        }
+
+        if (!result.success) {
+          const error = `Workflow failed: ${workflowPath} - ${result.message}`;
+          errors.push(error);
+          await this.markChildWorkflowError(workflowPath, result.error?.message);
+          console.warn(`   ❌ ${error}`);
+
+          // Stop on first error (continue_on_error: false)
+          throw new Error(error);
+        }
+
+        await this.markChildWorkflowComplete(workflowPath);
+        executedPaths.push(workflowPath);
+        console.warn(`   ✅ Completed: ${workflowPath}`);
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        errors.push(errorMsg);
+        throw new Error(`Routing failed at workflow ${workflowPath}: ${errorMsg}`);
+      }
+    }
+
+    const completedAt = new Date().toISOString();
+
+    // Create routing result
+    const routingResult: RoutingResult = {
+      level,
+      workflowsExecuted: executedPaths.length,
+      workflowPaths: executedPaths,
+      startedAt,
+      completedAt,
+      success: errors.length === 0,
+      errors: errors.length > 0 ? errors : undefined,
+    };
+
+    // Save routing result to state
+    if (step.output_var) {
+      this.state!.variables[step.output_var] = routingResult;
+    }
+
+    // Also save routing decision for tracking
+    this.state!.variables['routing_decision'] = routingResult;
+
+    console.warn(`   ✅ Routing complete: ${executedPaths.length}/${workflows.length} workflows executed`);
+  }
+
+  /**
+   * Extract numeric level from variable string
+   * Supports formats: "0", "level_0", "${level}", etc.
+   */
+  private extractLevel(levelVar: string): number | null {
+    // Try to parse as number directly
+    const direct = parseInt(levelVar, 10);
+    if (!isNaN(direct)) {
+      return direct;
+    }
+
+    // Try to extract from "level_N" pattern
+    const match = levelVar.match(/level[_-]?(\d+)/i);
+    if (match && match[1]) {
+      return parseInt(match[1], 10);
+    }
+
+    // Try to extract any number from string
+    const numMatch = levelVar.match(/\d+/);
+    if (numMatch && numMatch[0]) {
+      return parseInt(numMatch[0], 10);
+    }
+
+    return null;
+  }
+
   private detectCircularDependency(childWorkflowPath: string): void {
     // Check if we have a visited workflows array in state
     const visitedWorkflows = (this.state!.variables['_VISITED_WORKFLOWS'] as string[]) || [];
@@ -439,13 +597,18 @@ export class WorkflowExecutor {
   }
 
   private resolveVariables(text: string): string {
-    // Simple variable substitution using official MADACE pattern {variable-name}
+    // Variable substitution supporting Handlebars syntax {{variable}} and legacy {variable}
     let result = text;
 
-    // Replace variables in curly braces
+    // Replace variables in curly braces (supports both {{var}} and {var})
     for (const [key, value] of Object.entries(this.state!.variables)) {
-      const pattern = new RegExp(`\{${key}\}`, 'g');
-      result = result.replace(pattern, String(value));
+      // Replace double curly braces {{variable}} (Handlebars/Mustache syntax)
+      const doublePattern = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+      result = result.replace(doublePattern, String(value));
+
+      // Replace single curly braces {variable} (legacy syntax)
+      const singlePattern = new RegExp(`\\{${key}\\}`, 'g');
+      result = result.replace(singlePattern, String(value));
     }
 
     return result;
@@ -630,7 +793,14 @@ export async function loadWorkflow(workflowPath: string): Promise<Workflow> {
     }
   }
 
-  return workflow;
+  // Normalize to legacy format for executor compatibility
+  // Extract workflow.workflow properties to top level
+  return {
+    name: wf.name,
+    description: wf.description,
+    steps: wf.steps,
+    variables: wf.variables,
+  };
 }
 
 export function createWorkflowExecutor(workflow: Workflow, statePath?: string): WorkflowExecutor {

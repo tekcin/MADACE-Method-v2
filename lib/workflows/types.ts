@@ -2,6 +2,35 @@
  * Workflow Types
  */
 
+/**
+ * Routing configuration for conditional workflow execution (v3.0)
+ * Maps complexity levels to arrays of workflow paths
+ */
+export interface WorkflowRoutingPath {
+  label?: string; // Human-readable label (e.g., "Minimal Workflow Path")
+  description?: string; // Description of this routing path
+  workflows: string[]; // Array of workflow file paths to execute sequentially
+}
+
+export interface WorkflowRouting {
+  level_0?: WorkflowRoutingPath | string[]; // Minimal (0-5 points)
+  level_1?: WorkflowRoutingPath | string[]; // Basic (6-12 points)
+  level_2?: WorkflowRoutingPath | string[]; // Standard (13-20 points)
+  level_3?: WorkflowRoutingPath | string[]; // Comprehensive (21-30 points)
+  level_4?: WorkflowRoutingPath | string[]; // Enterprise (31-40 points)
+  default?: WorkflowRoutingPath | string[]; // Fallback if level is invalid
+}
+
+export interface RoutingResult {
+  level: number; // Complexity level that was routed to (0-4)
+  workflowsExecuted: number; // Number of workflows executed
+  workflowPaths: string[]; // Paths of workflows that were executed
+  startedAt: string; // ISO timestamp when routing started
+  completedAt: string; // ISO timestamp when routing completed
+  success: boolean; // Whether all workflows completed successfully
+  errors?: string[]; // Errors encountered during routing
+}
+
 export type WorkflowStepAction =
   | 'elicit'
   | 'reflect'
@@ -12,6 +41,7 @@ export type WorkflowStepAction =
   | 'display'
   | 'load_state_machine'
   | 'sub-workflow'
+  | 'route'
   | 'api_call';
 
 export interface WorkflowStep {
@@ -33,6 +63,10 @@ export interface WorkflowStep {
   subworkflow?: string; // Legacy field (deprecated, use workflow_path instead)
   workflow_path?: string; // Path to child workflow YAML file (required for sub-workflow action)
   context_vars?: Record<string, string>; // Variables to pass to child workflow
+
+  // Routing support (v3.0 - Scale-Adaptive Workflow Router)
+  routing?: WorkflowRouting; // Routing configuration for route action
+  output_var?: string; // Variable to store result/output
 }
 
 export interface Workflow {
