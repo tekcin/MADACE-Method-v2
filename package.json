@@ -31,7 +31,8 @@
     "db:push": "prisma db push",
     "db:reset": "prisma migrate reset",
     "import-madace": "tsx scripts/import-madace-agents.ts",
-    "import-madace-v3": "tsx scripts/import-madace-v3-agents.ts"
+    "import-madace-v3": "tsx scripts/import-madace-v3-agents.ts",
+    "madace": "tsx bin/madace.ts"
   },
   "dependencies": {
     "@heroicons/react": "2.2.0",
@@ -39,6 +40,7 @@
     "chokidar": "4.0.3",
     "commander": "14.0.1",
     "handlebars": "4.7.8",
+    "inquirer": "12.10.0",
     "js-yaml": "4.1.0",
     "next": "15.5.6",
     "react": "19.2.0",
@@ -53,6 +55,7 @@
     "@eslint/eslintrc": "3.3.1",
     "@playwright/test": "1.56.1",
     "@tailwindcss/postcss": "4.1.15",
+    "@types/inquirer": "9.0.9",
     "@types/jest": "30.0.0",
     "@types/js-yaml": "4.0.9",
     "@types/node": "22.18.11",

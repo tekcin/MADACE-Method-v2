@@ -258,7 +258,49 @@ npm run format:check       # Prettier (check only)
 npm run check-all          # Run all checks (type-check + lint + format:check)
 
 # Testing
-npm test                   # Run Jest tests (__tests__/ and *.spec.ts)
+npm test                   # Run all tests with Jest
+```
+
+### MADACE CLI Commands
+
+```bash
+# Project Complexity Assessment
+npm run madace assess-scale              # Interactive assessment wizard
+npm run madace assess-scale -- --json '{"projectSize":2,...}' --format=json
+npm run madace assess-scale -- --json '{"projectSize":2,...}' --format=markdown --output=docs/assessment.md
+
+# Command: madace assess-scale
+# Purpose: Assess project complexity and recommend planning level (0-4)
+# Modes:
+#   - Interactive (default): 8-question wizard using inquirer.js
+#   - Non-interactive: JSON input via --json flag
+# Output formats:
+#   - table (default): Terminal-friendly box drawing
+#   - json: Machine-readable JSON
+#   - markdown: Full assessment report
+# Options:
+#   --format <format>: Output format (table, json, markdown)
+#   --output <file>: Save report to file
+#   --json <data>: Non-interactive mode with JSON input
+
+# Example JSON input:
+# {
+#   "projectSize": 2,        // 0-5: Tiny to Massive
+#   "teamSize": 2,          // 0-5: Solo to Enterprise
+#   "codebaseComplexity": 2, // 0-5: Trivial to Extreme
+#   "integrations": 2,       // 0-5: None to Extensive
+#   "userBase": 2,          // 0-5: Personal to Massive
+#   "security": 2,          // 0-5: None to Critical
+#   "duration": 2,          // 0-5: Very Short to Indefinite
+#   "existingCode": 0       // 0-5: Greenfield to Full Rewrite
+# }
+
+# Example outputs:
+# - Level 0 (Minimal): Simple projects, minimal planning
+# - Level 1 (Basic): Small teams, basic planning
+# - Level 2 (Standard): Medium projects, structured planning
+# - Level 3 (Comprehensive): Large projects, comprehensive planning
+# - Level 4 (Enterprise): Mission-critical systems, full governance
 ```
 
 ### Docker Deployment
