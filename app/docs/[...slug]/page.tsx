@@ -16,12 +16,14 @@ interface DocPageProps {
 
 async function getDocContent(slug: string[]): Promise<{ content: string; title: string } | null> {
   try {
-    const docPath = path.join(process.cwd(), 'docs', ...slug);
+    // Decode URL segments to handle encoded paths like %2F
+    const decodedSlug = slug.map((segment) => decodeURIComponent(segment));
+    const docPath = path.join(process.cwd(), 'docs', ...decodedSlug);
     const content = await fs.readFile(docPath, 'utf-8');
 
     // Extract title from first heading or filename
     const firstLine = content.split('\n')[0] || '';
-    const filename = slug[slug.length - 1] || 'Document';
+    const filename = decodedSlug[decodedSlug.length - 1] || 'Document';
     const title = firstLine.startsWith('#')
       ? firstLine.replace(/^#+\s*/, '')
       : filename.replace('.md', '');
@@ -41,6 +43,9 @@ export default async function DocPage({ params }: DocPageProps) {
     notFound();
   }
 
+  // Decode slug for display
+  const decodedSlug = slug.map((segment) => decodeURIComponent(segment));
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
@@ -54,7 +59,7 @@ export default async function DocPage({ params }: DocPageProps) {
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{doc.title}</h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            {slug.join(' / ')}
+            {decodedSlug.join(' / ')}
           </p>
         </div>
 
@@ -90,9 +95,10 @@ export default async function DocPage({ params }: DocPageProps) {
 export async function generateMetadata({ params }: DocPageProps) {
   const { slug } = await params;
   const doc = await getDocContent(slug);
+  const decodedSlug = slug.map((segment) => decodeURIComponent(segment));
 
   return {
     title: doc ? `${doc.title} - Documentation` : 'Documentation',
-    description: `MADACE-Method v2.0 Documentation: ${slug.join('/')}`,
+    description: `MADACE-Method v2.0 Documentation: ${decodedSlug.join('/')}`,
   };
 }
