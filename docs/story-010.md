@@ -38,10 +38,12 @@ override?: {
 ### Display Formats
 
 **JSON Output:**
+
 - Override object automatically included in result
 - All override metadata preserved for programmatic use
 
 **Table Output:**
+
 ```
 ⚠️  MANUAL OVERRIDE APPLIED
 Original Level: 2 → Override Level: 4
@@ -50,6 +52,7 @@ By: CLI User
 ```
 
 **Markdown Output:**
+
 ```markdown
 ## ⚠️ Manual Override
 
@@ -65,26 +68,30 @@ By: CLI User
 ### lib/cli/commands/assess-scale.ts
 
 **Added Functions:**
+
 - `getLevelName(level: number): string` - Maps level number to name (Minimal, Basic, Standard, Comprehensive, Enterprise)
 - `getWorkflowName(level: number): string` - Maps level to workflow filename
 - `getScoreRange(level: number): string` - Maps level to score range string
 
 **Modified Functions:**
+
 - `createAssessScaleCommand()` - Added CLI options and validation logic
 - `formatAsTable()` - Added override information display section
 - `formatAsMarkdown()` - Added "Manual Override" section with metadata
 
 **CLI Options:**
+
 ```typescript
 .option('-l, --level <level>', 'Manually override the recommended level (0-4)', parseInt)
 .option('-r, --reason <reason>', 'Reason for manual override (required if --level is used)')
 ```
 
-### __tests__/lib/cli/commands/assess-scale.test.ts
+### **tests**/lib/cli/commands/assess-scale.test.ts
 
 **Added Test Suite:** "Manual Override Functionality (STORY-V3-010)"
 
 **6 New Tests:**
+
 1. `should apply manual override with --level and --reason flags`
    - Verifies override applied to result
    - Checks override metadata (originalLevel, overrideLevel, reason, overriddenBy, overriddenAt)
@@ -137,6 +144,7 @@ madace assess-scale \
 ```
 
 Output includes:
+
 ```json
 {
   "totalScore": 8,
@@ -168,12 +176,14 @@ madace assess-scale \
 ## Test Results
 
 **All 20 tests PASSING:**
+
 - 14 existing tests (level detection, formats, error handling)
 - 6 new override tests
 
 **Test Execution Time:** ~9 seconds
 
 **Quality Checks:**
+
 - ✅ TypeScript type-check: PASS (no errors)
 - ✅ ESLint: PASS (console.log warnings expected for CLI)
 - ✅ Build: PASS (production build succeeds)
@@ -225,6 +235,7 @@ Changed `overriddenAt` from `string` to `Date` to match the `ComplexityResult` i
 ### Helper Functions
 
 Created three helper functions to avoid code duplication and ensure consistency:
+
 - `getLevelName()` - Used in override application and format functions
 - `getWorkflowName()` - Maps level to workflow filename
 - `getScoreRange()` - Provides human-readable score range
@@ -234,6 +245,7 @@ These functions use Record<number, string> for type-safe lookups with fallback v
 ### Validation Strategy
 
 Validation occurs before assessment runs to fail fast with clear error messages:
+
 1. Check level is defined
 2. Validate level is 0-4 (not NaN, not negative, not > 4)
 3. Require reason when level is provided
@@ -282,6 +294,7 @@ Related: EPIC-V3-001 (Scale-Adaptive Project Router)
 **Actual:** ~90 minutes
 
 **Breakdown:**
+
 - Implementation: 30 minutes
 - Testing: 20 minutes
 - Debugging (syntax error): 10 minutes

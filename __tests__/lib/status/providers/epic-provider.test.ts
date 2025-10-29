@@ -196,9 +196,7 @@ Second epic summary.
     });
 
     it('should return all epics when no entityId provided', async () => {
-      mockFs.readFile
-        .mockResolvedValueOnce(mockEpic1)
-        .mockResolvedValueOnce(mockEpic2);
+      mockFs.readFile.mockResolvedValueOnce(mockEpic1).mockResolvedValueOnce(mockEpic2);
 
       const result = await provider.getStatus();
 
@@ -209,9 +207,7 @@ Second epic summary.
     });
 
     it('should include all epic details', async () => {
-      mockFs.readFile
-        .mockResolvedValueOnce(mockEpic1)
-        .mockResolvedValueOnce(mockEpic2);
+      mockFs.readFile.mockResolvedValueOnce(mockEpic1).mockResolvedValueOnce(mockEpic2);
 
       const result = await provider.getStatus();
       const epics = result.data.epics as Array<{ id: string; name: string; effort: number }>;
@@ -234,9 +230,7 @@ Second epic summary.
     });
 
     it('should sort epics by ID', async () => {
-      mockFs.readFile
-        .mockResolvedValueOnce(mockEpic1)
-        .mockResolvedValueOnce(mockEpic2);
+      mockFs.readFile.mockResolvedValueOnce(mockEpic1).mockResolvedValueOnce(mockEpic2);
 
       const result = await provider.getStatus();
       const epics = result.data.epics as Array<{ id: string }>;
@@ -554,9 +548,7 @@ The Scale Router eliminates manual workflow selection by:
 10. **US-010:** E2E Testing | 1 pt
 `;
       mockFs.access.mockResolvedValue(undefined);
-      mockFs.readdir.mockResolvedValue([
-        'EPIC-V3-001-scale-router.md',
-      ] as any);
+      mockFs.readdir.mockResolvedValue(['EPIC-V3-001-scale-router.md'] as any);
       mockFs.readFile.mockResolvedValue(realWorldEpic);
 
       const result = await provider.getStatus('EPIC-V3-001');

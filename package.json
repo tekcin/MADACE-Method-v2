@@ -1,8 +1,8 @@
 {
-  "name": "madace-method-v2",
-  "version": "2.0.0-alpha",
+  "name": "madace-method-v3",
+  "version": "3.0.0-alpha",
   "private": true,
-  "description": "MADACE-Method v2.0 - Methodology for AI-Driven Agile Collaboration Engine - Next.js full-stack implementation",
+  "description": "MADACE-Method v3.0 - Methodology for AI-Driven Agile Collaboration Engine - Production-ready full-stack implementation with Prisma ORM",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -82,12 +82,16 @@
   "keywords": [
     "madace",
     "madace-method",
-    "v2",
+    "v3",
     "next.js",
     "typescript",
+    "prisma",
+    "postgresql",
     "ai-agents",
     "workflow",
-    "state-machine"
+    "state-machine",
+    "llm",
+    "collaboration"
   ],
   "engines": {
     "node": ">=20.0.0",

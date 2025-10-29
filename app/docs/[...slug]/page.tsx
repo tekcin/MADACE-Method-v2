@@ -58,15 +58,13 @@ export default async function DocPage({ params }: DocPageProps) {
             ← Back to Documentation
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{doc.title}</h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            {decodedSlug.join(' / ')}
-          </p>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{decodedSlug.join(' / ')}</p>
         </div>
 
         {/* Content */}
         <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <div className="p-6">
-            <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-gray-900 dark:text-gray-100">
+            <pre className="font-mono text-sm leading-relaxed break-words whitespace-pre-wrap text-gray-900 dark:text-gray-100">
               {doc.content}
             </pre>
           </div>

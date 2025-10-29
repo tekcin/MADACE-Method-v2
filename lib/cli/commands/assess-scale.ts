@@ -144,7 +144,9 @@ function formatAsTable(result: ComplexityResult): string {
   if (override) {
     lines.push('');
     lines.push('  ⚠️  MANUAL OVERRIDE APPLIED');
-    lines.push(`  Original Level: ${override.originalLevel} → Override Level: ${override.overrideLevel}`);
+    lines.push(
+      `  Original Level: ${override.originalLevel} → Override Level: ${override.overrideLevel}`
+    );
     lines.push(`  Reason: ${override.reason}`);
     lines.push(`  By: ${override.overriddenBy}`);
   }
@@ -210,14 +212,30 @@ function formatAsMarkdown(result: ComplexityResult): string {
   lines.push('');
   lines.push('| Criterion | Score | Max | Percentage |');
   lines.push('|-----------|-------|-----|------------|');
-  lines.push(`| Project Size | ${breakdown.projectSize} | 5 | ${Math.round((breakdown.projectSize / 5) * 100)}% |`);
-  lines.push(`| Team Size | ${breakdown.teamSize} | 5 | ${Math.round((breakdown.teamSize / 5) * 100)}% |`);
-  lines.push(`| Codebase Complexity | ${breakdown.codebaseComplexity} | 5 | ${Math.round((breakdown.codebaseComplexity / 5) * 100)}% |`);
-  lines.push(`| Integrations | ${breakdown.integrations} | 5 | ${Math.round((breakdown.integrations / 5) * 100)}% |`);
-  lines.push(`| User Base | ${breakdown.userBase} | 5 | ${Math.round((breakdown.userBase / 5) * 100)}% |`);
-  lines.push(`| Security | ${breakdown.security} | 5 | ${Math.round((breakdown.security / 5) * 100)}% |`);
-  lines.push(`| Duration | ${breakdown.duration} | 5 | ${Math.round((breakdown.duration / 5) * 100)}% |`);
-  lines.push(`| Existing Code | ${breakdown.existingCode} | 5 | ${Math.round((breakdown.existingCode / 5) * 100)}% |`);
+  lines.push(
+    `| Project Size | ${breakdown.projectSize} | 5 | ${Math.round((breakdown.projectSize / 5) * 100)}% |`
+  );
+  lines.push(
+    `| Team Size | ${breakdown.teamSize} | 5 | ${Math.round((breakdown.teamSize / 5) * 100)}% |`
+  );
+  lines.push(
+    `| Codebase Complexity | ${breakdown.codebaseComplexity} | 5 | ${Math.round((breakdown.codebaseComplexity / 5) * 100)}% |`
+  );
+  lines.push(
+    `| Integrations | ${breakdown.integrations} | 5 | ${Math.round((breakdown.integrations / 5) * 100)}% |`
+  );
+  lines.push(
+    `| User Base | ${breakdown.userBase} | 5 | ${Math.round((breakdown.userBase / 5) * 100)}% |`
+  );
+  lines.push(
+    `| Security | ${breakdown.security} | 5 | ${Math.round((breakdown.security / 5) * 100)}% |`
+  );
+  lines.push(
+    `| Duration | ${breakdown.duration} | 5 | ${Math.round((breakdown.duration / 5) * 100)}% |`
+  );
+  lines.push(
+    `| Existing Code | ${breakdown.existingCode} | 5 | ${Math.round((breakdown.existingCode / 5) * 100)}% |`
+  );
   lines.push('');
   lines.push('## Level Characteristics');
   lines.push('');

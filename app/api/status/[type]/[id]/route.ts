@@ -98,7 +98,8 @@ export async function GET(
       return NextResponse.json<ErrorResponse>(
         {
           success: false,
-          error: 'Invalid ID: Must be a non-empty string without path traversal or injection attempts',
+          error:
+            'Invalid ID: Must be a non-empty string without path traversal or injection attempts',
           code: ERROR_CODE.VALIDATION_ERROR,
         },
         { status: 400 }

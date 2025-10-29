@@ -98,27 +98,21 @@ export default async function DocsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
-                {grouped[category]!
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((file) => (
-                    <Link
-                      key={file.path}
-                      href={`/docs/${file.path}`}
-                      className="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600"
-                    >
-                      <div className="flex items-start">
-                        <span className="mr-3 text-2xl">📄</span>
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900 dark:text-white">
-                            {file.name}
-                          </h3>
-                          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            {file.path}
-                          </p>
-                        </div>
+                {grouped[category]!.sort((a, b) => a.name.localeCompare(b.name)).map((file) => (
+                  <Link
+                    key={file.path}
+                    href={`/docs/${file.path}`}
+                    className="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600"
+                  >
+                    <div className="flex items-start">
+                      <span className="mr-3 text-2xl">📄</span>
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900 dark:text-white">{file.name}</h3>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{file.path}</p>
                       </div>
-                    </Link>
-                  ))}
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           ))}

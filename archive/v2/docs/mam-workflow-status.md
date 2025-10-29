@@ -189,7 +189,7 @@ Completed stories with dates and points:
   **Files Already Implemented:**
   - lib/workflows/conditions.ts: Complete condition evaluator (326 lines)
   - lib/workflows/executor.ts: Integrated conditional step execution
-  - __tests__/lib/workflows/conditions.test.ts: Comprehensive tests (592 lines)
+  - **tests**/lib/workflows/conditions.test.ts: Comprehensive tests (592 lines)
 
   **Conditional Execution Features:**
   - ✅ **Variable Substitution**: ${VAR} and {{VAR}} syntax
@@ -263,6 +263,7 @@ Completed stories with dates and points:
   - **Level 4 (Enterprise)**: 30-40 points - Enterprise, distributed systems
 
   **CLI Usage:**
+
   ```bash
   # Interactive mode (default)
   $ madace assess-scale
@@ -335,6 +336,7 @@ Completed stories with dates and points:
   - ✅ **Graceful Exit**: Cleanup stdin and exit without errors
 
   **CLI Usage:**
+
   ```bash
   # Watch state machine (default 2-second interval)
   $ madace status --watch
@@ -427,7 +429,7 @@ Completed stories with dates and points:
 
   **Files Already Implemented:**
   - lib/workflows/executor.ts: Complete handleRoute() method (lines 366-489, 124 lines)
-  - __tests__/lib/workflows/routing.test.ts: Comprehensive test suite (1,171 lines, 24 tests)
+  - **tests**/lib/workflows/routing.test.ts: Comprehensive test suite (1,171 lines, 24 tests)
 
   **Routing Action Features:**
   - ✅ **Level-Based Routing**: Routes to workflows based on complexity level (0-4)
@@ -485,6 +487,7 @@ Completed stories with dates and points:
   - Production build: PASS (all routes compiled successfully)
 
   **Technical Implementation:**
+
   ```typescript
   // Routing action handler (lib/workflows/executor.ts:366-489)
   private async handleRoute(step: WorkflowStep): Promise<void> {
@@ -570,8 +573,8 @@ Completed stories with dates and points:
 
   **Files Created:**
   - app/api/status/[type]/[id]/route.ts: Complete API route implementation (270 lines)
-  - __tests__/app/api/status/[type]/[id]/route.test.ts: Comprehensive test suite (1,458 lines, 106 tests)
-  - __tests__/app/api/status/TEST-PLAN-V3-017.md: Detailed test planning document
+  - **tests**/app/api/status/[type]/[id]/route.test.ts: Comprehensive test suite (1,458 lines, 106 tests)
+  - **tests**/app/api/status/TEST-PLAN-V3-017.md: Detailed test planning document
 
   **API Structure:**
   - ✅ **Route Pattern**: GET /api/status/:type/:id
@@ -647,6 +650,7 @@ Completed stories with dates and points:
   - Production build: PASS (all routes compiled successfully)
 
   **API Usage Examples:**
+
   ```bash
   # Story status
   $ curl http://localhost:3000/api/status/story/STORY-V3-017
@@ -694,7 +698,7 @@ Completed stories with dates and points:
 
   **Files Created:**
   - lib/cli/commands/status.ts: Complete CLI command implementation (238 lines)
-  - __tests__/lib/cli/commands/status.test.ts: Comprehensive test suite (312 lines, 29 tests)
+  - **tests**/lib/cli/commands/status.test.ts: Comprehensive test suite (312 lines, 29 tests)
 
   **Files Updated:**
   - lib/cli/index.ts: Export status command and assess-scale command
@@ -726,6 +730,7 @@ Completed stories with dates and points:
   - ESLint: PASS (warnings only, no errors)
 
   **CLI Usage:**
+
   ```bash
   # State machine overview (default)
   $ madace status
@@ -782,7 +787,7 @@ Completed stories with dates and points:
   - All tests passing with 100% coverage of provider functionality
 
   **Files Created:**
-  - __tests__/lib/status/providers/state-machine-provider.test.ts: Comprehensive test suite (690 lines, 42 tests)
+  - **tests**/lib/status/providers/state-machine-provider.test.ts: Comprehensive test suite (690 lines, 42 tests)
 
   **Files Already Implemented:**
   - lib/status/providers/state-machine-provider.ts: Complete provider implementation (306 lines)
@@ -843,16 +848,16 @@ Completed stories with dates and points:
   - All tests passing with 100% coverage of provider functionality
 
   **Files Created:**
-  - __tests__/lib/status/providers/workflow-provider.test.ts: Comprehensive test suite (874 lines, 39 tests)
+  - **tests**/lib/status/providers/workflow-provider.test.ts: Comprehensive test suite (874 lines, 39 tests)
 
   **Files Already Implemented:**
   - lib/status/providers/workflow-provider.ts: Complete provider implementation (504 lines)
-  - Reads workflow state files (.*.state.json) from madace-data/workflow-states/ directory
+  - Reads workflow state files (.\*.state.json) from madace-data/workflow-states/ directory
   - Calculates progress, extracts current step, handles workflow lifecycle states
 
   **Features:**
   - ✅ **Entity Detection**: Regex pattern matching for kebab-case workflow names (pm-planning, create-prd)
-  - ✅ **State File Reading**: Reads and parses .*.state.json files from workflow-states directory
+  - ✅ **State File Reading**: Reads and parses .\*.state.json files from workflow-states directory
   - ✅ **Progress Calculation**: Calculates completion percentage based on completed steps
   - ✅ **Current Step Extraction**: Identifies and returns current step name from workflow state
   - ✅ **Single Workflow Query**: Returns detailed status for individual workflows by name
@@ -905,7 +910,7 @@ Completed stories with dates and points:
   - All tests passing with 100% coverage of provider functionality
 
   **Files Created:**
-  - __tests__/lib/status/providers/epic-provider.test.ts: Comprehensive test suite (578 lines, 27 tests)
+  - **tests**/lib/status/providers/epic-provider.test.ts: Comprehensive test suite (578 lines, 27 tests)
 
   **Files Already Implemented:**
   - lib/status/providers/epic-provider.ts: Complete provider implementation (559 lines)
@@ -966,7 +971,7 @@ Completed stories with dates and points:
   - All tests passing with 100% coverage of provider functionality
 
   **Files Created:**
-  - __tests__/lib/status/providers/story-provider.test.ts: Comprehensive test suite (350 lines, 24 tests)
+  - **tests**/lib/status/providers/story-provider.test.ts: Comprehensive test suite (350 lines, 24 tests)
 
   **Files Already Implemented:**
   - lib/status/providers/story-provider.ts: Complete provider implementation (552 lines)

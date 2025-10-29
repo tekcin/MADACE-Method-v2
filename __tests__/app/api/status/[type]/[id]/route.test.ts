@@ -967,9 +967,7 @@ describe('GET /api/status/:type/:id', () => {
       });
 
       it('should return 404 for story not in mam-workflow-status.md', async () => {
-        mockRegistry.getStatusResult.mockRejectedValue(
-          new Error('Story not found in status file')
-        );
+        mockRegistry.getStatusResult.mockRejectedValue(new Error('Story not found in status file'));
 
         const response = await GET(mockRequest as Request, {
           params: Promise.resolve({ type: 'story', id: 'STORY-999' }),
@@ -1001,9 +999,7 @@ describe('GET /api/status/:type/:id', () => {
       });
 
       it('should return 404 for missing mam-workflow-status.md', async () => {
-        mockRegistry.getStatusResult.mockRejectedValue(
-          new Error('Status file not found')
-        );
+        mockRegistry.getStatusResult.mockRejectedValue(new Error('Status file not found'));
 
         const response = await GET(mockRequest as Request, {
           params: Promise.resolve({ type: 'state-machine', id: 'state' }),
@@ -1028,9 +1024,7 @@ describe('GET /api/status/:type/:id', () => {
 
     describe('500 Server Error', () => {
       it('should return 500 for registry internal error', async () => {
-        mockRegistry.getStatusResult.mockRejectedValue(
-          new Error('Internal registry error')
-        );
+        mockRegistry.getStatusResult.mockRejectedValue(new Error('Internal registry error'));
 
         const response = await GET(mockRequest as Request, {
           params: Promise.resolve({ type: 'story', id: 'STORY-001' }),
@@ -1065,9 +1059,7 @@ describe('GET /api/status/:type/:id', () => {
       });
 
       it('should return 500 for provider initialization failure', async () => {
-        mockRegistry.getStatusResult.mockRejectedValue(
-          new Error('Provider initialization failed')
-        );
+        mockRegistry.getStatusResult.mockRejectedValue(new Error('Provider initialization failed'));
 
         const response = await GET(mockRequest as Request, {
           params: Promise.resolve({ type: 'story', id: 'STORY-001' }),
@@ -1294,12 +1286,7 @@ describe('GET /api/status/:type/:id', () => {
         });
         const data = await response.json();
 
-        const validCodes = [
-          'ENTITY_NOT_FOUND',
-          'INVALID_TYPE',
-          'INTERNAL_ERROR',
-          'MISSING_PARAMS',
-        ];
+        const validCodes = ['ENTITY_NOT_FOUND', 'INVALID_TYPE', 'INTERNAL_ERROR', 'MISSING_PARAMS'];
         expect(validCodes).toContain(data.code);
       });
 
@@ -1504,9 +1491,7 @@ describe('GET /api/status/:type/:id', () => {
 
     describe('Provider Errors', () => {
       it('should return 404 for provider "not found" error', async () => {
-        mockRegistry.getStatusResult.mockRejectedValue(
-          new Error('Entity not found: STORY-999')
-        );
+        mockRegistry.getStatusResult.mockRejectedValue(new Error('Entity not found: STORY-999'));
 
         const response = await GET(mockRequest as Request, {
           params: Promise.resolve({ type: 'story', id: 'STORY-999' }),
@@ -1516,9 +1501,7 @@ describe('GET /api/status/:type/:id', () => {
       });
 
       it('should return 500 for provider permission error', async () => {
-        mockRegistry.getStatusResult.mockRejectedValue(
-          new Error('EACCES: permission denied')
-        );
+        mockRegistry.getStatusResult.mockRejectedValue(new Error('EACCES: permission denied'));
 
         const response = await GET(mockRequest as Request, {
           params: Promise.resolve({ type: 'story', id: 'STORY-001' }),

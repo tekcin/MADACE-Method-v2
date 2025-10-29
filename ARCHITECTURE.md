@@ -1,888 +1,977 @@
-# MADACE-Method v2.0 - Architecture Documentation
+# MADACE-Method v3.0 - Proposed Architecture
 
-**Version:** 2.0.0-alpha
-**Status:** Production-Ready
-**Last Updated:** 2025-10-28
-**MADACE Compliance:** ✅ 92% (Excellent)
+**Project:** MADACE-Method v3.0
+**Version:** 3.0.0-alpha
+**Document Status:** Proposal
 
-> **MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
-
----
-
-## Table of Contents
-
-1. [Executive Summary](#executive-summary)
-2. [Architecture Overview](#architecture-overview)
-3. [Core Principles](#core-principles)
-4. [Tech Stack (LOCKED)](#tech-stack-locked)
-5. [System Components](#system-components)
-6. [Quality Assurance](#quality-assurance)
-7. [Deployment Architecture](#deployment-architecture)
-8. [MADACE Compliance](#madace-compliance)
-9. [Security](#security)
-10. [Performance](#performance)
-11. [Development Workflow](#development-workflow)
-12. [References](#references)
+> This document outlines the proposed architecture for the next major version of the MADACE-Method, focusing on enhancing the capabilities of agents, the CLI, and the web interface.
 
 ---
 
-## Executive Summary
+## ⚠️ CRITICAL DEVELOPMENT RULES FOR V3.0
 
-MADACE-Method v2.0 is an **experimental Next.js full-stack implementation** that brings the MADACE methodology to the web with a visual interface.
+### File Access and Runtime Error Prevention
 
-### Key Characteristics
+**RULE 1: Never assume files exist in production**
 
-- **Architecture**: Next.js 15 Full-Stack TypeScript (Single Runtime)
-- **Status**: ✅ v2.0-alpha Ready for Release
-- **Compliance**: ✅ 92% MADACE-METHOD Compliant
-- **Version Control**: ⛔ LOCKED (Exact versions, no ranges)
-- **Innovation**: Web UI with visual Kanban board vs CLI
+- ✅ **DO**: Always check if files exist before reading them
+- ✅ **DO**: Return graceful fallbacks when files are missing
+- ❌ **DON'T**: Use direct `fs.readFile()` without existence checks
+- ❌ **DON'T**: Throw errors for missing optional files
 
-### Design Philosophy
+**RULE 2: Development vs Production file paths**
 
-1. **Boring is Good** - Use proven, reliable technology
-2. **Single Runtime** - Node.js only, no FFI complexity
-3. **Type Safety** - TypeScript + Zod = Compile-time + Runtime validation
-4. **Version Locked** - 100% reproducibility across all environments
-5. **MADACE Compliant** - Follows official MADACE-METHOD patterns
+- Development files (like `docs/mam-workflow-status.md`) may NOT exist in production Docker builds
+- Production builds only include files in the Docker image (see `.dockerignore`)
+- API routes must handle missing development files gracefully
 
----
-
-## Architecture Overview
-
-### High-Level Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    MADACE-Method v2.0                           │
-│                  Next.js 15 Full-Stack                          │
-│                                                                  │
-│  ┌─────────────────────┐        ┌─────────────────────┐        │
-│  │   Frontend (React)  │◄──────►│  API Routes (Node)  │        │
-│  │   - Home Dashboard  │        │  - RESTful APIs     │        │
-│  │   - Kanban Board    │        │  - Server Actions   │        │
-│  │   - Agent Manager   │        │  - WebSocket        │        │
-│  │   - Setup Wizard    │        └──────────┬──────────┘        │
-│  └─────────────────────┘                   │                   │
-│                                             ▼                   │
-│         ┌───────────────────────────────────────────────┐      │
-│         │       Business Logic (TypeScript)             │      │
-│         │  ┌──────────┐  ┌──────────┐  ┌──────────┐   │      │
-│         │  │  Agents  │  │ Workflow │  │  State   │   │      │
-│         │  │  System  │  │  Engine  │  │ Machine  │   │      │
-│         │  └──────────┘  └──────────┘  └──────────┘   │      │
-│         │  ┌──────────┐  ┌──────────┐  ┌──────────┐   │      │
-│         │  │   LLM    │  │ Template │  │  Config  │   │      │
-│         │  │  Client  │  │  Engine  │  │ Manager  │   │      │
-│         │  └──────────┘  └──────────┘  └──────────┘   │      │
-│         └───────────────────────────────────────────────┘      │
-│                                                                  │
-│  Runtime: Node.js 24.10.0 | Language: TypeScript 5.9.3        │
-│  Framework: Next.js 15.5.6 | UI: React 19.2.0                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Component Communication Flow
-
-```
-┌─────────────┐
-│   Browser   │
-│   (User)    │
-└──────┬──────┘
-       │ HTTP/WebSocket
-       ▼
-┌────────────────────────────────────────────────────────┐
-│              Next.js 15 Server                         │
-│  ┌──────────────┐              ┌──────────────┐       │
-│  │   Frontend   │              │  API Routes  │       │
-│  │ (React 19)   │              │  (Node.js)   │       │
-│  └──────┬───────┘              └──────┬───────┘       │
-│         │                             │               │
-│         └──────────┬──────────────────┘               │
-│                    ▼                                  │
-│    ┌───────────────────────────────────────┐         │
-│    │      Business Logic Layer             │         │
-│    │  ┌─────────────────────────────────┐  │         │
-│    │  │  Agent System                   │  │         │
-│    │  │  - Loader (YAML → TypeScript)   │  │         │
-│    │  │  - Runtime (LLM Integration)    │  │         │
-│    │  │  - Validation (Zod schemas)     │  │         │
-│    │  └─────────────────────────────────┘  │         │
-│    │  ┌─────────────────────────────────┐  │         │
-│    │  │  Workflow Engine                │  │         │
-│    │  │  - Executor (Step-by-step)      │  │         │
-│    │  │  - State Persistence            │  │         │
-│    │  │  - Action Handlers              │  │         │
-│    │  └─────────────────────────────────┘  │         │
-│    │  ┌─────────────────────────────────┐  │         │
-│    │  │  State Machine                  │  │         │
-│    │  │  - Story Lifecycle              │  │         │
-│    │  │  - Transition Rules (1 TODO)    │  │         │
-│    │  │  - Status File Parser           │  │         │
-│    │  └─────────────────────────────────┘  │         │
-│    │  ┌─────────────────────────────────┐  │         │
-│    │  │  LLM Client (Multi-provider)    │  │         │
-│    │  │  - Gemini (Google)              │  │         │
-│    │  │  - Claude (Anthropic)           │  │         │
-│    │  │  - OpenAI (GPT)                 │  │         │
-│    │  │  - Local (Ollama)               │  │         │
-│    │  └─────────────────────────────────┘  │         │
-│    │  ┌─────────────────────────────────┐  │         │
-│    │  │  Template Engine                │  │         │
-│    │  │  - Handlebars (40+ helpers)     │  │         │
-│    │  │  - Legacy pattern support       │  │         │
-│    │  │  - Variable validation          │  │         │
-│    │  └─────────────────────────────────┘  │         │
-│    │  ┌─────────────────────────────────┐  │         │
-│    │  │  Configuration Manager          │  │         │
-│    │  │  - Auto-detection               │  │         │
-│    │  │  - Cross-platform paths         │  │         │
-│    │  │  - Atomic file operations       │  │         │
-│    │  └─────────────────────────────────┘  │         │
-│    └───────────────────────────────────────┘         │
-│                    │                                  │
-│                    ▼                                  │
-│    ┌───────────────────────────────────────┐         │
-│    │         File System                   │         │
-│    │  - Agent YAML files                   │         │
-│    │  - Workflow definitions               │         │
-│    │  - State files (.state.json)          │         │
-│    │  - Configuration (config.yaml)        │         │
-│    │  - Status (mam-workflow-status.md)    │         │
-│    └───────────────────────────────────────┘         │
-└───────────────────────────────────────────────────────┘
-```
-
----
-
-## Core Principles
-
-### 1. Simplicity Over Cleverness
-
-**Philosophy:** Use boring, proven technology. Innovation belongs in features, not infrastructure.
+**RULE 3: Graceful degradation pattern**
 
 ```typescript
-// ✅ GOOD: Simple, clear, maintainable
-export function loadAgent(path: string): Promise<Agent> {
-  return defaultLoader.loadAgent(path);
+// ✅ CORRECT: Check file existence first
+import { existsSync } from 'fs';
+
+if (!existsSync(filePath)) {
+  return { success: true, data: emptyState, message: 'File not found - returning empty state' };
 }
 
-// ❌ BAD: Clever but hard to maintain
-export const loadAgent = memoize(compose(validate, parse, read));
+// ❌ WRONG: Direct file access
+const data = await fs.readFile(filePath); // This will crash if file doesn't exist!
 ```
 
-### 2. Type Safety at All Levels
+**RULE 4: Health checks should never fail for missing optional files**
 
-**Compile-time:** TypeScript strict mode
-**Runtime:** Zod validation
+- Missing development files should return `status: 'pass'` with a descriptive message
+- Only fail health checks for critical system failures (database, disk space, permissions)
+
+**Example from production error fix:**
 
 ```typescript
-// Define schema
-const AgentSchema = z.object({
-  metadata: z.object({ name: z.string() }),
-  persona: z.object({ role: z.string() }),
+// app/api/state/route.ts - BEFORE (caused production crash)
+const stateMachine = createStateMachine(statusFilePath);
+await stateMachine.load(); // CRASH: ENOENT error
+
+// app/api/state/route.ts - AFTER (graceful degradation)
+if (!existsSync(statusFilePath)) {
+  return NextResponse.json({
+    success: true,
+    status: { backlog: [], todo: [], inProgress: [], done: [] },
+    message: 'No workflow status file found - returning empty state',
+  });
+}
+```
+
+### Database Schema and Type Safety
+
+**RULE 5: Never flatten JSON fields in UI components**
+
+- Prisma schema uses `Json` type for `persona`, `menu`, and `prompts`
+- ✅ **DO**: Access JSON fields as `agent.persona` (JsonValue type)
+- ❌ **DON'T**: Create flattened fields like `agent.personaName`, `agent.personaRole`
+- Use type assertions when needed: `agent.persona as Record<string, unknown>`
+
+**RULE 6: Match Prisma types exactly**
+
+```typescript
+// ✅ CORRECT: Use Prisma-generated types
+import type { Agent } from '@prisma/client';
+
+// Agent type has these fields:
+// - persona: JsonValue (not personaName, personaRole, etc.)
+// - menu: JsonValue (not menuOptions, menuPrompt, etc.)
+// - prompts: JsonValue (not individual prompt fields)
+
+// ❌ WRONG: Creating custom types that don't match Prisma
+interface CustomAgent {
+  personaName: string; // Does not exist in database!
+  menuOptions: string[]; // Does not exist in database!
+}
+```
+
+**RULE 7: Service layer schema must match Prisma schema**
+
+```typescript
+// lib/services/agent-service.ts schema structure:
+export const CreateAgentSchema = z.object({
+  name: z.string(),
+  title: z.string(),
+  persona: z.object({  // Stored as JSON in Prisma
+    role: z.string(),
+    identity: z.string().optional(),
+  }),
+  menu: z.array(z.object({ ... })),  // Stored as JSON in Prisma
+  prompts: z.array(z.object({ ... })),  // Stored as JSON in Prisma
 });
-
-// TypeScript type from Zod schema
-type Agent = z.infer<typeof AgentSchema>;
-
-// Runtime validation
-const agent = AgentSchema.parse(untrustedData);
 ```
 
-### 3. Version Locking (Zero Drift)
+### API Route Error Handling
 
-**ALL dependencies use exact versions. NO exceptions.**
+**RULE 8: All API routes must return proper error responses**
 
-```json
-{
-  "next": "15.5.6", // ✅ Exact - no ^, ~, >=
-  "react": "19.2.0", // ✅ Exact
-  "typescript": "5.9.3" // ✅ Exact
-}
+```typescript
+// ✅ CORRECT: Structured error responses
+return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
+
+// ❌ WRONG: Throwing unhandled errors
+throw new Error(errorMessage); // Crashes Next.js server!
 ```
 
-**Why?** Reproducibility > Convenience
+**RULE 9: Use try-catch in all API routes**
 
-See [ADR-004](./docs/adrs/ADR-004-version-locking-enforcement.md) and [VERSION-LOCK.md](./VERSION-LOCK.md)
+- Wrap all async operations in try-catch blocks
+- Handle Prisma errors specifically (check for `PrismaClientKnownRequestError`)
+- Return appropriate HTTP status codes (400, 404, 500, etc.)
 
-### 4. MADACE Compliance
+### UI Component Best Practices
 
-**Follows official MADACE-METHOD patterns:**
+**RULE 10: Keep UI components simple until schema is stable**
 
-- ✅ Agent YAML format
-- ✅ Workflow step structure
-- ✅ State machine rules (1 TODO, 1 IN_PROGRESS)
-- ✅ Template rendering patterns
-- ✅ Configuration schema
-- ✅ Error handling codes
-
-**Compliance Score:** 92% (Excellent)
-
-See [MADACE Compliance Audit](#madace-compliance)
-
-### 5. Single Runtime Simplicity
-
-**One runtime (Node.js), one language (TypeScript), one deployment artifact (Docker).**
-
-```
-❌ OLD: Rust ⇄ FFI ⇄ Python ⇄ IPC ⇄ Next.js
-          3 runtimes, 3 languages, complex deployment
-
-✅ NEW: TypeScript (Node.js)
-         1 runtime, 1 language, simple deployment
-```
-
-See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)
+- Complex forms (AgentEditor, AgentWizard) should be deferred until JSON schema is finalized
+- Start with read-only views (display JSON as formatted text)
+- Add edit functionality incrementally once schema patterns are proven
 
 ---
 
-## Tech Stack (LOCKED)
+## 1. Overview
 
-### Core Stack (FROZEN for v2.0-alpha)
+This proposal introduces a set of architectural changes and new features designed to make the MADACE-Method more dynamic, intelligent, and user-friendly. The proposed changes are focused on three key areas: Agents, CLI, and the Web Interface.
 
-| Component      | Version | Status         | Notes                         |
-| -------------- | ------- | -------------- | ----------------------------- |
-| **Next.js**    | 15.5.6  | ⛔ LOCKED      | App Router, Server Components |
-| **React**      | 19.2.0  | ⛔ LOCKED      | Must match react-dom          |
-| **React DOM**  | 19.2.0  | ⛔ LOCKED      | Must match react              |
-| **TypeScript** | 5.9.3   | ⛔ LOCKED      | Strict mode enabled           |
-| **Node.js**    | 24.10.0 | 🔒 Recommended | Minimum: 20.0.0               |
-| **npm**        | 10.x    | 🔒 Recommended | Minimum: 9.0.0                |
+Recent implementation progress includes a comprehensive Local LLM Provider architecture with Docker model integration, providing zero-configuration setup for local AI models.
 
-### Key Libraries
+---
 
-| Library          | Version | Purpose                    |
-| ---------------- | ------- | -------------------------- |
-| **Zod**          | 4.1.12  | Runtime validation         |
-| **js-yaml**      | 4.1.0   | YAML parsing               |
-| **Handlebars**   | 4.7.8   | Template engine            |
-| **Tailwind CSS** | 4.1.15  | Styling                    |
-| **Heroicons**    | 2.2.0   | UI icons                   |
-| **Socket.io**    | 4.8.1   | WebSocket (real-time sync) |
-| **Prisma**       | 6.17.1  | Database ORM               |
-| **Jest**         | 30.2.0  | Testing                    |
-| **Playwright**   | 1.56.1  | E2E testing                |
+## 2. Agent Enhancements
 
-**ALL versions are exact (no ranges).** See [VERSION-LOCK.md](./VERSION-LOCK.md)
+To make the agents more dynamic, intelligent, and easier to interact with, we propose the following:
 
-### Version Enforcement
+### 2.1. Dynamic Agent Management
+
+- **Problem:** Currently, agents are statically defined in YAML files, which makes it difficult to create or modify them without manual intervention.
+- **Proposal:** Implement a system for dynamic agent management, allowing users to create, edit, and delete agents through the web UI or CLI.
+- **Implementation:**
+  - Store agent definitions in a database (e.g., SQLite, PostgreSQL) instead of YAML files.
+  - Create a new set of API routes for managing agents (e.g., `POST /api/agents`, `PUT /api/agents/:id`, `DELETE /api/agents/:id`).
+  - Develop a user-friendly interface in the web UI for managing agents.
+
+### 2.2. Conversational Interaction
+
+- **Problem:** The current interaction with agents is limited to a predefined menu of commands, which can be restrictive.
+- **Proposal:** Implement a conversational interface for agents, allowing for more natural and flexible interactions.
+- **Implementation:**
+  - Integrate a Natural Language Understanding (NLU) service (e.g., Dialogflow, Rasa) to process user input.
+  - Implement a chat interface in the web UI for conversational interaction with agents.
+  - Develop a more sophisticated dialogue management system for agents to handle conversations.
+
+### 2.3. Persistent Agent Memory
+
+- **Problem:** Agents are currently stateless and do not remember past interactions.
+- **Proposal:** Introduce a memory system for agents to enable them to retain context and learn from past interactions.
+- **Implementation:**
+  - Use a database to store the agent's memory, including information about the user, the project, and past conversations.
+  - Enable agents to access and update their memory during conversations to provide more personalized and context-aware responses.
+
+---
+
+## 3. CLI Advancements
+
+To make the CLI a more powerful and user-friendly tool, we suggest the following improvements:
+
+### 3.1. Interactive Mode
+
+- **Problem:** The current CLI is non-interactive and requires users to know the exact commands to execute.
+- **Proposal:** Enhance the CLI with an interactive mode that guides users through commands with prompts and suggestions.
+- **Implementation:**
+  - Use a library like `inquirer.js` to create interactive command-line interfaces.
+  - Implement a REPL (Read-Eval-Print Loop) for a more fluid and exploratory interaction with agents and workflows.
+
+### 3.2. Terminal Dashboard
+
+- **Problem:** There is no easy way to monitor the system's state from the CLI.
+- **Proposal:** Create a text-based dashboard within the CLI to provide a real-time overview of agents, workflows, and the state machine.
+- **Implementation:**
+  - Use a library like `blessed` or `neo-blessed` to create a text-based user interface (TUI) in the terminal.
+  - The dashboard would display key information in a compact and terminal-friendly format.
+
+### 3.3. Feature Parity with Web UI
+
+- **Problem:** The CLI currently has limited functionality compared to the web UI.
+- **Proposal:** Elevate the CLI to be a first-class interface with the same capabilities as the web UI.
+- **Implementation:**
+  - Implement all the features of the web UI in the CLI to provide a consistent user experience across both interfaces.
+
+---
+
+## 4. Web Interface and Configuration Overhaul
+
+To improve the web interface and simplify configuration management, we recommend the following:
+
+### 4.1. Unified Configuration
+
+- **Problem:** The configuration is currently fragmented across YAML files, `.env` files, and browser localStorage.
+- **Proposal:** Consolidate all configuration into a single, unified source of truth, such as a database.
+- **Implementation:**
+  - Use a database to store all configuration settings.
+  - The web UI and the CLI would both read and write the configuration from the database, simplifying management and improving robustness.
+
+### 4.2. Integrated Web IDE
+
+- **Problem:** The web interface is currently limited to configuration and monitoring.
+- **Proposal:** Extend the web interface into a full-fledged, web-based IDE for MADACE.
+- **Implementation:**
+  - Integrate a web-based code editor like Monaco Editor.
+  - Provide a file explorer to navigate the project files.
+  - Integrate a terminal in the web UI.
+
+### 4.3. Real-time Collaboration
+
+- **Problem:** The current system is single-user and does not support collaboration.
+- **Proposal:** Enable multiple users to collaborate on the same project in real-time.
+- **Implementation:**
+  - Use WebSockets to enable real-time communication between clients.
+  - Implement collaborative features like shared cursors, live editing, and in-app chat.
+
+---
+
+## 5. Local LLM Provider with Docker Model Integration ✅
+
+**Status:** Implemented - Zero-configuration local AI model support with Ollama and Docker containers
+
+### 5.1. Multi-Provider Local Architecture
+
+- **Problem:** Local AI models require complex setup and configuration, making them inaccessible to most users.
+- **Solution:** Implemented a comprehensive local LLM provider that supports both Ollama and Docker-based models with zero-configuration.
+- **Implementation Details:**
+  - **Ollama Integration**: Full HTTP API support for `localhost:11434` with automatic model discovery
+  - **Docker Model Support**: Custom endpoints for Docker containers with health checking
+  - **Auto-Detection**: Intelligent classification of model types based on endpoint patterns
+  - **Health Monitoring**: 30-second cached health checking proactively validates model availability
+
+### 5.2. Zero-Configuration Experience with Gemma3 4B Default
+
+- **Default Model (Ships with Product):**
+  - **Gemma3 4B**: Google's efficient 4.3B parameter model (Q4_K_M quantization)
+  - **Pre-configured**: Included in Docker Compose setup via Ollama container
+  - **Production Ready**: 3.3GB model size, CPU-optimized for broad hardware compatibility
+  - **Zero Setup**: `docker-compose up -d` includes both MADACE and Ollama with Gemma3 4B pre-loaded
+  - **Free & Private**: No API keys required, complete data sovereignty
+  - **User Customizable**: Users can add/change models via Ollama (`ollama pull <model>`)
+
+- **Key Features:**
+  - **Out-of-the-Box**: Gemma3 4B works immediately on container startup
+  - **Auto Discovery**: Automatically lists available models via `/api/tags` endpoint
+  - **Smart Setup**: Auto-detects model type (Ollama vs Docker) from configuration
+  - **Custom Endpoints**: Support for any HTTP-based LLM container or service
+  - **Model Management**: Users can add models: `docker exec ollama ollama pull llama3.1`
+
+- **Supported Models:**
+  - **Default (Gemma3)**: `gemma3` (4.3B, Q4_K_M) - Ships with product ✅
+  - **Pre-configured Ollama**: `llama3.1`, `llama3.1:8b`, `codellama:7b`, `mistral:7b`, `gemma3:latest`
+  - **Docker Models**: Custom endpoints (e.g., `localhost:8080`, `localhost:9000`)
+  - **User-Added**: Any Ollama-compatible model via `ollama pull <model>`
+  - **Dynamic Discovery**: Real-time model listing and availability checking
+
+### 5.3. Enterprise-Grade Features
+
+- **Error Handling:** 8 comprehensive error codes with user-friendly messages:
+  - `CONNECTION_REFUSED`: Helpful setup guidance for Ollama/Docker
+  - `MODEL_UNAVAILABLE`: Proactive health checking prevents failed requests
+  - `TIMEOUT`: Extended timeouts for slower local models
+  - `SERVICE_UNAVAILABLE`: Clear endpoint reachability diagnostics
+
+- **Reliability:**
+  - **Health Checking**: Pre-request validation ensures model availability
+  - **Retry Logic**: Resilient network error handling with exponential backoff
+  - **Stream Processing**: Real-time streaming with Server-Sent Events
+  - **Caching**: 30-second health check cache for performance
+
+- **Privacy & Performance:**
+  - **Local Processing**: Complete data sovereignty with zero cloud dependencies
+  - **Low Latency**: Eliminates network overhead
+  - **Cost Effective**: No API costs after initial setup
+  - **Custom Models**: Support for fine-tuned or private models
+
+### 5.4. Architecture Patterns
+
+- **Provider Interface**: Consistent with cloud providers (Gemini, OpenAI) for seamless switching
+- **Configuration Pattern**: Flexible endpoint and header configuration for custom deployments
+- **Error Pattern**: Standardized MADACE error codes and user-friendly guidance
+- **Discovery Pattern**: Automatic model listing and health monitoring
+
+- **Code Example:**
+
+  ```typescript
+  // Default Gemma3 4B setup (ships with product)
+  const gemmaProvider = createLLMClient({
+    provider: 'local',
+    model: 'gemma3', // Pre-loaded in Ollama container
+  });
+
+  // Alternative Ollama models (user adds via: docker exec ollama ollama pull llama3.1)
+  const llamaProvider = createLLMClient({
+    provider: 'local',
+    model: 'llama3.1:8b', // User-added model
+  });
+
+  // Custom Docker model setup
+  const dockerProvider = createLLMClient({
+    provider: 'local',
+    model: 'custom-7b',
+    baseURL: 'http://localhost:8080', // Custom Docker endpoint
+  });
+  ```
+
+### 5.4b. Docker Compose Deployment with Gemma3 4B
+
+**Production Deployment Configuration:**
+
+```yaml
+# docker-compose.yml (ships with product)
+services:
+  madace:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - LOCAL_MODEL_URL=http://ollama:11434 # Container-to-container communication
+      - LOCAL_MODEL_NAME=gemma3 # Default model
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama-data:/root/.ollama # Persistent model storage
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:11434/api/tags']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  ollama-data: # Stores Gemma3 4B model (3.3GB)
+```
+
+**First-Time Setup Script:**
 
 ```bash
-# Validation script
-npm run validate-versions
-# ✅ Checks all core packages
-# ✅ Checks for version ranges
-# ✅ Checks installed vs package.json
+#!/bin/bash
+# Automated setup that ships with product
 
-# Automatic enforcement
-# .npmrc: save-exact=true
-# .nvmrc: 24.10.0
-# CI/CD: npm ci (uses lockfile)
+# Start Docker services
+docker-compose up -d
+
+# Wait for Ollama to be healthy
+echo "Waiting for Ollama to start..."
+sleep 10
+
+# Pull Gemma3 4B model (3.3GB download, ~2-5 minutes)
+docker exec ollama ollama pull gemma3
+
+echo "✅ MADACE is ready with Gemma3 4B!"
+echo "🌐 Web UI: http://localhost:3000"
+echo "🤖 LLM Test: http://localhost:3000/llm-test"
 ```
+
+**User Model Management:**
+
+```bash
+# List available models
+docker exec ollama ollama list
+
+# Add additional models (user choice)
+docker exec ollama ollama pull llama3.1
+docker exec ollama ollama pull mistral
+
+# Remove models to save space
+docker exec ollama ollama rm codellama:7b
+
+# Test model directly
+docker exec ollama ollama run gemma3 "Hello, how are you?"
+```
+
+**Environment Configuration (.env):**
+
+```bash
+# Default configuration (ships with product)
+PLANNING_LLM=local
+LOCAL_MODEL_URL=http://localhost:11434  # Browser access
+LOCAL_MODEL_NAME=gemma3                  # Default model
+
+# Optional cloud providers (user adds API keys)
+GEMINI_API_KEY=your-api-key-here
+CLAUDE_API_KEY=your-api-key-here
+OPENAI_API_KEY=your-api-key-here
+```
+
+### 5.5. Integration Benefits with Gemma3 4B Default
+
+- **Zero Setup Required**: Product ships with Gemma3 4B pre-configured, works immediately
+- **No API Keys Needed**: Complete privacy and offline capability out-of-the-box
+- **Cost-Free Operation**: No recurring costs for local AI inference
+- **Multi-Environment**: Works in development, testing, and production with local models
+- **CI/CD Ready**: Docker container support enables automated testing and deployment
+- **Privacy Focus**: Ideal for sensitive data processing and compliance requirements
+- **User Flexibility**: Easy to add/swap models (Llama3.1, Mistral, etc.) via simple commands
+- **Performance**: Gemma3 4B optimized for CPU inference, broad hardware compatibility
+- **Lightweight**: 3.3GB model size fits on standard development machines
 
 ---
 
-## System Components
+## 6. HTTPS Deployment Architecture ✅
 
-### 1. Agent System (`lib/agents/`)
+**Status:** Implemented - Zero-configuration production deployment with automatic TLS certificates
 
-**Purpose:** Load, validate, and execute MADACE agents from YAML files.
+### 6.1. Secure External Access
 
-**Architecture:**
+- **Problem:** Applications need secure HTTPS access for production deployment, but setting up SSL/TLS certificates is complex and error-prone.
+- **Solution:** Implemented automatic HTTPS deployment using Caddy reverse proxy with Let's Encrypt integration.
+- **Implementation Details:**
+  - **Caddy Reverse Proxy**: Automatic TLS certificate management with zero configuration
+  - **Let's Encrypt Integration**: Free SSL/TLS certificates with automatic renewal
+  - **HTTP to HTTPS Redirect**: Automatic redirection from insecure HTTP to secure HTTPS
+  - **Security Headers**: Comprehensive security headers (HSTS, CSP, X-Frame-Options)
 
-```
-Agent System
-├── Loader (loader.ts)
-│   ├── YAML parsing (js-yaml)
-│   ├── Zod validation (schema.ts)
-│   ├── Caching (Map)
-│   └── Error handling (AgentLoadError)
-│
-├── Runtime (runtime.ts)
-│   ├── LLM integration
-│   ├── Conversation management
-│   ├── Action execution
-│   └── State persistence
-│
-├── Schema (schema.ts)
-│   ├── AgentFileSchema
-│   ├── AgentMetadataSchema
-│   ├── AgentPersonaSchema
-│   └── Type inference (z.infer)
-│
-└── Types (types.ts)
-    └── TypeScript interfaces
-```
+### 6.2. Deployment Modes
 
-**Key Patterns:**
+- **Development Mode (HTTP):**
+  - Local development at `http://localhost:3000`
+  - Network access at `http://192.168.1.214:3000`
+  - Fast iteration with hot reload
+  - No SSL overhead for local testing
 
-- ✅ Singleton with caching
-- ✅ Factory functions
-- ✅ Custom error types
-- ✅ Zod runtime validation
+- **Production Mode (HTTPS):**
+  - Automatic SSL/TLS certificate from Let's Encrypt
+  - Secure access via custom domain (e.g., `https://madace.yourdomain.com`)
+  - HTTP → HTTPS automatic redirect
+  - Certificate auto-renewal (30 days before expiry)
 
-**MADACE Compliance:** ✅ 95%
+### 6.3. Architecture Components
 
-### 2. Workflow Engine (`lib/workflows/`)
+**Docker Compose HTTPS Stack:**
 
-**Purpose:** Execute MADACE workflow YAML files step-by-step with state persistence.
+```yaml
+services:
+  madace-app:
+    # Next.js application (not exposed externally)
+    expose: ['3000']
 
-**Architecture:**
-
-```
-Workflow Engine
-├── Executor (executor.ts)
-│   ├── Step-by-step execution
-│   ├── State management
-│   ├── Action handlers (elicit, reflect, guide, template, validate)
-│   └── Sub-workflow support
-│
-├── Loader (loader.ts)
-│   ├── YAML parsing
-│   ├── Validation
-│   └── Error handling
-│
-├── Types (types.ts)
-│   ├── Workflow interface
-│   ├── WorkflowStep interface
-│   └── WorkflowState interface
-│
-└── Schema (schema.ts)
-    ├── WorkflowFileSchema
-    └── WorkflowStateSchema
+  caddy:
+    # Reverse proxy with automatic HTTPS
+    ports: ['80:80', '443:443']
+    volumes:
+      - caddy-data:/data # Persistent certificate storage
 ```
 
-**State Persistence:**
+**Caddy Configuration Features:**
 
-- Format: `.{workflow-name}.state.json`
-- Location: `madace-data/workflow-states/`
-- Atomic updates with validation
+- **Automatic HTTPS**: Caddy handles entire TLS certificate lifecycle
+- **Health Checking**: 10-second interval health checks to Next.js backend
+- **Security Headers**:
+  - `Strict-Transport-Security`: HSTS with 1-year max-age
+  - `X-Frame-Options`: Clickjacking prevention
+  - `X-Content-Type-Options`: MIME-sniffing protection
+  - `Content-Security-Policy`: XSS and injection attack prevention
+- **Compression**: gzip and zstd compression for optimal performance
+- **Logging**: JSON-formatted access logs for monitoring
 
-**MADACE Compliance:** ✅ 90%
+### 6.4. Security Best Practices
 
-### 3. State Machine (`lib/state/`)
+- **TLS 1.2/1.3 Only**: Modern cipher suites, no deprecated protocols
+- **HSTS Enabled**: Force HTTPS for all subsequent requests
+- **CSP Headers**: Whitelist trusted domains for API access (Gemini, Claude, OpenAI)
+- **X-Frame-Options**: Prevent embedding in malicious iframes
+- **Referrer-Policy**: Control referrer information leakage
+- **Firewall Rules**: Only ports 80 (HTTP challenge) and 443 (HTTPS) exposed
 
-**Purpose:** Manage story lifecycle with strict MADACE rules.
+### 6.5. Deployment Options
 
-**Architecture:**
+**Option 1: Docker with Caddy (Recommended)**
 
-```
-State Machine
-├── Machine (machine.ts)
-│   ├── State transition logic
-│   ├── Validation rules
-│   ├── Markdown parsing
-│   └── Markdown generation
-│
-├── Types (types.ts)
-│   ├── Story interface
-│   ├── StoryState type
-│   └── WorkflowStatus interface
-│
-└── Validation
-    ├── Only 1 story in TODO
-    ├── Only 1 story in IN_PROGRESS
-    └── Valid transitions only
-```
+- Zero-configuration automatic HTTPS
+- Automatic certificate renewal
+- Built-in HTTP/2 and HTTP/3 support
+- Best for: Self-hosted deployments, VPS, dedicated servers
 
-**State Flow:**
+**Option 2: Cloud Platform Deployment**
 
-```
-BACKLOG → TODO → IN_PROGRESS → DONE
-          (1)      (1)
-```
+- Automatic HTTPS (platform-managed)
+- CDN and global distribution
+- Automatic scaling
+- Best for: Production deployments, teams, enterprises
+- Supported: Vercel, Netlify, Railway
 
-**Source of Truth:** `docs/mam-workflow-status.md`
+**Option 3: Nginx with Let's Encrypt**
 
-**MADACE Compliance:** ✅ 98%
+- Manual certificate management with certbot
+- Fine-grained control
+- Best for: Existing nginx infrastructure
 
-### 4. LLM Client (`lib/llm/`)
+### 6.6. Quick Start
 
-**Purpose:** Multi-provider LLM integration with unified interface.
+```bash
+# 1. Set domain name
+export DOMAIN=madace.yourdomain.com
 
-**Architecture:**
+# 2. Create data directories
+mkdir -p madace-data logs/caddy
 
-```
-LLM Client
-├── Client (client.ts)
-│   ├── Factory pattern
-│   ├── Provider switching
-│   └── Configuration validation
-│
-├── Providers
-│   ├── Gemini (gemini.ts) - ✅ Implemented
-│   ├── Claude (claude.ts) - ⚠️  Stub
-│   ├── OpenAI (openai.ts) - ✅ Implemented
-│   └── Local (local.ts) - ✅ Implemented (Ollama)
-│
-├── Base (base.ts)
-│   ├── Abstract provider class
-│   ├── Common functionality
-│   └── Interface contract
-│
-└── Types (types.ts)
-    ├── LLMConfig
-    ├── LLMRequest/Response
-    └── LLMStreamChunk
+# 3. Deploy with HTTPS
+docker-compose -f docker-compose.https.yml up -d
+
+# 4. Access securely
+open https://madace.yourdomain.com
 ```
 
-**Features:**
+Caddy automatically:
 
-- ✅ Strategy pattern for providers
-- ✅ Streaming support (AsyncGenerator)
-- ✅ Rate limiting
-- ✅ Retry logic with backoff
-- ✅ Comprehensive error codes
+- Obtains TLS certificates from Let's Encrypt
+- Configures HTTPS with security headers
+- Redirects HTTP to HTTPS
+- Renews certificates 30 days before expiry
 
-**MADACE Compliance:** ✅ 93%
+### 6.7. Certificate Management
 
-### 5. Template Engine (`lib/templates/`)
+- **Automatic Acquisition**: Certificates obtained on first start via HTTP-01 challenge
+- **Auto-Renewal**: Caddy renews certificates 30 days before expiration
+- **Persistent Storage**: Certificates stored in Docker volume `caddy-data`
+- **Zero Manual Intervention**: Fully automated lifecycle management
+- **Multi-Domain Support**: Single Caddy instance can manage multiple domains
 
-**Purpose:** Render Handlebars templates with MADACE variables.
+### 6.8. Monitoring and Troubleshooting
 
-**Architecture:**
+**Health Checks:**
 
-```
-Template Engine
-├── Engine (engine.ts)
-│   ├── Handlebars integration
-│   ├── 40+ custom helpers
-│   ├── Legacy pattern support
-│   └── Variable validation
-│
-├── Helpers (helpers.ts)
-│   ├── String helpers
-│   ├── Date helpers
-│   ├── Comparison helpers
-│   ├── Logic helpers
-│   ├── Math helpers
-│   ├── List helpers
-│   └── MADACE-specific helpers
-│
-├── Cache (cache.ts)
-│   ├── LRU cache
-│   ├── Content-based invalidation
-│   └── Performance metrics
-│
-└── Legacy (legacy.ts)
-    ├── {var} support
-    ├── ${var} support
-    └── %VAR% support
+- Caddy health endpoint: `http://localhost:2019/config/`
+- Next.js health endpoint: `http://localhost:3000/`
+- 30-second interval with 10-second timeout
+
+**Certificate Verification:**
+
+```bash
+# Check certificate details
+openssl s_client -connect madace.yourdomain.com:443
+
+# SSL Labs test
+https://www.ssllabs.com/ssltest/analyze.html?d=madace.yourdomain.com
 ```
 
-**Pattern Support:**
+**Common Issues:**
 
-- Primary: `{{variable}}`
-- Legacy: `{variable}`, `${variable}`, `%VARIABLE%`
+- **DNS Not Propagated**: Wait 5-15 minutes for DNS changes
+- **Port 80 Blocked**: Let's Encrypt requires HTTP-01 challenge on port 80
+- **Firewall Rules**: Ensure ports 80 and 443 are open
 
-**MADACE Compliance:** ✅ 97%
+### 6.9. Integration Benefits
 
-### 6. Configuration Manager (`lib/config/`)
-
-**Purpose:** Centralized configuration with auto-detection and validation.
-
-**Architecture:**
-
-```
-Configuration Manager
-├── Manager (manager.ts)
-│   ├── Auto-detection (3 locations)
-│   ├── Cross-platform paths
-│   ├── Atomic file operations
-│   ├── Backup/rollback
-│   ├── File watching
-│   └── Environment merging
-│
-├── Schema (schema.ts)
-│   ├── ConfigSchema (Zod)
-│   └── Type inference
-│
-└── Loader (loader.ts)
-    ├── Load with validation
-    └── Error handling
-```
-
-**Detection Priority:**
-
-1. `./madace/core/config.yaml` (standard)
-2. `./madace/config.yaml` (simplified)
-3. `./config.yaml` (fallback)
-4. `$MADACE_CONFIG_PATH` (override)
-
-**MADACE Compliance:** ✅ 97%
+- **Zero Configuration**: Automatic certificate management with no manual steps
+- **Production Ready**: Battle-tested Let's Encrypt infrastructure
+- **Cost Effective**: Free SSL/TLS certificates with automatic renewal
+- **Security Compliant**: Modern TLS standards and comprehensive security headers
+- **Performance**: HTTP/2 and HTTP/3 support with automatic compression
+- **Reliability**: Automatic renewal prevents certificate expiration
+- **Scalability**: Single Caddy instance can proxy multiple backend services
 
 ---
 
-## Quality Assurance
+## 7. End-to-End Testing Infrastructure ✅
 
-### Validation Layers
+**Status:** Implemented - Comprehensive E2E testing with Playwright for multi-browser validation
+
+### 7.1. Testing Framework Architecture
+
+- **Problem:** Manual testing is error-prone, time-consuming, and doesn't scale with rapid development cycles. Route conflicts and build cache issues caused production failures.
+- **Solution:** Implemented comprehensive E2E testing infrastructure using Playwright with automated cleanup, route validation, and multi-browser support.
+- **Implementation Details:**
+  - **Playwright Framework**: Multi-browser testing (Chromium, Firefox, WebKit)
+  - **Mobile Testing**: Pixel 5, iPhone 12, iPad Pro viewport emulation
+  - **Page Object Model**: Maintainable, reusable test components
+  - **Global Lifecycle**: Setup/teardown hooks for test environment management
+  - **Visual Debugging**: Screenshot/video capture on test failures
+  - **Execution Traces**: Detailed debugging information for failed tests
+
+### 7.2. Test Coverage
+
+**10 Comprehensive Test Suites** (336 total tests across all browsers):
+
+1. **Setup Wizard Tests** (`setup-wizard.spec.ts`)
+   - Multi-step form validation
+   - Navigation between wizard steps
+   - Form field validation
+   - Configuration persistence
+   - Success state handling
+
+2. **Agent Management Tests** (`agents.spec.ts`)
+   - Agent listing and display
+   - Agent detail pages
+   - Search and filtering
+   - MAM agent verification
+   - Agent metadata validation
+
+3. **Kanban Board Tests** (`kanban-board.spec.ts`)
+   - Drag-and-drop functionality
+   - State transitions (Backlog → TODO → In Progress → Done)
+   - Visual feedback and animations
+   - Story card interactions
+   - Board synchronization
+
+4. **LLM Integration Tests** (`llm-integration.spec.ts`)
+   - API endpoint testing
+   - Configuration management
+   - Multi-provider support validation
+   - Error handling
+   - Response validation
+
+5. **API Endpoint Tests** (`api-endpoints.spec.ts`)
+   - REST API validation
+   - Response structure verification
+   - HTTP status code checking
+   - Error response handling
+   - Data integrity validation
+
+6. **Accessibility Tests** (`accessibility.spec.ts`)
+   - WCAG 2.1 compliance
+   - Keyboard navigation
+   - Screen reader compatibility
+   - ARIA labels and roles
+   - Semantic HTML structure
+   - Focus management
+
+7. **Performance Tests** (`performance.spec.ts`)
+   - Page load time metrics
+   - Time to Interactive (TTI)
+   - First Contentful Paint (FCP)
+   - Resource loading analysis
+   - Bundle size monitoring
+
+8. **Authentication Tests** (`auth-setup.spec.ts`)
+   - Setup flow completion
+   - Configuration saving
+   - Session management
+   - Future authentication readiness
+
+9. **Server Lifecycle Tests** (`test-server-lifecycle.spec.ts`)
+   - Dev server health checking
+   - API endpoint availability
+   - Concurrent request handling
+   - Server responsiveness
+
+10. **Home Page Tests** (integrated across suites)
+    - Landing page functionality
+    - Quick actions
+    - Navigation links
+    - Project statistics
+
+### 7.3. Automation Scripts
+
+**Cross-Platform Cleanup System:**
+
+1. **cleanup-dev-servers.js** (Cross-platform Node.js)
+
+   ```javascript
+   // Features:
+   - Kill processes on port 3000
+   - Terminate all Next.js dev servers
+   - Clear .next build cache (prevents route conflicts)
+   - Cross-platform (Windows, macOS, Linux)
+   - Graceful error handling
+   ```
+
+2. **cleanup-dev-servers.sh** (Enhanced Unix/Linux)
+
+   ```bash
+   # Additional features:
+   - More thorough process cleanup
+   - npm dev process termination
+   - Faster execution on Unix systems
+   ```
+
+3. **verify-routes.js** (Route Structure Validation)
+
+   ```javascript
+   // Validation checks:
+   - Detect nested MADACE directories
+   - Find conflicting [name] parameters
+   - Verify [id] route consistency
+   - Display visual route tree
+   - Exit with error codes for CI/CD
+   ```
+
+4. **run-e2e.sh** (Automated Test Execution)
+   ```bash
+   # Workflow automation:
+   - Cleanup → Verify → Dev Server → Tests
+   - Integrated error handling
+   - CI/CD ready
+   ```
+
+### 7.4. Route Conflict Resolution
+
+**Critical Production Fix:**
+
+- **Problem Identified**: Next.js route parameter mismatch (`[id]` vs `[name]`) caused deployment failures
+- **Root Cause**: Stale build cache (`.next` directory) contained old route structures
+- **Solution Implemented**:
+  1. Renamed all dynamic routes from `[name]` → `[id]` for consistency
+  2. Integrated build cache clearing into cleanup scripts
+  3. Created route verification tool for pre-deployment validation
+  4. Added route structure validation to test workflow
+
+**Routes Fixed:**
 
 ```
-┌─────────────────────────────────────────┐
-│     Layer 1: Pre-Install Prevention     │
-│  - .npmrc (save-exact=true)             │
-│  - .nvmrc (Node.js 24.10.0)             │
-│  - engines (>=20.0.0)                   │
-└──────────┬──────────────────────────────┘
-           ▼
-┌─────────────────────────────────────────┐
-│     Layer 2: Post-Install Validation    │
-│  - validate-versions script             │
-│  - Check package.json                   │
-│  - Check installed packages             │
-│  - Check for ranges                     │
-└──────────┬──────────────────────────────┘
-           ▼
-┌─────────────────────────────────────────┐
-│     Layer 3: Pre-Commit Quality Gates   │
-│  - npm run validate-versions            │
-│  - npm run type-check (TypeScript)      │
-│  - npm run lint (ESLint)                │
-│  - npm run format:check (Prettier)      │
-│  └── npm run check-all (ALL)            │
-└──────────┬──────────────────────────────┘
-           ▼
-┌─────────────────────────────────────────┐
-│     Layer 4: CI/CD Validation           │
-│  - npm ci (exact versions)              │
-│  - validate-versions (blocking)         │
-│  - check-all (blocking)                 │
-│  - npm test (blocking)                  │
-│  - npm run build (blocking)             │
-└─────────────────────────────────────────┘
+app/api/agents/[name] → app/api/agents/[id]
+app/api/workflows/[name] → app/api/workflows/[id]
+app/agents/[name] → (removed - conflicting directory)
 ```
 
-### Quality Scripts
+**Error Prevented:**
+
+```
+Error: You cannot use different slug names for the same dynamic path ('id' !== 'name').
+```
+
+### 7.5. NPM Scripts Integration
+
+**New Testing Commands:**
 
 ```json
 {
-  "scripts": {
-    "validate-versions": "node scripts/validate-versions.js",
-    "type-check": "tsc --noEmit",
-    "lint": "next lint",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "check-all": "npm run validate-versions && npm run type-check && npm run lint && npm run format:check",
-    "test": "jest",
-    "test:e2e": "playwright test",
-    "build": "next build"
+  "verify-routes": "node scripts/verify-routes.js",
+  "cleanup": "node scripts/cleanup-dev-servers.js",
+  "cleanup:bash": "bash scripts/cleanup-dev-servers.sh",
+  "test:e2e": "playwright test",
+  "test:e2e:ui": "playwright test --ui",
+  "test:e2e:debug": "playwright test --debug",
+  "test:e2e:chromium": "playwright test --project=chromium",
+  "test:e2e:headed": "playwright test --headed",
+  "test:e2e:report": "playwright show-report",
+  "test:e2e:clean": "npm run verify-routes && npm run cleanup && npm run dev & sleep 3 && npm run test:e2e"
+}
+```
+
+### 7.6. Page Object Model Pattern
+
+**Maintainable Test Architecture:**
+
+```typescript
+// e2e-tests/page-objects/setup-wizard.page.ts
+export class SetupWizardPage {
+  async goto() {
+    await this.page.goto('/setup');
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async fillProjectInfo(data: ProjectInfo) {
+    await this.page.fill('[name="projectName"]', data.name);
+    await this.page.fill('[name="outputFolder"]', data.folder);
+  }
+
+  async navigateNext() {
+    await this.page.click('button:has-text("Next")');
   }
 }
 ```
 
-### Testing Strategy
+**Benefits:**
 
-| Test Type             | Framework         | Coverage       | Status         |
-| --------------------- | ----------------- | -------------- | -------------- |
-| **Unit Tests**        | Jest 30.2.0       | 85-90%         | ✅ Passing     |
-| **Integration Tests** | Jest              | Core modules   | ✅ Passing     |
-| **E2E Tests**         | Playwright 1.56.1 | Critical paths | ⚠️ In Progress |
-| **Type Checking**     | TypeScript 5.9.3  | 100%           | ✅ Passing     |
-| **Linting**           | ESLint 9.38.0     | 100%           | ✅ Passing     |
-| **Formatting**        | Prettier 3.6.2    | 100%           | ✅ Passing     |
+- Centralized element selectors
+- Reusable page interactions
+- Easier maintenance when UI changes
+- Type-safe page operations
+- Self-documenting test code
 
----
+### 7.7. Test Configuration
 
-## Deployment Architecture
+**Playwright Configuration** (`playwright.config.ts`):
 
-### Docker Deployment
-
-#### Production Mode (Optimized)
-
-```dockerfile
-# Multi-stage build
-FROM node:24.10.0-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-FROM node:24.10.0-alpine
-WORKDIR /app
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
-EXPOSE 3000
-CMD ["npm", "start"]
+```typescript
+export default defineConfig({
+  testDir: './e2e-tests',
+  timeout: 30000,
+  retries: process.env.CI ? 2 : 0,
+  use: {
+    baseURL: 'http://localhost:3000',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    trace: 'on-first-retry',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'Mobile Chrome', use: { ...devices['Pixel 5'] } },
+    { name: 'Mobile Safari', use: { ...devices['iPhone 12'] } },
+    { name: 'iPad', use: { ...devices['iPad Pro'] } },
+  ],
+});
 ```
 
-**Size:** ~200MB (Alpine-based)
-**Startup:** ~2-3 seconds
+### 7.8. CI/CD Integration
 
-#### Development Mode (with IDEs)
-
-```dockerfile
-# Includes VSCode Server + Cursor
-FROM node:24.10.0
-WORKDIR /workspace
-# ... VSCode Server installation ...
-EXPOSE 8080 8081 3000
-```
-
-**Size:** ~2-3GB (includes IDEs)
-**Features:**
-
-- VSCode Server (http://localhost:8080)
-- Cursor IDE (http://localhost:8081)
-- Hot reload
-- All dev tools
-
-### Deployment Options
-
-| Option         | Best For       | Complexity | Cost      |
-| -------------- | -------------- | ---------- | --------- |
-| **Docker**     | Self-hosted    | Low        | Free      |
-| **Vercel**     | Quick deploy   | Very Low   | Free tier |
-| **Railway**    | Hobby projects | Low        | $5/month  |
-| **AWS ECS**    | Enterprise     | Medium     | Variable  |
-| **Kubernetes** | Large scale    | High       | Variable  |
-
-**Recommended:** Docker Compose (see [docker-compose.yml](./docker-compose.yml))
-
----
-
-## MADACE Compliance
-
-### Compliance Audit Results
-
-**Date:** 2025-10-28
-**Overall Score:** ✅ 92% MADACE COMPLIANT
-**Status:** EXCELLENT
-
-### Component Scores
-
-| Component           | Score | Status       | Notes                                      |
-| ------------------- | ----- | ------------ | ------------------------------------------ |
-| **Agent System**    | 95%   | ✅ Excellent | Singleton pattern, caching, error handling |
-| **Workflow Engine** | 90%   | ✅ Compliant | Template stubs pending                     |
-| **State Machine**   | 98%   | ✅ Excellent | Enforces MADACE rules perfectly            |
-| **LLM Client**      | 93%   | ✅ Excellent | Claude provider needs completion           |
-| **Config Manager**  | 97%   | ✅ Excellent | Official MADACE error codes                |
-| **Template Engine** | 97%   | ✅ Excellent | 40+ helpers, legacy support                |
-| **API Routes**      | 90%   | ✅ Compliant | RESTful design                             |
-
-### MADACE Patterns Implemented
-
-#### ✅ Core Principles (All Met)
-
-1. ✅ **Single Source of Truth** - `docs/mam-workflow-status.md`
-2. ✅ **Natural Language First** - YAML configs, no executable code
-3. ✅ **Type Safety** - Zod + TypeScript strict mode
-4. ✅ **Error Handling** - Custom errors with MADACE error codes
-5. ✅ **Factory Patterns** - Consistent instance creation
-6. ✅ **Singleton Patterns** - Caching and resource management
-7. ✅ **Cross-Platform** - macOS/Linux/Windows support
-8. ✅ **Atomic Operations** - State transitions and file writes
-
-#### ✅ File Formats (All Met)
-
-1. ✅ Agent files: `*.agent.yaml`
-2. ✅ Workflow files: `workflow.yaml`
-3. ✅ Status file: `mam-workflow-status.md`
-4. ✅ State files: `.{workflow-name}.state.json`
-5. ✅ Config file: `config.yaml`
-
-#### ✅ Architecture Patterns (All Met)
-
-1. ✅ Agent Loader - Singleton with caching
-2. ✅ Workflow Executor - State persistence and resume
-3. ✅ State Machine - Strict lifecycle enforcement
-4. ✅ Template Engine - Handlebars with helpers
-5. ✅ Configuration Manager - Auto-detection and validation
-6. ✅ LLM Client - Multi-provider with strategy pattern
-
-### Priority Recommendations
-
-See full [MADACE Compliance Audit Report](./docs/MADACE-COMPLIANCE-AUDIT.md)
-
----
-
-## Security
-
-### Security Measures
-
-1. **No Executable Code in YAML** - By design
-2. **Path Traversal Protection** - Validation on all file operations
-3. **Template Injection Prevention** - Handlebars auto-escapes
-4. **API CORS Configuration** - Proper origin controls
-5. **Secrets Management** - `.env` files git-ignored
-6. **Input Validation** - Zod validation on all untrusted input
-7. **HTTPS Enforcement** - All external API calls use HTTPS
-8. **File Permissions** - Secure permissions on config files
-
-### Security Checklist
-
-- [x] `.env` in `.gitignore`
-- [x] No hardcoded secrets
-- [x] HTTPS for all external APIs
-- [x] Input validation with Zod
-- [x] Path sandboxing
-- [x] Template auto-escaping
-- [x] Secure file permissions
-- [x] CORS configuration
-- [x] Rate limiting (LLM providers)
-- [x] Error messages don't leak secrets
-
----
-
-## Performance
-
-### Performance Characteristics
-
-| Operation              | Time      | Acceptable?  |
-| ---------------------- | --------- | ------------ |
-| **Agent Load**         | ~1-2ms    | ✅ Excellent |
-| **YAML Parse**         | ~1ms      | ✅ Excellent |
-| **State Machine Read** | ~5ms      | ✅ Good      |
-| **Template Render**    | ~10ms     | ✅ Good      |
-| **Workflow Step**      | ~50-100ms | ✅ Good      |
-| **LLM Call**           | 1-10s     | ✅ Expected  |
-
-### Optimization Strategies
-
-1. **Caching**
-   - Agents cached after first load
-   - Templates compiled and cached
-   - Configuration cached in memory
-
-2. **Lazy Loading**
-   - Agents loaded on demand
-   - Workflows loaded when needed
-   - Components code-split (Next.js)
-
-3. **Efficient Parsing**
-   - Zod validation (fast)
-   - js-yaml parsing (native)
-   - Minimal transformations
-
-**Conclusion:** Performance is excellent for single-user experimental project.
-
----
-
-## Development Workflow
-
-### Setup
+**Automated Testing Workflow:**
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/your-org/MADACE-Method-v2.0
-cd MADACE-Method-v2.0
-
-# 2. Install exact versions
+# CI Pipeline Integration
 npm ci
+npx playwright install --with-deps chromium
 
-# 3. Validate environment
-npm run validate-versions
+# Pre-deployment validation
+npm run verify-routes    # Validate route structure
+npm run cleanup          # Clear stale processes/cache
+npm run dev &            # Start dev server
+sleep 5                  # Wait for server ready
 
-# 4. Start development
-npm run dev
+# Execute tests
+npm run test:e2e         # Run all E2E tests
+npm run test:e2e:report  # Generate test report
+
+# Cleanup
+npm run cleanup
 ```
 
-### Daily Workflow
+**GitHub Actions Ready:**
+
+- Automated browser installation
+- Parallel test execution
+- Test result reporting
+- Artifact collection (screenshots, videos, traces)
+- Slack/email notifications on failure
+
+### 7.9. Test Artifacts and Debugging
+
+**Failure Investigation Tools:**
+
+1. **Screenshots** (`test-results/*/test-failed-*.png`)
+   - Captured automatically on test failure
+   - Visual state at time of failure
+   - Timestamped for correlation
+
+2. **Videos** (`test-results/*/video.webm`)
+   - Full test execution recording
+   - Retained only on failure
+   - Helps reproduce intermittent issues
+
+3. **Execution Traces** (`test-results/*/trace.zip`)
+   - Detailed timeline of test execution
+   - Network activity
+   - Console logs
+   - DOM snapshots
+   - Viewable with `npx playwright show-trace`
+
+4. **Error Context** (`test-results/*/error-context.md`)
+   - Detailed error messages
+   - Stack traces
+   - Test configuration
+   - Environment information
+
+### 7.10. Test Execution Modes
+
+**Development Workflow:**
 
 ```bash
-# 1. Pull latest changes
-git pull
+# Quick feedback during development
+npm run test:e2e:chromium  # Single browser (fastest)
+npm run test:e2e:headed    # Watch tests run
+npm run test:e2e:debug     # Step through tests
 
-# 2. Install any new dependencies
-npm ci
-
-# 3. Validate versions
-npm run validate-versions
-
-# 4. Start development server
-npm run dev
-
-# 5. Make changes...
-
-# 6. Before committing
-npm run check-all  # MUST pass
-npm run build      # Verify production build
-
-# 7. Commit
-git add .
-git commit -m "feat: your changes"
-git push
+# Full validation before PR
+npm run test:e2e           # All browsers (336 tests)
+npm run test:e2e:report    # View results in browser
 ```
 
-### Quality Gates (MUST PASS)
+**Interactive Debugging:**
 
 ```bash
-npm run check-all
-# ✅ validate-versions - Version lock validation
-# ✅ type-check - TypeScript compilation
-# ✅ lint - ESLint validation
-# ✅ format:check - Prettier validation
+# UI Mode - visual test explorer
+npm run test:e2e:ui
+
+Features:
+- Pick and choose tests to run
+- Watch mode for rapid iteration
+- Time travel debugging
+- Visual test selector
+- Real-time results
 ```
 
+### 7.11. Test Quality Metrics
+
+**Current Status:**
+
+- **Total Tests**: 56 tests (Chromium) | 336 tests (all browsers)
+- **Test Suites**: 10 comprehensive suites
+- **Coverage Areas**: UI, API, Accessibility, Performance, Integration
+- **Execution Time**: ~2-3 minutes (Chromium) | ~10-15 minutes (all browsers)
+- **Retry Strategy**: 2 retries on CI, 0 retries locally
+- **Parallel Execution**: 5 workers for faster execution
+
+**Known Test Status:**
+
+- ✅ Core functionality tests passing
+- ⚠️ Some tests expect unimplemented features (expected)
+- ⚠️ Selector refinement needed for dynamic content
+- ⚠️ Timeout adjustments for slower pages
+
+### 7.12. Documentation
+
+**Comprehensive Guides:**
+
+1. **E2E-TESTING-WORKFLOW.md** (Complete workflow guide)
+   - Quick start instructions
+   - Available scripts reference
+   - Troubleshooting guide
+   - CI/CD integration examples
+   - Best practices
+
+2. **E2E-TESTING-GUIDE.md** (Test writing guide)
+   - Page Object Model patterns
+   - Writing maintainable tests
+   - Assertion strategies
+   - Common pitfalls
+
+3. **CORE-INTEGRATION-ANALYSIS.md** (Integration documentation)
+   - System integration points
+   - API contract testing
+   - State management validation
+
+### 7.13. Future Enhancements
+
+**Planned Improvements:**
+
+- [ ] Visual regression testing (Percy, Chromatic)
+- [ ] Contract testing for API endpoints
+- [ ] Load testing with k6 or Artillery
+- [ ] Component testing with Storybook
+- [ ] Test data factories for consistent fixtures
+- [ ] Database snapshot/restore for isolation
+- [ ] Parallel test execution optimization
+- [ ] Test flakiness monitoring and reporting
+
+### 7.14. Integration Benefits
+
+**Value Delivered:**
+
+- **Quality Assurance**: Automated validation of critical user flows
+- **Regression Prevention**: Catch breaking changes before deployment
+- **Development Velocity**: Faster feedback on code changes
+- **Confidence**: Safe refactoring with comprehensive test coverage
+- **Documentation**: Tests serve as executable specifications
+- **Multi-Browser Support**: Validated across all major browsers
+- **Accessibility**: WCAG compliance automated validation
+- **Performance**: Early detection of performance regressions
+- **Route Validation**: Prevents deployment-breaking route conflicts
+- **Clean Environment**: Automated cleanup prevents test pollution
+
+**Production Readiness:**
+
+- ✅ Zero-configuration setup
+- ✅ Cross-platform compatibility
+- ✅ CI/CD ready
+- ✅ Comprehensive error reporting
+- ✅ Visual debugging tools
+- ✅ Route conflict prevention
+- ✅ Build cache management
+- ✅ Multi-browser validation
+
 ---
-
-## References
-
-### Architecture Decision Records (ADRs)
-
-- **[ADR-001](./docs/adrs/ADR-001-multi-tier-architecture.md)** - Multi-Tier Architecture (Superseded)
-- **[ADR-002](./docs/adrs/ADR-002-ffi-strategy.md)** - FFI Strategy (Superseded)
-- **[ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)** - Architecture Simplification ✅
-- **[ADR-004](./docs/adrs/ADR-004-version-locking-enforcement.md)** - Version Locking Strategy ✅
-
-### Key Documentation
-
-- **[README.md](./README.md)** - Project overview
-- **[PRD.md](./PRD.md)** - Product requirements (v2.0 AUTHORITATIVE)
-- **[CLAUDE.md](./CLAUDE.md)** - Developer guide (comprehensive)
-- **[VERSION-LOCK.md](./VERSION-LOCK.md)** - Version control policy
-- **[PLAN.md](./PLAN.md)** - Development roadmap
-- **[DEVELOPMENT.md](./DEVELOPMENT.md)** - Development container guide
-
-### Official MADACE
-
-- **Official Repository**: https://github.com/tekcin/MADACE-METHOD
-- **Version**: v1.0-alpha.2
-- **Status**: Production-ready CLI tool
-
----
-
-## Conclusion
-
-MADACE-Method v2.0 represents **pragmatic architecture at its best**:
-
-### What We Did Right
-
-1. **Simplified** - From 3 runtimes to 1
-2. **Locked Versions** - From "probably consistent" to "guaranteed consistent"
-3. **Validated MADACE Compliance** - 92% score proves adherence to patterns
-4. **Automated Quality Gates** - No room for manual errors
-5. **Clear Documentation** - Future developers have roadmap
-
-### What Makes This Special
-
-- ✅ **Boring is Good** - Proven tech, minimal surprises
-- ✅ **Type-Safe** - Compile-time + runtime validation
-- ✅ **Reproducible** - Same input → same output
-- ✅ **Compliant** - Follows official MADACE patterns
-- ✅ **Production-Ready** - All quality gates pass
-
-### Ready for v2.0-alpha Release
-
-```bash
-npm run validate-versions  # ✅ PASS
-npm run check-all          # ✅ PASS
-npm run build              # ✅ PASS
-npm test                   # ✅ PASS
-```
-
-**Status:** ✅ **READY FOR RELEASE**
-
----
-
-**Architecture Version:** 1.0.0
-**Last Updated:** 2025-10-28
-**Next Review:** 2026-01-28 (Quarterly)
-**Status:** ✅ APPROVED and IN PRODUCTION
-
----
-
-**Remember:** Boring architecture is reliable architecture. And reliability is the foundation of great software.

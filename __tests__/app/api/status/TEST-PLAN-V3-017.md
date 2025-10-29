@@ -24,19 +24,22 @@ From STORY-V3-019 (detailed requirements):
 ## API Route Structure
 
 ### Route Location
+
 ```
 app/api/status/[type]/[id]/route.ts
 ```
 
 ### TypeScript Function Signature
+
 ```typescript
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ type: string; id: string }> }
-): Promise<NextResponse>
+): Promise<NextResponse>;
 ```
 
 ### Response Format (Success)
+
 ```typescript
 {
   success: true,
@@ -45,6 +48,7 @@ export async function GET(
 ```
 
 ### Response Format (Error)
+
 ```typescript
 {
   success: false,
@@ -58,6 +62,7 @@ export async function GET(
 ## Test Suite Structure
 
 ### Location
+
 ```
 __tests__/app/api/status/[type]/[id]/route.test.ts
 ```
@@ -136,6 +141,7 @@ describe('GET /api/status/:type/:id', () => {
 #### 1.1 Story Status Queries (5 tests)
 
 **Test 1.1.1: Get story status with STORY- prefix**
+
 ```typescript
 it('should return story status for STORY-V3-001', async () => {
   // Given: Valid story ID with STORY- prefix
@@ -149,10 +155,10 @@ it('should return story status for STORY-V3-001', async () => {
     data: {
       status: 'in-progress',
       title: 'Example Story',
-      points: 5
+      points: 5,
     },
     timestamp: new Date(),
-    metadata: {}
+    metadata: {},
   });
 
   // When: GET /api/status/story/STORY-V3-001
@@ -169,6 +175,7 @@ it('should return story status for STORY-V3-001', async () => {
 ```
 
 **Test 1.1.2: Get story status with US- prefix**
+
 ```typescript
 it('should return story status for US-001', async () => {
   // US-001 pattern (User Story format)
@@ -177,6 +184,7 @@ it('should return story status for US-001', async () => {
 ```
 
 **Test 1.1.3: Get story status with TASK- prefix**
+
 ```typescript
 it('should return story status for TASK-001', async () => {
   // TASK-001 pattern
@@ -185,6 +193,7 @@ it('should return story status for TASK-001', async () => {
 ```
 
 **Test 1.1.4: Get story status with case-insensitive ID**
+
 ```typescript
 it('should return story status for story-v3-001 (lowercase)', async () => {
   // Case insensitive matching
@@ -193,6 +202,7 @@ it('should return story status for story-v3-001 (lowercase)', async () => {
 ```
 
 **Test 1.1.5: Get story status with all metadata fields**
+
 ```typescript
 it('should return story with complete metadata', async () => {
   // Mock returns all fields: title, points, assignee, dates, milestone
@@ -203,6 +213,7 @@ it('should return story with complete metadata', async () => {
 #### 1.2 Epic Status Queries (5 tests)
 
 **Test 1.2.1: Get epic status with EPIC-V3- prefix**
+
 ```typescript
 it('should return epic status for EPIC-V3-001', async () => {
   // Given: Valid epic ID
@@ -218,10 +229,10 @@ it('should return epic status for EPIC-V3-001', async () => {
       priority: 'P0',
       effort: 34,
       completedStories: 3,
-      totalStories: 10
+      totalStories: 10,
     },
     timestamp: new Date(),
-    metadata: {}
+    metadata: {},
   });
 
   // When: GET /api/status/epic/EPIC-V3-001
@@ -239,6 +250,7 @@ it('should return epic status for EPIC-V3-001', async () => {
 ```
 
 **Test 1.2.2: Get epic status with EPIC- prefix (no version)**
+
 ```typescript
 it('should return epic status for EPIC-MAM', async () => {
   // EPIC-MAM pattern (no version number)
@@ -246,6 +258,7 @@ it('should return epic status for EPIC-MAM', async () => {
 ```
 
 **Test 1.2.3: Get epic status with case-insensitive ID**
+
 ```typescript
 it('should return epic status for epic-v3-001 (lowercase)', async () => {
   // Case insensitive matching
@@ -253,6 +266,7 @@ it('should return epic status for epic-v3-001 (lowercase)', async () => {
 ```
 
 **Test 1.2.4: Get epic status with all metadata**
+
 ```typescript
 it('should return epic with complete metadata', async () => {
   // All fields: title, description, priority, effort, quarter, owner, status, story count, last updated, summary
@@ -260,6 +274,7 @@ it('should return epic with complete metadata', async () => {
 ```
 
 **Test 1.2.5: Get epic status with story breakdown**
+
 ```typescript
 it('should return epic with story breakdown', async () => {
   // Verify stories array contains story details
@@ -269,6 +284,7 @@ it('should return epic with story breakdown', async () => {
 #### 1.3 Workflow Status Queries (5 tests)
 
 **Test 1.3.1: Get workflow status for kebab-case workflow**
+
 ```typescript
 it('should return workflow status for pm-planning', async () => {
   // Given: Valid workflow name (kebab-case)
@@ -284,10 +300,10 @@ it('should return workflow status for pm-planning', async () => {
       currentStep: 2,
       totalSteps: 5,
       progress: 40,
-      status: 'in_progress'
+      status: 'in_progress',
     },
     timestamp: new Date(),
-    metadata: {}
+    metadata: {},
   });
 
   // When: GET /api/status/workflow/pm-planning
@@ -304,6 +320,7 @@ it('should return workflow status for pm-planning', async () => {
 ```
 
 **Test 1.3.2: Get workflow status for completed workflow**
+
 ```typescript
 it('should return workflow status for completed workflow', async () => {
   // Mock status: 'completed', progress: 100
@@ -311,6 +328,7 @@ it('should return workflow status for completed workflow', async () => {
 ```
 
 **Test 1.3.3: Get workflow status with step details**
+
 ```typescript
 it('should return workflow with step details', async () => {
   // Verify steps array contains step status, timestamps
@@ -318,6 +336,7 @@ it('should return workflow with step details', async () => {
 ```
 
 **Test 1.3.4: Get workflow status with context variables**
+
 ```typescript
 it('should return workflow with context variables', async () => {
   // Verify context object contains workflow variables
@@ -325,6 +344,7 @@ it('should return workflow with context variables', async () => {
 ```
 
 **Test 1.3.5: Get workflow status for failed workflow**
+
 ```typescript
 it('should return workflow status for failed workflow', async () => {
   // Mock status: 'failed', error message included
@@ -334,6 +354,7 @@ it('should return workflow status for failed workflow', async () => {
 #### 1.4 State Machine Queries (5 tests)
 
 **Test 1.4.1: Get state machine overview with 'state' ID**
+
 ```typescript
 it('should return state machine overview for state', async () => {
   // Given: state-machine type with 'state' ID
@@ -348,15 +369,15 @@ it('should return state machine overview for state', async () => {
       backlog: 45,
       todo: 1,
       inProgress: 1,
-      done: 40
+      done: 40,
     },
     timestamp: new Date(),
     metadata: {
       todoLimit: 1,
       inProgressLimit: 1,
       todoViolation: false,
-      inProgressViolation: false
-    }
+      inProgressViolation: false,
+    },
   });
 
   // When: GET /api/status/state-machine/state
@@ -375,6 +396,7 @@ it('should return state machine overview for state', async () => {
 ```
 
 **Test 1.4.2: Get state machine overview with 'overview' ID**
+
 ```typescript
 it('should return state machine overview for overview', async () => {
   // ID: 'overview' - should work same as 'state'
@@ -382,6 +404,7 @@ it('should return state machine overview for overview', async () => {
 ```
 
 **Test 1.4.3: Get state machine overview with 'summary' ID**
+
 ```typescript
 it('should return state machine overview for summary', async () => {
   // ID: 'summary' - should work same as 'state'
@@ -389,6 +412,7 @@ it('should return state machine overview for summary', async () => {
 ```
 
 **Test 1.4.4: Get state machine with limit violations**
+
 ```typescript
 it('should return state machine with limit violations', async () => {
   // Mock: todo: 2 (violation), inProgress: 2 (violation)
@@ -397,6 +421,7 @@ it('should return state machine with limit violations', async () => {
 ```
 
 **Test 1.4.5: Get state machine with empty sections**
+
 ```typescript
 it('should return state machine with empty sections', async () => {
   // Mock: backlog: 0, todo: 0, inProgress: 0, done: 0
@@ -410,6 +435,7 @@ it('should return state machine with empty sections', async () => {
 #### 2.1 Valid Type Validation (4 tests)
 
 **Test 2.1.1: Accept 'story' type**
+
 ```typescript
 it('should accept type=story as valid', async () => {
   // type: 'story', id: 'STORY-001'
@@ -418,6 +444,7 @@ it('should accept type=story as valid', async () => {
 ```
 
 **Test 2.1.2: Accept 'epic' type**
+
 ```typescript
 it('should accept type=epic as valid', async () => {
   // type: 'epic', id: 'EPIC-V3-001'
@@ -425,6 +452,7 @@ it('should accept type=epic as valid', async () => {
 ```
 
 **Test 2.1.3: Accept 'workflow' type**
+
 ```typescript
 it('should accept type=workflow as valid', async () => {
   // type: 'workflow', id: 'pm-planning'
@@ -432,6 +460,7 @@ it('should accept type=workflow as valid', async () => {
 ```
 
 **Test 2.1.4: Accept 'state-machine' type**
+
 ```typescript
 it('should accept type=state-machine as valid', async () => {
   // type: 'state-machine', id: 'state'
@@ -441,6 +470,7 @@ it('should accept type=state-machine as valid', async () => {
 #### 2.2 Invalid Type Validation (4 tests)
 
 **Test 2.2.1: Reject invalid type 'invalid'**
+
 ```typescript
 it('should return 400 for invalid type', async () => {
   // Given: Invalid type
@@ -460,6 +490,7 @@ it('should return 400 for invalid type', async () => {
 ```
 
 **Test 2.2.2: Reject empty type**
+
 ```typescript
 it('should return 400 for empty type', async () => {
   // type: '', id: 'STORY-001'
@@ -468,6 +499,7 @@ it('should return 400 for empty type', async () => {
 ```
 
 **Test 2.2.3: Reject uppercase type**
+
 ```typescript
 it('should return 400 for STORY type (uppercase)', async () => {
   // type: 'STORY', id: 'STORY-001'
@@ -476,6 +508,7 @@ it('should return 400 for STORY type (uppercase)', async () => {
 ```
 
 **Test 2.2.4: Reject type with special characters**
+
 ```typescript
 it('should return 400 for type with special characters', async () => {
   // type: 'story!', id: 'STORY-001'
@@ -486,6 +519,7 @@ it('should return 400 for type with special characters', async () => {
 #### 2.3 ID Format Validation (4 tests)
 
 **Test 2.3.1: Accept valid story ID formats**
+
 ```typescript
 it('should accept STORY-V3-001, US-001, TASK-001 formats', async () => {
   // Test multiple ID formats
@@ -494,6 +528,7 @@ it('should accept STORY-V3-001, US-001, TASK-001 formats', async () => {
 ```
 
 **Test 2.3.2: Accept valid epic ID formats**
+
 ```typescript
 it('should accept EPIC-V3-001, EPIC-MAM formats', async () => {
   // Test multiple epic ID formats
@@ -501,6 +536,7 @@ it('should accept EPIC-V3-001, EPIC-MAM formats', async () => {
 ```
 
 **Test 2.3.3: Accept valid workflow ID formats**
+
 ```typescript
 it('should accept pm-planning, create-prd formats', async () => {
   // Test kebab-case workflow names
@@ -508,6 +544,7 @@ it('should accept pm-planning, create-prd formats', async () => {
 ```
 
 **Test 2.3.4: Accept state machine keyword IDs**
+
 ```typescript
 it('should accept state, overview, summary, all for state-machine', async () => {
   // Test all valid state machine keywords
@@ -517,6 +554,7 @@ it('should accept state, overview, summary, all for state-machine', async () => 
 #### 2.4 Edge Cases (3 tests)
 
 **Test 2.4.1: Handle very long IDs**
+
 ```typescript
 it('should handle ID with 200+ characters', async () => {
   // ID: 'STORY-' + 'A'.repeat(200)
@@ -525,6 +563,7 @@ it('should handle ID with 200+ characters', async () => {
 ```
 
 **Test 2.4.2: Handle IDs with URL-encoded characters**
+
 ```typescript
 it('should handle URL-encoded ID %20%20%20', async () => {
   // ID: 'STORY%20001'
@@ -533,6 +572,7 @@ it('should handle URL-encoded ID %20%20%20', async () => {
 ```
 
 **Test 2.4.3: Handle IDs with trailing whitespace**
+
 ```typescript
 it('should handle ID with trailing whitespace', async () => {
   // ID: 'STORY-001   '
@@ -547,6 +587,7 @@ it('should handle ID with trailing whitespace', async () => {
 #### 3.1 404 Not Found Errors (8 tests)
 
 **Test 3.1.1: Story not found**
+
 ```typescript
 it('should return 404 for non-existent story', async () => {
   // Given: Story ID that doesn't exist
@@ -554,9 +595,7 @@ it('should return 404 for non-existent story', async () => {
   const id = 'STORY-NONEXISTENT';
 
   // Mock: Registry throws "Story not found" error
-  mockRegistry.getStatusResult.mockRejectedValue(
-    new Error('Story not found: STORY-NONEXISTENT')
-  );
+  mockRegistry.getStatusResult.mockRejectedValue(new Error('Story not found: STORY-NONEXISTENT'));
 
   // When: GET /api/status/story/STORY-NONEXISTENT
   const response = await GET(mockRequest, { params: Promise.resolve({ type, id }) });
@@ -571,6 +610,7 @@ it('should return 404 for non-existent story', async () => {
 ```
 
 **Test 3.1.2: Epic not found**
+
 ```typescript
 it('should return 404 for non-existent epic', async () => {
   // Epic doesn't exist in docs/v3-planning/epics/
@@ -578,6 +618,7 @@ it('should return 404 for non-existent epic', async () => {
 ```
 
 **Test 3.1.3: Workflow not found**
+
 ```typescript
 it('should return 404 for non-existent workflow', async () => {
   // Workflow state file doesn't exist
@@ -585,6 +626,7 @@ it('should return 404 for non-existent workflow', async () => {
 ```
 
 **Test 3.1.4: Story not found in status file**
+
 ```typescript
 it('should return 404 for story not in mam-workflow-status.md', async () => {
   // Story exists but not tracked in state machine
@@ -592,6 +634,7 @@ it('should return 404 for story not in mam-workflow-status.md', async () => {
 ```
 
 **Test 3.1.5: Epic file missing**
+
 ```typescript
 it('should return 404 for missing epic markdown file', async () => {
   // EPIC-V3-999 file doesn't exist
@@ -599,6 +642,7 @@ it('should return 404 for missing epic markdown file', async () => {
 ```
 
 **Test 3.1.6: Workflow state directory missing**
+
 ```typescript
 it('should return 404 for missing workflow state directory', async () => {
   // madace-data/workflow-states/ doesn't exist
@@ -606,6 +650,7 @@ it('should return 404 for missing workflow state directory', async () => {
 ```
 
 **Test 3.1.7: State machine file missing**
+
 ```typescript
 it('should return 404 for missing mam-workflow-status.md', async () => {
   // docs/mam-workflow-status.md doesn't exist
@@ -613,6 +658,7 @@ it('should return 404 for missing mam-workflow-status.md', async () => {
 ```
 
 **Test 3.1.8: Entity ID doesn't match provider pattern**
+
 ```typescript
 it('should return 404 for ID that no provider recognizes', async () => {
   // Registry can't find provider for this ID pattern
@@ -622,15 +668,16 @@ it('should return 404 for ID that no provider recognizes', async () => {
 #### 3.2 500 Server Error (6 tests)
 
 **Test 3.2.1: Registry throws unexpected error**
+
 ```typescript
 it('should return 500 for registry internal error', async () => {
   // Given: Registry throws non-standard error
-  mockRegistry.getStatusResult.mockRejectedValue(
-    new Error('Internal registry error')
-  );
+  mockRegistry.getStatusResult.mockRejectedValue(new Error('Internal registry error'));
 
   // When: GET /api/status/story/STORY-001
-  const response = await GET(mockRequest, { params: Promise.resolve({ type: 'story', id: 'STORY-001' }) });
+  const response = await GET(mockRequest, {
+    params: Promise.resolve({ type: 'story', id: 'STORY-001' }),
+  });
   const data = await response.json();
 
   // Then: Returns 500 Internal Server Error
@@ -642,6 +689,7 @@ it('should return 500 for registry internal error', async () => {
 ```
 
 **Test 3.2.2: File system read error**
+
 ```typescript
 it('should return 500 for file system permission error', async () => {
   // Mock: EACCES error (permission denied)
@@ -649,6 +697,7 @@ it('should return 500 for file system permission error', async () => {
 ```
 
 **Test 3.2.3: JSON parse error**
+
 ```typescript
 it('should return 500 for malformed workflow state JSON', async () => {
   // Mock: JSON.parse() throws SyntaxError
@@ -656,6 +705,7 @@ it('should return 500 for malformed workflow state JSON', async () => {
 ```
 
 **Test 3.2.4: Provider initialization error**
+
 ```typescript
 it('should return 500 for provider initialization failure', async () => {
   // Mock: Provider constructor throws error
@@ -663,6 +713,7 @@ it('should return 500 for provider initialization failure', async () => {
 ```
 
 **Test 3.2.5: Unknown error type**
+
 ```typescript
 it('should return 500 for non-Error exception', async () => {
   // Mock: Registry throws string error (not Error object)
@@ -671,6 +722,7 @@ it('should return 500 for non-Error exception', async () => {
 ```
 
 **Test 3.2.6: Timeout error**
+
 ```typescript
 it('should return 500 for timeout reading large file', async () => {
   // Mock: Promise never resolves (timeout scenario)
@@ -680,6 +732,7 @@ it('should return 500 for timeout reading large file', async () => {
 #### 3.3 400 Bad Request (6 tests)
 
 **Test 3.3.1: Missing type parameter**
+
 ```typescript
 it('should return 400 for missing type parameter', async () => {
   // type: undefined, id: 'STORY-001'
@@ -688,6 +741,7 @@ it('should return 400 for missing type parameter', async () => {
 ```
 
 **Test 3.3.2: Missing ID parameter**
+
 ```typescript
 it('should return 400 for missing ID parameter', async () => {
   // type: 'story', id: undefined
@@ -696,6 +750,7 @@ it('should return 400 for missing ID parameter', async () => {
 ```
 
 **Test 3.3.3: Both parameters missing**
+
 ```typescript
 it('should return 400 for both parameters missing', async () => {
   // type: undefined, id: undefined
@@ -704,6 +759,7 @@ it('should return 400 for both parameters missing', async () => {
 ```
 
 **Test 3.3.4: Type parameter is number**
+
 ```typescript
 it('should return 400 for numeric type parameter', async () => {
   // type: '123', id: 'STORY-001'
@@ -712,6 +768,7 @@ it('should return 400 for numeric type parameter', async () => {
 ```
 
 **Test 3.3.5: ID with invalid characters**
+
 ```typescript
 it('should return 400 for ID with SQL injection attempt', async () => {
   // id: "'; DROP TABLE stories; --"
@@ -720,6 +777,7 @@ it('should return 400 for ID with SQL injection attempt', async () => {
 ```
 
 **Test 3.3.6: ID with path traversal attempt**
+
 ```typescript
 it('should return 400 for ID with path traversal', async () => {
   // id: '../../../etc/passwd'
@@ -734,6 +792,7 @@ it('should return 400 for ID with path traversal', async () => {
 #### 4.1 Success Response Structure (5 tests)
 
 **Test 4.1.1: Validate success response has required fields**
+
 ```typescript
 it('should return success response with required fields', async () => {
   // Response must have: success, result
@@ -748,6 +807,7 @@ it('should return success response with required fields', async () => {
 ```
 
 **Test 4.1.2: Validate StatusResult structure**
+
 ```typescript
 it('should return result with StatusResult structure', async () => {
   // result must have: entityType, entityId, data, timestamp, metadata
@@ -761,6 +821,7 @@ it('should return result with StatusResult structure', async () => {
 ```
 
 **Test 4.1.3: Validate timestamp is ISO string**
+
 ```typescript
 it('should return timestamp as ISO 8601 string', async () => {
   // timestamp should be parseable as Date
@@ -773,6 +834,7 @@ it('should return timestamp as ISO 8601 string', async () => {
 ```
 
 **Test 4.1.4: Validate data object is not null**
+
 ```typescript
 it('should return data object (not null)', async () => {
   const data = await response.json();
@@ -783,6 +845,7 @@ it('should return data object (not null)', async () => {
 ```
 
 **Test 4.1.5: Validate metadata object exists**
+
 ```typescript
 it('should return metadata object', async () => {
   const data = await response.json();
@@ -795,6 +858,7 @@ it('should return metadata object', async () => {
 #### 4.2 Error Response Structure (5 tests)
 
 **Test 4.2.1: Validate error response has required fields**
+
 ```typescript
 it('should return error response with required fields', async () => {
   // Response must have: success, error, code
@@ -812,6 +876,7 @@ it('should return error response with required fields', async () => {
 ```
 
 **Test 4.2.2: Validate error message is string**
+
 ```typescript
 it('should return error as string', async () => {
   const data = await response.json();
@@ -822,6 +887,7 @@ it('should return error as string', async () => {
 ```
 
 **Test 4.2.3: Validate error code is from enum**
+
 ```typescript
 it('should return error code from ERROR_CODE enum', async () => {
   const data = await response.json();
@@ -832,6 +898,7 @@ it('should return error code from ERROR_CODE enum', async () => {
 ```
 
 **Test 4.2.4: Validate error response doesn't leak stack traces**
+
 ```typescript
 it('should not return stack trace in production', async () => {
   const data = await response.json();
@@ -843,6 +910,7 @@ it('should not return stack trace in production', async () => {
 ```
 
 **Test 4.2.5: Validate error response is JSON-serializable**
+
 ```typescript
 it('should return error response that is JSON-serializable', async () => {
   const response = await GET(...);
@@ -865,6 +933,7 @@ it('should return error response that is JSON-serializable', async () => {
 #### 5.1 Provider Detection (5 tests)
 
 **Test 5.1.1: Verify StoryStatusProvider is invoked for story type**
+
 ```typescript
 it('should invoke StoryStatusProvider for type=story', async () => {
   // Mock: Spy on registry.getStatusResult()
@@ -878,6 +947,7 @@ it('should invoke StoryStatusProvider for type=story', async () => {
 ```
 
 **Test 5.1.2: Verify EpicStatusProvider is invoked for epic type**
+
 ```typescript
 it('should invoke EpicStatusProvider for type=epic', async () => {
   // Similar to 5.1.1
@@ -885,6 +955,7 @@ it('should invoke EpicStatusProvider for type=epic', async () => {
 ```
 
 **Test 5.1.3: Verify WorkflowStatusProvider is invoked for workflow type**
+
 ```typescript
 it('should invoke WorkflowStatusProvider for type=workflow', async () => {
   // Similar to 5.1.1
@@ -892,6 +963,7 @@ it('should invoke WorkflowStatusProvider for type=workflow', async () => {
 ```
 
 **Test 5.1.4: Verify StateMachineStatusProvider is invoked for state-machine type**
+
 ```typescript
 it('should invoke StateMachineStatusProvider for type=state-machine', async () => {
   // Similar to 5.1.1
@@ -899,6 +971,7 @@ it('should invoke StateMachineStatusProvider for type=state-machine', async () =
 ```
 
 **Test 5.1.5: Verify registry is only called once per request**
+
 ```typescript
 it('should call registry getStatusResult() exactly once', async () => {
   const spy = jest.spyOn(mockRegistry, 'getStatusResult');
@@ -912,6 +985,7 @@ it('should call registry getStatusResult() exactly once', async () => {
 #### 5.2 Provider Invocation (5 tests)
 
 **Test 5.2.1: Verify provider receives correct entity ID**
+
 ```typescript
 it('should pass correct entity ID to provider', async () => {
   mockRegistry.getStatusResult.mockImplementation(async (entityId) => {
@@ -925,6 +999,7 @@ it('should pass correct entity ID to provider', async () => {
 ```
 
 **Test 5.2.2: Verify provider return value is passed through**
+
 ```typescript
 it('should return provider result unchanged', async () => {
   const mockResult = {
@@ -945,6 +1020,7 @@ it('should return provider result unchanged', async () => {
 ```
 
 **Test 5.2.3: Verify provider errors are caught**
+
 ```typescript
 it('should catch provider errors and return error response', async () => {
   mockRegistry.getStatusResult.mockRejectedValue(new Error('Provider error'));
@@ -956,6 +1032,7 @@ it('should catch provider errors and return error response', async () => {
 ```
 
 **Test 5.2.4: Verify provider timeout is handled**
+
 ```typescript
 it('should handle provider timeout gracefully', async () => {
   // Mock: Promise never resolves
@@ -966,6 +1043,7 @@ it('should handle provider timeout gracefully', async () => {
 ```
 
 **Test 5.2.5: Verify provider null result is handled**
+
 ```typescript
 it('should handle provider returning null', async () => {
   mockRegistry.getStatusResult.mockResolvedValue(null as any);
@@ -980,6 +1058,7 @@ it('should handle provider returning null', async () => {
 #### 5.3 Provider Errors (5 tests)
 
 **Test 5.3.1: Handle provider "not found" error**
+
 ```typescript
 it('should return 404 for provider "not found" error', async () => {
   mockRegistry.getStatusResult.mockRejectedValue(
@@ -993,6 +1072,7 @@ it('should return 404 for provider "not found" error', async () => {
 ```
 
 **Test 5.3.2: Handle provider "permission denied" error**
+
 ```typescript
 it('should return 500 for provider permission error', async () => {
   mockRegistry.getStatusResult.mockRejectedValue(
@@ -1006,6 +1086,7 @@ it('should return 500 for provider permission error', async () => {
 ```
 
 **Test 5.3.3: Handle provider "no provider" error**
+
 ```typescript
 it('should return 400 for "No status provider found" error', async () => {
   mockRegistry.getStatusResult.mockRejectedValue(
@@ -1019,6 +1100,7 @@ it('should return 400 for "No status provider found" error', async () => {
 ```
 
 **Test 5.3.4: Handle provider validation error**
+
 ```typescript
 it('should return 400 for provider validation error', async () => {
   mockRegistry.getStatusResult.mockRejectedValue(
@@ -1032,6 +1114,7 @@ it('should return 400 for provider validation error', async () => {
 ```
 
 **Test 5.3.5: Handle provider generic error**
+
 ```typescript
 it('should return 500 for provider generic error', async () => {
   mockRegistry.getStatusResult.mockRejectedValue(
@@ -1051,6 +1134,7 @@ it('should return 500 for provider generic error', async () => {
 #### 6.1 Malformed Input (3 tests)
 
 **Test 6.1.1: Handle null type parameter**
+
 ```typescript
 it('should handle null type parameter', async () => {
   // type: null, id: 'STORY-001'
@@ -1061,6 +1145,7 @@ it('should handle null type parameter', async () => {
 ```
 
 **Test 6.1.2: Handle undefined ID parameter**
+
 ```typescript
 it('should handle undefined ID parameter', async () => {
   // type: 'story', id: undefined
@@ -1071,6 +1156,7 @@ it('should handle undefined ID parameter', async () => {
 ```
 
 **Test 6.1.3: Handle object as ID parameter**
+
 ```typescript
 it('should handle object as ID parameter', async () => {
   // type: 'story', id: { foo: 'bar' }
@@ -1083,6 +1169,7 @@ it('should handle object as ID parameter', async () => {
 #### 6.2 Special Characters (3 tests)
 
 **Test 6.2.1: Handle HTML injection in ID**
+
 ```typescript
 it('should sanitize HTML in ID parameter', async () => {
   // id: '<script>alert("XSS")</script>'
@@ -1094,6 +1181,7 @@ it('should sanitize HTML in ID parameter', async () => {
 ```
 
 **Test 6.2.2: Handle SQL injection in ID**
+
 ```typescript
 it('should sanitize SQL injection in ID parameter', async () => {
   // id: "'; DROP TABLE stories; --"
@@ -1104,6 +1192,7 @@ it('should sanitize SQL injection in ID parameter', async () => {
 ```
 
 **Test 6.2.3: Handle path traversal in ID**
+
 ```typescript
 it('should prevent path traversal in ID parameter', async () => {
   // id: '../../../etc/passwd'
@@ -1116,6 +1205,7 @@ it('should prevent path traversal in ID parameter', async () => {
 #### 6.3 Empty Parameters (2 tests)
 
 **Test 6.3.1: Handle empty string type**
+
 ```typescript
 it('should return 400 for empty string type', async () => {
   const response = await GET(..., { params: Promise.resolve({ type: '', id: 'STORY-001' }) });
@@ -1125,6 +1215,7 @@ it('should return 400 for empty string type', async () => {
 ```
 
 **Test 6.3.2: Handle empty string ID**
+
 ```typescript
 it('should return 400 for empty string ID', async () => {
   const response = await GET(..., { params: Promise.resolve({ type: 'story', id: '' }) });
@@ -1136,6 +1227,7 @@ it('should return 400 for empty string ID', async () => {
 #### 6.4 Very Long IDs (2 tests)
 
 **Test 6.4.1: Handle 500-character ID**
+
 ```typescript
 it('should handle or reject 500-character ID', async () => {
   const longId = 'STORY-' + 'A'.repeat(494);
@@ -1147,6 +1239,7 @@ it('should handle or reject 500-character ID', async () => {
 ```
 
 **Test 6.4.2: Handle 10000-character ID**
+
 ```typescript
 it('should reject 10000-character ID', async () => {
   const veryLongId = 'STORY-' + 'A'.repeat(9994);
@@ -1161,6 +1254,7 @@ it('should reject 10000-character ID', async () => {
 ### Test Suite 7: HTTP Status Codes (6 tests)
 
 **Test 7.1: Return 200 OK for successful story query**
+
 ```typescript
 it('should return 200 OK for successful query', async () => {
   mockRegistry.getStatusResult.mockResolvedValue(mockStoryResult);
@@ -1172,6 +1266,7 @@ it('should return 200 OK for successful query', async () => {
 ```
 
 **Test 7.2: Return 200 OK for successful epic query**
+
 ```typescript
 it('should return 200 OK for successful epic query', async () => {
   // Similar to 7.1
@@ -1179,6 +1274,7 @@ it('should return 200 OK for successful epic query', async () => {
 ```
 
 **Test 7.3: Return 400 Bad Request for invalid type**
+
 ```typescript
 it('should return 400 Bad Request for invalid type', async () => {
   const response = await GET(..., { params: Promise.resolve({ type: 'invalid', id: 'STORY-001' }) });
@@ -1188,6 +1284,7 @@ it('should return 400 Bad Request for invalid type', async () => {
 ```
 
 **Test 7.4: Return 400 Bad Request for missing parameters**
+
 ```typescript
 it('should return 400 Bad Request for missing parameters', async () => {
   const response = await GET(..., { params: Promise.resolve({ type: undefined as any, id: 'STORY-001' }) });
@@ -1197,6 +1294,7 @@ it('should return 400 Bad Request for missing parameters', async () => {
 ```
 
 **Test 7.5: Return 404 Not Found for non-existent entity**
+
 ```typescript
 it('should return 404 Not Found for non-existent entity', async () => {
   mockRegistry.getStatusResult.mockRejectedValue(new Error('Entity not found'));
@@ -1208,6 +1306,7 @@ it('should return 404 Not Found for non-existent entity', async () => {
 ```
 
 **Test 7.6: Return 500 Internal Server Error for registry failure**
+
 ```typescript
 it('should return 500 Internal Server Error for registry failure', async () => {
   mockRegistry.getStatusResult.mockRejectedValue(new Error('Internal error'));
@@ -1223,6 +1322,7 @@ it('should return 500 Internal Server Error for registry failure', async () => {
 ### Test Suite 8: Integration Scenarios (10 tests)
 
 **Test 8.1: End-to-end story status query**
+
 ```typescript
 it('should handle complete story status query flow', async () => {
   // Real-world scenario: Frontend queries story status
@@ -1255,6 +1355,7 @@ it('should handle complete story status query flow', async () => {
 ```
 
 **Test 8.2: Epic progress tracking scenario**
+
 ```typescript
 it('should return epic progress for Web UI dashboard', async () => {
   // Scenario: Dashboard displays epic completion percentage
@@ -1262,6 +1363,7 @@ it('should return epic progress for Web UI dashboard', async () => {
 ```
 
 **Test 8.3: Workflow execution monitoring**
+
 ```typescript
 it('should return workflow status for monitoring page', async () => {
   // Scenario: Monitor workflow execution progress
@@ -1269,6 +1371,7 @@ it('should return workflow status for monitoring page', async () => {
 ```
 
 **Test 8.4: State machine Kanban view**
+
 ```typescript
 it('should return state machine overview for Kanban board', async () => {
   // Scenario: Kanban board displays story counts
@@ -1276,6 +1379,7 @@ it('should return state machine overview for Kanban board', async () => {
 ```
 
 **Test 8.5: CLI integration scenario**
+
 ```typescript
 it('should return JSON response for CLI consumption', async () => {
   // Scenario: CLI tool queries status via API
@@ -1283,6 +1387,7 @@ it('should return JSON response for CLI consumption', async () => {
 ```
 
 **Test 8.6: Multiple concurrent requests**
+
 ```typescript
 it('should handle multiple concurrent requests', async () => {
   // Scenario: 10 requests at the same time
@@ -1291,6 +1396,7 @@ it('should handle multiple concurrent requests', async () => {
 ```
 
 **Test 8.7: Request with stale cache**
+
 ```typescript
 it('should return fresh data even if cache is stale', async () => {
   // Scenario: Registry cache might be stale
@@ -1299,6 +1405,7 @@ it('should return fresh data even if cache is stale', async () => {
 ```
 
 **Test 8.8: Request after file system change**
+
 ```typescript
 it('should return updated data after file change', async () => {
   // Scenario: Status file changed between requests
@@ -1306,6 +1413,7 @@ it('should return updated data after file change', async () => {
 ```
 
 **Test 8.9: Error recovery scenario**
+
 ```typescript
 it('should recover after transient error', async () => {
   // First request fails, second succeeds
@@ -1322,6 +1430,7 @@ it('should recover after transient error', async () => {
 ```
 
 **Test 8.10: Comprehensive error handling flow**
+
 ```typescript
 it('should handle complete error flow with proper logging', async () => {
   // Scenario: Error occurs, gets logged, returns proper response
@@ -1407,14 +1516,14 @@ expect(data.result.timestamp).toBeInstanceOf(Date);
 ```typescript
 // ERROR_CODE enum
 enum ERROR_CODE {
-  ENTITY_NOT_FOUND = 'ENTITY_NOT_FOUND',       // 404
-  INVALID_TYPE = 'INVALID_TYPE',               // 400
-  MISSING_PARAMS = 'MISSING_PARAMS',           // 400
-  INTERNAL_ERROR = 'INTERNAL_ERROR',           // 500
-  PROVIDER_ERROR = 'PROVIDER_ERROR',           // 500
-  VALIDATION_ERROR = 'VALIDATION_ERROR',       // 400
-  PERMISSION_DENIED = 'PERMISSION_DENIED',     // 500
-  TIMEOUT = 'TIMEOUT',                         // 500
+  ENTITY_NOT_FOUND = 'ENTITY_NOT_FOUND', // 404
+  INVALID_TYPE = 'INVALID_TYPE', // 400
+  MISSING_PARAMS = 'MISSING_PARAMS', // 400
+  INTERNAL_ERROR = 'INTERNAL_ERROR', // 500
+  PROVIDER_ERROR = 'PROVIDER_ERROR', // 500
+  VALIDATION_ERROR = 'VALIDATION_ERROR', // 400
+  PERMISSION_DENIED = 'PERMISSION_DENIED', // 500
+  TIMEOUT = 'TIMEOUT', // 500
 }
 ```
 

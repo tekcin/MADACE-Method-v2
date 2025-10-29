@@ -161,7 +161,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(mockWorkflowState));
 
       const result = await provider.getStatus('pm-planning');
-      
 
       expect(result.data.currentStepName).toBe('generate-initial-prd');
     });
@@ -170,7 +169,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(mockWorkflowState));
 
       const result = await provider.getStatus('pm-planning');
-      
 
       expect(result.data.context).toEqual({
         projectName: 'Test Project',
@@ -182,7 +180,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(mockWorkflowState));
 
       const result = await provider.getStatus('pm-planning');
-      
 
       const steps = result.data.steps as WorkflowStep[];
       expect(steps).toHaveLength(5);
@@ -240,7 +237,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(completedState));
 
       const result = await provider.getStatus('pm-planning');
-      
 
       expect(result.data.status).toBe('completed');
       expect(result.data.progress).toBe(100);
@@ -260,7 +256,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(pendingState));
 
       const result = await provider.getStatus('pm-planning');
-      
 
       expect(result.data.progress).toBe(0);
     });
@@ -284,7 +279,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(failedState));
 
       const result = await provider.getStatus('pm-planning');
-
 
       expect(result.data.status).toBe('failed');
       const steps = result.data.steps as WorkflowStep[];
@@ -382,10 +376,7 @@ describe('WorkflowStatusProvider', () => {
 
     it('should skip invalid state files', async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockFs.readdir.mockResolvedValue([
-        '.pm-planning.state.json',
-        '.invalid.state.json',
-      ] as any);
+      mockFs.readdir.mockResolvedValue(['.pm-planning.state.json', '.invalid.state.json'] as any);
 
       const validState: WorkflowState = {
         workflow: 'pm-planning',
@@ -432,10 +423,7 @@ describe('WorkflowStatusProvider', () => {
 
     it('should calculate progress for multiple workflows', async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mockFs.readdir.mockResolvedValue([
-        '.workflow-a.state.json',
-        '.workflow-b.state.json',
-      ] as any);
+      mockFs.readdir.mockResolvedValue(['.workflow-a.state.json', '.workflow-b.state.json'] as any);
 
       const stateA: WorkflowState = {
         workflow: 'workflow-a',
@@ -688,7 +676,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(emptyStepsState));
 
       const result = await provider.getStatus('test-workflow');
-      
 
       expect(result.data.steps).toEqual([]);
       expect(result.data.progress).toBeNaN(); // 0/0 = NaN
@@ -712,7 +699,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(noContextState));
 
       const result = await provider.getStatus('test-workflow');
-      
 
       expect(result.data.context).toEqual({});
     });
@@ -738,7 +724,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(outOfBoundsState));
 
       const result = await provider.getStatus('test-workflow');
-      
 
       expect(result.data.currentStepName).toBe('unknown');
     });
@@ -790,7 +775,6 @@ describe('WorkflowStatusProvider', () => {
       mockFs.readFile.mockResolvedValue(JSON.stringify(realWorldState));
 
       const result = await provider.getStatus('route-workflow');
-      
 
       expect(result.data.workflow).toBe('route-workflow');
       expect(result.data.status).toBe('in_progress');

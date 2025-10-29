@@ -1,1498 +1,879 @@
-# Product Requirements Document (PRD)
+# MADACE-Method v3.0 - Product Requirements Document
 
-**Project:** MADACE-Method v2.0 - Next Generation Web-Based Implementation
-**Version:** 2.0.0-alpha
-**Status:** ✅ In Development
-**Last Updated:** 2025-10-20
-**Document Owner:** MADACE Core Team
+**Project**: MADACE-Method v3.0
+**Version**: 3.0.0-alpha
+**Status**: Planning Phase
+**Created**: 2025-10-23
+**Planning Method**: MADACE Method (Level 3 - Comprehensive Planning)
+**PM**: MADACE PM Agent
 
-> **✅ FEASIBILITY CONFIRMED (2025-10-20)**: Architecture validated through comprehensive testing.
-> See [FEASIBILITY-REPORT.md](./FEASIBILITY-REPORT.md) for full validation results.
->
-> **Architecture**: **Next.js 15 Full-Stack TypeScript**
-> **See**: [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)
->
-> **For Official MADACE-METHOD**: https://github.com/tekcin/MADACE-METHOD
+---
+
+## ⚠️ CRITICAL: READ BEFORE IMPLEMENTATION
+
+All developers implementing v3.0 features **MUST** read and follow:
+
+1. **[ARCHITECTURE-V3.md](./ARCHITECTURE-V3.md)** - Section: "CRITICAL DEVELOPMENT RULES FOR V3.0"
+2. **[PLAN-V3.md](./PLAN-V3.md)** - Section: "MANDATORY DEVELOPMENT CHECKLIST"
+
+### Key Implementation Rules
+
+**Before writing ANY code for v3.0:**
+
+✅ Verify file existence with `existsSync()` before reading
+✅ Return graceful fallbacks for missing development files
+✅ Use Prisma-generated types (never flatten JSON fields)
+✅ Wrap all async operations in try-catch blocks
+✅ Test in production Docker container
+
+**Production Errors to Avoid:**
+
+❌ `ENOENT` errors from missing files → Use existence checks
+❌ TypeScript errors from mismatched Prisma types → Use `@prisma/client` types
+❌ Unhandled API route errors → Use try-catch with proper error responses
+❌ Flattened JSON fields in UI → Access `agent.persona` as JsonValue
+
+### Recent Production Error Example
+
+```typescript
+// ❌ WRONG - Caused production crash
+const data = await fs.readFile(statusFilePath); // ENOENT error!
+
+// ✅ CORRECT - Graceful degradation
+if (!existsSync(statusFilePath)) {
+  return { success: true, data: emptyState };
+}
+const data = await fs.readFile(statusFilePath);
+```
+
+**See ARCHITECTURE-V3.md for complete rules and examples.**
 
 ---
 
 ## Executive Summary
 
-MADACE-Method v2.0 is an **experimental proof-of-concept** that empowers individual developers and small teams to build production-ready software through AI-assisted workflows. The system provides a structured, agent-based approach to software development, from ideation through deployment, using natural language configuration and intelligent orchestration.
+MADACE v3.0 represents a major evolution from the v2.0 experimental Next.js implementation. Building on the successful v2.0 Alpha MVP (40 stories, 218 points, 9.8/10 quality), v3.0 introduces four transformative feature sets that will elevate MADACE from a proof-of-concept to a production-ready AI-driven development platform.
 
-**Implementation**: Next.js 15 full-stack TypeScript with web-based UI.
+**Key Innovations**:
 
-### Vision
+- Database-driven architecture replacing file-based storage
+- Interactive CLI with REPL and terminal dashboard
+- Natural language conversation with AI agents
+- Real-time collaborative web IDE
 
-Create a "software company in a box" that enables non-technical visionaries and solo developers to transform ideas into production-ready applications through AI-powered agents and workflows, without requiring a full development team.
-
-### Mission
-
-Democratize software development by providing an intuitive, modular framework that combines the power of AI with proven software engineering methodologies, making professional-grade development accessible to anyone with an idea.
-
----
-
-## 1. Product Overview
-
-### 1.1 Problem Statement
-
-**Current Challenges:**
-
-- Building software requires extensive technical expertise across multiple domains
-- Small teams and solo founders struggle to execute on ideas without hiring expensive developers
-- Traditional development tools assume technical proficiency
-- AI coding assistants lack structured workflows and best practices
-- Project planning, architecture, and implementation are fragmented across different tools
-
-**Solution:**
-MADACE-Method v2.0 provides a unified framework that guides users through the entire software development lifecycle using specialized AI agents, pre-built workflows, and natural language configuration. The system enforces best practices while remaining flexible enough for projects of any scale.
-
-### 1.2 Target Audience
-
-**Primary Users:**
-
-1. **"VIBE Coders"** - Non-technical entrepreneurs and innovators who want to build MVPs using AI
-2. **Solo Developers** - Individual developers who want AI-assisted workflows with structure
-3. **Small Teams** - 2-5 person teams needing process and AI amplification
-4. **Technical Founders** - Startup founders who need to move fast without compromising quality
-
-**User Personas:**
-
-**Persona 1: The Visionary Entrepreneur**
-
-- Has product ideas but limited coding experience
-- Comfortable with AI tools and natural language interaction
-- Needs guidance through the development process
-- Values speed and iteration over perfection
-
-**Persona 2: The Solo Developer**
-
-- Experienced developer working alone
-- Wants AI assistance with structure
-- Needs architecture guidance for complex projects
-- Values best practices and maintainability
-
-**Persona 3: The Technical Founder**
-
-- Strong technical background
-- Building MVP while also handling business
-- Needs to maximize productivity
-- Wants AI to handle routine tasks while maintaining control
+**Target Release**: Q3 2025 (v3.0-alpha)
+**Timeline**: 16-20 weeks (4 milestones)
+**Success Criteria**: Production-ready platform with 100+ active users
 
 ---
 
-## 2. Core Principles
+## 1. Product Vision
 
-### 2.1 Framework Philosophy
+### 1.1 Vision Statement
 
-1. **Human Amplification** - AI agents facilitate thinking, don't replace it
-2. **Natural Language First** - All configurations use YAML/Markdown (no executable code)
-3. **Scale-Adaptive** - Workflows adapt to project complexity (Level 0-4)
-4. **Single Source of Truth** - State machine eliminates searching and ambiguity
-5. **Just-In-Time** - Generate what's needed when it's needed
-6. **Modular Composition** - Modules compose into complete workflows
+MADACE v3.0 will be the world's first **conversational AI-driven agile collaboration platform** that enables developers to build complex software through natural language interaction with specialized AI agents, supported by a unified database architecture and real-time collaborative environment.
 
-### 2.2 Design Principles
+### 1.2 Problem Statement
 
-1. **Convention Over Configuration** - Sensible defaults, customize when needed
-2. **Explicit Over Implicit** - Clear state transitions and workflows
-3. **Fail-Safe Operations** - Atomic state changes, rollback capability
-4. **Cross-Platform** - Consistent behavior across macOS, Linux, Windows
-5. **No Lock-In** - All outputs are standard formats (Markdown, YAML, code)
+**v2.0 Limitations**:
+
+- Static YAML-based agent definitions (cannot be modified at runtime)
+- File-based configuration fragmentation (.env + YAML + localStorage)
+- Menu-driven agent interaction (restrictive, not conversational)
+- Single-user web interface (no team collaboration)
+- Basic CLI with limited functionality
+- No agent memory or context retention
+
+**User Pain Points**:
+
+- Developers: "I want to create custom agents without editing YAML files"
+- Teams: "We need to collaborate on the same project in real-time"
+- Power Users: "I prefer terminal workflows but the CLI is too basic"
+- All Users: "Agents should remember our conversations and preferences"
+
+### 1.3 Goals and Objectives
+
+**Primary Goals**:
+
+1. Enable dynamic agent management through UI/CLI (no file editing)
+2. Provide natural language conversation with context-aware agents
+3. Support real-time team collaboration on shared projects
+4. Elevate CLI to first-class interface with terminal dashboard
+
+**Success Metrics**:
+
+- 50+ custom agents created by users in first 3 months
+- 80% of interactions use conversational mode vs. menu mode
+- 20+ teams actively collaborating on projects
+- 30% of users primarily use CLI over Web UI
 
 ---
 
-## 3. System Architecture
+## 2. User Personas
 
-### 3.1 Technology Stack
+### 2.1 Solo Developer (Primary)
 
-**Tech Stack**: Next.js 15.5.6 • React 19.2.0 • TypeScript 5.9.3 • Node.js 24.10.0 • Tailwind CSS 4.1.15 • Zod 4.1.12
+**Name**: Alex (Indie Developer)
+**Age**: 28
+**Experience**: 5 years full-stack development
 
-_See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
-_See [VERSION-LOCK.md](./VERSION-LOCK.md) for version locking policy and enforcement._
+**Goals**:
 
-> **⚠️ CRITICAL: Version Locking Policy**
->
-> MADACE-Method v2.0 uses **EXACT versions** for all dependencies. NO version ranges (^, ~, >=, <=, >, <) allowed.
-> This ensures 100% reproducible builds across all environments. See Section 3.3 for details.
+- Build side projects faster with AI assistance
+- Create custom agents for specific frameworks (Next.js, Django)
+- Work primarily in terminal/CLI
+- Maintain context across multiple sessions
 
-**Core Tech Stack (LOCKED for v2.0-alpha):**
+**Frustrations**:
 
-| Package        | Version | Status    | Notes                        |
-| -------------- | ------- | --------- | ---------------------------- |
-| **next**       | 15.5.6  | ⛔ LOCKED | NO changes without approval  |
-| **react**      | 19.2.0  | ⛔ LOCKED | Must match react-dom         |
-| **react-dom**  | 19.2.0  | ⛔ LOCKED | Must match react             |
-| **typescript** | 5.9.3   | ⛔ LOCKED | Strict mode enabled          |
-| **Node.js**    | 24.10.0 | ⛔ LOCKED | Recommended (minimum 20.0.0) |
+- Switching between terminal and browser breaks flow
+- Agents forget previous conversations
+- Cannot customize agents without YAML knowledge
 
-**Full-Stack:**
+**v3.0 Solutions**:
 
-- Framework: Next.js 15.5.6 (App Router) ⛔ LOCKED
-- UI Library: React 19.2.0 ⛔ LOCKED
-- Language: TypeScript 5.9.3 (strict mode) ⛔ LOCKED
-- Runtime: Node.js 24.10.0 (minimum 20.0.0) ⛔ LOCKED
-- Styling: Tailwind CSS 4.1.15
-- Components: Shadcn/ui
+- Interactive CLI with REPL and dashboard
+- Persistent agent memory
+- UI-based agent customization
 
-**Backend:**
+### 2.2 Development Team (Secondary)
 
-- API: Next.js API Routes
-- Server Actions: Next.js Server Actions
+**Name**: TechCorp Engineering Team
+**Size**: 3-5 developers
+**Project**: Enterprise SaaS application
 
-**Business Logic:**
+**Goals**:
 
-- Language: TypeScript 5.9.3 ⛔ LOCKED
-- Validation: Zod 4.1.12 (runtime type checking)
-- YAML Parsing: js-yaml 4.1.0
-- Templates: Handlebars 4.7.8
+- Collaborate on complex projects in real-time
+- Share AI agent configurations across team
+- Review code together with AI assistance
+- Track project progress collaboratively
 
-**Integration:**
+**Frustrations**:
 
-- State Persistence: File system (YAML, JSON, Markdown)
-- LLM: Multi-provider (Gemini/Claude/OpenAI/Local)
+- v2.0 is single-user only
+- No way to share agent customizations
+- Manual synchronization of project state
 
-### 3.2 Core Components
+**v3.0 Solutions**:
 
-#### 3.2.1 Agent System
+- Real-time collaborative editing
+- Shared agent library
+- WebSocket-based live updates
 
-**Purpose:** Specialized AI personas that guide specific workflows
+### 2.3 AI Engineer (Tertiary)
 
-**Key Features:**
+**Name**: Dr. Morgan (AI Researcher)
+**Age**: 35
+**Experience**: PhD in NLP, 8 years AI/ML
 
-- YAML-based agent definitions
-- Persona configuration (role, identity, communication style)
-- Menu-driven command interface
-- Critical actions (auto-execute on load)
-- Reusable prompt libraries
+**Goals**:
 
-**Agent Types:**
+- Experiment with different LLM providers and models
+- Fine-tune agent prompts and personas
+- Build domain-specific agents (legal, medical, finance)
+- Export/import agent configurations
 
-- **MADACE Master** - Central orchestrator for local environments
-- **PM (Product Manager)** - Scale-adaptive planning (Level 0-4)
-- **Analyst** - Requirements discovery and research
-- **Architect** - Solution architecture and technical specifications
-- **SM (Scrum Master)** - Story lifecycle management
-- **DEV (Developer)** - Implementation and code review
-- **Builder** - Create custom agents/workflows/modules
-- **Creativity** - Innovation and creative problem-solving
+**Frustrations**:
 
-#### 3.2.2 Workflow Engine
+- Limited control over agent behavior
+- Cannot A/B test different prompts
+- No analytics on agent performance
 
-**Purpose:** Execute multi-step processes with state management
+**v3.0 Solutions**:
 
-**Key Features:**
-
-- YAML-based workflow definitions
-- Sequential step execution
-- Multiple action types (elicit, reflect, guide, template, validate, sub-workflow)
-- State persistence (resume on failure)
-- Dependency management
-- Context passing between steps
-
-**Workflow Phases:**
-
-1. **Analysis** (Optional) - brainstorm-project, research, product-brief
-2. **Planning** (Required) - plan-project, assess-scale, detect-project-type
-3. **Solutioning** (Levels 3-4) - solution-architecture, jit-tech-spec
-4. **Implementation** - create-story, dev-story, story-approved, retrospective
-
-#### 3.2.3 State Machine
-
-**Purpose:** Manage story lifecycle with strict state transitions
-
-**Key Features:**
-
-- Single source of truth: `mam-workflow-status.md`
-- Atomic state transitions: BACKLOG → TODO → IN PROGRESS → DONE
-- One-at-a-time enforcement (only ONE story in TODO, ONE in IN PROGRESS)
-- Automatic progression (when TODO→IN PROGRESS, next BACKLOG→TODO)
-- Story metadata tracking (status, points, dates)
-
-**States:**
-
-- **BACKLOG** - Ordered list of stories to draft
-- **TODO** - Single story ready for drafting
-- **IN PROGRESS** - Single story being implemented
-- **DONE** - Completed stories with completion metadata
-
-#### 3.2.4 Template Engine
-
-**Purpose:** Render templates with variable substitution
-
-**Key Features:**
-
-- Multiple interpolation patterns (`{var}`, `{{var}}`, `${var}`, `%VAR%`, `$var`)
-- Nested variable resolution
-- Context merging from multiple sources
-- Strict mode validation
-- Directory-based bulk rendering
-- Standard MADACE variables (project_name, user_name, current_date, etc.)
-
-#### 3.2.5 Configuration Manager
-
-**Purpose:** Load, validate, and manage system configuration
-
-**Key Features:**
-
-- Auto-detection of config location
-- Cross-platform path resolution
-- Installation validation
-- Schema enforcement
-- Module enablement flags
-
-**Configuration Schema:**
-
-```yaml
-project_name: string # Required - project identifier
-output_folder: string # Required - where docs are generated
-user_name: string # Required - developer name
-communication_language: string # Required - UI language
-madace_version: string # Framework version
-modules:
-  mam: { enabled: boolean } # MADACE Agile Method
-  mab: { enabled: boolean } # MADACE Builder
-  cis: { enabled: boolean } # Creative Intelligence Suite
-```
-
-#### 3.2.6 Manifest Manager
-
-**Purpose:** Track installed agents, workflows, and tasks
-
-**Key Features:**
-
-- CSV-based registries
-- Component discovery
-- Installation tracking
-- Statistics and reporting
-
-**Manifest Files:**
-
-- `agent-manifest.csv` - All installed agents
-- `workflow-manifest.csv` - All installed workflows
-- `task-manifest.csv` - All installed tasks
-
-### 3.3 Version Locking and Enforcement
-
-**Purpose:** Ensure 100% reproducible builds across all development environments and deployments.
-
-**Rationale:**
-
-Version locking eliminates "works on my machine" problems by guaranteeing that every developer, CI/CD pipeline, and production deployment uses identical dependency versions. This dramatically reduces debugging time and prevents version-related bugs.
-
-**Problem Solved:**
-
-Without exact version locking, different environments can install different versions due to semantic versioning ranges (^, ~), leading to:
-
-- Inconsistent behavior across environments
-- Breaking changes introduced automatically
-- Difficult-to-reproduce bugs
-- CI/CD producing different results than local development
-
-**Implementation:**
-
-MADACE-Method v2.0 enforces exact versions through a **4-layer validation architecture**:
-
-#### Layer 1: Pre-Install Prevention
-
-**Files:** `.npmrc`, `.nvmrc`
-
-**Purpose:** Prevent version ranges from being saved in the first place
-
-**Mechanisms:**
-
-- `.npmrc` with `save-exact=true` - All `npm install` commands save exact versions
-- `.npmrc` with `engine-strict=true` - Enforce Node.js version requirements
-- `.nvmrc` with `24.10.0` - Lock Node.js version for nvm/fnm
-
-**Example:**
-
-```bash
-# Before .npmrc
-npm install some-package
-# Saves: "some-package": "^1.2.3"  ❌
-
-# After .npmrc
-npm install some-package
-# Saves: "some-package": "1.2.3"  ✅
-```
-
-#### Layer 2: Post-Install Validation
-
-**File:** `scripts/validate-versions.js`
-
-**Purpose:** Validate package.json and installed versions after installation
-
-**Checks:**
-
-1. ✅ Core packages (Next.js, React, TypeScript) match LOCKED versions exactly
-2. ✅ No version range operators (^, ~, >=, <=, >, <) in package.json
-3. ✅ Installed versions match package.json declarations
-4. ✅ Node.js version meets requirements (warns if not 24.10.0)
-
-**Usage:**
-
-```bash
-npm run validate-versions  # Standalone validation
-npm run check-all          # Includes validation + type-check + lint + format
-```
-
-**Exit Code:** Returns 1 on failure (blocks CI/CD)
-
-#### Layer 3: Pre-Commit Quality Gates
-
-**Integration:** `npm run check-all` script
-
-**Purpose:** Block commits with incorrect versions
-
-**Workflow:**
-
-```bash
-# Developer flow
-git add .
-npm run check-all  # MUST pass before commit
-# ✅ validate-versions
-# ✅ type-check
-# ✅ lint
-# ✅ format:check
-git commit -m "..."
-```
-
-**Effect:** Prevents version drift from reaching the repository
-
-#### Layer 4: CI/CD Validation
-
-**Integration:** GitHub Actions, GitLab CI, etc.
-
-**Purpose:** Final enforcement in CI/CD pipeline
-
-**Workflow:**
-
-```yaml
-# Example GitHub Actions
-steps:
-  - uses: actions/setup-node@v3
-    with:
-      node-version-file: '.nvmrc' # Uses exact 24.10.0
-  - run: npm ci # Uses package-lock.json (exact versions)
-  - run: npm run validate-versions # Blocks merge if fails
-  - run: npm run check-all
-```
-
-**Upgrade Process:**
-
-**Core Packages (Next.js, React, TypeScript):**
-
-- ⚠️ Requires team approval
-- Create upgrade branch
-- Test thoroughly (all major features, deprecation warnings, release notes)
-- Update VERSION-LOCK.md and CLAUDE.md
-- Get code review before merge
-
-**Non-Core Packages:**
-
-- Any developer can upgrade
-- Use exact version: `npm install package@X.Y.Z`
-- Run validation: `npm run validate-versions && npm run check-all`
-- Test and commit
-
-**Security Exception:**
-
-- **CRITICAL/HIGH vulnerabilities:** Upgrade immediately (skip approval)
-- **MODERATE/LOW vulnerabilities:** Schedule for next sprint
-
-**Documentation:**
-
-- [VERSION-LOCK.md](./VERSION-LOCK.md) - Comprehensive version locking guide
-- [ADR-004](./docs/adrs/ADR-004-version-locking-enforcement.md) - Architecture decision record
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - Technical implementation details
-
-**Success Metrics:**
-
-- ✅ Zero version drift incidents
-- ✅ 100% validation pass rate
-- ✅ Reproducible builds (same input → same output)
-- ✅ No "different version" debugging variables
+- Database-backed agent definitions (easy versioning)
+- Conversational testing interface
+- Agent analytics dashboard (future: v3.1+)
 
 ---
 
-## 4. Module System
+## 3. Feature Specifications
 
-### 4.1 Core Modules
+### 3.1 EPIC 1: Database Migration & Unified Configuration
 
-#### Module 1: MADACE Core
+**Milestone**: 3.1
+**Priority**: P0 (Must Have - Foundation)
+**Timeline**: 3-4 weeks
+**Points**: 40-50 points
 
-**Purpose:** Framework orchestration and universal features
+#### 3.1.1 Database Architecture
 
-**Components:**
+**Description**: Migrate from file-based storage (YAML, .env, localStorage) to unified database (SQLite for dev, PostgreSQL for production).
 
-- MADACE Master agent
-- System initialization workflows
-- Configuration management
-- Agent discovery
+**Acceptance Criteria**:
 
-**User Value:** Foundation for all other modules
+- ✅ Database schema defined for agents, workflows, config, state, memory
+- ✅ Migration scripts created for v2.0 → v3.0 data
+- ✅ Backward compatibility maintained (can read v2.0 YAML files)
+- ✅ Database connection pooling and optimization
+- ✅ Automated backups and restore functionality
 
-#### Module 2: MADACE Method (MAM)
+**Technical Details**:
 
-**Purpose:** Agile software development with scale-adaptive planning
+- **Stack**: Prisma ORM + SQLite (dev) + PostgreSQL (prod)
+- **Tables**: agents, workflows, config, state_machine, agent_memory, users, projects
+- **Indexes**: Optimized for common queries (agent lookup, state transitions)
 
-**Components:**
+**User Stories**:
 
-- 5 specialized agents (PM, Analyst, Architect, SM, DEV)
-- 15+ workflows covering analysis → planning → solutioning → implementation
-- Scale-adaptive planning (Level 0-4)
-- State machine for story management
+- [DB-001] As a developer, I want all configuration in one place (5 points)
+- [DB-002] As a user, I want to migrate my v2.0 data to v3.0 (8 points)
+- [DB-003] As a system, I need optimized database queries (5 points)
+- [DB-004] As an admin, I want automated database backups (3 points)
 
-**Scale Levels:**
+#### 3.1.2 Dynamic Agent Management
 
-- **Level 0** - Tiny (< 1 week): Direct to code, minimal docs
-- **Level 1** - Small (1-4 weeks): Basic PRD + Epics
-- **Level 2** - Medium (1-3 months): Full PRD + detailed Epics
-- **Level 3** - Large (3-6 months): + Solution Architecture + ADRs
-- **Level 4** - Enterprise (6+ months): + Per-epic tech specs
+**Description**: Allow users to create, edit, and delete agents through Web UI and CLI without editing YAML files.
 
-**User Value:** Complete development methodology from idea to production
+**Acceptance Criteria**:
 
-#### Module 3: MADACE Builder (MAB)
+- ✅ Agent CRUD API endpoints (POST/PUT/DELETE /api/agents)
+- ✅ Web UI: Agent creation wizard with template selection
+- ✅ Web UI: Agent editor with persona, prompts, menu customization
+- ✅ CLI: `madace agent create/edit/delete` commands
+- ✅ Agent versioning and rollback capability
+- ✅ Agent export/import (JSON format)
 
-**Purpose:** Create custom agents, workflows, and modules
+**User Stories**:
 
-**Components:**
+- [AGENT-001] As a user, I want to create a new agent via UI (8 points)
+- [AGENT-002] As a user, I want to edit agent persona and prompts (5 points)
+- [AGENT-003] As a user, I want to delete unused agents (2 points)
+- [AGENT-004] As a user, I want to export/import agents (5 points)
+- [AGENT-005] As a user, I want to version my agents (5 points)
 
-- Builder agent
-- create-agent workflow
-- create-workflow workflow
-- create-module workflow
-- Template library
+#### 3.1.3 Unified Configuration System
 
-**User Value:** Extend framework with custom functionality
+**Description**: Consolidate all configuration (.env, config.yaml, localStorage) into database with UI management.
 
-#### Module 4: Creative Intelligence Suite (CIS)
+**Acceptance Criteria**:
 
-**Purpose:** Unlock innovation and creative problem-solving
+- ✅ All config stored in database `config` table
+- ✅ Web UI: Settings page for all configuration
+- ✅ CLI: `madace config get/set` commands
+- ✅ Environment-specific configs (dev, staging, prod)
+- ✅ Secure storage for API keys (encryption)
+- ✅ Config validation with Zod schemas
 
-**Components:**
+**User Stories**:
 
-- Creativity agent
-- SCAMPER brainstorming
-- Six Thinking Hats
-- Design Thinking process
-- Mind mapping
-- Innovation challenges
-
-**User Value:** Structured creativity for better product ideas
+- [CONFIG-001] As a user, I want one place to manage all settings (8 points)
+- [CONFIG-002] As a user, I want secure API key storage (5 points)
+- [CONFIG-003] As a developer, I want environment-specific configs (5 points)
 
 ---
 
-## 5. Key Features & Requirements
+### 3.2 EPIC 2: CLI Enhancements
 
-### 5.1 Must-Have Features (MVP)
+**Milestone**: 3.2
+**Priority**: P1 (High - Power Users)
+**Timeline**: 2-3 weeks
+**Points**: 25-35 points
 
-#### F1: Web-Based Interface
+#### 3.2.1 Interactive REPL Mode
 
-**Description:** React-based UI for all user interactions
+**Description**: Add interactive Read-Eval-Print Loop for conversational CLI interaction.
 
-**Requirements:**
+**Acceptance Criteria**:
 
-- [ ] Next.js frontend with SSR
-- [ ] Real-time status updates
-- [ ] Natural language command input
-- [ ] Agent persona display
-- [ ] Workflow progress tracking
-- [ ] Configuration management UI
+- ✅ `madace repl` command launches interactive mode
+- ✅ Auto-completion for commands and agent names
+- ✅ Command history (up/down arrows)
+- ✅ Multi-line input support
+- ✅ Syntax highlighting for code snippets
+- ✅ Exit with Ctrl+C or /exit command
 
-**Success Criteria:**
+**Technical Details**:
 
-- Non-technical user can navigate UI without training
-- All core workflows accessible via web interface
-- Mobile-responsive design
+- **Library**: inquirer.js or prompts for interactive input
+- **Features**: Tab completion, history, multi-line editing
 
-#### F2: AI Agent Orchestration
+**User Stories**:
 
-**Description:** Specialized agents guide users through workflows
+- [CLI-001] As a power user, I want interactive CLI mode (8 points)
+- [CLI-002] As a user, I want command auto-completion (5 points)
+- [CLI-003] As a user, I want command history (3 points)
 
-**Requirements:**
+#### 3.2.2 Terminal Dashboard (TUI)
 
-- [ ] YAML-based agent definitions
-- [ ] Agent loader with validation
-- [ ] Agent runtime with execution context
-- [ ] Critical actions execution
-- [ ] Menu-driven command system
-- [ ] Persona display
+**Description**: Text-based UI in terminal showing real-time project status, agents, workflows.
 
-**Success Criteria:**
+**Acceptance Criteria**:
 
-- Agents load in < 1 second
-- Agent personas provide clear guidance
-- Menu commands execute correctly 100% of the time
+- ✅ `madace dashboard` command launches TUI
+- ✅ Split-pane layout: agents | workflows | state machine | logs
+- ✅ Real-time updates (refreshes every 5 seconds)
+- ✅ Keyboard navigation (arrow keys, tab)
+- ✅ Color-coded status indicators
+- ✅ Responsive to terminal resize
 
-#### F3: Workflow Execution Engine
+**Technical Details**:
 
-**Description:** Execute multi-step workflows with state management
+- **Library**: blessed or ink (React for CLIs)
+- **Layout**: 4-pane dashboard with live data
 
-**Requirements:**
+**User Stories**:
 
-- [ ] YAML workflow parser
-- [ ] Sequential step execution
-- [ ] State persistence to disk
-- [ ] Resume on failure
-- [ ] Sub-workflow support
-- [ ] Context passing
+- [CLI-004] As a developer, I want a terminal dashboard (13 points)
+- [CLI-005] As a user, I want keyboard-only navigation (5 points)
 
-**Success Criteria:**
+#### 3.2.3 CLI Feature Parity
 
-- Workflows resume correctly after interruption
-- All step types execute successfully
-- State files are human-readable
+**Description**: Ensure CLI has all features available in Web UI.
 
-#### F4: State Machine Management
+**Acceptance Criteria**:
 
-**Description:** Enforce story lifecycle rules
+- ✅ Agent management: create, edit, delete, list
+- ✅ Workflow execution: run, pause, resume, status
+- ✅ State machine: view, transition stories
+- ✅ Configuration: get, set, list
+- ✅ Project: init, status, stats
 
-**Requirements:**
+**User Stories**:
 
-- [ ] Single source of truth (status file)
-- [ ] Atomic state transitions
-- [ ] One-at-a-time enforcement
-- [ ] Automatic progression
-- [ ] Story metadata tracking
-
-**Success Criteria:**
-
-- No state corruption under normal operation
-- Rules enforced 100% (cannot violate one-at-a-time)
-- Status file remains valid Markdown
-
-#### F5: Template Rendering System
-
-**Description:** Generate documents from templates
-
-**Requirements:**
-
-- [ ] Multiple interpolation patterns
-- [ ] Nested variable resolution
-- [ ] Strict mode validation
-- [ ] Directory rendering
-- [ ] Standard variable library
-
-**Success Criteria:**
-
-- Templates render in < 500ms
-- Missing variables detected in strict mode
-- Generated documents are well-formatted
-
-#### F6: Configuration Management
-
-**Description:** Auto-detect and validate configuration
-
-**Requirements:**
-
-- [ ] Auto-detection (multiple search paths)
-- [ ] Schema validation
-- [ ] Cross-platform path resolution
-- [ ] Installation validation
-- [ ] Module enablement
-
-**Success Criteria:**
-
-- Config detected 100% when present
-- Validation errors are clear and actionable
-- Paths work on macOS, Linux, Windows
-
-#### F7: LLM Integration
-
-**Description:** Pluggable LLM architecture
-
-**Requirements:**
-
-- [ ] Default Gemini model integration
-- [ ] Abstract LLM interface
-- [ ] API key management
-- [ ] Token usage tracking
-- [ ] Error handling and retries
-
-**Success Criteria:**
-
-- Can swap LLM without code changes
-- API failures handled gracefully
-- Token usage monitored and logged
-
-#### F8: API Backend
-
-**Description:** Next.js API Routes orchestrating all operations
-
-**Requirements:**
-
-- [ ] TypeScript API routes
-- [ ] Async operation support
-- [ ] Error handling
-- [ ] Logging and monitoring
-
-**Success Criteria:**
-
-- API response time < 200ms (excluding LLM calls)
-- 100% API coverage for UI needs
-- Clear error messages
-
-#### F9: Scale-Adaptive Planning
-
-**Description:** Automatically adjust planning depth to project size
-
-**Requirements:**
-
-- [ ] Project assessment workflow
-- [ ] Level 0-4 determination logic
-- [ ] Conditional workflow execution
-- [ ] Minimal docs for small projects
-- [ ] Comprehensive docs for large projects
-
-**Success Criteria:**
-
-- Level detected correctly for sample projects
-- Small projects don't require unnecessary docs
-- Large projects get full architecture support
-
-#### F10: Docker Deployment
-
-**Description:** Easy installation and deployment
-
-**Requirements:**
-
-- [x] Production Dockerfile (optimized Alpine image ~200MB)
-- [x] Development Dockerfile (with VSCode Server + Cursor ~2-3GB)
-- [x] docker-compose.yml for production deployment
-- [x] docker-compose.dev.yml for development with IDEs
-- [x] Environment variable configuration
-- [x] Volume mounts for persistence (named data folder)
-- [x] Single-command startup for both modes
-- [x] Pre-installed VSCode extensions in dev container
-- [x] Hot reload enabled in development mode
-
-**Success Criteria:**
-
-- ✅ `docker-compose up` launches production system
-- ✅ `docker-compose -f docker-compose.dev.yml up -d` launches development environment with IDEs
-- ✅ Non-technical user can install in < 5 minutes
-- ✅ Data persists across container restarts in `./madace-data/`
-- ✅ Browser-based VSCode accessible at http://localhost:8080
-- ✅ All development tools pre-installed (TypeScript, ESLint, Prettier, Jest, Claude CLI)
-
-### 5.2 Should-Have Features (Post-MVP)
-
-#### F11: Sub-Workflow Support
-
-**Description:** Nest workflows within workflows
-
-**Status:** Planned for v1.0-beta
-
-**Requirements:**
-
-- [ ] Sub-workflow execution
-- [ ] Context inheritance
-- [ ] Independent state tracking
-- [ ] Parent workflow reference
-
-#### F12: Workflow Dependencies
-
-**Description:** Define prerequisite workflows
-
-**Status:** Planned for v1.0-beta
-
-**Requirements:**
-
-- [ ] Dependency validation
-- [ ] Auto-execution of prerequisites
-- [ ] Dependency graph visualization
-
-#### F13: Progress Dashboard
-
-**Description:** Visual tracking of project progress
-
-**Status:** Planned for v1.0-beta
-
-**Requirements:**
-
-- [ ] Story burn-down chart
-- [ ] Workflow completion status
-- [ ] Time tracking per story
-- [ ] Velocity metrics
-
-#### F14: Multi-User Collaboration
-
-**Description:** Team support with role-based access
-
-**Status:** Planned for v1.0 stable
-
-**Requirements:**
-
-- [ ] User authentication
-- [ ] Role-based permissions
-- [ ] Activity feed
-- [ ] Conflict resolution
-
-#### F15: Integration Ecosystem
-
-**Description:** Connect with external tools
-
-**Status:** Planned for v1.0 stable
-
-**Requirements:**
-
-- [ ] GitHub integration
-- [ ] Jira integration
-- [ ] Slack notifications
-- [ ] CI/CD triggers
-
-### 5.3 Could-Have Features (Future)
-
-- Web-based code editor
-- Real-time collaboration
-- AI model marketplace (custom fine-tuned models)
-- Template marketplace
-- Module marketplace
-- Visual workflow builder
-- Mobile app
+- [CLI-006] As a CLI user, I want full feature access (8 points)
 
 ---
 
-## 6. User Workflows
+### 3.3 EPIC 3: Conversational AI & NLU
 
-### 6.1 Primary User Journey: Building an MVP
+**Milestone**: 3.3
+**Priority**: P1 (High - UX Innovation)
+**Timeline**: 4-6 weeks
+**Points**: 50-60 points
 
-**Step 1: Installation**
+#### 3.3.1 NLU Integration
 
-1. Clone repository
-2. Run `docker-compose up`
-3. Access web UI at `localhost:3000`
-4. Complete initial configuration
+**Description**: Integrate Natural Language Understanding service to parse user intent.
 
-**Step 2: Project Planning**
+**Acceptance Criteria**:
 
-1. Load PM agent
-2. Run `plan-project` workflow
-3. System assesses scale (Level 0-4)
-4. Generate PRD and Epics based on scale
+- ✅ NLU service integrated (Dialogflow or Rasa)
+- ✅ Intent classification (create_agent, run_workflow, check_status, etc.)
+- ✅ Entity extraction (agent names, story IDs, file paths)
+- ✅ Context management across conversation turns
+- ✅ Fallback to menu mode if NLU confidence < 70%
 
-**Step 3: Architecture (Levels 3-4 only)**
+**Technical Details**:
 
-1. Load Architect agent
-2. Run `solution-architecture` workflow
-3. Review and approve architecture
-4. Generate tech specs per epic (JIT)
+- **Service**: Dialogflow CX or Rasa Open Source
+- **Intents**: ~20 core intents mapped to MADACE actions
+- **Entities**: @agent, @workflow, @story, @file_path
 
-**Step 4: Story Implementation**
+**User Stories**:
 
-1. Run `init-backlog` to populate BACKLOG from Epics
-2. Run `workflow-status` to see current state
-3. Run `create-story` to draft story from TODO
-4. Run `story-ready` to approve (TODO → IN PROGRESS)
-5. Load DEV agent
-6. Run `dev-story` to implement
-7. Run `story-approved` when complete (IN PROGRESS → DONE)
-8. Repeat until BACKLOG is empty
+- [NLU-001] As a user, I want to talk to agents naturally (13 points)
+- [NLU-002] As a system, I need to understand user intent (13 points)
+- [NLU-003] As a system, I need to extract entities (8 points)
 
-**Step 5: Deployment**
+#### 3.3.2 Chat Interface
 
-1. Run deployment workflow
-2. Review deployment checklist
-3. Deploy to production
+**Description**: Build chat UI in Web and CLI for conversational interaction.
 
-**Total Time:** Level 0: 1-2 days | Level 2: 1-2 weeks | Level 4: 4-6 weeks
+**Acceptance Criteria**:
 
-### 6.2 Secondary User Journey: Creating Custom Agent
+- ✅ Web UI: Chat component with message history
+- ✅ CLI: Chat mode with `madace chat <agent-name>`
+- ✅ Markdown rendering in chat messages
+- ✅ Code syntax highlighting in responses
+- ✅ Message threading (quote/reply)
+- ✅ Voice input support (future: v3.1+)
 
-**Step 1: Load Builder**
+**User Stories**:
 
-1. Access web UI
-2. Load Builder agent
+- [CHAT-001] As a user, I want a chat interface (8 points)
+- [CHAT-002] As a user, I want to see message history (5 points)
+- [CHAT-003] As a user, I want markdown/code highlighting (5 points)
 
-**Step 2: Design Agent**
+#### 3.3.3 Persistent Agent Memory
 
-1. Run `create-agent` workflow
-2. Define agent metadata (id, name, title, icon)
-3. Define persona (role, identity, principles)
-4. Define menu commands
-5. Define reusable prompts
+**Description**: Agents remember conversations, user preferences, and project context.
 
-**Step 3: Test Agent**
+**Acceptance Criteria**:
 
-1. Load custom agent
-2. Execute menu commands
-3. Validate behavior
+- ✅ Database table: agent_memory (agent_id, user_id, context, timestamp)
+- ✅ Agents access memory during conversations
+- ✅ Memory types: short-term (session), long-term (persistent)
+- ✅ Memory pruning strategy (keep last 30 days)
+- ✅ Privacy: users can clear agent memory
 
-**Step 4: Register Agent**
+**User Stories**:
 
-1. Add to agent manifest
-2. Make available to other workflows
-
-**Total Time:** 30-60 minutes
+- [MEMORY-001] As a user, I want agents to remember me (13 points)
+- [MEMORY-002] As a user, I want to clear agent memory (3 points)
+- [MEMORY-003] As an agent, I need context from past conversations (8 points)
 
 ---
 
-## 7. Technical Requirements
+### 3.4 EPIC 4: Web IDE & Collaboration
 
-### 7.1 Performance Requirements
+**Milestone**: 3.4
+**Priority**: P2 (Nice to Have - Team Features)
+**Timeline**: 6-8 weeks
+**Points**: 60-80 points
 
-| Metric                   | Target       | Measurement                          |
-| ------------------------ | ------------ | ------------------------------------ |
-| Agent Load Time          | < 1 second   | Time from trigger to persona display |
-| Workflow Step Execution  | < 500ms      | Time per step (excluding LLM calls)  |
-| Template Rendering       | < 500ms      | Single template with 50 variables    |
-| State Machine Transition | < 100ms      | Atomic state update                  |
-| API Response Time        | < 200ms      | Backend API (excluding LLM)          |
-| Frontend Initial Load    | < 3 seconds  | First contentful paint               |
-| LLM Response Time        | < 10 seconds | 95th percentile                      |
+#### 3.4.1 Integrated Web IDE
 
-### 7.2 Scalability Requirements
+**Description**: Embed full-featured code editor in web interface.
 
-| Dimension               | Minimum | Target | Maximum |
-| ----------------------- | ------- | ------ | ------- |
-| Concurrent Users        | 1       | 10     | 100     |
-| Agents per Installation | 5       | 20     | 100     |
-| Workflows per Module    | 5       | 15     | 50      |
-| Stories per Project     | 10      | 100    | 500     |
-| Template Size           | 1 KB    | 50 KB  | 500 KB  |
+**Acceptance Criteria**:
 
-### 7.3 Reliability Requirements
+- ✅ Monaco Editor integrated (same as VS Code)
+- ✅ Syntax highlighting for 20+ languages
+- ✅ IntelliSense and auto-completion
+- ✅ Multi-file tabs
+- ✅ Integrated terminal in IDE
+- ✅ Git operations (commit, push, pull)
 
-- **Uptime:** 99% (for web service)
-- **Data Durability:** 99.99% (state files must not corrupt)
-- **Error Recovery:** 100% (all workflows must be resumable)
-- **State Consistency:** 100% (state machine rules enforced)
+**Technical Details**:
 
-### 7.4 Security Requirements
+- **Editor**: @monaco-editor/react
+- **Features**: TypeScript/JavaScript LSP, multi-cursor, find/replace
 
-1. **Path Traversal Protection:** All file operations sandboxed to project directory
-2. **YAML Injection Prevention:** No executable code in YAML (by design)
-3. **Template Injection Prevention:** No eval/Function in templates
-4. **Command Injection Prevention:** No shell execution from user input
-5. **Secrets Management:** API keys via environment variables (never in config files)
-6. **Manifest Integrity:** CSV validation on read (checksums planned for v1.0-beta)
+**User Stories**:
 
-### 7.5 Platform Requirements
+- [IDE-001] As a developer, I want to code in the browser (21 points)
+- [IDE-002] As a user, I want syntax highlighting (5 points)
+- [IDE-003] As a developer, I want integrated terminal (8 points)
 
-**Supported Operating Systems:**
+#### 3.4.2 Real-time Collaboration
 
-- macOS 11+ (Big Sur and later)
-- Ubuntu 20.04+
-- Windows 10+ (with WSL2)
+**Description**: Multiple users editing same project simultaneously.
 
-**Required Software:**
+**Acceptance Criteria**:
 
-- Docker 20.10+
-- Docker Compose 2.0+
-- 8GB RAM minimum
-- 20GB disk space
+- ✅ WebSocket server for real-time sync
+- ✅ Operational Transformation (OT) for conflict resolution
+- ✅ Shared cursors with user colors
+- ✅ Live editing indicators
+- ✅ Presence awareness (who's online)
+- ✅ In-app chat for team communication
 
-### 7.6 Compatibility Requirements
+**Technical Details**:
 
-**Frontend:**
+- **Stack**: Socket.IO or Yjs for CRDT-based collaboration
+- **Conflict Resolution**: OT or CRDT algorithms
 
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
+**User Stories**:
 
-**Runtime:**
+- [COLLAB-001] As a team, we want to code together (21 points)
+- [COLLAB-002] As a user, I want to see others' cursors (8 points)
+- [COLLAB-003] As a team, we want in-app chat (8 points)
 
-- Node.js 20+ (24.10.0 recommended)
-- npm 9+
+#### 3.4.3 File Explorer & Project Management
 
-### 7.7 Version Locking Requirements
+**Description**: Visual file browser for project navigation.
 
-**Requirement:** All dependencies MUST use exact versions. NO version ranges (^, ~, >=, <=, >, <) allowed.
+**Acceptance Criteria**:
 
-**Rationale:** Version locking ensures 100% reproducible builds across all development environments, CI/CD, and production deployments. This eliminates "works on my machine" problems and prevents version-related bugs.
+- ✅ Tree-view file explorer
+- ✅ Create/rename/delete files/folders
+- ✅ Drag-and-drop file organization
+- ✅ File search (fuzzy matching)
+- ✅ Git status indicators (modified, new, deleted)
 
-**Core Package Version Requirements:**
+**User Stories**:
 
-| Package    | Exact Version | Status    | Change Policy                     |
-| ---------- | ------------- | --------- | --------------------------------- |
-| next       | 15.5.6        | ⛔ LOCKED | Requires team approval            |
-| react      | 19.2.0        | ⛔ LOCKED | Requires team approval            |
-| react-dom  | 19.2.0        | ⛔ LOCKED | Must match react version          |
-| typescript | 5.9.3         | ⛔ LOCKED | Requires team approval            |
-| Node.js    | 24.10.0       | ⛔ LOCKED | Minimum 20.0.0, recommend 24.10.0 |
-
-**Enforcement Mechanisms:**
-
-1. **Pre-Install Prevention:**
-   - `.npmrc` with `save-exact=true` - Forces exact version saves
-   - `.npmrc` with `engine-strict=true` - Enforces Node.js version
-   - `.nvmrc` with `24.10.0` - Locks Node.js version
-
-2. **Post-Install Validation:**
-   - `scripts/validate-versions.js` - Validates all versions
-   - Checks core packages against LOCKED versions
-   - Detects version range operators in package.json
-   - Verifies installed versions match package.json
-   - Exit code 1 on failure (blocks CI/CD)
-
-3. **Pre-Commit Quality Gates:**
-   - `npm run check-all` includes version validation
-   - Must pass before commit
-   - Prevents version drift from reaching repository
-
-4. **CI/CD Validation:**
-   - GitHub Actions runs version validation
-   - Uses `npm ci` (lockfile-based installation)
-   - Blocks merge on validation failure
-
-**Validation Commands:**
-
-```bash
-npm run validate-versions  # Standalone version validation
-npm run check-all          # Full quality check (includes version validation)
-```
-
-**Version Update Process:**
-
-**Core Packages (Locked):**
-
-1. Create upgrade branch
-2. Get team approval
-3. Update to exact version: `npm install package@X.Y.Z`
-4. Run full validation: `npm run validate-versions && npm run check-all && npm run build && npm test`
-5. Update VERSION-LOCK.md and CLAUDE.md
-6. Create PR with detailed description
-7. Merge after code review
-
-**Non-Core Packages:**
-
-1. Update to exact version: `npm install package@X.Y.Z`
-2. Run validation: `npm run validate-versions && npm run check-all`
-3. Test thoroughly
-4. Commit with clear message
-
-**Security Exceptions:**
-
-- **CRITICAL/HIGH** vulnerabilities: Upgrade immediately (skip approval)
-- **MODERATE/LOW** vulnerabilities: Schedule for next sprint
-
-**Success Criteria:**
-
-- ✅ Zero version drift incidents across environments
-- ✅ 100% validation pass rate in CI/CD
-- ✅ Reproducible builds (identical results every time)
-- ✅ No debugging time wasted on version inconsistencies
-
-**Documentation:**
-
-- [VERSION-LOCK.md](./VERSION-LOCK.md) - Comprehensive guide
-- [ADR-004](./docs/adrs/ADR-004-version-locking-enforcement.md) - Architecture decision
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - Technical details
-- See Section 3.3 for detailed implementation
+- [FILES-001] As a user, I want visual file navigation (13 points)
+- [FILES-002] As a user, I want to manage files via UI (8 points)
 
 ---
 
-## 8. User Interface Requirements
+## 4. Technical Architecture
 
-### 8.1 UI Components
+### 4.1 Technology Stack (Updated for v3.0)
 
-**Home Dashboard:**
+| Component     | v2.0       | v3.0                       |
+| ------------- | ---------- | -------------------------- |
+| **Frontend**  | Next.js 15 | Next.js 15 (same)          |
+| **Backend**   | API Routes | API Routes + tRPC          |
+| **Database**  | YAML files | Prisma + SQLite/PostgreSQL |
+| **Real-time** | None       | Socket.IO / Yjs            |
+| **NLU**       | None       | Dialogflow CX              |
+| **Editor**    | None       | Monaco Editor              |
+| **CLI**       | Basic      | inquirer + blessed         |
+| **Auth**      | None       | NextAuth.js                |
+| **Local LLM** | Manual     | **Gemma3 4B (Ollama) ✅**  |
 
-- Welcome message with current agent
-- Quick actions (most common workflows)
-- Recent activity feed
-- Project health indicators
+**Local LLM Provider (✅ Implemented)**:
 
-**Agent View:**
+- **Default Model**: Gemma3 4B (Q4_K_M, 3.3GB) ships with product
+- **Infrastructure**: Docker Compose with Ollama container auto-configured
+- **Zero Setup**: Works out-of-the-box, no API keys required for local AI
+- **User Flexibility**: Easy to add/change models (`docker exec ollama ollama pull <model>`)
+- **Multi-Provider**: Supports Gemini, Claude, OpenAI, and local models
+- **Privacy**: Complete data sovereignty with offline capability
+- **Cost**: Free operation, no recurring API costs
 
-- Agent persona display (icon, name, role, identity)
-- Menu commands (clear descriptions)
-- Command history
-- Agent statistics
+### 4.2 Database Schema
 
-**Workflow View:**
+```prisma
+// prisma/schema.prisma
 
-- Workflow progress indicator
-- Current step details
-- Step history
-- Pause/resume controls
+model Agent {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  title       String
+  icon        String
+  module      String
+  version     String
+  persona     Json     // { role, identity, communication_style, principles }
+  menu        Json     // Array of menu items
+  prompts     Json     // Array of prompts
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  projectId   String?
 
-**State Machine View:**
+  memories    AgentMemory[]
+  project     Project?  @relation(fields: [projectId], references: [id])
 
-- Visual representation of BACKLOG → TODO → IN PROGRESS → DONE
-- Story cards with metadata
-- Drag-and-drop support (future)
-- Filtering and search
+  @@index([projectId])
+}
 
-**Configuration View:**
+model AgentMemory {
+  id          String   @id @default(cuid())
+  agentId     String
+  userId      String
+  context     Json     // Conversation context
+  type        String   // "short-term" | "long-term"
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime?
 
-- Project settings
-- Module enablement toggles
-- LLM configuration
-- Path settings
+  agent       Agent    @relation(fields: [agentId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
 
-**Template Library:**
+  @@index([agentId, userId])
+}
 
-- Browse available templates
-- Preview templates
-- Template variables documentation
-- Custom template upload
+model Workflow {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  steps       Json     // Array of workflow steps
+  state       Json?    // Current execution state
+  projectId   String
 
-### 8.2 Interaction Patterns
+  project     Project  @relation(fields: [projectId], references: [id])
 
-**Natural Language Input:**
+  @@index([projectId])
+}
 
-- Chat-like interface for commands
-- Autocomplete for common commands
-- Command history
-- Inline help
+model Config {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  encrypted   Boolean  @default(false)
+  projectId   String?
 
-**Conversational Flows:**
+  project     Project? @relation(fields: [projectId], references: [id])
 
-- Agents ask clarifying questions
-- Multi-turn conversations
-- Context awareness
-- Conversation history
+  @@index([projectId])
+}
 
-**Feedback & Validation:**
+model StateMachine {
+  id          String   @id @default(cuid())
+  storyId     String   @unique
+  title       String
+  status      String   // "BACKLOG" | "TODO" | "IN_PROGRESS" | "DONE"
+  points      Int
+  assignee    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  projectId   String
 
-- Real-time validation messages
-- Success/error toasts
-- Confirmation dialogs for destructive actions
-- Progress indicators for long operations
+  project     Project  @relation(fields: [projectId], references: [id])
 
----
+  @@index([projectId, status])
+}
 
-## 9. Data Model
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-### 9.1 Core Entities
+  agents      Agent[]
+  workflows   Workflow[]
+  configs     Config[]
+  stories     StateMachine[]
+  members     ProjectMember[]
+}
 
-**Agent:**
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  createdAt   DateTime @default(now())
 
-```yaml
-metadata:
-  id: string # Unique identifier
-  name: string # Short name
-  title: string # Full title
-  icon: string # Emoji
-  module: string # Parent module
-  version: string # Agent version
-persona:
-  role: string # Primary role
-  identity: string # Detailed identity
-  communication_style: string
-  principles: string
-critical_actions: array # Auto-execute on load
-menu: array # Command menu
-prompts: array # Reusable prompts
+  memories    AgentMemory[]
+  projects    ProjectMember[]
+}
+
+model ProjectMember {
+  id          String   @id @default(cuid())
+  userId      String
+  projectId   String
+  role        String   // "owner" | "admin" | "member"
+  joinedAt    DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+  project     Project  @relation(fields: [projectId], references: [id])
+
+  @@unique([userId, projectId])
+}
 ```
 
-**Workflow:**
+### 4.3 API Design
 
-```yaml
-name: string             # Workflow name
-description: string      # What it does
-dependencies: array      # Prerequisites
-steps: array            # Execution steps
-  - name: string
-    action: string       # elicit, reflect, guide, template, validate, sub-workflow
-    prompt: string       # Optional
-    template: string     # Optional
-    output: string       # Optional
-```
-
-**Story:**
-
-```markdown
-[STORY-ID] Title (filename.md) [Status: Draft|Ready|InReview|Done] [Points: N] [Date: YYYY-MM-DD]
-```
-
-**Configuration:**
-
-```yaml
-project_name: string
-output_folder: string
-user_name: string
-communication_language: string
-madace_version: string
-installed_at: string # ISO 8601
-ide: string # cursor, vscode, etc.
-modules:
-  mam: { enabled: boolean }
-  mab: { enabled: boolean }
-  cis: { enabled: boolean }
-```
-
-### 9.2 File System Structure
+**New API Routes for v3.0**:
 
 ```
-project-root/
-├── app/                         # Next.js application (App Router)
-├── lib/                         # TypeScript business logic
-├── components/                  # React components
-├── madace/                      # Framework installation
-│   ├── _cfg/                   # Configuration and manifests
-│   │   ├── agent-manifest.csv
-│   │   ├── workflow-manifest.csv
-│   │   └── task-manifest.csv
-│   ├── core/
-│   │   ├── config.yaml
-│   │   ├── agents/
-│   │   └── workflows/
-│   ├── mam/                    # MAM module
-│   ├── mab/                    # MAB module
-│   └── cis/                    # CIS module
-└── docs/                       # Generated outputs
-    ├── PRD.md
-    ├── Epics.md
-    ├── solution-architecture.md
-    ├── tech-spec-*.md
-    ├── mam-workflow-status.md  # State machine source of truth
-    └── story-*.md
+# Agent Management
+POST   /api/v3/agents             - Create agent
+GET    /api/v3/agents             - List agents
+GET    /api/v3/agents/:id         - Get agent details
+PUT    /api/v3/agents/:id         - Update agent
+DELETE /api/v3/agents/:id         - Delete agent
+POST   /api/v3/agents/:id/export  - Export agent as JSON
+POST   /api/v3/agents/import      - Import agent from JSON
+
+# Agent Memory
+GET    /api/v3/agents/:id/memory  - Get agent memory
+POST   /api/v3/agents/:id/memory  - Add to agent memory
+DELETE /api/v3/agents/:id/memory  - Clear agent memory
+
+# Conversational Interaction
+POST   /api/v3/chat               - Send message to agent
+GET    /api/v3/chat/history       - Get chat history
+POST   /api/v3/nlu/parse          - Parse natural language input
+
+# Configuration
+GET    /api/v3/config             - Get all config
+GET    /api/v3/config/:key        - Get config value
+PUT    /api/v3/config/:key        - Set config value
+DELETE /api/v3/config/:key        - Delete config key
+
+# Real-time Collaboration
+WS     /api/v3/collab             - WebSocket connection
+POST   /api/v3/collab/join        - Join collaboration session
+POST   /api/v3/collab/leave       - Leave collaboration session
+
+# IDE Operations
+GET    /api/v3/files              - List project files
+GET    /api/v3/files/:path        - Read file
+PUT    /api/v3/files/:path        - Write file
+DELETE /api/v3/files/:path        - Delete file
+POST   /api/v3/files/search       - Search files
 ```
 
 ---
 
-## 10. Success Metrics
+## 5. Development Roadmap
 
-### 10.1 Product Metrics
+### 5.1 Milestone Overview
 
-**Adoption:**
+| Milestone | Epic                                | Timeline        | Points      | Status     |
+| --------- | ----------------------------------- | --------------- | ----------- | ---------- |
+| **3.1**   | Database Migration & Unified Config | 3-4 weeks       | 40-50       | 📅 Planned |
+| **3.2**   | CLI Enhancements                    | 2-3 weeks       | 25-35       | 📅 Planned |
+| **3.3**   | Conversational AI & NLU             | 4-6 weeks       | 50-60       | 📅 Planned |
+| **3.4**   | Web IDE & Collaboration             | 6-8 weeks       | 60-80       | 📅 Planned |
+| **Total** | All Epics                           | **16-20 weeks** | **175-225** | -          |
 
-- Downloads per month: Target 100+ by end of alpha
-- Active installations: Target 50+ by end of alpha
-- Module enablement rate: Target 80%+ enable MAM
+### 5.2 Detailed Timeline
 
-**Engagement:**
+**Phase 1: Foundation (Milestone 3.1)** - Weeks 1-4
 
-- Stories created per user: Target 20+ per project
-- Workflows executed per user: Target 50+ per project
-- Custom agents created: Target 5% of users create custom agents
-- Session duration: Target 30+ minutes per session
+- Week 1: Prisma setup, database schema design, migration scripts
+- Week 2: Agent CRUD API, dynamic agent management
+- Week 3: Unified config system, settings UI
+- Week 4: Testing, documentation, v3.1-alpha release
 
-**Quality:**
+**Phase 2: CLI Power-Up (Milestone 3.2)** - Weeks 5-7
 
-- Workflow completion rate: Target 95%+
-- State machine consistency: Target 100% (no violations)
-- Error rate: Target < 1% of operations
-- User-reported bugs: Target < 5 critical bugs per month
+- Week 5: REPL implementation, auto-completion
+- Week 6: Terminal dashboard with blessed
+- Week 7: CLI feature parity, testing, v3.2-alpha release
 
-### 10.2 Business Metrics
+**Phase 3: Conversational AI (Milestone 3.3)** - Weeks 8-13
 
-**Market Validation:**
+- Week 8-9: NLU service integration (Dialogflow)
+- Week 10-11: Chat UI (web + CLI), message history
+- Week 12-13: Agent memory system, testing, v3.3-alpha release
 
-- GitHub stars: Target 500+ by end of beta
-- Community contributions: Target 10+ contributors by v1.0
-- Module marketplace submissions: Target 20+ custom modules by v1.0
+**Phase 4: Collaboration (Milestone 3.4)** - Weeks 14-21
 
-**User Satisfaction:**
+- Week 14-15: Monaco Editor integration
+- Week 16-17: File explorer, project management
+- Week 18-19: WebSocket sync, real-time collaboration
+- Week 20-21: Testing, optimization, v3.0-beta release
 
-- Net Promoter Score (NPS): Target 40+
-- User retention (30-day): Target 60%+
-- Support ticket volume: Target < 10 per week
-- Documentation clarity: Target 4+ stars out of 5
+### 5.3 Release Strategy
 
-### 10.3 Technical Metrics
+**Alpha Releases** (for each milestone):
 
-**Performance:**
+- v3.1-alpha: Database foundation
+- v3.2-alpha: CLI enhancements
+- v3.3-alpha: Conversational AI
+- v3.4-alpha: Full IDE + collaboration
 
-- Average agent load time: Target < 1 second
-- Average workflow step time: Target < 500ms
-- API response time (p95): Target < 200ms
-- LLM response time (p95): Target < 10 seconds
+**Beta Release**:
 
-**Reliability:**
+- v3.0-beta: All features integrated, performance optimization
 
-- System uptime: Target 99%+
-- Data loss incidents: Target 0
-- State corruption incidents: Target 0
-- Security incidents: Target 0
+**Stable Release**:
 
----
-
-## 11. Risks & Mitigations
-
-### 11.1 Technical Risks
-
-**Risk 1: LLM API Reliability**
-
-- **Impact:** High - System unusable if LLM is down
-- **Probability:** Medium - Third-party APIs have outages
-- **Mitigation:**
-  - Implement retry logic with exponential backoff
-  - Support multiple LLM providers (fallback)
-  - Cache LLM responses when appropriate
-  - Queue operations for offline execution
-
-**Risk 2: State Corruption**
-
-- **Impact:** High - Data loss and workflow failure
-- **Probability:** Low - Atomic operations reduce risk
-- **Mitigation:**
-  - Atomic file writes with temp files
-  - State validation on every load
-  - Automatic backups before transitions
-  - Recovery procedures in documentation
-
-**Risk 3: Cross-Platform Path Issues**
-
-- **Impact:** Medium - Workflows fail on some platforms
-- **Probability:** Medium - Windows paths differ
-- **Mitigation:**
-  - Use pathlib consistently
-  - Test on all target platforms
-  - Normalize paths at boundaries
-  - Document platform-specific issues
-
-### 11.2 Product Risks
-
-**Risk 1: User Complexity**
-
-- **Impact:** High - Users abandon if too complex
-- **Probability:** High - Framework is comprehensive
-- **Mitigation:**
-  - Excellent onboarding experience
-  - Progressive disclosure of features
-  - Clear documentation and tutorials
-  - Video walkthroughs
-
-**Risk 2: LLM Cost**
-
-- **Impact:** Medium - High costs deter users
-- **Probability:** Medium - LLM APIs can be expensive
-- **Mitigation:**
-  - Token usage optimization
-  - Caching strategies
-  - Local LLM support (future)
-  - Transparent cost tracking
-
-**Risk 3: Competition**
-
-- **Impact:** Medium - Other AI dev tools
-- **Probability:** High - Fast-moving space
-- **Mitigation:**
-  - Focus on structured workflows (differentiator)
-  - Strong community and extensibility
-  - Best-in-class documentation
-  - Rapid iteration
-
-### 11.3 Business Risks
-
-**Risk 1: Open Source Sustainability**
-
-- **Impact:** High - Project dies without maintainers
-- **Probability:** Medium - Many OSS projects struggle
-- **Mitigation:**
-  - Build strong contributor community
-  - Clear contribution guidelines
-  - Regular releases and roadmap updates
-  - Consider commercial support tier
-
-**Risk 2: Legal/Licensing**
-
-- **Impact:** Medium - License violations
-- **Probability:** Low - Using permissive licenses
-- **Mitigation:**
-  - Audit all dependencies
-  - Use MIT/Apache-2.0 licenses
-  - Clear attribution
-  - Legal review of generated code ownership
+- v3.0.0: Production-ready, full documentation
 
 ---
 
-## 12. Release Plan
+## 6. Success Criteria
 
-### 12.1 Phase 1: Alpha (Current)
+### 6.1 Quantitative Metrics
 
-**Timeline:** Q4 2025 (Oct-Dec)
+| Metric                         | Target                | Measurement          |
+| ------------------------------ | --------------------- | -------------------- |
+| **Custom Agents Created**      | 50+ in first 3 months | Database count       |
+| **Conversational Mode Usage**  | 80% of interactions   | Analytics tracking   |
+| **Active Teams Collaborating** | 20+ teams             | Project member count |
+| **CLI Primary Users**          | 30% of user base      | Usage analytics      |
+| **Agent Memory Accuracy**      | 85% context retention | User surveys         |
+| **Real-time Sync Performance** | < 100ms latency       | WebSocket metrics    |
 
-**Goals:**
+### 6.2 Qualitative Metrics
 
-- Validate core architecture
-- Prove Next.js full-stack TypeScript approach
-- Test agent and workflow systems
-- Gather early feedback
-
-**Deliverables:**
-
-- ✅ Next.js 15 full-stack architecture
-- ✅ TypeScript business logic modules
-- ✅ MADACE Master agent
-- ✅ Basic MAM workflows (plan-project, create-story)
-- ✅ State machine implementation
-- ✅ Docker deployment (production + development with IDEs)
-- ✅ Development container with VSCode Server + Cursor
-- ✅ LLM selection system (Gemini/Claude/OpenAI/Local)
-- ⬜ Next.js project initialization
-- ⬜ Web-based setup wizard
-- ⬜ Settings page
-
-**Success Criteria:**
-
-- 10+ alpha testers
-- 3+ complete MVP builds
-- Core architecture validated
-
-### 12.2 Phase 2: Beta (v1.0-beta)
-
-**Timeline:** Q1-Q2 2026 (Jan-Jun)
-
-**Goals:**
-
-- Feature completeness
-- Production readiness
-- Performance optimization
-- Community building
-
-**Deliverables:**
-
-- All MAM agents and workflows
-- MAB and CIS modules complete
-- Sub-workflow support
-- Workflow dependencies
-- Progress dashboard
-- Web-based ChatGPT/Gemini integration
-- Comprehensive testing
-- Full documentation
-
-**Success Criteria:**
-
-- 100+ beta testers
-- 50+ active projects
-- < 5 critical bugs
-- 90%+ workflow completion rate
-
-### 12.3 Phase 3: v1.0 Stable
-
-**Timeline:** Q3 2026 (Jul-Sep)
-
-**Goals:**
-
-- Production release
-- Enterprise readiness
-- Ecosystem launch
-
-**Deliverables:**
-
-- Multi-user collaboration
-- External integrations (GitHub, Jira)
-- Module marketplace
-- Template marketplace
-- Compliance reporting
-- Commercial support tier
-- CI/CD integration
-
-**Success Criteria:**
-
-- 500+ installations
-- 10+ commercial users
-- 99% uptime
-- 50+ community modules
-
-### 12.4 Phase 4: v2.0 and Beyond
-
-**Timeline:** Q4 2026+
-
-**Goals:**
-
-- Advanced AI features
-- Enterprise scale
-- Global adoption
-
-**Features:**
-
-- Real-time collaboration
-- Visual workflow builder
-- Mobile app
-- AI model marketplace
-- Custom fine-tuned models
-- Advanced analytics
-- Multi-project management
+- **User Satisfaction**: 4.5+ / 5.0 rating
+- **Feature Completeness**: 90%+ of planned features working
+- **Documentation Quality**: Comprehensive docs for all features
+- **Code Quality**: 9.0+ / 10.0 quality score
+- **Test Coverage**: 80%+ test coverage
 
 ---
 
-## 13. Dependencies
+## 7. Risks and Mitigation
 
-### 13.1 External Dependencies
+### 7.1 Technical Risks
 
-**LLM Providers:**
+**Risk 1: NLU Accuracy**
 
-- Google Gemini API (default)
-- OpenAI API (optional)
-- Anthropic Claude API (optional)
-- Local models via Ollama (future)
+- **Impact**: High - Poor NLU would break conversational experience
+- **Probability**: Medium
+- **Mitigation**:
+  - Use proven NLU service (Dialogflow)
+  - Fallback to menu mode if confidence < 70%
+  - Extensive training data and testing
+  - A/B test with real users
 
-**Infrastructure:**
+**Risk 2: Real-time Collaboration Complexity**
 
-- Docker Hub (image distribution)
-- GitHub (code hosting)
-- npm registry (dependencies)
+- **Impact**: High - Difficult to implement correctly
+- **Probability**: High
+- **Mitigation**:
+  - Use proven libraries (Yjs, Socket.IO)
+  - Start with simple features (presence, chat)
+  - Add OT/CRDT gradually
+  - Consider deferring to v3.1 if timeline slips
 
-**Third-Party Services:**
+**Risk 3: Database Migration**
 
-- None required for core functionality
-- Optional: GitHub integration, Jira integration
+- **Impact**: High - Data loss would be catastrophic
+- **Probability**: Low
+- **Mitigation**:
+  - Extensive testing with v2.0 data
+  - Automated migration scripts
+  - Rollback capability
+  - User data backups before migration
 
-### 13.2 Internal Dependencies
+### 7.2 Timeline Risks
 
-**Business Logic → API Routes:**
+**Risk: Feature Scope Too Large**
 
-- TypeScript interfaces must be stable
-- Breaking changes require frontend updates
-
-**API Routes → Frontend:**
-
-- REST API must be versioned
-- Type definitions must be current
-
-**Workflows → Templates:**
-
-- Template changes may break workflows
-- Version compatibility required
-
----
-
-## 14. Open Questions
-
-1. **LLM Selection:** Should we support local models (Ollama) in v1.0 or defer to v2.0?
-2. **Pricing Model:** Will there be a commercial tier? If so, what features are gated?
-3. **Module Distribution:** Should modules be distributed via npm, custom registry, or GitHub?
-4. **Multi-Tenancy:** Should a single deployment support multiple projects or one project per deployment?
-5. **Code Generation:** Should DEV agent write code directly or guide the user?
-6. **Version Control:** Should the system auto-commit to git or leave it to the user?
-7. **Testing Strategy:** Should the system auto-generate tests or leave it to the user?
+- **Impact**: Medium - Could delay v3.0 release
+- **Probability**: Medium
+- **Mitigation**:
+  - Prioritize P0 and P1 features
+  - Move P2 features to v3.1 if needed
+  - Release incrementally (alpha for each milestone)
+  - Get user feedback early and often
 
 ---
 
-## 15. Appendices
+## 8. Dependencies and Prerequisites
 
-### 15.1 Glossary
+### 8.1 External Dependencies
 
-- **Agent:** A specialized AI persona that guides specific workflows
-- **Workflow:** A multi-step process defined in YAML
-- **State Machine:** The story lifecycle management system
-- **Epic:** A large feature or capability (collection of stories)
-- **Story:** A single unit of work (user story or technical task)
-- **Module:** A collection of agents and workflows for a specific domain
-- **Template:** A document with variable placeholders for rendering
-- **Manifest:** A CSV registry of installed components
-- **Scale Level:** Project complexity rating (0-4)
-- **Critical Action:** Auto-executed action when agent loads
-- **JIT:** Just-In-Time (generate only when needed)
+- **Dialogflow CX**: Google account, API billing enabled
+- **Prisma**: Database credentials (PostgreSQL for production)
+- **Monaco Editor**: CDN or npm package
+- **Socket.IO**: WebSocket infrastructure
+- **NextAuth.js**: OAuth providers configured
 
-### 15.2 References
+### 8.2 Internal Prerequisites
 
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - Comprehensive technical architecture
-- [CLAUDE.md](./CLAUDE.md) - Development guidance for AI assistants
-- [README.md](./README.md) - Project overview
-- [GEMINI.md](./GEMINI.md) - AI assistant development guide
-- [docs/PRD.md](./docs/PRD.md) - Original PRD with JARVIS vision
-- [docs/Epics.md](./docs/Epics.md) - Project epics
-
-### 15.3 Change Log
-
-| Version | Date       | Author      | Changes                                                                                        |
-| ------- | ---------- | ----------- | ---------------------------------------------------------------------------------------------- |
-| 1.1.0   | 2025-10-28 | MADACE Team | Added version locking requirements (Section 3.3, 7.7), updated tech stack with LOCKED versions |
-| 1.0.0   | 2025-10-19 | MADACE Team | Initial comprehensive PRD                                                                      |
+- ✅ v2.0.0-alpha successfully released to GitHub
+- ✅ v2.0 documentation complete
+- ✅ Test infrastructure in place (Jest)
+- ✅ CI/CD pipeline functional
+- ⏳ User feedback gathered from v2.0 alpha users
+- ⏳ Development branch (`develop/v3`) created
 
 ---
 
-**Document Status:** Living Document
-**Review Cycle:** Monthly
-**Next Review:** 2025-11-28
-**Last Updated:** 2025-10-28
+## 9. Out of Scope (for v3.0)
+
+The following features are **not included** in v3.0 and deferred to future releases:
+
+**Deferred to v3.1+**:
+
+- Mobile applications (iOS/Android)
+- Advanced analytics dashboard
+- Agent performance metrics
+- Voice input/output for agents
+- Integration with Jira/Trello/Linear
+- Multi-language support (i18n)
+- Plugin/extension system
+- Agent marketplace
+
+**Deferred to v4.0+**:
+
+- Self-hosted enterprise version
+- On-premise deployment
+- SSO/SAML authentication
+- Advanced RBAC (role-based access control)
+- Audit logging
+- Compliance certifications (SOC 2, GDPR)
+
+---
+
+## 10. Appendices
+
+### 10.1 Glossary
+
+- **NLU**: Natural Language Understanding
+- **REPL**: Read-Eval-Print Loop (interactive CLI)
+- **TUI**: Text-based User Interface
+- **OT**: Operational Transformation (for real-time collaboration)
+- **CRDT**: Conflict-free Replicated Data Type
+- **LSP**: Language Server Protocol (for IDE features)
+
+### 10.2 References
+
+- [MADACE v2.0 PRD](./PRD.md)
+- [v3.0 Vision Document](./ROADMAP-V3-FUTURE-VISION.md)
+- [v3.0 Architecture Proposal](./ARCHITECTURE-V3-FUTURE.md)
+- [v2.0 Workflow Status](./docs/mam-workflow-status.md)
+- [v2.0 Release Notes](./RELEASE-NOTES.md)
+
+---
+
+**Document Status**: ✅ Complete - Ready for Story Breakdown
+**Next Step**: Create v3-workflow-status.md and break down Milestone 3.1 into stories
+**Approver**: Product Owner
+**Date**: 2025-10-23
+
+---
+
+_This PRD follows MADACE Method Level 3 (Comprehensive Planning) for complex, multi-milestone projects._

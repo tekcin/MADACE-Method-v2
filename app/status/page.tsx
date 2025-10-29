@@ -312,7 +312,7 @@ export default function StatusPage() {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:bg-blue-600"
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400 dark:bg-blue-500 dark:hover:bg-blue-600"
           >
             {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </button>
@@ -356,9 +356,7 @@ export default function StatusPage() {
             <div className="mt-2 text-3xl font-bold text-orange-900 dark:text-orange-100">
               {summary.inProgress}
             </div>
-            <div className="mt-1 text-xs text-orange-600 dark:text-orange-400">
-              Max 1 at a time
-            </div>
+            <div className="mt-1 text-xs text-orange-600 dark:text-orange-400">Max 1 at a time</div>
           </div>
 
           {/* DONE */}
@@ -394,12 +392,12 @@ export default function StatusPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Enter story ID (e.g., STORY-V3-010)"
-                className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
               />
               <button
                 type="submit"
                 disabled={isSearching}
-                className="rounded-md bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed dark:bg-blue-500 dark:hover:bg-blue-600"
+                className="rounded-md bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400 dark:bg-blue-500 dark:hover:bg-blue-600"
               >
                 {isSearching ? 'Searching...' : 'Search'}
               </button>
@@ -423,7 +421,8 @@ export default function StatusPage() {
                   className={`rounded-full px-3 py-1 text-xs font-medium ${
                     searchResult.status?.state === 'DONE'
                       ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300'
-                      : searchResult.status?.state === 'IN_PROGRESS' || searchResult.status?.state === 'IN PROGRESS'
+                      : searchResult.status?.state === 'IN_PROGRESS' ||
+                          searchResult.status?.state === 'IN PROGRESS'
                         ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-300'
                         : searchResult.status?.state === 'TODO'
                           ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300'
@@ -442,7 +441,7 @@ export default function StatusPage() {
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Source</dt>
-                  <dd className="text-sm text-gray-900 dark:text-white break-all">
+                  <dd className="text-sm break-all text-gray-900 dark:text-white">
                     {searchResult.source}
                   </dd>
                 </div>

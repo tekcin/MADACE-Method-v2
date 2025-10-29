@@ -4,17 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 > **MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
 
-> **⚠️ PROJECT VERSION: v2.0 (Experimental Next.js Implementation)**
+> **PROJECT VERSION: v3.0 (Production-Ready Implementation)**
 >
-> This document describes the **CURRENT project** (v2.0 Alpha).
+> This is the **production implementation** of MADACE-Method with full database support, Prisma ORM, and advanced NLU capabilities.
 >
-> **For v3.0 future vision:** See [ROADMAP-V3-FUTURE-VISION.md](./ROADMAP-V3-FUTURE-VISION.md) and [ARCHITECTURE-V3-FUTURE.md](./ARCHITECTURE-V3-FUTURE.md)
->
-> **DO NOT implement v3.0 features** (database, NLU, web IDE, real-time collaboration) in this v2.0 implementation.
-
-> **IMPORTANT**: This is an **experimental implementation** exploring MADACE-METHOD concepts using Next.js 15 full-stack TypeScript.
->
-> The **official MADACE-METHOD** is Node.js CLI-based. See: https://github.com/tekcin/MADACE-METHOD
+> **For V2 (experimental) history:** See [archive/v2/](./archive/v2/)
 
 ## Quick Reference
 
@@ -26,25 +20,29 @@ npm run dev                # Start dev server at http://localhost:3000
 npm run check-all          # Run all quality checks (MUST pass before commit)
 npm run build              # Production build (verify before commit)
 
+# Database
+npm run db:migrate         # Run database migrations
+npm run db:studio          # Open Prisma Studio (database GUI)
+npm run db:push            # Push schema changes to database
+
 # Quality Checks
 npm run type-check         # TypeScript type checking
 npm run lint               # ESLint check
 npm run format             # Format with Prettier
 npm test                   # Run Jest tests
+npm run test:e2e           # Run Playwright E2E tests
 
-# Docker
-docker-compose up -d                          # Production deployment
-docker-compose -f docker-compose.dev.yml up -d  # Development with IDEs
-docker-compose down                           # Stop containers
+# Agent Management
+npm run import-madace-v3   # Import MADACE agents to database
 ```
 
 **Key File Locations:**
 
 - **Business Logic**: `lib/` (TypeScript modules)
 - **API Routes**: `app/api/` (Next.js App Router)
-- **UI Components**: `components/features/` and `app/*/page.tsx`
+- **Database Schema**: `prisma/schema.prisma`
 - **Agent Definitions**: `madace/mam/agents/*.agent.yaml`
-- **State Machine**: `docs/mam-workflow-status.md` (single source of truth)
+- **Workflow Status**: `docs/workflow-status.md` (single source of truth)
 - **Types**: `lib/types/` (TypeScript interfaces)
 
 **Environment:**
@@ -52,1243 +50,612 @@ docker-compose down                           # Stop containers
 - Node.js v24.10.0 (v20+ required)
 - Next.js 15.5.6 with React 19.2.0
 - TypeScript 5.9.3 (strict mode)
+- Prisma 6.17.1 (PostgreSQL/SQLite)
 
-## ⚠️ CRITICAL: Version Locking Policy
+## Project Overview
 
-**MADACE-Method v2.0 uses EXACT versions for all dependencies. NO version ranges allowed.**
+**MADACE-Method v3.0** is a production-ready full-stack implementation with:
+
+- **Frontend**: Next.js 15.5.6 with React 19.2.0 and App Router
+- **Backend**: Next.js API Routes + Prisma ORM
+- **Database**: PostgreSQL (production) / SQLite (development)
+- **Business Logic**: TypeScript modules
+- **UI**: Modern web interface with real-time collaboration
+- **LLM**: Multi-provider support (Gemini/Claude/OpenAI/Local)
+- **Agent System**: Database-backed with dynamic loading
+- **State Machine**: Visual Kanban board with persistence
+
+### Architecture Overview
+
+**V3 Architecture**: Full-Stack TypeScript with Database
+
+```
+Browser (React 19) → Next.js App Router
+                          ↓
+                    API Routes
+                          ↓
+                  Business Logic (lib/)
+                          ↓
+         ┌────────────────┴────────────────┐
+         │                                  │
+         ▼                                  ▼
+   Prisma ORM                        File System
+         │                                  │
+         ▼                                  ▼
+   PostgreSQL/SQLite                YAML Agents
+```
+
+**Key Differences from V2:**
+
+- ✅ **Database-backed**: Agents, workflows, state stored in DB
+- ✅ **Prisma ORM**: Type-safe database access
+- ✅ **Agent Management**: CRUD operations via API + UI
+- ✅ **Real-time sync**: WebSocket + database watchers
+- ✅ **NLU Integration**: Natural language understanding (planned)
+- ✅ **Production-ready**: Deployment guides, E2E tests, monitoring
+
+See [PRD.md](./PRD.md) and [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
+
+## Version Locking Policy
+
+**MADACE v3.0 uses EXACT versions for all dependencies. NO version ranges allowed.**
 
 ### Locked Core Tech Stack (DO NOT CHANGE)
 
 ```json
 {
-  "next": "15.5.6", // LOCKED - NO upgrades without team approval
-  "react": "19.2.0", // LOCKED - Must match react-dom
-  "react-dom": "19.2.0", // LOCKED - Must match react
-  "typescript": "5.9.3" // LOCKED - Strict mode enabled
+  "next": "15.5.6",       // LOCKED
+  "react": "19.2.0",      // LOCKED
+  "react-dom": "19.2.0",  // LOCKED
+  "typescript": "5.9.3",  // LOCKED
+  "prisma": "6.17.1"      // LOCKED
 }
 ```
 
-### Why Exact Versions?
-
-1. **Consistency** - Same behavior across all environments (dev/staging/prod)
-2. **Reproducibility** - `npm ci` installs exact versions from package-lock.json
-3. **No Surprises** - Version ranges can introduce breaking changes silently
-4. **MADACE Compliance** - Official requirement for v2.0-alpha release
-
-### Version Validation
-
-**Before any commit, run:**
+**Before any commit:**
 
 ```bash
-npm run validate-versions  # Checks all version requirements
-npm run check-all          # Includes version validation + quality checks
+npm run validate-versions  # Check version requirements
+npm run check-all          # All quality checks
 ```
 
-**The validation script checks:**
+See [VERSION-LOCK.md](./VERSION-LOCK.md) for full policy.
 
-- ✅ Next.js is exactly 15.5.6
-- ✅ React is exactly 19.2.0
-- ✅ React DOM is exactly 19.2.0
-- ✅ TypeScript is exactly 5.9.3
-- ✅ Node.js is >= 20.0.0 (recommended: 24.10.0)
-- ✅ No version ranges in package.json (no ^, ~, >, <)
-- ✅ Installed versions match package.json
+## Development Workflow
 
-### Enforced by Configuration
+### Initial Setup
 
 ```bash
-# .nvmrc - Node.js version lock
-24.10.0
+# 1. Clone and install
+git clone <repo-url>
+cd MADACE-Method-v2.0
+npm install
 
-# .npmrc - npm configuration
-save-exact=true        # Always save exact versions
-engine-strict=true     # Enforce engine requirements
-package-lock=true      # Use lockfile for reproducibility
+# 2. Setup database (SQLite for development)
+npm run db:push
 
-# package.json - Engine requirements
-"engines": {
-  "node": ">=20.0.0",
-  "npm": ">=9.0.0"
+# 3. Import MADACE agents
+npm run import-madace-v3
+
+# 4. Start dev server
+npm run dev
+```
+
+### Database Operations
+
+```bash
+# Prisma Studio (visual database editor)
+npm run db:studio          # Open at http://localhost:5555
+
+# Schema changes
+npm run db:migrate         # Create and run migrations
+npm run db:push            # Quick schema push (dev only)
+npm run db:generate        # Generate Prisma Client
+npm run db:reset           # Reset database (WARNING: deletes data)
+```
+
+### Code Quality Checks
+
+```bash
+# Run before every commit (MANDATORY)
+npm run check-all          # Type-check + lint + format
+
+# Individual checks
+npm run type-check         # TypeScript errors
+npm run lint               # ESLint issues
+npm run lint:fix           # Auto-fix ESLint
+npm run format             # Format with Prettier
+npm run format:check       # Check formatting only
+```
+
+### Testing
+
+```bash
+# Unit tests (Jest)
+npm test                   # Run all unit tests
+npm test -- --watch        # Watch mode
+
+# E2E tests (Playwright)
+npm run test:e2e           # Run all E2E tests
+npm run test:e2e:ui        # Open Playwright UI
+npm run test:e2e:debug     # Debug mode
+npm run test:e2e:report    # View last report
+npm run test:e2e:clean     # Clean run (restart server)
+```
+
+## Key Architecture Components
+
+### Database Layer (Prisma)
+
+**Schema**: `prisma/schema.prisma`
+
+```prisma
+model Agent {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  title     String
+  module    String
+  version   String
+  icon      String?
+  persona   Json
+  menu      Json
+  prompts   Json?
+  loadAlways Json?
+  criticalActions Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorkflowState {
+  id          String   @id @default(cuid())
+  workflowId  String   @unique
+  currentStep Int
+  data        Json
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 ```
 
-### Rules for Dependencies
+**Accessing Database**:
 
-1. **NEVER use version ranges** (^, ~, >=, <=, >, <)
-2. **ALWAYS use exact versions** (e.g., "15.5.6", not "^15.5.6")
-3. **RUN validation before committing** (`npm run validate-versions`)
-4. **USE `npm ci`** instead of `npm install` in CI/CD
-5. **COMMIT package-lock.json** to git (required)
+```typescript
+import { prisma } from '@/lib/database/client';
 
-### Upgrading Dependencies
+// Query agents
+const agents = await prisma.agent.findMany();
 
-**⚠️ Core packages (Next.js, React, TypeScript) require team approval.**
+// Create agent
+const agent = await prisma.agent.create({
+  data: { name: 'pm', title: 'Product Manager', /* ... */ }
+});
 
-**Process for non-core packages:**
-
-```bash
-# 1. Check current version
-npm list <package-name>
-
-# 2. Update to specific version (no ranges!)
-npm install <package-name>@<exact-version>
-
-# 3. Validate
-npm run validate-versions
-npm run check-all
-
-# 4. Test thoroughly
-npm run build
-npm test
-
-# 5. Commit with explanation
-git add package.json package-lock.json
-git commit -m "deps: update <package> to <version> - <reason>"
+// Update workflow state
+await prisma.workflowState.update({
+  where: { workflowId: 'mam-workflow' },
+  data: { currentStep: 2, status: 'in-progress' }
+});
 ```
 
-### When to Upgrade Core Packages
+### Agent System (`lib/agents/`)
 
-**DO NOT upgrade unless:**
+**V3 Agent Architecture**:
 
-- ✅ Critical security vulnerability
-- ✅ Team consensus on upgrade path
-- ✅ All tests pass with new version
-- ✅ Migration guide reviewed
-- ✅ Breaking changes documented
+- **Loader** (`loader.ts`): Loads from YAML or database
+- **Service** (`lib/services/agent-service.ts`): CRUD operations
+- **Schema** (`schema.ts`): Zod validation for YAML
+- **Runtime** (`runtime.ts`): Agent execution engine
+- **Conversation** (`conversation.ts`): LLM conversation management
+- **Actions** (`actions.ts`): Agent action handlers
 
-**For v2.0-alpha: Core packages are FROZEN until beta release.**
+**Loading Agents**:
 
-## Project Overview
+```typescript
+// From database (V3)
+import { getAgentById, getAllAgents } from '@/lib/services/agent-service';
+const agent = await getAgentById('agent-id');
+const agents = await getAllAgents();
 
-This repository (MADACE-Method v2.0) is a **proof-of-concept** implementation with a simplified Next.js full-stack architecture:
-
-- **Frontend**: Next.js 15.5.6 with React 19.2.0 and App Router
-- **Backend**: Next.js API Routes and Server Actions
-- **Business Logic**: TypeScript modules
-- **UI**: Web-based interface with visual Kanban board
-- **LLM**: User-selectable (Gemini/Claude/OpenAI/Local)
-
-### Architecture
-
-**Current Design**: Next.js 15 Full-Stack TypeScript
-
-- Single runtime (Node.js)
-- Single language (TypeScript everywhere)
-- Proven stack with battle-tested components
-- 4-week timeline to Alpha MVP
-
-See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for architectural decisions.
-
-### Official MADACE-METHOD vs This Project
-
-| Aspect            | Official MADACE       | This Project (Experimental) |
-| ----------------- | --------------------- | --------------------------- |
-| **Language**      | JavaScript/Node.js    | TypeScript/Node.js          |
-| **Interface**     | CLI + IDE integration | Web UI (browser-based)      |
-| **Architecture**  | Single runtime        | Single runtime (Next.js)    |
-| **Status**        | v1.0-alpha.2 (Stable) | Proof-of-concept (Alpha)    |
-| **State Machine** | CLI text              | Visual Kanban board         |
-| **LLM Selection** | Fixed                 | User-selectable (4 options) |
-| **Use Case**      | Production use        | Research & UI innovation    |
-
-## Project Status
-
-**Current Phase**: ✅ Implementation In Progress - Foundation Complete
-
-**Completed**:
-
-- ✅ Architecture review and simplification decision
-- ✅ LLM selection system created
-- ✅ Documentation updated for new architecture
-- ✅ ADRs created (ADR-001, ADR-002, ADR-003)
-- ✅ **Feasibility tests completed (ALL PASSED)**
-- ✅ Core dependencies installed (zod, js-yaml, handlebars)
-- ✅ Environment validated (Node.js v24.10.0)
-- ✅ CLI tools confirmed (Claude CLI v2.0.14, Gemini CLI v0.9.0)
-- ✅ **Next.js 15.5.6 project initialized**
-- ✅ **Project structure created** (app/, lib/, components/)
-- ✅ **ESLint and Prettier configured**
-- ✅ **Environment variables configured** (.env.example)
-- ✅ **Base layout and navigation** (responsive, dark mode)
-- ✅ **Setup Wizard UI** (4-step configuration wizard)
-- ✅ **Agent Loader** (Zod validation, YAML parsing, caching)
-- ✅ **Multi-provider LLM client** (Gemini, Claude, OpenAI, Local)
-- ✅ **API routes** (agents, LLM test)
-- ✅ Docker deployment configured (production + development)
-- ✅ Development container with VSCode Server + Cursor ready
-
-**In Progress**:
-
-- ⏭️ Configuration persistence (save config.yaml + .env from web UI)
-- ⬜ Settings Page (edit configuration)
-- ⬜ Workflow Engine
-- ⬜ State Machine
-- ⬜ Template Engine
-
-**Completed Stories**: 13 stories | 57 points (see [docs/mam-workflow-status.md](./docs/mam-workflow-status.md))
-
-**Feasibility Validation**: See [FEASIBILITY-REPORT.md](./FEASIBILITY-REPORT.md)
-
-**Timeline**: Week 2 of 4-week Alpha MVP timeline
-
-## Development Commands
-
-### LLM Selection (First Step)
-
-```bash
-# Interactive LLM selection for planning/architecture
-./scripts/select-llm.sh
-
-# Test LLM connection
-./scripts/test-llm.sh
+// From YAML (for importing)
+import { loadAgent } from '@/lib/agents/loader';
+const yamlAgent = await loadAgent('/path/to/agent.yaml');
 ```
 
-### Next.js Development
+### API Routes (V3)
 
-```bash
-npm install                # Install dependencies
-npm run dev                # Development server (http://localhost:3000)
-npm run build              # Production build
-npm start                  # Production server
+**Database-backed endpoints**:
 
-# Code Quality
-npm run type-check         # TypeScript type checking (no emit)
-npm run lint               # ESLint (check)
-npm run lint:fix           # ESLint (auto-fix)
-npm run format             # Prettier (format all files)
-npm run format:check       # Prettier (check only)
-npm run check-all          # Run all checks (type-check + lint + format:check)
+- `GET /api/v3/agents` - List all agents (from DB)
+- `GET /api/v3/agents/[id]` - Get agent by ID
+- `POST /api/v3/agents` - Create new agent
+- `PUT /api/v3/agents/[id]` - Update agent
+- `DELETE /api/v3/agents/[id]` - Delete agent
+- `POST /api/v3/agents/[id]/duplicate` - Duplicate agent
+- `POST /api/v3/agents/[id]/export` - Export as JSON
+- `POST /api/v3/agents/import` - Import agent from JSON
+- `GET /api/v3/agents/search?q=query` - Search agents
 
-# Testing
-npm test                   # Run all tests with Jest
-```
-
-### MADACE CLI Commands
-
-```bash
-# Project Complexity Assessment
-npm run madace assess-scale              # Interactive assessment wizard
-npm run madace assess-scale -- --json '{"projectSize":2,...}' --format=json
-npm run madace assess-scale -- --json '{"projectSize":2,...}' --format=markdown --output=docs/assessment.md
-
-# Command: madace assess-scale
-# Purpose: Assess project complexity and recommend planning level (0-4)
-# Modes:
-#   - Interactive (default): 8-question wizard using inquirer.js
-#   - Non-interactive: JSON input via --json flag
-# Output formats:
-#   - table (default): Terminal-friendly box drawing
-#   - json: Machine-readable JSON
-#   - markdown: Full assessment report
-# Options:
-#   --format <format>: Output format (table, json, markdown)
-#   --output <file>: Save report to file
-#   --json <data>: Non-interactive mode with JSON input
-
-# Example JSON input:
-# {
-#   "projectSize": 2,        // 0-5: Tiny to Massive
-#   "teamSize": 2,          // 0-5: Solo to Enterprise
-#   "codebaseComplexity": 2, // 0-5: Trivial to Extreme
-#   "integrations": 2,       // 0-5: None to Extensive
-#   "userBase": 2,          // 0-5: Personal to Massive
-#   "security": 2,          // 0-5: None to Critical
-#   "duration": 2,          // 0-5: Very Short to Indefinite
-#   "existingCode": 0       // 0-5: Greenfield to Full Rewrite
-# }
-
-# Example outputs:
-# - Level 0 (Minimal): Simple projects, minimal planning
-# - Level 1 (Basic): Small teams, basic planning
-# - Level 2 (Standard): Medium projects, structured planning
-# - Level 3 (Comprehensive): Large projects, comprehensive planning
-# - Level 4 (Enterprise): Mission-critical systems, full governance
-```
-
-### Docker Deployment
-
-**IMPORTANT: Always use Docker Compose for Docker operations in this project.**
-
-Docker Compose provides:
-
-- Consistent configuration across environments
-- Volume management for data persistence
-- Easy service orchestration
-- Simplified command interface
-- Environment-specific configurations
-
-**Two deployment modes:**
-
-#### Development Container (with VSCode + Cursor)
-
-```bash
-# Start development environment with IDEs pre-installed
-mkdir madace-data
-docker-compose -f docker-compose.dev.yml up -d
-
-# Access:
-# - VSCode Server: http://localhost:8080 (password: madace123)
-# - Next.js Dev: http://localhost:3000
-# - Cursor: http://localhost:8081
-
-# Stop containers
-docker-compose -f docker-compose.dev.yml down
-
-# View logs
-docker-compose -f docker-compose.dev.yml logs -f
-
-# Features:
-# ✅ VSCode Server in browser with all extensions
-# ✅ Cursor IDE for AI-powered coding
-# ✅ Hot reload enabled
-# ✅ All dev tools pre-installed (TypeScript, ESLint, Prettier, Jest)
-# ✅ Claude CLI integrated
-# ✅ Live code sync (edit in browser, saves to host)
-```
-
-#### Production Deployment (optimized image)
-
-```bash
-# Create data folder on host
-mkdir madace-data
-
-# Build and run production container with Docker Compose (RECOMMENDED)
-docker-compose up -d
-
-# Stop containers
-docker-compose down
-
-# Rebuild after code changes
-docker-compose up -d --build
-
-# View logs
-docker-compose logs -f
-
-# Access: http://localhost:3000
-# Complete setup wizard (saves to madace-data/config/)
-```
-
-**Why Docker Compose?**
-
-- ✅ Declarative configuration in `docker-compose.yml`
-- ✅ Automatic volume creation and management
-- ✅ Named volumes for better data persistence
-- ✅ Easy to scale and add services (future: database, redis, etc.)
-- ✅ Consistent commands across dev/prod environments
-- ✅ No manual port/volume mapping needed
-
-**Data Persistence (both modes):**
-
-- All config, generated files, and user data stored in `./madace-data/` (host folder)
-- Volume mounted to `/app/data` (production) or `/workspace/madace-data` (dev)
-- Survives container restarts and updates
-
-## Architecture Highlights
-
-### Component Communication Flow
-
-```
-User (Browser) → Frontend (React)
-                     ↓
-              API Routes (Next.js)
-                     ↓
-         ┌───────────┴───────────┐
-         │                       │
-         ▼                       ▼
-    Agent System          Workflow Engine
-         │                       │
-         └───────────┬───────────┘
-                     ▼
-              State Machine
-                     ↓
-         ┌───────────┴───────────┐
-         │                       │
-         ▼                       ▼
-   Template Engine         LLM Client
-         │                       │
-         └───────────┬───────────┘
-                     ▼
-                File System
-         (Agents, Workflows, Status)
-```
-
-### Key Architectural Components (TypeScript)
-
-**Agent System** (`lib/agents/`):
-
-- **Loader** (`loader.ts`): AgentLoader class with YAML parsing and caching
-  - Singleton pattern with `loadAgent()` and `loadMAMAgents()` functions
-  - In-memory caching to avoid repeated file reads
-  - Custom `AgentLoadError` for detailed error messages
-  - Example: `loadMAMAgents()` loads all 5 MAM agents from `madace/mam/agents/`
-- **Schema** (`schema.ts`): Zod validation schemas
-  - `AgentFileSchema` validates entire YAML structure
-  - `AgentSchema` for agent metadata and definition
-  - Runtime type safety with `z.infer<typeof AgentSchema>`
-- **Types** (`lib/types/agent.ts`): TypeScript interfaces
-  - `Agent`, `AgentMetadata`, `AgentPersona`, `AgentMenu`, `AgentPrompt`
-  - Type-safe agent structure throughout the application
-- **Runtime** (TODO): Agent execution engine not yet implemented
-
-**Workflow Engine** (TODO - `lib/workflows/`):
-
-- Parses and executes workflow YAML files
-- Sequential step execution with state persistence
-- Supports action types: elicit, reflect, guide, template, validate, sub-workflow
-- State files: `.{workflow-name}.state.json`
-- **Status**: Not yet implemented (placeholder index.ts only)
-
-**Template Engine** (TODO - `lib/templates/`):
-
-- Handlebars template rendering (planned)
-- Support for legacy patterns: `{var}`, `${var}`, `%VAR%`
-- Standard MADACE variables
-- Template validation
-- **Status**: Not yet implemented (has `llm-system-prompt.ts` placeholder)
-
-**State Machine** (TODO - `lib/state/`):
-
-- Manages story lifecycle: BACKLOG → TODO → IN PROGRESS → DONE
-- **Critical Rules**:
-  - Only ONE story in TODO at a time
-  - Only ONE story in IN PROGRESS at a time
-  - Single source of truth: `docs/mam-workflow-status.md`
-  - Atomic state transitions (no skipping states)
-- **Visual Kanban Board** in Web UI (planned)
-- **Status**: Not yet implemented (placeholder index.ts only)
-
-**LLM Client** (`lib/llm/`):
-
-- **Client** (`client.ts`): Factory pattern for multi-provider support
-  - `LLMClient` class with `chat()` and `chatStream()` methods
-  - Provider switching via `createProvider()` factory
-  - Configuration validation before each request
-  - Example: `createLLMClient({ provider: 'gemini', apiKey, model })`
-- **Providers** (`providers/`): Strategy pattern implementations
-  - `BaseLLMProvider` abstract class with common functionality
-  - Gemini, Claude, OpenAI, Local providers (all currently stubs)
-  - Each provider implements `ILLMProvider` interface
-  - Support for both blocking and streaming responses
-- **Types** (`types.ts`): LLM interfaces
-  - `LLMConfig`, `LLMRequest`, `LLMResponse`, `LLMStreamChunk`, `ILLMProvider`
-  - AsyncGenerator for streaming API
-- **Config** (`config.ts`): `getLLMConfigFromEnv()` helper
-- **API Route**: `app/api/llm/test/route.ts` for testing LLM connections
-- **Status**: ✅ Architecture complete, providers need real implementations
-
-**Configuration Manager** (TODO - `lib/config/`):
-
-- Auto-detects config location: `./madace/core/config.yaml` (planned)
-- Cross-platform path resolution
-- Validates installation integrity
-- Zod schema validation
-- **Status**: Not yet implemented (placeholder index.ts only)
-- **Next**: Implement `app/api/config/route.ts` to save setup wizard config
-
-### API Routes
-
-Currently implemented REST endpoints:
-
-**Agent Operations** (`app/api/agents/`):
-
-- `GET /api/agents` - List all MAM agents
-  - Returns array of 5 agents (PM, Analyst, Architect, SM, DEV)
-  - Uses `loadMAMAgents()` from agent loader
-  - Example response: `[{ name: 'pm', version: '1.0.0', ... }]`
-- `GET /api/agents/[name]` - Get single agent by name
-  - Example: `/api/agents/pm` returns PM agent definition
-  - 404 if agent not found
-  - Uses `loadAgent()` with file path
-
-**LLM Operations** (`app/api/llm/`):
-
-- `POST /api/llm/test` - Test LLM connection
-  - Request: `{ provider, apiKey, model, testPrompt? }`
-  - Response: `{ success, message, provider }`
-  - Uses `createLLMClient()` and `chat()` method
-  - Validates configuration before testing
-
-**Workflow Operations** (`app/api/workflows/`):
+**Workflow Operations**:
 
 - `GET /api/workflows` - List all workflows
-- `GET /api/workflows/[name]` - Get workflow details
-- `POST /api/workflows/[name]/execute` - Execute next workflow step
-- `GET /api/workflows/[name]/state` - Get workflow execution state
-- `DELETE /api/workflows/[name]/state` - Reset workflow state
+- `GET /api/workflows/[id]` - Get workflow details
+- `POST /api/workflows/[id]/execute` - Execute next step
+- `GET /api/workflows/[id]/state` - Get execution state
+- `DELETE /api/workflows/[id]/state` - Reset workflow
 
-**State Operations** (`app/api/state/`):
+**Status Operations**:
 
-- `GET /api/state` - Get current workflow status from state machine
+- `GET /api/status/[type]/[id]` - Get status by type (story, epic, workflow)
+- `PATCH /api/status/[type]/[id]` - Update status
 
-**Configuration Operations** (`app/api/config/`):
+### LLM Client (`lib/llm/`)
 
-- `GET /api/config` - Load configuration
-- `POST /api/config` - Save configuration
-
-**Health Check** (`app/api/health/`):
-
-- `GET /api/health` - System health check (filesystem, state machine, config, LLM)
-
-**Sync Service** (`app/api/sync/`): ✅ **NEW**
-
-- `GET /api/sync` - Get sync service status and connected clients
-- `POST /api/sync` - Start/stop WebSocket sync service
-  - Request: `{ action: 'start' | 'stop', wsPort?: number }`
-  - Response: `{ success, running, clientCount }`
-
-### CLI Integration System ✅ **NEW**
-
-**Overview**: Real-time synchronization between Web UI and external CLI tools (Claude CLI, Gemini CLI).
-
-**Architecture** (`lib/cli/` and `lib/sync/`):
-
-- **CLI Adapters** (`lib/cli/`):
-  - `ClaudeCLIAdapter` - Integrates with Anthropic's Claude CLI
-  - `GeminiCLIAdapter` - Integrates with Google's Gemini CLI
-  - Both adapters use the same TypeScript business logic as Web UI
-  - Generate `.claude.json` and `.gemini.json` config files
-
-- **WebSocket Server** (`lib/sync/websocket-server.ts`):
-  - Real-time bidirectional communication (port 3001)
-  - Broadcasts state changes to all connected clients
-  - Client detection (Web UI, Claude CLI, Gemini CLI)
-  - Ping/pong heartbeat for connection health
-  - Singleton pattern with `getWebSocketServer()`
-
-- **File Watchers** (`lib/sync/file-watcher.ts`):
-  - Monitors workflow state files (`.*.state.json`)
-  - Monitors configuration changes
-  - Debounced change detection (300ms)
-  - Auto-broadcasts via WebSocket on file changes
-
-- **Sync Service** (`lib/sync/sync-service.ts`):
-  - Coordinates WebSocket server + file watchers
-  - Single entry point: `startSyncService()` / `stopSyncService()`
-  - Default paths: `madace-data/workflow-states`, `madace-data/config/config.yaml`
-
-**Web UI**:
-
-- **Sync Status Page** (`/sync-status`): Real-time dashboard
-  - Shows connected clients with source detection
-  - Start/Stop sync service buttons
-  - Auto-refresh every 5 seconds
-  - Client health indicators (Active/Idle)
-
-**Demo Script**:
-
-```bash
-./scripts/demo-cli-integration.sh  # Interactive demo of CLI integration
-```
-
-**How It Works**:
-
-1. Web UI or CLI makes changes to workflow state
-2. File watcher detects the change
-3. WebSocket server broadcasts update to all connected clients
-4. All clients (Web UI + CLI tools) receive real-time updates
-
-**Use Cases**:
-
-- Work in Claude CLI while monitoring progress in Web UI
-- Make changes in Web UI, see them instantly in CLI
-- Multiple developers working on same project simultaneously
-- Real-time collaboration between different interfaces
-
-### Module System
-
-Modules are located in `madace/` directory:
-
-- **core**: Framework orchestration (MADACE Master agent) - TODO
-- **mam**: MADACE Agile Method - PM, Analyst, Architect, SM, DEV agents ✅
-- **mab**: MADACE Builder - Agent/workflow/module creation - TODO
-- **cis**: Creative Intelligence Suite - Creativity workflows - TODO
-
-### Directory Structure
-
-```
-/Users/nimda/MADACE-Method-v2.0/
-├── app/                    # Next.js App Router
-│   ├── page.tsx           # Home page ✅
-│   ├── layout.tsx         # Root layout ✅
-│   ├── api/               # API routes
-│   │   ├── agents/        # Agent operations ✅
-│   │   │   ├── route.ts   # GET /api/agents (list all)
-│   │   │   └── [name]/route.ts  # GET /api/agents/:name
-│   │   ├── llm/           # LLM operations ✅
-│   │   │   └── test/route.ts    # POST /api/llm/test
-│   │   ├── workflows/     # Workflow execution (TODO)
-│   │   ├── state/         # State machine (TODO)
-│   │   └── config/        # Configuration API (TODO)
-│   ├── setup/             # Setup wizard ✅
-│   │   └── page.tsx       # 4-step wizard UI
-│   ├── settings/          # Settings page (placeholder)
-│   │   └── page.tsx
-│   ├── agents/            # Agents page (placeholder)
-│   │   └── page.tsx
-│   └── workflows/         # Workflows page (placeholder)
-│       └── page.tsx
-│
-├── lib/                   # Business logic (TypeScript)
-│   ├── agents/            # Agent system ✅
-│   │   ├── loader.ts      # AgentLoader class (YAML + Zod validation)
-│   │   ├── schema.ts      # Zod schemas for agent validation
-│   │   └── index.ts       # Public exports
-│   ├── llm/               # LLM client ✅
-│   │   ├── client.ts      # LLMClient (factory pattern)
-│   │   ├── types.ts       # LLM interfaces
-│   │   ├── config.ts      # Environment config loader
-│   │   ├── providers/     # Provider implementations
-│   │   │   ├── base.ts    # BaseLLMProvider abstract class
-│   │   │   ├── gemini.ts  # Google Gemini (stub)
-│   │   │   ├── claude.ts  # Anthropic Claude (stub)
-│   │   │   ├── openai.ts  # OpenAI GPT (stub)
-│   │   │   └── local.ts   # Local/Ollama (stub)
-│   │   └── index.ts       # Public exports
-│   ├── types/             # TypeScript types ✅
-│   │   ├── agent.ts       # Agent interfaces
-│   │   ├── setup.ts       # Setup wizard types
-│   │   └── index.ts       # Aggregated exports
-│   ├── constants/         # Constants ✅
-│   │   └── tech-stack.ts  # Tech stack definitions
-│   ├── templates/         # Template engine (placeholders)
-│   │   ├── llm-system-prompt.ts
-│   │   └── index.ts
-│   ├── utils/             # Utility functions ✅
-│   │   └── index.ts       # Date, string, JSON, array utilities
-│   ├── workflows/         # Workflow engine (TODO)
-│   │   └── index.ts
-│   ├── state/             # State machine (TODO)
-│   │   └── index.ts
-│   ├── config/            # Configuration (TODO)
-│   │   └── index.ts
-│   └── cli/               # CLI integration (TODO)
-│       └── index.ts
-│
-├── components/            # React components
-│   ├── features/          # Feature components ✅
-│   │   ├── Navigation.tsx # Responsive nav with mobile menu
-│   │   ├── Footer.tsx     # Footer with links
-│   │   └── setup/         # Setup wizard components
-│   │       ├── StepIndicator.tsx   # Progress tracker
-│   │       ├── ProjectInfoStep.tsx # Project config
-│   │       ├── LLMConfigStep.tsx   # LLM selection
-│   │       ├── ModuleConfigStep.tsx # Module toggles
-│   │       └── SummaryStep.tsx     # Review config
-│   └── ui/                # UI primitives (empty, for Shadcn/ui)
-│       └── index.ts
-│
-├── public/               # Static assets
-│   └── agents/          # Agent YAML files
-│
-├── scripts/              # Utility scripts
-│   ├── select-llm.sh    # Interactive LLM selection
-│   └── test-llm.sh      # LLM connection test
-│
-├── docs/                 # Project documentation
-│   ├── adrs/            # Architecture Decision Records
-│   ├── LLM-SELECTION.md # LLM selection guide
-│   └── mam-workflow-status.md   # State machine source of truth
-│
-├── madace/              # MADACE agents/workflows (built-in) ✅
-│   └── mam/
-│       └── agents/      # 5 MAM agents (PM, Analyst, Architect, SM, DEV)
-│           ├── pm.agent.yaml
-│           ├── analyst.agent.yaml
-│           ├── architect.agent.yaml
-│           ├── sm.agent.yaml
-│           └── dev.agent.yaml
-│
-├── madace-data/         # User data (Docker volume mount)
-│   ├── config/
-│   │   ├── config.yaml  # Generated by web UI
-│   │   └── .env         # API keys (from web UI)
-│   ├── agents/custom/   # User-created agents
-│   ├── workflows/custom/ # User-created workflows
-│   ├── docs/            # Generated PRD, stories, status
-│   └── output/          # Generated artifacts
-│
-├── .env                 # Environment variables (git-ignored)
-├── .env.example         # Environment template ✅
-├── .gitignore           # Git exclusions ✅
-├── .dockerignore        # Docker build exclusions ✅
-├── Dockerfile           # Multi-stage Docker build ✅
-├── docker-compose.yml   # Production deployment (HTTP) ✅
-├── docker-compose.dev.yml # Development with VSCode ✅
-├── docker-compose.https.yml # Production deployment (HTTPS) ✅
-├── Caddyfile            # Caddy reverse proxy config ✅
-├── package.json         # Dependencies and scripts ✅
-├── tsconfig.json        # TypeScript config (strict mode) ✅
-├── next.config.ts       # Next.js 15 config ✅
-├── eslint.config.mjs    # ESLint config ✅
-├── prettier.config.js   # Prettier config ✅
-└── tailwind.config.ts   # Tailwind CSS 4 config ✅
-```
-
-**Legend**: ✅ = Implemented | (TODO) = Not yet implemented | (placeholder) = Basic implementation, needs work
-
-## Design Patterns
-
-**Core Patterns**:
-
-- **Functional Programming**: Pure functions, immutable data
-- **Type Safety**: Zod schemas for runtime validation + TypeScript strict mode
-- **Singleton Pattern**: Default agent loader instance with caching
-- **Factory Pattern**: LLM client creation (`createLLMClient()`, `createProvider()`)
-- **Strategy Pattern**: LLM providers implementing `ILLMProvider` interface
-- **Component Composition**: Small, reusable React components
-
-**Next.js Patterns**:
-
-- **API Routes**: RESTful endpoints in `app/api/` (App Router)
-- **Server Components**: Default for all pages (use `'use client'` when needed)
-- **Client Components**: Interactive UI (marked with `'use client'` directive)
-  - Example: `app/setup/page.tsx` for wizard with React state
-- **Route Handlers**: `route.ts` files for API endpoints
-  - Example: `app/api/agents/route.ts` exports `GET` function
-
-**Error Handling**:
-
-- **Custom Errors**: `AgentLoadError` with file path and cause
-- **Try-Catch**: All file I/O and YAML parsing wrapped in try-catch
-- **Validation**: Zod parsing throws descriptive errors
-- **API Errors**: Return proper HTTP status codes (404, 500, etc.)
-
-**File Structure**:
-
-- **Barrel Exports**: `index.ts` files re-export public APIs
-- **Type Inference**: `z.infer<typeof Schema>` for Zod schemas
-- **Path Aliases**: `@/` prefix for imports (maps to project root)
-  - Example: `import { Agent } from '@/lib/types/agent'`
-
-## Key Configuration
-
-### Environment Variables (.env)
-
-```bash
-# Planning/Architecture LLM
-PLANNING_LLM=gemini                    # Options: gemini, claude, openai, local
-GEMINI_API_KEY=your-key-here
-GEMINI_MODEL=gemini-2.0-flash-exp
-
-# Implementation uses local Docker agent (automatic)
-IMPLEMENTATION_AGENT=docker
-```
-
-### MADACE Configuration (madace/core/config.yaml)
-
-```yaml
-project_name: string # Required
-output_folder: string # Required (e.g., "docs")
-user_name: string # Required
-communication_language: string # Required
-modules:
-  mam: { enabled: boolean }
-  mab: { enabled: boolean }
-  cis: { enabled: boolean }
-```
-
-## Common Implementation Patterns
-
-Based on the current codebase, here are examples for implementing common tasks:
-
-### Loading Agents
+Multi-provider architecture with streaming support:
 
 ```typescript
-// Single agent
-import { loadAgent } from '@/lib/agents/loader';
-const agent = await loadAgent('/path/to/agent.yaml');
-
-// All MAM agents
-import { loadMAMAgents } from '@/lib/agents/loader';
-const agents = await loadMAMAgents();
-```
-
-### Creating LLM Clients
-
-```typescript
-// From environment variables
 import { createLLMClient } from '@/lib/llm/client';
-import { getLLMConfigFromEnv } from '@/lib/llm/config';
 
-const config = getLLMConfigFromEnv();
-const client = createLLMClient(config);
-
-// Manual configuration
 const client = createLLMClient({
   provider: 'gemini',
   apiKey: process.env.GEMINI_API_KEY!,
-  model: 'gemini-2.0-flash-exp',
+  model: 'gemini-2.0-flash-exp'
 });
 
-// Using the client
+// Blocking request
 const response = await client.chat({
-  messages: [{ role: 'user', content: 'Hello!' }],
+  messages: [{ role: 'user', content: 'Hello!' }]
 });
 
-// Streaming
+// Streaming request
 for await (const chunk of client.chatStream(request)) {
-  console.log(chunk.content);
+  process.stdout.write(chunk.content);
 }
 ```
 
-### Creating API Routes
+**Providers**: Gemini, Claude, OpenAI, Local (Ollama/Gemma3)
 
-```typescript
-// app/api/example/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+### State Machine (`lib/state/`)
 
-export async function GET(request: NextRequest) {
-  try {
-    const data = await fetchData();
-    return NextResponse.json(data);
-  } catch (error) {
-    return NextResponse.json({ error: 'Error message' }, { status: 500 });
-  }
-}
+Manages story lifecycle with database persistence:
 
-export async function POST(request: NextRequest) {
-  const body = await request.json();
-  // Process body
-  return NextResponse.json({ success: true });
-}
+```
+BACKLOG → TODO → IN_PROGRESS → DONE
 ```
 
-### Zod Validation
+**Critical Rules**:
+- Only ONE story in TODO at a time
+- Only ONE story in IN_PROGRESS at a time
+- Single source of truth: `docs/workflow-status.md` (synced with DB)
+- Atomic state transitions (no skipping)
+
+### Template Engine (`lib/templates/`)
+
+Handlebars-based with legacy pattern support:
 
 ```typescript
-// Define schema
-import { z } from 'zod';
+import { renderTemplate } from '@/lib/templates/engine';
 
-const ConfigSchema = z.object({
-  name: z.string().min(1),
-  enabled: z.boolean().default(false),
-  options: z.array(z.string()).optional(),
+const output = await renderTemplate('template-name', {
+  projectName: 'My Project',
+  userName: 'John Doe'
 });
-
-// Validate data
-const validated = ConfigSchema.parse(untrustedData);
-
-// Type inference
-type Config = z.infer<typeof ConfigSchema>;
-
-// Safe parsing (no throw)
-const result = ConfigSchema.safeParse(data);
-if (result.success) {
-  console.log(result.data);
-} else {
-  console.error(result.error);
-}
 ```
 
-### Component Structure
+**Supported patterns**:
+- Handlebars: `{{variable_name}}`
+- Legacy: `{variable-name}`, `${variable}`, `%VAR%`
 
-```typescript
-// Client component with state
-'use client';
+### Workflow Engine (`lib/workflows/`)
 
-import { useState } from 'react';
-import type { MyType } from '@/lib/types';
+YAML-based workflow execution with sub-workflow support:
 
-export default function MyComponent() {
-  const [state, setState] = useState<MyType>({});
+```yaml
+name: mam-workflow
+description: MADACE Agile Method workflow
+steps:
+  - name: assess-complexity
+    action: workflow:assess-scale
+    agent: pm
 
-  return <div>...</div>;
-}
+  - name: create-prd
+    action: workflow:create-prd
+    agent: analyst
+    condition: "complexity >= 2"
 
-// Server component (default)
-import { loadData } from '@/lib/data';
-
-export default async function MyPage() {
-  const data = await loadData();
-  return <div>{data.title}</div>;
-}
+  - name: sub-workflow
+    action: sub-workflow:epic-breakdown
+    workflow: epic-breakdown.workflow.yaml
 ```
+
+## UI Pages
+
+**Agent Management**:
+- `/agents` - Agent selector and list
+- `/agents/[id]` - Agent detail view
+- `/agents/manage` - CRUD interface for agents
+
+**Workflow & Status**:
+- `/workflows` - Workflow list and execution
+- `/status` - Visual Kanban board (BACKLOG, TODO, IN_PROGRESS, DONE)
+- `/kanban` - Alternative Kanban view
+
+**Configuration**:
+- `/setup` - Initial setup wizard
+- `/settings` - System configuration
+- `/assess` - Complexity assessment tool
+
+**Development**:
+- `/docs` - Documentation viewer
+- `/docs/[...slug]` - Dynamic doc pages
+- `/sync-status` - Real-time sync dashboard
+- `/llm-test` - LLM connection tester
+
+## Docker Deployment
+
+**Production (HTTP)**:
+
+```bash
+mkdir madace-data
+docker-compose up -d
+# Access: http://localhost:3000
+```
+
+**Production (HTTPS with Caddy)**:
+
+```bash
+mkdir -p madace-data logs/caddy
+export DOMAIN=madace.yourdomain.com
+docker-compose -f docker-compose.https.yml up -d
+# Access: https://madace.yourdomain.com
+```
+
+**Development (with VSCode Server)**:
+
+```bash
+mkdir madace-data
+docker-compose -f docker-compose.dev.yml up -d
+# VSCode: http://localhost:8080 (password: madace123)
+# Next.js: http://localhost:3000
+```
+
+See [docs/HTTPS-DEPLOYMENT.md](./docs/HTTPS-DEPLOYMENT.md) for production setup.
 
 ## Critical Development Rules
 
-### HTTP/HTTPS Security
+### Database Operations
 
-**ALWAYS use HTTPS for HTTP connections:**
-
-- All external HTTP requests MUST use HTTPS (never plain HTTP)
-- LLM provider APIs: Use HTTPS endpoints only
-  - Gemini: `https://generativelanguage.googleapis.com`
-  - OpenAI: `https://api.openai.com`
-  - Claude: `https://api.anthropic.com`
-- WebFetch and external API calls: Upgrade HTTP to HTTPS automatically
-- Local development (localhost) is exempt from this rule
-- Docker internal communication is exempt from this rule
-- Production deployments MUST use HTTPS with valid TLS certificates
-
-### Docker Operations
-
-**ALWAYS use Docker Compose for all Docker operations:**
-
-- Use `docker-compose up -d` instead of `docker run`
-- Use `docker-compose down` instead of `docker stop` or `docker rm`
-- Use `docker-compose logs -f` instead of `docker logs`
-- Use `docker-compose up -d --build` to rebuild images
-- Configuration lives in `docker-compose.yml` (prod) and `docker-compose.dev.yml` (dev)
-- Named volumes are managed automatically by Compose
-- Never use standalone `docker` commands for this project
-
-### State Machine Operations
-
-- NEVER manually edit `docs/mam-workflow-status.md`
-- ALWAYS read story state from the status file (single source of truth)
-- Use state transition methods: `transitionBacklogToTodo()`, `transitionTodoToInProgress()`, `transitionInProgressToDone()`
-- Enforce one-at-a-time rule for TODO and IN PROGRESS
-- Web UI displays as visual Kanban board
+- **ALWAYS use Prisma Client**: Never raw SQL unless absolutely necessary
+- **Run migrations in order**: Use `npm run db:migrate` for schema changes
+- **Test schema changes**: Use `npm run db:push` in dev, migrations in prod
+- **Backup before reset**: `npm run db:reset` deletes all data
 
 ### TypeScript & Type Safety
 
-- Use Zod schemas for all YAML parsing and validation
-- Define types with `z.infer<typeof Schema>`
+- Use Zod schemas for runtime validation (YAML, API inputs)
+- Leverage Prisma-generated types for database models
 - Never use `any` type without explicit reason
-- Enable strict TypeScript mode
-- Validate at runtime (YAML is untrusted input)
+- Enable strict mode (already enabled)
 
-### YAML Definitions
+### State Machine Operations
 
-- Agent files: `*.agent.yaml` with metadata, persona, menu, prompts
-- Workflow files: `workflow.yaml` with name, description, steps
-- Use `action` field for workflow steps
-- All configs are natural language (no executable code)
-- Validate with Zod before processing
+- NEVER manually edit `docs/workflow-status.md`
+- Use state provider API: `lib/status/providers/state-machine-provider.ts`
+- Enforce one-at-a-time rule for TODO and IN_PROGRESS
+- Sync changes to database via status API
 
-### Template Rendering
+### Git Workflow
 
-- Primary: Handlebars `{{variable_name}}`
-- Legacy support: `{variable-name}`, `${variable}`, `%VAR%`
-- Validate required variables before rendering
-- Use strict mode to catch missing variables
-- Standard variables from config
-
-### Path Handling
-
-- Always use `path.resolve()` for absolute paths
-- Cross-platform compatibility (macOS/Linux/Windows)
-- Sandbox operations to project directory
-- Validate paths are within project boundaries
-
-### LLM Integration
-
-- Use multi-provider client abstraction
-- Planning phase: User-selected LLM (configured via web UI)
-- Implementation phase: Local Docker agent
-- Configuration via web UI (Settings → LLM)
-- No manual `.env` editing required (web UI manages it)
-- Handle API errors gracefully
-- Support streaming responses
-
-## Testing Conventions
-
-**Status**: Jest configured with ts-jest, tests in progress
-
-### Test Framework Setup
-
-- **Test Runner**: Jest 30.2.0 with ts-jest preset
-- **Environment**: Node.js (for API routes and business logic)
-- **Config**: `jest.config.mjs` with Next.js integration
-- **Setup**: `jest.setup.js` provides global mocks (Request, Response, fetch, TextEncoder)
-
-### Running Tests
+**Before committing**:
 
 ```bash
-npm test                   # Run all tests with Jest
-npm run check-all          # Type-check + lint + format (no tests)
+npm run check-all          # MUST pass
 npm run build              # Verify production build
-npm run dev                # Manual testing in browser
+npm test                   # Unit tests must pass
+npm run test:e2e           # E2E tests must pass (optional but recommended)
 ```
 
-### Test File Patterns
+**Commit message format**:
 
-**Location and Naming**:
+```
+type(scope): brief description
 
-- Unit/Integration tests: `__tests__/**/*.test.ts` (mirrors `lib/` structure)
-- API route tests: Colocated as `app/api/**/*.spec.ts` OR in `__tests__/app/api/**/*.test.ts`
-
-**Current Test Coverage**:
-
-- ✅ `__tests__/lib/agents/loader.test.ts` - Agent loading and caching
-- ✅ `__tests__/lib/llm/client.test.ts` - LLM client (stub)
-- ✅ `__tests__/app/api/agents/route.test.ts` - Agent API endpoints
-- ✅ `app/api/llm/test/route.spec.ts` - LLM test endpoint
-- ⬜ `__tests__/lib/state/machine.test.ts` - State machine (TODO)
-
-### Testing Patterns
-
-**API Route Testing** (Next.js App Router):
-
-```typescript
-// app/api/example/route.spec.ts
-import { GET, POST } from './route';
-import { NextResponse } from 'next/server';
-
-jest.mock('next/server', () => ({
-  NextResponse: { json: jest.fn() },
-}));
-
-describe('GET /api/example', () => {
-  let mockRequest: Partial<Request>;
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockRequest = { url: 'http://localhost:3000/api/example' };
-  });
-
-  it('should return data', async () => {
-    const response = await GET(mockRequest as Request);
-    expect(response.status).toBe(200);
-  });
-});
+feat(agents): add agent duplication feature
+fix(workflows): correct step execution order
+docs(readme): update setup instructions
+test(api): add tests for agent endpoints
 ```
 
-**Business Logic Testing** (lib/ modules):
-
-```typescript
-// __tests__/lib/agents/loader.test.ts
-import { loadAgent, AgentLoadError } from '@/lib/agents/loader';
-import fs from 'fs/promises';
-
-jest.mock('fs/promises');
-const mockFs = fs as jest.Mocked<typeof fs>;
-
-describe('AgentLoader', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should load valid agent YAML', async () => {
-    mockFs.readFile.mockResolvedValue('agent:\n  metadata:\n    ...');
-    const agent = await loadAgent('/path/to/agent.yaml');
-    expect(agent.metadata.name).toBe('PM');
-  });
-
-  it('should cache loaded agents', async () => {
-    mockFs.readFile.mockResolvedValue(validYAML);
-    const agent1 = await loadAgent('/path');
-    const agent2 = await loadAgent('/path');
-    expect(agent1).toBe(agent2); // Same reference
-    expect(mockFs.readFile).toHaveBeenCalledTimes(1);
-  });
-});
-```
-
-**Mocking Patterns**:
-
-- Mock Next.js APIs: `jest.mock('next/server')`
-- Mock fs operations: `jest.mock('fs/promises')`
-- Mock lib modules: `jest.mock('@/lib/agents')`
-- Path aliases work in tests: `@/` maps to project root
-
-**Test Guidelines**:
-
-- Use `beforeEach` to clear mocks
-- Test error cases (file not found, invalid YAML, API errors)
-- Verify caching behavior where applicable
-- Mock external dependencies (fs, LLM APIs, Next.js)
-- Use TypeScript with proper typing for mocks
-
-## Security Considerations
+### Security Rules
 
 - No executable code in YAML (by design)
 - Path traversal protection via validation
-- Template injection prevention (Handlebars auto-escapes)
-- API CORS configuration
-- `.env` files git-ignored (secrets never committed)
 - Zod validation on all untrusted input
+- API keys in `.env` only (never committed)
+- Database queries use parameterized statements (Prisma handles this)
 
-## LLM Selection
+## Testing Strategy
 
-This project uses different LLMs for different phases:
+### Unit Tests (Jest)
 
-**Phase 1: Planning & Architecture** (User-Selected)
+Location: `__tests__/**/*.test.ts`
 
-- Google Gemini (Recommended - Free tier)
-- Anthropic Claude (Best reasoning)
-- OpenAI GPT (Popular)
-- Local Models (Privacy)
+```typescript
+// __tests__/lib/agents/loader.test.ts
+import { loadAgent } from '@/lib/agents/loader';
 
-Run `./scripts/select-llm.sh` for interactive setup.
+describe('AgentLoader', () => {
+  it('should load valid agent YAML', async () => {
+    const agent = await loadAgent('/path/to/pm.agent.yaml');
+    expect(agent.metadata.name).toBe('PM');
+  });
+});
+```
 
-**Phase 2: Implementation** (Automatic)
+### E2E Tests (Playwright)
 
-- Local Docker agent
-- No user configuration needed
+Location: `e2e-tests/**/*.spec.ts`
 
-See [`docs/LLM-SELECTION.md`](./docs/LLM-SELECTION.md) for detailed guide.
+```typescript
+// e2e-tests/agents.spec.ts
+import { test, expect } from '@playwright/test';
 
-## Additional Documentation
+test('should display agent list', async ({ page }) => {
+  await page.goto('/agents');
+  await expect(page.locator('h1')).toContainText('MADACE Agents');
+});
+```
 
-### Current Project (v2.0)
+**Test Guidelines**:
+- Unit tests for business logic
+- E2E tests for user workflows
+- Mock external dependencies (LLM APIs)
+- Test error cases and edge cases
 
-- **[README.md](./README.md)** - Project overview and quick start
-- **[PRD.md](./PRD.md)** - Product requirements document (v2.0 - AUTHORITATIVE)
-- **[DEVELOPMENT.md](./DEVELOPMENT.md)** - Development container guide (VSCode + Cursor)
-- **[HTTPS-DEPLOYMENT.md](./docs/HTTPS-DEPLOYMENT.md)** - ✅ **HTTPS deployment guide (Caddy + Let's Encrypt)**
-- **[FEASIBILITY-REPORT.md](./FEASIBILITY-REPORT.md)** - ✅ **Feasibility validation (ALL PASSED)**
-- **[PLAN.md](./PLAN.md)** - Development roadmap (4-week timeline)
-- **[USING-MADACE.md](./USING-MADACE.md)** - Using MADACE to build MADACE
-- **[LLM-SELECTION.md](./docs/LLM-SELECTION.md)** - LLM selection guide
+## Common Tasks
 
-### Future Vision (v3.0)
+### Adding a New Agent
 
-- **[ROADMAP-V3-FUTURE-VISION.md](./ROADMAP-V3-FUTURE-VISION.md)** - v3.0 product vision (2026+)
-- **[ARCHITECTURE-V3-FUTURE.md](./ARCHITECTURE-V3-FUTURE.md)** - v3.0 architecture proposals (2026+)
+```bash
+# 1. Create YAML file
+# madace/mam/agents/new-agent.agent.yaml
 
-### Architecture Decision Records (ADRs)
+# 2. Import to database
+npm run import-madace-v3
 
-- **[ADR-001](./docs/adrs/ADR-001-multi-tier-architecture.md)** - Multi-Tier Architecture (Superseded)
-- **[ADR-002](./docs/adrs/ADR-002-ffi-strategy.md)** - FFI Strategy (Superseded)
-- **[ADR-003](./docs/adrs/ADR-003-architecture-simplification.md)** - Architecture Simplification ✅
+# 3. Verify in Prisma Studio
+npm run db:studio
+```
+
+### Creating a New API Endpoint
+
+```typescript
+// app/api/v3/example/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/database/client';
+
+export async function GET(request: NextRequest) {
+  try {
+    const data = await prisma.model.findMany();
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: 'Error message' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+### Adding a Database Model
+
+```prisma
+// prisma/schema.prisma
+model NewModel {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+```bash
+# Generate migration
+npm run db:migrate
+
+# Or quick push (dev only)
+npm run db:push
+```
 
 ## Troubleshooting
 
-### Common Issues
-
-**TypeScript Errors After `npm install`:**
+### Database Issues
 
 ```bash
-# Clear Next.js cache and rebuild
-rm -rf .next
+# Can't connect to database
+npm run db:push              # Reinitialize
+
+# Schema out of sync
+npm run db:generate          # Regenerate Prisma Client
+
+# Corrupt data
+npm run db:reset             # WARNING: Deletes all data
+npm run import-madace-v3     # Re-import agents
+```
+
+### Port Conflicts
+
+```bash
+# Port 3000 in use
+lsof -ti:3000 | xargs kill -9
+
+# Port 5555 (Prisma Studio) in use
+lsof -ti:5555 | xargs kill -9
+```
+
+### TypeScript Errors
+
+```bash
+# Clear caches
+rm -rf .next node_modules/.cache
 npm run build
 ```
 
-**Port Already in Use (3000):**
+### E2E Test Failures
 
 ```bash
-# Find process using port 3000
-lsof -ti:3000 | xargs kill -9
+# Clean environment
+npm run test:e2e:clean       # Restart server + run tests
 
-# Or use a different port
-PORT=3001 npm run dev
+# Debug mode
+npm run test:e2e:debug       # Step through tests
 ```
 
-**Docker Container Won't Start:**
+## Documentation
 
-```bash
-# Check logs
-docker-compose logs -f
+**Core Docs**:
+- [README.md](./README.md) - Project overview
+- [PRD.md](./PRD.md) - Product requirements (V3)
+- [PLAN.md](./PLAN.md) - Development roadmap
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
+- [FEASIBILITY-REPORT.md](./FEASIBILITY-REPORT.md) - Technical feasibility
 
-# Clean rebuild
-docker-compose down
-docker-compose up -d --build
-```
+**Guides**:
+- [DEVELOPMENT.md](./DEVELOPMENT.md) - Development container setup
+- [E2E-TESTING-GUIDE.md](./E2E-TESTING-GUIDE.md) - E2E testing guide
+- [TESTING-POLICY.md](./TESTING-POLICY.md) - Testing standards
+- [docs/HTTPS-DEPLOYMENT.md](./docs/HTTPS-DEPLOYMENT.md) - Production deployment
 
-**ESLint/Prettier Conflicts:**
+**V2 Archive**:
+- [archive/v2/](./archive/v2/) - V2 documentation and code
 
-```bash
-# Format all files
-npm run format
+## Project Status
 
-# Fix auto-fixable issues
-npm run lint:fix
-```
+**Current Phase**: V3 Alpha - Database Integration Complete
 
-**State Machine Validation Errors:**
+**Completed**:
+- ✅ Prisma ORM integration
+- ✅ Database schema design
+- ✅ Agent CRUD API (V3)
+- ✅ Agent management UI
+- ✅ LLM multi-provider client
+- ✅ E2E testing framework
+- ✅ Docker deployment
 
-- Check `docs/mam-workflow-status.md` - only ONE story in TODO and ONE in IN_PROGRESS
-- Ensure proper state format: `[STORY-ID] Title (filename.md) [Status: ...] [Points: N]`
-- Never manually edit the status file - use state transition methods
+**In Progress**:
+- ⏳ Workflow engine with DB persistence
+- ⏳ State machine with DB sync
+- ⏳ NLU integration
 
-**Agent YAML Not Loading:**
+**Planned**:
+- 📋 Real-time collaboration features
+- 📋 Advanced agent orchestration
+- 📋 Plugin system
 
-- Verify YAML syntax with a validator
-- Check file path is correct relative to project root
-- Ensure all required fields are present (metadata, persona, menu)
-- Check Zod validation errors in console for specific issues
-
-**LLM API Errors:**
-
-- Verify API key is set in `.env` file
-- Check API key has correct permissions
-- For local models, ensure Ollama is running: `ollama serve`
-- Test connection: http://localhost:3000/llm-test
-
-### Performance Issues
-
-**Slow Development Server:**
-
-```bash
-# Clear Next.js cache
-rm -rf .next
-
-# Reduce log verbosity
-export NODE_ENV=production
-npm run build && npm start
-```
-
-**High Memory Usage:**
-
-- Check for memory leaks in WebSocket connections
-- Restart development server periodically
-- Use production build for testing: `npm run build && npm start`
-
-## Getting Started
-
-For new developers joining the project:
-
-1. **Clone and Install**:
-
-   ```bash
-   git clone <repo-url>
-   cd MADACE-Method-v2.0
-   npm install
-   ```
-
-2. **Development Server**:
-
-   ```bash
-   npm run dev              # Start at http://localhost:3000
-   npm run check-all        # Verify code quality
-   ```
-
-3. **Explore Current Implementation**:
-   - Home page: http://localhost:3000
-   - Setup wizard: http://localhost:3000/setup
-   - Agents API: http://localhost:3000/api/agents
-   - Agent loader: `lib/agents/loader.ts`
-   - LLM client: `lib/llm/client.ts`
-
-4. **Next Tasks** (Priority Order):
-   - [ ] Configuration persistence (`app/api/config/route.ts`)
-   - [ ] Settings page implementation (`app/settings/page.tsx`)
-   - [ ] Workflow Engine (`lib/workflows/engine.ts`)
-   - [ ] State Machine (`lib/state/machine.ts`)
-   - [ ] Template Engine (`lib/templates/engine.ts`)
-
-5. **Docker Deployment** (Optional):
-
-   ```bash
-   # Development (with VSCode Server)
-   mkdir madace-data
-   docker-compose -f docker-compose.dev.yml up -d
-   # VSCode: http://localhost:8080 (password: madace123)
-   # Next.js: http://localhost:3000
-
-   # Production (HTTP - local/private network)
-   mkdir madace-data
-   docker-compose up -d
-   # Access at http://localhost:3000
-
-   # Production (HTTPS - external access with domain)
-   mkdir -p madace-data logs/caddy
-   export DOMAIN=madace.yourdomain.com
-   docker-compose -f docker-compose.https.yml up -d
-   # Access at https://madace.yourdomain.com
-   # See docs/HTTPS-DEPLOYMENT.md for detailed setup
-   ```
-
-6. **Before Committing**:
-
-   ```bash
-   npm run check-all        # MUST pass before commit
-   npm run build            # Verify production build works
-   ```
+See [docs/workflow-status.md](./docs/workflow-status.md) for current stories.
 
 ---
 
-**Note**: This project is under active development as an experimental Next.js full-stack implementation.
+**For V2 experimental implementation**, see [archive/v2/](./archive/v2/)
 
-For the production-ready MADACE framework, use the official Node.js implementation: https://github.com/tekcin/MADACE-METHOD
+**For official MADACE-METHOD (Node.js CLI)**, see https://github.com/tekcin/MADACE-METHOD

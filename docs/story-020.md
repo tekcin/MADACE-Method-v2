@@ -144,6 +144,7 @@ useEffect(() => {
 ```
 
 **Connection Status Display**:
+
 - Changed from static "Offline" to dynamic WebSocket status
 - Green dot (🟢) when connected, gray (⚪) when offline
 - Real-time connection state updates
@@ -254,6 +255,7 @@ async function startWatchMode(
 ```
 
 **Benefits**:
+
 - Instant updates via WebSocket (no 2-second delay)
 - Automatic fallback to polling if WebSocket unavailable
 - Connection status indicator in display
@@ -299,10 +301,12 @@ async function startWatchMode(
 ### Message Types
 
 **Client → Server:**
+
 - `ping`: Keep-alive heartbeat
 - `pong`: Response to server ping
 
 **Server → Client:**
+
 - `ping`: Welcome message with clientId on connection
 - `state_updated`: Workflow state file changed
 - `workflow_completed`: Workflow finished successfully
@@ -312,12 +316,14 @@ async function startWatchMode(
 ### Connection Management
 
 **Status Dashboard** (Browser WebSocket API):
+
 - Connect on page load
 - Ping interval: 30 seconds
 - Reconnect timeout: 5 seconds
 - Auto-cleanup on unmount
 
 **CLI Watch Mode** (Node.js 'ws' package):
+
 - Connect on watch mode start
 - Fallback to polling if connection fails
 - Display connection status in real-time
@@ -343,6 +349,7 @@ $ node test-websocket.js
 ```
 
 **Server Logs**:
+
 ```
 [WebSocket] Client connected: 8c82856c-d653-41c1-aafe-0bf02dd93b77 (source: web-ui)
 [WebSocket] Message from 8c82856c-d653-41c1-aafe-0bf02dd93b77: ping
@@ -355,6 +362,7 @@ $ echo '{"status":"testing"}' > madace-data/workflow-states/.test-workflow.state
 ```
 
 **Server Logs**:
+
 ```
 [FileWatcher] File changed: .../madace-data/workflow-states/.test-workflow.state.json (change)
 [FileWatcher] Broadcasted state update for 'test-workflow' to 0 clients
@@ -377,24 +385,28 @@ $ echo '{"status":"testing"}' > madace-data/workflow-states/.test-workflow.state
 ## Quality Assurance
 
 **Type Safety:**
+
 - ✅ TypeScript type-check: PASS (0 errors)
 - ✅ All WebSocket message types properly typed
 - ✅ Browser WebSocket API types
 - ✅ Node.js 'ws' package types
 
 **Error Handling:**
+
 - ✅ Connection failures handled gracefully
 - ✅ Automatic reconnection on disconnect
 - ✅ Fallback to polling if WebSocket unavailable
 - ✅ Parse errors caught and logged
 
 **Performance:**
+
 - ✅ Native addons installed for optimal 'ws' performance
 - ✅ Efficient message parsing
 - ✅ No memory leaks (cleanup on unmount/exit)
 - ✅ Ping/pong keep-alive prevents stale connections
 
 **Code Quality:**
+
 - ✅ ESLint: PASS
 - ✅ Prettier: PASS
 - ✅ Build: SUCCESS
@@ -404,6 +416,7 @@ $ echo '{"status":"testing"}' > madace-data/workflow-states/.test-workflow.state
 ### Starting WebSocket Sync Service
 
 **Via API**:
+
 ```bash
 curl -X POST http://localhost:3000/api/sync \
   -H "Content-Type: application/json" \
@@ -411,6 +424,7 @@ curl -X POST http://localhost:3000/api/sync \
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -422,6 +436,7 @@ curl -X POST http://localhost:3000/api/sync \
 ```
 
 **Via Web UI** (Future):
+
 - Navigate to `/sync-status`
 - Click "Start Sync Service" button
 
@@ -446,6 +461,7 @@ madace status STORY-V3-020 --watch
 ```
 
 **Output**:
+
 ```
 👁️  Watch mode enabled (WebSocket real-time updates)
    Fallback: Polling every 2s if WebSocket unavailable
@@ -525,12 +541,14 @@ Press 'q' or Ctrl+C to exit watch mode
 ### Browser WebSocket API vs Node.js 'ws' Package
 
 **Browser** (`WebSocket` global):
+
 - Built into all modern browsers
 - No installation required
 - Automatic connection management
 - Simple event-based API
 
 **Node.js** (`ws` package):
+
 - Requires npm installation: `npm install ws`
 - Optional dependencies for performance: `bufferutil`, `utf-8-validate`
 - Full control over connection lifecycle
@@ -549,6 +567,7 @@ Press 'q' or Ctrl+C to exit watch mode
 ### WebSocket Port 3001
 
 **Why port 3001?**
+
 - Next.js dev server uses port 3000
 - WebSocket needs separate port for protocol upgrade
 - 3001 is common convention for auxiliary services
@@ -633,6 +652,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 **Actual:** ~90 minutes
 
 **Breakdown:**
+
 - WebSocket client integration (status dashboard): 25 minutes
 - CLI watch mode WebSocket integration: 20 minutes
 - Testing and debugging (bufferutil issue): 25 minutes
@@ -649,6 +669,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **Milestone**: 2.1 - Universal Workflow Status Checker ✅ COMPLETE
 
 **All Priority 0 Stories**:
+
 1. ✅ STORY-V3-001: Assess PRD and create epics (2 pts)
 2. ✅ STORY-V3-002: Implement complexity scoring algorithm (3 pts)
 3. ✅ STORY-V3-003: Define story categories (2 pts)

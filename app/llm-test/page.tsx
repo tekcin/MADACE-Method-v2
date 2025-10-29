@@ -8,7 +8,15 @@ const PROVIDER_MODELS: Record<LLMProvider, string[]> = {
   gemini: ['gemini-2.0-flash-exp', 'gemini-1.5-flash-latest', 'gemini-1.5-pro-latest'],
   claude: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
   openai: ['gpt-4o-latest', 'gpt-4o-mini', 'gpt-3.5-turbo-latest'],
-  local: ['gemma3', 'gemma3:latest', 'llama3.1', 'llama3.1:8b', 'codellama:7b', 'mistral:7b', 'custom'],
+  local: [
+    'gemma3',
+    'gemma3:latest',
+    'llama3.1',
+    'llama3.1:8b',
+    'codellama:7b',
+    'mistral:7b',
+    'custom',
+  ],
 };
 
 // Provider information

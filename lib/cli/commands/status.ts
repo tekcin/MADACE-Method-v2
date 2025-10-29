@@ -41,7 +41,10 @@ export function createStatusCommand(): Command {
   command
     .description('Check status of stories, epics, workflows, or overall state machine')
     .usage('[entity] [options]')
-    .argument('[entity]', 'Entity ID (STORY-001, EPIC-V3-001, workflow-name) or empty for state overview')
+    .argument(
+      '[entity]',
+      'Entity ID (STORY-001, EPIC-V3-001, workflow-name) or empty for state overview'
+    )
     .option('-f, --format <format>', 'Output format (table, json, markdown)', 'table')
     .option('-w, --watch', 'Watch mode: Update display every 2 seconds (press q to exit)', false)
     .option('-i, --interval <seconds>', 'Watch interval in seconds', '2')
