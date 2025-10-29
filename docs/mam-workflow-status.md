@@ -171,7 +171,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - STORY-V3-009 moved to DONE)
+**[STORY-V3-011] Create IStatusProvider Interface** (story-v3-011-status-provider-interface.md) [Status: In Progress] [Points: 2] [Started: 2025-10-29]
 
 ---
 
