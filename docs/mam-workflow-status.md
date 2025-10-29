@@ -175,6 +175,72 @@ Completed stories with dates and points:
 
 ### Phase v3.0: MADACE v3.0 Implementation (Q2 2026+)
 
+- **[STORY-V3-019]** Watch Mode for Real-time Status Updates (2025-10-29) [Points: 1]
+  **Status:** COMPLETED - Watch mode with 2-second polling and graceful exit handling
+  **Developer:** Claude | **Duration:** ~10 minutes (verification only) | **Epic:** EPIC-V3-002 (Universal Workflow Status Checker)
+
+  **Implementation Summary:**
+  - Found existing complete implementation in CLI status command
+  - Watch mode with configurable interval (default 2 seconds)
+  - Screen clearing and reprint for inline updates
+  - Graceful exit handling (Ctrl+C and 'q' key)
+  - Verified 29 passing CLI tests including watch mode tests
+
+  **Files Already Implemented:**
+  - lib/cli/commands/status.ts: Complete watch mode implementation
+    - --watch flag (short: -w)
+    - --interval option (default: 2 seconds)
+    - startWatchMode() function with polling loop
+    - Screen clearing with ANSI escape codes
+    - Keyboard input handling for 'q' exit
+    - Graceful signal handling (SIGINT)
+
+  **Watch Mode Features:**
+  - ✅ **Flag: --watch** (-w): Enable watch mode
+  - ✅ **Poll Interval**: Configurable with --interval (default 2s)
+  - ✅ **Inline Updates**: Clear screen + reprint for clean display
+  - ✅ **Timestamp**: Shows "Last updated: [time]" on each refresh
+  - ✅ **Exit Methods**: Press 'q' or Ctrl+C to exit
+  - ✅ **Graceful Exit**: Cleanup stdin and exit without errors
+
+  **CLI Usage:**
+  ```bash
+  # Watch state machine (default 2-second interval)
+  $ madace status --watch
+
+  # Watch specific entity
+  $ madace status STORY-V3-019 --watch
+
+  # Custom interval (5 seconds)
+  $ madace status --watch --interval=5
+
+  # Watch with different format
+  $ madace status --watch --format=json
+
+  # Exit: Press 'q' or Ctrl+C
+  ```
+
+  **Test Coverage (29 tests, 100% pass rate, 0.139s):**
+  - Watch option structure tests
+  - Watch flag default value (false)
+  - Interval option structure tests
+  - Interval default value (2 seconds)
+  - Interval parser tests
+
+  **Quality Assurance:**
+  - TypeScript type-check: PASS (0 errors)
+  - Jest tests: 29/29 PASS (100%, 0.139s)
+  - ESLint: PASS (warnings only)
+  - Production build: PASS
+
+  **Acceptance Criteria Verification:**
+  - ✅ Flag: --watch or -w
+  - ✅ Poll every 2 seconds (configurable)
+  - ✅ Update display inline (clear + reprint)
+  - ✅ Show timestamp of last update
+  - ✅ Press 'q' to exit
+  - ✅ Handle Ctrl+C gracefully
+
 - **[STORY-V3-018]** Multiple Output Formats for Status System (2025-10-29) [Points: 2]
   **Status:** COMPLETED - Three output formats (table, json, markdown) fully implemented and tested
   **Developer:** Claude | **Duration:** ~15 minutes (verification only) | **Epic:** EPIC-V3-002 (Universal Workflow Status Checker)
