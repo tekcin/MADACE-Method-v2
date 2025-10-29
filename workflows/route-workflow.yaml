@@ -1,0 +1,452 @@
+# MADACE v3.0 - Scale-Adaptive Workflow Router
+# STORY-V3-004: Main routing workflow that assesses project complexity
+# and routes to appropriate planning workflows based on level (0-4)
+
+workflow:
+  metadata:
+    name: 'Scale-Adaptive Workflow Router'
+    version: '3.0.0'
+    description: 'Routes to appropriate planning workflow based on project complexity'
+    module: 'core'
+    author: 'MADACE v3.0 Team'
+    epic: 'EPIC-V3-001'
+    story: 'STORY-V3-004'
+    tags:
+      - 'routing'
+      - 'complexity-assessment'
+      - 'adaptive-workflow'
+      - 'v3.0'
+
+  variables:
+    # Variables set during workflow execution
+    project_info: null # ProjectInput from user responses
+    complexity_assessment: null # ComplexityResult from assessment algorithm
+    assessment_report: null # Generated markdown report
+    confirmed_level: null # Level after user confirmation/override
+    routing_decision: null # Selected workflow paths
+
+  steps:
+    # STEP 1: Gather Project Information (8 Questions)
+    - id: 'gather-project-info'
+      name: 'Gather Project Information'
+      action: 'elicit'
+      description: 'Interactive prompts to gather 8 criteria for complexity assessment'
+
+      prompts:
+        - id: 'project_size'
+          question: 'What is the scale of your project?'
+          type: 'select'
+          options:
+            - value: 0
+              label: 'Tiny (script, tool, prototype)'
+              description: 'Single file or minimal codebase (<100 LOC)'
+            - value: 1
+              label: 'Small (simple app, feature)'
+              description: 'Small application or feature addition (100-1K LOC)'
+            - value: 2
+              label: 'Medium (standard app)'
+              description: 'Typical web/mobile application (1K-10K LOC)'
+            - value: 3
+              label: 'Large (complex system)'
+              description: 'Large-scale application (10K-50K LOC)'
+            - value: 4
+              label: 'Very Large (enterprise platform)'
+              description: 'Very large system (50K-100K LOC)'
+            - value: 5
+              label: 'Massive (distributed platform)'
+              description: 'Massive distributed system (>100K LOC)'
+
+        - id: 'team_size'
+          question: 'How many developers will work on this project?'
+          type: 'select'
+          options:
+            - value: 0
+              label: 'Solo developer (1 person)'
+            - value: 1
+              label: 'Small team (2-3 developers)'
+            - value: 2
+              label: 'Medium team (4-5 developers)'
+            - value: 3
+              label: 'Large team (6-10 developers)'
+            - value: 4
+              label: 'Very large team (11-20 developers)'
+            - value: 5
+              label: 'Enterprise team (20+ developers)'
+
+        - id: 'codebase_complexity'
+          question: 'What is the technical complexity of the codebase?'
+          type: 'select'
+          options:
+            - value: 0
+              label: 'Trivial (simple scripts, basic logic)'
+            - value: 1
+              label: 'Simple (straightforward app, minimal architecture)'
+            - value: 2
+              label: 'Moderate (standard patterns, some abstraction)'
+            - value: 3
+              label: 'Complex (advanced patterns, multiple layers)'
+            - value: 4
+              label: 'Very Complex (sophisticated architecture, high abstraction)'
+            - value: 5
+              label: 'Extreme (cutting-edge tech, research-level complexity)'
+
+        - id: 'integrations'
+          question: 'How many external systems/APIs will you integrate?'
+          type: 'select'
+          options:
+            - value: 0
+              label: 'None (standalone application)'
+            - value: 1
+              label: 'Few (1-2 integrations)'
+            - value: 2
+              label: 'Some (3-5 integrations)'
+            - value: 3
+              label: 'Many (6-10 integrations)'
+            - value: 4
+              label: 'Very Many (11-20 integrations)'
+            - value: 5
+              label: 'Extensive (20+ integrations)'
+
+        - id: 'user_base'
+          question: 'What is the expected user base size?'
+          type: 'select'
+          options:
+            - value: 0
+              label: 'Personal (just you or internal tool)'
+            - value: 1
+              label: 'Internal (team/company, <100 users)'
+            - value: 2
+              label: 'Small (hundreds of users)'
+            - value: 3
+              label: 'Medium (thousands of users)'
+            - value: 4
+              label: 'Large (tens of thousands of users)'
+            - value: 5
+              label: 'Massive (millions of users)'
+
+        - id: 'security'
+          question: 'What are the security and compliance requirements?'
+          type: 'select'
+          options:
+            - value: 0
+              label: 'None (no sensitive data)'
+            - value: 1
+              label: 'Low (basic user data, minimal compliance)'
+            - value: 2
+              label: 'Moderate (PII, standard security practices)'
+            - value: 3
+              label: 'High (financial data, GDPR, SOC2)'
+            - value: 4
+              label: 'Very High (healthcare/HIPAA, regulated industry)'
+            - value: 5
+              label: 'Critical (government, defense, high-stakes)'
+
+        - id: 'duration'
+          question: 'What is the estimated project duration?'
+          type: 'select'
+          options:
+            - value: 0
+              label: 'Very Short (< 1 week)'
+            - value: 1
+              label: 'Short (1-4 weeks)'
+            - value: 2
+              label: 'Medium (1-3 months)'
+            - value: 3
+              label: 'Long (3-6 months)'
+            - value: 4
+              label: 'Very Long (6-12 months)'
+            - value: 5
+              label: 'Indefinite (12+ months or ongoing)'
+
+        - id: 'existing_code'
+          question: 'Are you working with existing code?'
+          type: 'select'
+          options:
+            - value: 0
+              label: 'Greenfield (brand new project)'
+            - value: 1
+              label: 'Minor Refactor (small changes to existing code)'
+            - value: 2
+              label: 'Moderate Refactor (significant changes, some rewrites)'
+            - value: 3
+              label: 'Major Refactor (extensive changes, large rewrites)'
+            - value: 4
+              label: 'Legacy Modernization (updating old tech stack)'
+            - value: 5
+              label: 'Full Rewrite (replacing entire system)'
+
+      output_var: 'project_info'
+      next: 'assess-complexity'
+
+    # STEP 2: Assess Project Complexity
+    - id: 'assess-complexity'
+      name: 'Assess Project Complexity'
+      action: 'assess_complexity'
+      description: 'Calculate complexity score using 8-criterion algorithm (0-40 points)'
+
+      input: '{{project_info}}'
+      algorithm: 'lib/workflows/complexity-assessment.ts:assessComplexity'
+
+      output_var: 'complexity_assessment'
+      output_schema:
+        totalScore: 'number' # 0-40
+        level: 'number' # 0-4 (ComplexityLevel enum)
+        breakdown:
+          projectSize: 'number' # 0-5
+          teamSize: 'number' # 0-5
+          codebaseComplexity: 'number' # 0-5
+          integrations: 'number' # 0-5
+          userBase: 'number' # 0-5
+          security: 'number' # 0-5
+          duration: 'number' # 0-5
+          existingCode: 'number' # 0-5
+        levelName: 'string' # Minimal, Basic, Standard, Comprehensive, Enterprise
+        scoreRange: 'string' # e.g., "13-20"
+        recommendedWorkflow: 'string' # e.g., "standard-workflow.yaml"
+        assessedAt: 'Date' # ISO timestamp
+
+      next: 'generate-assessment-report'
+
+    # STEP 3: Generate Assessment Report
+    - id: 'generate-assessment-report'
+      name: 'Generate Assessment Report'
+      action: 'render_template'
+      description: 'Render scale-assessment.hbs template with complexity results'
+
+      template: 'scale-assessment.hbs'
+      template_path: 'templates/scale-assessment.hbs'
+      output_file: '{{project_output}}/scale-assessment.md'
+
+      vars:
+        # Template context variables
+        totalScore: '{{complexity_assessment.totalScore}}'
+        level: '{{complexity_assessment.level}}'
+        levelName: '{{complexity_assessment.levelName}}'
+        scoreRange: '{{complexity_assessment.scoreRange}}'
+        recommendedWorkflow: '{{complexity_assessment.recommendedWorkflow}}'
+        assessedAt: '{{complexity_assessment.assessedAt}}'
+        breakdown: '{{complexity_assessment.breakdown}}'
+
+      output_var: 'assessment_report'
+      output_format: 'markdown'
+      next: 'confirm-planning-level'
+
+    # STEP 4: Confirm Planning Level (with Override Option)
+    - id: 'confirm-planning-level'
+      name: 'Confirm Planning Level'
+      action: 'elicit'
+      description: 'Display assessment result and ask for confirmation or override'
+
+      prompt: |
+        ✅ Assessment Complete!
+
+        📊 Complexity Level: {{complexity_assessment.levelName}} (Level {{complexity_assessment.level}})
+        🎯 Total Score: {{complexity_assessment.totalScore}}/40 points
+        📄 Report: {{project_output}}/scale-assessment.md
+
+        Recommended Documentation:
+        {{#if (eq complexity_assessment.level 0)}}
+        - Direct to story creation (minimal documentation needed)
+        {{/if}}
+        {{#if (eq complexity_assessment.level 1)}}
+        - Lightweight PRD
+        - Story breakdown
+        {{/if}}
+        {{#if (gte complexity_assessment.level 2)}}
+        - Full PRD with requirements
+        - Tech specs and architecture
+        - Epic and story breakdown
+        {{/if}}
+        {{#if (gte complexity_assessment.level 3)}}
+        - Comprehensive PRD
+        - Detailed architecture diagrams
+        - Security and compliance specs
+        - Epic-driven story breakdown
+        {{/if}}
+        {{#if (eq complexity_assessment.level 4)}}
+        - Enterprise PRD
+        - Complete architecture documentation
+        - Security, compliance, DevOps specs
+        - Epic and milestone planning
+        {{/if}}
+
+        What would you like to do?
+
+      type: 'select'
+      options:
+        - value: 'proceed'
+          label: 'Proceed with Level {{complexity_assessment.level}} (Recommended)'
+        - value: 'override'
+          label: 'Choose a different level manually'
+        - value: 'view-report'
+          label: 'View full assessment report'
+        - value: 'restart'
+          label: 'Re-assess (change answers)'
+
+      # Conditional sub-prompts for override
+      follow_up:
+        - condition: '{{eq user_choice "override"}}'
+          prompts:
+            - id: 'manual_level'
+              question: 'Select complexity level (0-4):'
+              type: 'select'
+              options:
+                - value: 0
+                  label: 'Level 0 - Minimal (0-5 pts)'
+                - value: 1
+                  label: 'Level 1 - Basic (6-12 pts)'
+                - value: 2
+                  label: 'Level 2 - Standard (13-20 pts)'
+                - value: 3
+                  label: 'Level 3 - Comprehensive (21-30 pts)'
+                - value: 4
+                  label: 'Level 4 - Enterprise (31-40 pts)'
+            - id: 'override_reason'
+              question: 'Reason for override (optional):'
+              type: 'text'
+              required: false
+
+        - condition: '{{eq user_choice "view-report"}}'
+          action: 'display'
+          content: '{{assessment_report}}'
+          format: 'markdown'
+          loop_to: 'confirm-planning-level' # Loop back
+
+        - condition: '{{eq user_choice "restart"}}'
+          action: 'goto'
+          target: 'gather-project-info'
+
+      # Output variable - stores the confirmed complexity level (either recommended or overridden)
+      output_var: 'confirmed_level'
+
+      next: 'route-to-workflow'
+
+    # STEP 5: Route to Appropriate Workflow(s)
+    - id: 'route-to-workflow'
+      name: 'Route to Appropriate Workflow'
+      action: 'route'
+      description: 'Route to planning workflows based on confirmed complexity level'
+
+      condition: '{{confirmed_level}}'
+
+      routing:
+        # Level 0: Minimal - Direct to stories
+        level_0:
+          label: 'Minimal Workflow Path'
+          description: 'Lightweight path for prototypes and learning projects'
+          workflows:
+            - 'workflows/create-stories.workflow.yaml'
+
+        # Level 1: Basic - Light PRD + stories
+        level_1:
+          label: 'Basic Workflow Path'
+          description: 'Streamlined path for simple features'
+          workflows:
+            - 'workflows/plan-project-light.workflow.yaml'
+            - 'workflows/create-stories.workflow.yaml'
+
+        # Level 2: Standard - PRD + Basic Arch + Epics + Stories
+        level_2:
+          label: 'Standard Workflow Path'
+          description: 'Balanced path for typical applications'
+          workflows:
+            - 'workflows/plan-project.workflow.yaml'
+            - 'workflows/create-architecture-basic.workflow.yaml'
+            - 'workflows/create-epics.workflow.yaml'
+            - 'workflows/create-stories.workflow.yaml'
+
+        # Level 3: Comprehensive - Full PRD + Tech Specs + Arch + Epics + Stories
+        level_3:
+          label: 'Comprehensive Workflow Path'
+          description: 'Complete path for complex enterprise systems'
+          workflows:
+            - 'workflows/plan-project.workflow.yaml'
+            - 'workflows/create-tech-specs.workflow.yaml'
+            - 'workflows/create-architecture.workflow.yaml'
+            - 'workflows/create-epics.workflow.yaml'
+            - 'workflows/create-stories.workflow.yaml'
+
+        # Level 4: Enterprise - Full docs + Security + DevOps + Epics + Stories
+        level_4:
+          label: 'Enterprise Workflow Path'
+          description: 'Comprehensive path for large-scale distributed systems'
+          workflows:
+            - 'workflows/plan-project.workflow.yaml'
+            - 'workflows/create-tech-specs.workflow.yaml'
+            - 'workflows/create-architecture.workflow.yaml'
+            - 'workflows/create-security-spec.workflow.yaml'
+            - 'workflows/create-devops-spec.workflow.yaml'
+            - 'workflows/create-epics.workflow.yaml'
+            - 'workflows/create-stories.workflow.yaml'
+
+      # Default fallback if level is invalid
+      default:
+        workflows:
+          - 'workflows/plan-project.workflow.yaml'
+          - 'workflows/create-stories.workflow.yaml'
+
+      output_var: 'routing_decision'
+
+      # Execute workflows sequentially
+      execution:
+        strategy: 'sequential' # Execute workflows one after another
+        continue_on_error: false # Stop if any workflow fails
+        track_progress: true # Update state after each workflow completes
+
+  # Error Handling
+  error_handling:
+    - condition: 'validation_error'
+      action: 'retry'
+      max_retries: 3
+      message: 'Invalid input. Please try again.'
+
+    - condition: 'workflow_not_found'
+      action: 'fallback'
+      fallback_workflows:
+        - 'workflows/plan-project.workflow.yaml'
+        - 'workflows/create-stories.workflow.yaml'
+      message: 'Selected workflow not found. Using fallback workflows.'
+
+    - condition: 'assessment_error'
+      action: 'restart'
+      target: 'gather-project-info'
+      message: 'Error in complexity assessment. Restarting...'
+
+    - condition: 'user_cancelled'
+      action: 'exit'
+      message: 'Workflow cancelled by user.'
+
+  # Lifecycle Hooks
+  hooks:
+    on_start:
+      - action: 'log'
+        message: 'Starting Scale-Adaptive Workflow Router v3.0'
+
+      - action: 'validate_environment'
+        checks:
+          - template_exists: 'templates/scale-assessment.hbs'
+          - algorithm_exists: 'lib/workflows/complexity-assessment.ts'
+
+    on_complete:
+      - action: 'log'
+        message: 'Successfully routed to Level {{confirmed_level}} workflows'
+
+      - action: 'save_state'
+        path: '.scale-adaptive-route.state.json'
+        data:
+          completed_at: '{{timestamp}}'
+          complexity_level: '{{confirmed_level}}'
+          total_score: '{{complexity_assessment.totalScore}}'
+          routed_workflows: '{{routing_decision.workflows}}'
+
+    on_error:
+      - action: 'log'
+        level: 'error'
+        message: 'Error in routing workflow: {{error_message}}'
+
+      - action: 'save_state'
+        path: '.scale-adaptive-route.state.json'
+        data:
+          status: 'error'
+          error: '{{error_message}}'
+          timestamp: '{{timestamp}}'

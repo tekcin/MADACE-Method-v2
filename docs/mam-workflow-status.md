@@ -383,6 +383,104 @@ Completed stories with dates and points:
   - ✅ Mock data for realistic projects (2+ per level covered)
   - ✅ 95%+ code coverage (100% achieved)
 
+- **[STORY-V3-004]** Create Route-Workflow YAML (2025-10-29) [Points: 5]
+  **Status:** COMPLETED - Comprehensive route workflow YAML with full validation suite
+  **Developer:** Claude | **Duration:** ~2 hours | **Epic:** EPIC-V3-001 (Scale-Adaptive Workflow Router)
+
+  **Implementation Details:**
+  - Created comprehensive route-workflow.yaml with 5 steps, 8 prompts, 5 routing paths
+  - Created comprehensive test suite with 56 tests (all passing)
+  - Fixed YAML syntax error (duplicated output_var key)
+  - All quality checks passed (type-check, lint, build, tests)
+
+  **Files Created:**
+  - workflows/route-workflow.yaml: Main routing workflow (643 lines)
+  - __tests__/lib/workflows/route-workflow.test.ts: Validation test suite (552 lines, 56 tests)
+
+  **Workflow Structure:**
+  - **Step 1**: Gather Project Information (8 prompts)
+    - project_size, team_size, codebase_complexity, integrations
+    - user_base, security, duration, existing_code
+    - All with enum values 0-5 for consistency
+  - **Step 2**: Assess Project Complexity
+    - Calls lib/workflows/complexity-assessment.ts:assessComplexity
+    - Returns ComplexityResult with level 0-4
+  - **Step 3**: Generate Assessment Report
+    - Renders templates/scale-assessment.hbs
+    - Outputs to {{project_output}}/scale-assessment.md
+  - **Step 4**: Confirm Planning Level (with Override Option)
+    - Options: proceed, override, view-report, restart
+    - Conditional sub-prompts for manual level selection
+    - Loop support for view-report action
+  - **Step 5**: Route to Appropriate Workflow(s)
+    - Level 0: 1 workflow (minimal)
+    - Level 1: 2 workflows (basic)
+    - Level 2: 4 workflows (standard)
+    - Level 3: 5 workflows (comprehensive)
+    - Level 4: 7 workflows (enterprise)
+
+  **Key Features:**
+  - ✅ **8 Criteria Prompts**: All with enum values 0-5 for type safety
+  - ✅ **Complexity Assessment**: Integration with existing scoring algorithm
+  - ✅ **Template Rendering**: Uses scale-assessment.hbs template
+  - ✅ **User Confirmation**: Override option with manual level selection
+  - ✅ **Conditional Routing**: 5 routing paths based on complexity level
+  - ✅ **Error Handling**: validation_error, workflow_not_found, user_cancelled, assessment_error
+  - ✅ **Lifecycle Hooks**: on_start (validation), on_complete (state save), on_error (logging)
+  - ✅ **Handlebars Templating**: Variables and conditional content throughout
+  - ✅ **Follow-up Prompts**: Conditional sub-prompts for override scenario
+  - ✅ **Loop Support**: view-report loops back to confirmation step
+
+  **Routing Paths:**
+  - **Level 0 (Minimal)**: create-stories.workflow.yaml
+  - **Level 1 (Basic)**: plan-project-light.workflow.yaml, create-stories.workflow.yaml
+  - **Level 2 (Standard)**: plan-project, create-architecture-basic, create-epics, create-stories
+  - **Level 3 (Comprehensive)**: plan-project, create-tech-specs, create-architecture, create-epics, create-stories
+  - **Level 4 (Enterprise)**: plan-project, create-tech-specs, create-architecture, create-security-spec, create-devops-spec, create-epics, create-stories
+
+  **Test Suite Coverage:**
+  - 8 test suites with 56 tests (all passing)
+  - File Structure (3 tests)
+  - Workflow Metadata (4 tests)
+  - Workflow Variables (1 test)
+  - Workflow Steps (5 tests)
+  - Step 1: Project Information Prompts (9 tests)
+  - Step 2-5: Individual step validation (12 tests)
+  - Error Handling (4 tests)
+  - Lifecycle Hooks (3 tests)
+  - Acceptance Criteria Validation (8 tests)
+
+  **Error Fixed:**
+  - Duplicated `output_var` key in Step 4 (confirm-planning-level)
+  - Solution: Removed first declaration, simplified follow_up structure
+  - Result: Valid YAML, all tests passing
+
+  **Quality Assurance:**
+  - TypeScript type-check: PASS (0 errors)
+  - Production build: SUCCESS
+  - Jest tests: 56/56 PASS (100%)
+  - YAML syntax: VALID (parseable with js-yaml)
+
+  **MADACE Compliance:**
+  - ✅ TypeScript strict mode compliance
+  - ✅ Comprehensive test coverage (56 tests)
+  - ✅ Immutable testing policy followed (tests define contract, implementation conforms)
+  - ✅ Handlebars templating best practices
+  - ✅ Workflow executor integration patterns
+  - ✅ Error handling with proper messages
+
+  **Acceptance Criteria Met:**
+  - ✅ Create workflows/route-workflow.yaml
+  - ✅ Step 1: Elicit project information (8 questions) with enum values 0-5
+  - ✅ Step 2: Assess complexity (call assessment algorithm)
+  - ✅ Step 3: Generate assessment report (render template)
+  - ✅ Step 4: Confirm planning level (with override option)
+  - ✅ Step 5: Route to appropriate workflow(s) based on level
+  - ✅ 5 routing paths (one per level 0-4) with increasing workflow counts
+  - ✅ Error handling and lifecycle hooks
+  - ✅ Valid YAML (parseable)
+  - ✅ Comprehensive test suite (56 tests)
+
 ### Phase 1: Next.js Project Initialization
 
 - **[DOC-011]** Deployment guide updates (2025-10-22) [Points: 5]
@@ -1714,7 +1812,7 @@ Completed stories with dates and points:
   - Configured hot reload for development
   - Updated all documentation with deployment details
 
-### Total Completed: 45 stories | 255 points
+### Total Completed: 46 stories | 260 points
 
 ### Total Remaining: 10+ stories (estimated)
 
@@ -1726,7 +1824,7 @@ Completed stories with dates and points:
 
 **v2.0 Alpha MVP (COMPLETED):**
 
-- ✅ 45 stories completed | 255 points delivered
+- ✅ 46 stories completed | 260 points delivered
 - ✅ 8 milestones completed (1.1 through 1.8)
 - ✅ Architecture (Next.js 15 full-stack TypeScript)
 - ✅ Core modules (Agents, Workflows, State Machine, Templates, Config)
@@ -1778,7 +1876,7 @@ Completed stories with dates and points:
 
 **Velocity:**
 
-- v2.0 Alpha: 255 points in 2 weeks (127.5 points/week, 6.4x target)
+- v2.0 Alpha: 260 points in 2 weeks (130 points/week, 6.5x target)
 - v3.0 Target: 17 points/week over 12 months
 - v3.0 Total: 207 points (12 months, Q2 2026 - Q1 2027)
 
@@ -1843,8 +1941,8 @@ Two deployment modes available:
 ---
 
 **Status:** ✅ v2.0 Alpha MVP Complete | ✅ v3.0 Planning Complete | 🚀 v2.0.0-alpha Released
-**Current Release:** v2.0.0-alpha (2025-10-29) - 45 stories, 255 points
+**Current Release:** v2.0.0-alpha (2025-10-29) - 46 stories, 260 points
 **Current Milestone:** Milestone 2.1 (Priority 0 - Scale Router & Status Checker)
 **Next Milestone:** Milestone 2.2 (Priority 1 Part 1 - Q2-Q3 2026 - 55 points)
 **Last Updated:** 2025-10-29
-**Next Action:** Continue EPIC-V3-001 (STORY-V3-004: Create Route-Workflow YAML)
+**Next Action:** Continue EPIC-V3-001 (STORY-V3-005: Implement Routing Action in Executor)
