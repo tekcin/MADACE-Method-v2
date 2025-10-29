@@ -63,7 +63,6 @@ All critical stories completed! Milestone 1.8 finished on 2025-10-22.
 - [STORY-V3-005] Implement Routing Action in Executor [5 pts]
 - [STORY-V3-006] User Override System [5 pts]
 - [STORY-V3-007] CLI Command `madace assess-scale` [3 pts]
-- [STORY-V3-008] Integrate Assessment into Setup Wizard [2 pts]
 - [STORY-V3-009] Assessment Dashboard Page [2 pts]
 - [STORY-V3-010] E2E Testing for Scale Router [1 pt]
 
@@ -172,7 +171,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - STORY-V3-001 completed and moved to DONE)
+**[STORY-V3-008] Integrate Assessment into Setup Wizard** (story-v3-008-setup-wizard-assessment.md) [Status: In Progress] [Points: 3] [Started: 2025-10-29]
 
 ---
 
