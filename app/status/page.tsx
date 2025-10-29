@@ -181,21 +181,108 @@ export default function StatusPage() {
 
   /**
    * Connect to WebSocket for real-time updates
-   * TODO: Implement WebSocket client
    */
   useEffect(() => {
-    // WebSocket connection (placeholder)
-    // In a full implementation, this would connect to the WebSocket server
-    // and listen for status updates
-    setWsConnected(false); // Not implemented yet
-
     // Initial data fetch
     fetchSummary();
     fetchActivities();
 
-    // Cleanup
+    // Connect to WebSocket server
+    let ws: WebSocket | null = null;
+    let reconnectTimeout: NodeJS.Timeout | null = null;
+    let pingInterval: NodeJS.Timeout | null = null;
+
+    const connect = () => {
+      try {
+        ws = new WebSocket('ws://localhost:3001');
+
+        ws.onopen = () => {
+          console.log('[WebSocket] Connected to sync server');
+          setWsConnected(true);
+
+          // Start ping interval to keep connection alive
+          pingInterval = setInterval(() => {
+            if (ws?.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
+            }
+          }, 30000);
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const message = JSON.parse(event.data);
+            console.log('[WebSocket] Received:', message.type);
+
+            // Handle different message types
+            switch (message.type) {
+              case 'state_updated':
+              case 'workflow_completed':
+              case 'workflow_started':
+              case 'workflow_failed':
+                // Refresh data on any state change
+                fetchSummary();
+                fetchActivities();
+                setLastUpdate(new Date().toLocaleTimeString());
+                break;
+              case 'ping':
+                // Server ping - send pong
+                if (ws?.readyState === WebSocket.OPEN) {
+                  ws.send(JSON.stringify({ type: 'pong', timestamp: Date.now() }));
+                }
+                break;
+              case 'pong':
+                // Server pong - connection healthy
+                break;
+            }
+          } catch (error) {
+            console.error('[WebSocket] Failed to parse message:', error);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('[WebSocket] Error:', error);
+          setWsConnected(false);
+        };
+
+        ws.onclose = () => {
+          console.log('[WebSocket] Disconnected');
+          setWsConnected(false);
+
+          // Clear ping interval
+          if (pingInterval) {
+            clearInterval(pingInterval);
+            pingInterval = null;
+          }
+
+          // Attempt to reconnect after 5 seconds
+          reconnectTimeout = setTimeout(() => {
+            console.log('[WebSocket] Attempting to reconnect...');
+            connect();
+          }, 5000);
+        };
+      } catch (error) {
+        console.error('[WebSocket] Connection failed:', error);
+        setWsConnected(false);
+
+        // Retry after 5 seconds
+        reconnectTimeout = setTimeout(connect, 5000);
+      }
+    };
+
+    // Start connection
+    connect();
+
+    // Cleanup on unmount
     return () => {
-      // Disconnect WebSocket if connected
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+      if (ws) {
+        ws.close();
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty deps - only run once on mount

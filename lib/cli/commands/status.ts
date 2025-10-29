@@ -131,52 +131,31 @@ async function displayStatus(entity: string | undefined, format: StatusFormat): 
 }
 
 /**
- * Start watch mode with periodic updates
+ * Start watch mode with WebSocket real-time updates
  *
  * @param entity - Entity ID or undefined for state machine overview
  * @param format - Output format
- * @param interval - Update interval in milliseconds
+ * @param interval - Fallback polling interval in milliseconds (used if WebSocket fails)
  */
 async function startWatchMode(
   entity: string | undefined,
   format: StatusFormat,
   interval: number
 ): Promise<void> {
-  console.log(`\n👁️  Watch mode enabled (updating every ${interval / 1000}s)`);
+  console.log(`\n👁️  Watch mode enabled (WebSocket real-time updates)`);
+  console.log('   Fallback: Polling every ${interval / 1000}s if WebSocket unavailable');
   console.log('   Press Ctrl+C to exit\n');
   console.log('━'.repeat(80));
 
   const registry = getStatusRegistry();
   let isRunning = true;
+  let ws: any = null; // WebSocket instance
+  let useWebSocket = true; // Flag to switch between WebSocket and polling
 
-  // Handle Ctrl+C gracefully
-  process.on('SIGINT', () => {
-    isRunning = false;
-    console.log('\n\n✅ Watch mode stopped');
-    process.exit(0);
-  });
-
-  // Handle 'q' key press to exit
-  if (process.stdin.isTTY) {
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.on('data', (key) => {
-      // Detect 'q' or Ctrl+C
-      if (key.toString() === 'q' || key.toString() === '\u0003') {
-        isRunning = false;
-        if (process.stdin.isTTY) {
-          process.stdin.setRawMode(false);
-        }
-        console.log('\n\n✅ Watch mode stopped');
-        process.exit(0);
-      }
-    });
-  }
-
-  // Watch loop
-  while (isRunning) {
+  // Display status once immediately
+  const displayCurrentStatus = async () => {
     try {
-      // Clear screen (ANSI escape code)
+      // Clear screen (ANSI escape code) for table format
       if (format === 'table') {
         process.stdout.write('\x1Bc'); // Clear screen
       }
@@ -184,9 +163,10 @@ async function startWatchMode(
       // Get and display status
       const output = await registry.getStatus(entity, format);
       const timestamp = new Date().toLocaleTimeString();
+      const connectionStatus = ws && ws.readyState === 1 ? '🟢 WebSocket' : '🔴 Polling';
 
       if (format === 'table') {
-        console.log(`Last updated: ${timestamp}`);
+        console.log(`Last updated: ${timestamp} | Connection: ${connectionStatus}`);
         console.log('━'.repeat(80));
       }
 
@@ -196,15 +176,97 @@ async function startWatchMode(
         console.log('━'.repeat(80));
         console.log(`Press 'q' or Ctrl+C to exit watch mode`);
       }
-
-      // Wait for next interval
-      await sleep(interval);
     } catch (error) {
       if (isRunning) {
         console.error(`\n❌ Error: ${error instanceof Error ? error.message : String(error)}`);
-        console.log('\nRetrying in next interval...');
-        await sleep(interval);
       }
+    }
+  };
+
+  // Handle Ctrl+C gracefully
+  const cleanup = () => {
+    isRunning = false;
+    if (ws) {
+      ws.close();
+    }
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(false);
+    }
+    console.log('\n\n✅ Watch mode stopped');
+    process.exit(0);
+  };
+
+  process.on('SIGINT', cleanup);
+
+  // Handle 'q' key press to exit
+  if (process.stdin.isTTY) {
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.on('data', (key) => {
+      // Detect 'q' or Ctrl+C
+      if (key.toString() === 'q' || key.toString() === '\u0003') {
+        cleanup();
+      }
+    });
+  }
+
+  // Try to connect to WebSocket server
+  try {
+    // Dynamic import of 'ws' package for Node.js
+    const WebSocket = (await import('ws')).default;
+    ws = new WebSocket('ws://localhost:3001');
+
+    ws.on('open', () => {
+      console.log('[WebSocket] Connected to sync server');
+      useWebSocket = true;
+      displayCurrentStatus();
+    });
+
+    ws.on('message', (data: Buffer) => {
+      try {
+        const message = JSON.parse(data.toString());
+
+        // Update display on relevant messages
+        if (
+          message.type === 'state_updated' ||
+          message.type === 'workflow_completed' ||
+          message.type === 'workflow_started' ||
+          message.type === 'workflow_failed'
+        ) {
+          displayCurrentStatus();
+        }
+      } catch {
+        // Ignore parse errors
+      }
+    });
+
+    ws.on('error', (error: Error) => {
+      console.error('[WebSocket] Connection failed:', error.message);
+      console.log('[WebSocket] Falling back to polling mode...');
+      useWebSocket = false;
+    });
+
+    ws.on('close', () => {
+      console.log('[WebSocket] Disconnected, falling back to polling');
+      useWebSocket = false;
+    });
+  } catch {
+    console.log('[WebSocket] Not available, using polling mode');
+    useWebSocket = false;
+  }
+
+  // Display initial status
+  await displayCurrentStatus();
+
+  // Fallback polling loop (only runs if WebSocket is not connected)
+  while (isRunning) {
+    if (!useWebSocket || !ws || ws.readyState !== 1) {
+      // WebSocket not available or disconnected, use polling
+      await sleep(interval);
+      await displayCurrentStatus();
+    } else {
+      // WebSocket is active, just wait
+      await sleep(1000);
     }
   }
 }
