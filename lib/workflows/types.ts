@@ -83,6 +83,7 @@ export interface Workflow {
   name?: string;
   description?: string;
   steps?: WorkflowStep[];
+  variables?: Record<string, unknown>; // Support variables in legacy format
 }
 
 export interface WorkflowFile {

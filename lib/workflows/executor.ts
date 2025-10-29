@@ -23,6 +23,7 @@ import type {
 } from './types';
 import { WorkflowStateSchema } from './schema';
 import { StateMachine } from '@/lib/state/machine';
+import { evaluateCondition, ConditionEvaluationError } from './conditions';
 
 // Workflow schema from official MADACE-METHOD
 const REQUIRED_WORKFLOW_FIELDS = {
@@ -125,6 +126,16 @@ export class WorkflowExecutor {
   private async executeStep(step: WorkflowStep): Promise<void> {
     console.warn(`\n🔄 Step: ${step.name}`);
     console.warn(`   Action: ${step.action}`);
+
+    // STORY-V3-006: Check conditional execution
+    if (step.condition) {
+      const shouldExecute = this.evaluateStepCondition(step.condition);
+      if (!shouldExecute) {
+        console.warn(`   ⏭️  Skipped (condition evaluated to false)`);
+        return; // Skip this step
+      }
+      console.warn(`   ✅ Condition passed`);
+    }
 
     try {
       switch (step.action) {
@@ -594,6 +605,33 @@ export class WorkflowExecutor {
 
   private getStateFileName(): string {
     return `.${this.workflow.name}.state.json`;
+  }
+
+  /**
+   * Evaluate step condition for conditional execution
+   * STORY-V3-006: Add Conditional Workflow Execution
+   *
+   * @param condition - Condition string (e.g., "${LEVEL} === 0", "${USER_CHOICE} === '2'")
+   * @returns true if step should execute, false otherwise
+   */
+  private evaluateStepCondition(condition: string): boolean {
+    try {
+      // Use condition evaluator to evaluate the condition
+      const result = evaluateCondition(condition, this.state!.variables, {
+        throwOnError: true,
+        strictMode: false, // Allow undefined variables (will be treated as undefined)
+      });
+
+      return result;
+    } catch (error) {
+      if (error instanceof ConditionEvaluationError) {
+        console.warn(`   ⚠️  Condition evaluation error: ${error.message}`);
+        console.warn(`   Condition: ${condition}`);
+        // For safety, skip steps with invalid conditions
+        return false;
+      }
+      throw error;
+    }
   }
 
   private resolveVariables(text: string): string {
