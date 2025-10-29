@@ -171,7 +171,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-**[STORY-V3-008] Integrate Assessment into Setup Wizard** (story-v3-008-setup-wizard-assessment.md) [Status: In Progress] [Points: 3] [Started: 2025-10-29]
+(Empty - STORY-V3-008 moved to DONE)
 
 ---
 
@@ -479,6 +479,114 @@ Completed stories with dates and points:
   - ✅ Error handling and lifecycle hooks
   - ✅ Valid YAML (parseable)
   - ✅ Comprehensive test suite (56 tests)
+
+- **[STORY-V3-008]** Integrate Assessment into Setup Wizard (2025-10-29) [Points: 3]
+  **Status:** COMPLETED - Complexity assessment integrated into setup wizard with auto-calculation and visual display
+  **Developer:** Claude | **Duration:** ~1.5 hours | **Epic:** EPIC-V3-001 (Scale-Adaptive Workflow Router)
+
+  **Implementation Details:**
+  - Extended SetupConfig types for assessment data (8 optional fields in ProjectInfo)
+  - Created AssessmentWidget component for visual level display (180 lines)
+  - Enhanced ProjectInfoStep with 8 complexity assessment dropdowns (404 lines total)
+  - Added auto-assessment with useEffect hook (triggers on field changes)
+  - Implemented manual override system (preserves auto-assessment while allowing user choice)
+  - All quality checks passed (type-check, lint, build)
+
+  **Files Created:**
+  - components/features/AssessmentWidget.tsx: Visual assessment display component (180 lines)
+
+  **Files Modified:**
+  - lib/types/setup.ts: Extended ProjectInfo and SetupConfig interfaces
+  - components/features/setup/ProjectInfoStep.tsx: Added assessment fields and widget integration (404 lines)
+  - docs/mam-workflow-status.md: Updated state machine (BACKLOG → IN_PROGRESS → DONE)
+
+  **Type System Changes:**
+  - Extended `ProjectInfo` interface with 8 optional assessment fields (0-5 scale):
+    projectSize, teamSize, codebaseComplexity, integrations, userBase, security, duration, existingCode
+  - Created `AssessmentResult` interface matching ComplexityResult structure
+  - Extended `SetupConfig` with optional `assessment` object containing:
+    * autoAssessment: AssessmentResult | null (computed from inputs)
+    * manualOverride: number | null (user's manual level selection)
+
+  **AssessmentWidget Component Features:**
+  - ✅ **Level Badge**: Color-coded visual indicator (L0-L4) with level name
+    * Level 0 (Minimal): Gray badge
+    * Level 1 (Basic): Green badge
+    * Level 2 (Standard): Blue badge
+    * Level 3 (Comprehensive): Yellow badge
+    * Level 4 (Enterprise): Red badge
+  - ✅ **Score Display**: Shows totalScore/40 with percentage (e.g., "14/40 points (35%)")
+  - ✅ **Progress Bar**: Visual representation of score percentage
+  - ✅ **Manual Override Dropdown**: 5 level options with descriptions
+    * Shows "Use recommended" as default option
+    * Individual options: "Level X - Name (Description)"
+  - ✅ **Override Badge**: Orange "Manual Override" badge when user selects different level
+  - ✅ **Criteria Breakdown**: Collapsible section showing all 8 factor scores
+    * 2-column grid layout with criterion name and score/5
+    * Project Size, Team Size, Complexity, Integrations, User Base, Security, Duration, Existing Code
+  - ✅ **Toggle Button**: "Show/Hide Assessment Details" with arrows (▶/▼)
+  - ✅ **Empty State**: Gray placeholder when assessment not yet calculated
+  - ✅ **Responsive Design**: Mobile-friendly with proper grid layouts
+  - ✅ **Dark Mode Support**: Full dark mode styling throughout
+
+  **ProjectInfoStep Enhancements:**
+  - ✅ **8 Assessment Dropdowns**: Added in 2-column grid (md:grid-cols-2)
+    * Project Size: Tiny → Massive (0-5)
+    * Team Size: Solo → Enterprise (0-5)
+    * Codebase Complexity: Trivial → Extreme (0-5)
+    * Integrations: None → Extensive (0-5)
+    * User Base: Personal → Massive (0-5)
+    * Security: None → Critical (0-5)
+    * Duration: Very Short → Indefinite (0-5)
+    * Existing Code: Greenfield → Full Rewrite (0-5)
+  - ✅ **Auto-Assessment Logic**: useEffect hook with specific dependencies
+    * Only runs when all 8 assessment fields have values
+    * Calls assessComplexity() from lib/workflows/complexity-assessment.ts
+    * Updates config.assessment.autoAssessment with result
+    * Preserves manualOverride when recalculating
+  - ✅ **Manual Override Handler**: handleManualOverride function
+    * Updates config.assessment.manualOverride
+    * Preserves autoAssessment in state
+  - ✅ **Conditional Widget Display**: Shows widget when projectSize is defined
+  - ✅ **Section Separator**: Visual border and heading for assessment section
+
+  **Technical Patterns:**
+  - **Client Component**: Added 'use client' directive for interactivity
+  - **useEffect Hook**: Auto-assessment triggered by field changes
+  - **Type Safety**: All interfaces properly typed with TypeScript
+  - **Component Composition**: Separated AssessmentWidget from form step
+  - **Conditional Rendering**: Widget only shows when data available
+  - **Responsive Grid**: 1-column mobile, 2-column desktop
+  - **State Management**: Parent component manages all config state
+
+  **Quality Assurance:**
+  - TypeScript type-check: PASS (0 errors)
+  - ESLint: PASS (exhaustive-deps warning intentionally suppressed)
+  - Production build: SUCCESS
+  - Setup wizard route: 8.75 kB (increased from 5.24 kB)
+  - No runtime errors or console warnings
+
+  **Error Fixes:**
+  - Fixed type compatibility: Changed AssessmentResult.assessedAt from string to Date | string
+  - Added eslint-disable for exhaustive-deps (intentional partial dependency to avoid infinite loop)
+
+  **MADACE Compliance:**
+  - ✅ TypeScript strict mode compliance
+  - ✅ Component composition best practices
+  - ✅ Responsive design with mobile-first approach
+  - ✅ Dark mode support throughout
+  - ✅ Accessibility features (proper labels, semantic HTML)
+  - ✅ State management patterns (React hooks, parent state control)
+
+  **Acceptance Criteria Met:**
+  - ✅ Add assessment widget to Project Configuration step
+  - ✅ Auto-calculate level based on 8 project input fields
+  - ✅ Display recommended level with badge (Level 0-4)
+  - ✅ Show assessment summary (score/40, percentage, progress bar)
+  - ✅ Manual override dropdown with level descriptions
+  - ✅ Link/button to view assessment details (collapsible breakdown)
+  - ✅ Responsive design (1-col mobile, 2-col desktop)
+  - ✅ Dark mode support throughout
 
 ### Phase 1: Next.js Project Initialization
 
