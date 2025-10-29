@@ -1,33 +1,150 @@
+// MADACE v3.0 Database Schema
+// This is your Prisma schema file, learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
+// ==============================================================================
+// AGENTS
+// ==============================================================================
+
 model Agent {
-  id        String   @id @default(cuid())
-  name      String
-  persona   String
-  prompts   Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String   @unique
+  title       String
+  icon        String
+  module      String
+  version     String
+  persona     Json     // { role, identity, communication_style, principles }
+  menu        Json     // Array of menu items
+  prompts     Json     // Array of prompts
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+  projectId   String?
+
+  memories    AgentMemory[]
+  project     Project?  @relation(fields: [projectId], references: [id])
+
+  @@index([projectId])
+  @@index([module])
 }
+
+model AgentMemory {
+  id          String   @id @default(cuid())
+  agentId     String
+  userId      String
+  context     Json     // Conversation context
+  type        String   // "short-term" | "long-term"
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime?
+
+  agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([agentId, userId])
+  @@index([expiresAt])
+}
+
+// ==============================================================================
+// WORKFLOWS
+// ==============================================================================
+
+model Workflow {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  steps       Json     // Array of workflow steps
+  state       Json?    // Current execution state
+  projectId   String
+
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+// ==============================================================================
+// CONFIGURATION
+// ==============================================================================
 
 model Config {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  value     Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  encrypted   Boolean  @default(false)
+  projectId   String?
+
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
 }
 
-model Memory {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  value     Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ==============================================================================
+// STATE MACHINE
+// ==============================================================================
+
+model StateMachine {
+  id          String   @id @default(cuid())
+  storyId     String   @unique
+  title       String
+  status      String   // "BACKLOG" | "TODO" | "IN_PROGRESS" | "DONE"
+  points      Int
+  assignee    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  projectId   String
+
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, status])
+  @@index([status])
+}
+
+// ==============================================================================
+// PROJECTS & USERS
+// ==============================================================================
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  agents      Agent[]
+  workflows   Workflow[]
+  configs     Config[]
+  stories     StateMachine[]
+  members     ProjectMember[]
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  createdAt   DateTime @default(now())
+
+  memories    AgentMemory[]
+  projects    ProjectMember[]
+}
+
+model ProjectMember {
+  id          String   @id @default(cuid())
+  userId      String
+  projectId   String
+  role        String   // "owner" | "admin" | "member"
+  joinedAt    DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@index([projectId])
+  @@index([userId])
 }

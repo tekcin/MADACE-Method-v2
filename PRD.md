@@ -106,16 +106,32 @@ MADACE-Method v2.0 provides a unified framework that guides users through the en
 
 ### 3.1 Technology Stack
 
-**Tech Stack**: Next.js 15.5.6 • React 19.2.0 • TypeScript 5.9.3 • Node.js 20+ • Tailwind CSS 4.1.15 • Zod 4.1.12
+**Tech Stack**: Next.js 15.5.6 • React 19.2.0 • TypeScript 5.9.3 • Node.js 24.10.0 • Tailwind CSS 4.1.15 • Zod 4.1.12
 
 _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
+_See [VERSION-LOCK.md](./VERSION-LOCK.md) for version locking policy and enforcement._
+
+> **⚠️ CRITICAL: Version Locking Policy**
+>
+> MADACE-Method v2.0 uses **EXACT versions** for all dependencies. NO version ranges (^, ~, >=, <=, >, <) allowed.
+> This ensures 100% reproducible builds across all environments. See Section 3.3 for details.
+
+**Core Tech Stack (LOCKED for v2.0-alpha):**
+
+| Package        | Version | Status    | Notes                        |
+| -------------- | ------- | --------- | ---------------------------- |
+| **next**       | 15.5.6  | ⛔ LOCKED | NO changes without approval  |
+| **react**      | 19.2.0  | ⛔ LOCKED | Must match react-dom         |
+| **react-dom**  | 19.2.0  | ⛔ LOCKED | Must match react             |
+| **typescript** | 5.9.3   | ⛔ LOCKED | Strict mode enabled          |
+| **Node.js**    | 24.10.0 | ⛔ LOCKED | Recommended (minimum 20.0.0) |
 
 **Full-Stack:**
 
-- Framework: Next.js 15.5.6 (App Router)
-- UI Library: React 19.2.0
-- Language: TypeScript 5.9.3 (strict mode)
-- Runtime: Node.js 20+
+- Framework: Next.js 15.5.6 (App Router) ⛔ LOCKED
+- UI Library: React 19.2.0 ⛔ LOCKED
+- Language: TypeScript 5.9.3 (strict mode) ⛔ LOCKED
+- Runtime: Node.js 24.10.0 (minimum 20.0.0) ⛔ LOCKED
 - Styling: Tailwind CSS 4.1.15
 - Components: Shadcn/ui
 
@@ -126,7 +142,7 @@ _See [TECH-STACK.md](./docs/TECH-STACK.md) for canonical version information._
 
 **Business Logic:**
 
-- Language: TypeScript 5.9.3
+- Language: TypeScript 5.9.3 ⛔ LOCKED
 - Validation: Zod 4.1.12 (runtime type checking)
 - YAML Parsing: js-yaml 4.1.0
 - Templates: Handlebars 4.7.8
@@ -255,6 +271,148 @@ modules:
 - `agent-manifest.csv` - All installed agents
 - `workflow-manifest.csv` - All installed workflows
 - `task-manifest.csv` - All installed tasks
+
+### 3.3 Version Locking and Enforcement
+
+**Purpose:** Ensure 100% reproducible builds across all development environments and deployments.
+
+**Rationale:**
+
+Version locking eliminates "works on my machine" problems by guaranteeing that every developer, CI/CD pipeline, and production deployment uses identical dependency versions. This dramatically reduces debugging time and prevents version-related bugs.
+
+**Problem Solved:**
+
+Without exact version locking, different environments can install different versions due to semantic versioning ranges (^, ~), leading to:
+
+- Inconsistent behavior across environments
+- Breaking changes introduced automatically
+- Difficult-to-reproduce bugs
+- CI/CD producing different results than local development
+
+**Implementation:**
+
+MADACE-Method v2.0 enforces exact versions through a **4-layer validation architecture**:
+
+#### Layer 1: Pre-Install Prevention
+
+**Files:** `.npmrc`, `.nvmrc`
+
+**Purpose:** Prevent version ranges from being saved in the first place
+
+**Mechanisms:**
+
+- `.npmrc` with `save-exact=true` - All `npm install` commands save exact versions
+- `.npmrc` with `engine-strict=true` - Enforce Node.js version requirements
+- `.nvmrc` with `24.10.0` - Lock Node.js version for nvm/fnm
+
+**Example:**
+
+```bash
+# Before .npmrc
+npm install some-package
+# Saves: "some-package": "^1.2.3"  ❌
+
+# After .npmrc
+npm install some-package
+# Saves: "some-package": "1.2.3"  ✅
+```
+
+#### Layer 2: Post-Install Validation
+
+**File:** `scripts/validate-versions.js`
+
+**Purpose:** Validate package.json and installed versions after installation
+
+**Checks:**
+
+1. ✅ Core packages (Next.js, React, TypeScript) match LOCKED versions exactly
+2. ✅ No version range operators (^, ~, >=, <=, >, <) in package.json
+3. ✅ Installed versions match package.json declarations
+4. ✅ Node.js version meets requirements (warns if not 24.10.0)
+
+**Usage:**
+
+```bash
+npm run validate-versions  # Standalone validation
+npm run check-all          # Includes validation + type-check + lint + format
+```
+
+**Exit Code:** Returns 1 on failure (blocks CI/CD)
+
+#### Layer 3: Pre-Commit Quality Gates
+
+**Integration:** `npm run check-all` script
+
+**Purpose:** Block commits with incorrect versions
+
+**Workflow:**
+
+```bash
+# Developer flow
+git add .
+npm run check-all  # MUST pass before commit
+# ✅ validate-versions
+# ✅ type-check
+# ✅ lint
+# ✅ format:check
+git commit -m "..."
+```
+
+**Effect:** Prevents version drift from reaching the repository
+
+#### Layer 4: CI/CD Validation
+
+**Integration:** GitHub Actions, GitLab CI, etc.
+
+**Purpose:** Final enforcement in CI/CD pipeline
+
+**Workflow:**
+
+```yaml
+# Example GitHub Actions
+steps:
+  - uses: actions/setup-node@v3
+    with:
+      node-version-file: '.nvmrc' # Uses exact 24.10.0
+  - run: npm ci # Uses package-lock.json (exact versions)
+  - run: npm run validate-versions # Blocks merge if fails
+  - run: npm run check-all
+```
+
+**Upgrade Process:**
+
+**Core Packages (Next.js, React, TypeScript):**
+
+- ⚠️ Requires team approval
+- Create upgrade branch
+- Test thoroughly (all major features, deprecation warnings, release notes)
+- Update VERSION-LOCK.md and CLAUDE.md
+- Get code review before merge
+
+**Non-Core Packages:**
+
+- Any developer can upgrade
+- Use exact version: `npm install package@X.Y.Z`
+- Run validation: `npm run validate-versions && npm run check-all`
+- Test and commit
+
+**Security Exception:**
+
+- **CRITICAL/HIGH vulnerabilities:** Upgrade immediately (skip approval)
+- **MODERATE/LOW vulnerabilities:** Schedule for next sprint
+
+**Documentation:**
+
+- [VERSION-LOCK.md](./VERSION-LOCK.md) - Comprehensive version locking guide
+- [ADR-004](./docs/adrs/ADR-004-version-locking-enforcement.md) - Architecture decision record
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - Technical implementation details
+
+**Success Metrics:**
+
+- ✅ Zero version drift incidents
+- ✅ 100% validation pass rate
+- ✅ Reproducible builds (same input → same output)
+- ✅ No "different version" debugging variables
 
 ---
 
@@ -738,8 +896,93 @@ modules:
 
 **Runtime:**
 
-- Node.js 20+
+- Node.js 20+ (24.10.0 recommended)
 - npm 9+
+
+### 7.7 Version Locking Requirements
+
+**Requirement:** All dependencies MUST use exact versions. NO version ranges (^, ~, >=, <=, >, <) allowed.
+
+**Rationale:** Version locking ensures 100% reproducible builds across all development environments, CI/CD, and production deployments. This eliminates "works on my machine" problems and prevents version-related bugs.
+
+**Core Package Version Requirements:**
+
+| Package    | Exact Version | Status    | Change Policy                     |
+| ---------- | ------------- | --------- | --------------------------------- |
+| next       | 15.5.6        | ⛔ LOCKED | Requires team approval            |
+| react      | 19.2.0        | ⛔ LOCKED | Requires team approval            |
+| react-dom  | 19.2.0        | ⛔ LOCKED | Must match react version          |
+| typescript | 5.9.3         | ⛔ LOCKED | Requires team approval            |
+| Node.js    | 24.10.0       | ⛔ LOCKED | Minimum 20.0.0, recommend 24.10.0 |
+
+**Enforcement Mechanisms:**
+
+1. **Pre-Install Prevention:**
+   - `.npmrc` with `save-exact=true` - Forces exact version saves
+   - `.npmrc` with `engine-strict=true` - Enforces Node.js version
+   - `.nvmrc` with `24.10.0` - Locks Node.js version
+
+2. **Post-Install Validation:**
+   - `scripts/validate-versions.js` - Validates all versions
+   - Checks core packages against LOCKED versions
+   - Detects version range operators in package.json
+   - Verifies installed versions match package.json
+   - Exit code 1 on failure (blocks CI/CD)
+
+3. **Pre-Commit Quality Gates:**
+   - `npm run check-all` includes version validation
+   - Must pass before commit
+   - Prevents version drift from reaching repository
+
+4. **CI/CD Validation:**
+   - GitHub Actions runs version validation
+   - Uses `npm ci` (lockfile-based installation)
+   - Blocks merge on validation failure
+
+**Validation Commands:**
+
+```bash
+npm run validate-versions  # Standalone version validation
+npm run check-all          # Full quality check (includes version validation)
+```
+
+**Version Update Process:**
+
+**Core Packages (Locked):**
+
+1. Create upgrade branch
+2. Get team approval
+3. Update to exact version: `npm install package@X.Y.Z`
+4. Run full validation: `npm run validate-versions && npm run check-all && npm run build && npm test`
+5. Update VERSION-LOCK.md and CLAUDE.md
+6. Create PR with detailed description
+7. Merge after code review
+
+**Non-Core Packages:**
+
+1. Update to exact version: `npm install package@X.Y.Z`
+2. Run validation: `npm run validate-versions && npm run check-all`
+3. Test thoroughly
+4. Commit with clear message
+
+**Security Exceptions:**
+
+- **CRITICAL/HIGH** vulnerabilities: Upgrade immediately (skip approval)
+- **MODERATE/LOW** vulnerabilities: Schedule for next sprint
+
+**Success Criteria:**
+
+- ✅ Zero version drift incidents across environments
+- ✅ 100% validation pass rate in CI/CD
+- ✅ Reproducible builds (identical results every time)
+- ✅ No debugging time wasted on version inconsistencies
+
+**Documentation:**
+
+- [VERSION-LOCK.md](./VERSION-LOCK.md) - Comprehensive guide
+- [ADR-004](./docs/adrs/ADR-004-version-locking-enforcement.md) - Architecture decision
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - Technical details
+- See Section 3.3 for detailed implementation
 
 ---
 
@@ -1242,12 +1485,14 @@ project-root/
 
 ### 15.3 Change Log
 
-| Version | Date       | Author      | Changes                   |
-| ------- | ---------- | ----------- | ------------------------- |
-| 1.0.0   | 2025-10-19 | MADACE Team | Initial comprehensive PRD |
+| Version | Date       | Author      | Changes                                                                                        |
+| ------- | ---------- | ----------- | ---------------------------------------------------------------------------------------------- |
+| 1.1.0   | 2025-10-28 | MADACE Team | Added version locking requirements (Section 3.3, 7.7), updated tech stack with LOCKED versions |
+| 1.0.0   | 2025-10-19 | MADACE Team | Initial comprehensive PRD                                                                      |
 
 ---
 
 **Document Status:** Living Document
 **Review Cycle:** Monthly
-**Next Review:** 2025-11-19
+**Next Review:** 2025-11-28
+**Last Updated:** 2025-10-28

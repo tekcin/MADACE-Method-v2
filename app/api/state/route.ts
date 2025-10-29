@@ -9,6 +9,8 @@ import path from 'path';
 export async function GET() {
   try {
     const statusFilePath = path.join(process.cwd(), 'docs', 'mam-workflow-status.md');
+
+    // StateMachine.load() now handles missing files gracefully
     const stateMachine = createStateMachine(statusFilePath);
     await stateMachine.load();
     const status = stateMachine.getStatus();

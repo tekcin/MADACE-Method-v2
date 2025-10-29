@@ -1,0 +1,23 @@
+# Example Multi-Level Nested Workflow
+# Demonstrates deep nesting: Parent → Child → Grandchild
+
+workflow:
+  name: 'nested-workflow'
+  description: 'Workflow demonstrating multi-level nesting'
+  agent: 'architect'
+  phase: 1
+  steps:
+    - name: 'Initialize'
+      action: guide
+      prompt: 'Starting nested workflow execution'
+
+    - name: 'Execute Complex Sub-Workflow'
+      action: sub-workflow
+      workflow_path: 'madace/mam/workflows/examples/complex-workflow.workflow.yaml'
+      context_vars:
+        PROJECT_NAME: 'Nested Demo'
+        USER_NAME: 'Developer'
+
+    - name: 'Complete'
+      action: guide
+      prompt: 'All nested workflows completed successfully'

@@ -110,6 +110,20 @@ export async function loadMAMAgents(): Promise<Agent[]> {
 }
 
 /**
+ * Load all MADACE agents (MAM module only)
+ */
+export async function loadMADACEAgents(): Promise<Agent[]> {
+  return loadMAMAgents();
+}
+
+/**
+ * Load all agents from all modules (currently just MADACE/MAM)
+ */
+export async function loadAllAgents(): Promise<Agent[]> {
+  return loadMADACEAgents();
+}
+
+/**
  * Clear the agent cache
  */
 export function clearAgentCache(): void {

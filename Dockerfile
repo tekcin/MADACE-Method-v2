@@ -29,6 +29,9 @@ COPY . .
 # Install dev dependencies for build
 RUN npm install --only=development
 
+# Generate Prisma client
+RUN npx prisma generate
+
 # Build Next.js application
 # This creates .next directory with optimized production build
 RUN npm run build

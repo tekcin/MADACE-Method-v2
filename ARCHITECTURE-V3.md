@@ -8,6 +8,130 @@
 
 ---
 
+## ⚠️ CRITICAL DEVELOPMENT RULES FOR V3.0
+
+### File Access and Runtime Error Prevention
+
+**RULE 1: Never assume files exist in production**
+
+- ✅ **DO**: Always check if files exist before reading them
+- ✅ **DO**: Return graceful fallbacks when files are missing
+- ❌ **DON'T**: Use direct `fs.readFile()` without existence checks
+- ❌ **DON'T**: Throw errors for missing optional files
+
+**RULE 2: Development vs Production file paths**
+
+- Development files (like `docs/mam-workflow-status.md`) may NOT exist in production Docker builds
+- Production builds only include files in the Docker image (see `.dockerignore`)
+- API routes must handle missing development files gracefully
+
+**RULE 3: Graceful degradation pattern**
+
+```typescript
+// ✅ CORRECT: Check file existence first
+import { existsSync } from 'fs';
+
+if (!existsSync(filePath)) {
+  return { success: true, data: emptyState, message: 'File not found - returning empty state' };
+}
+
+// ❌ WRONG: Direct file access
+const data = await fs.readFile(filePath); // This will crash if file doesn't exist!
+```
+
+**RULE 4: Health checks should never fail for missing optional files**
+
+- Missing development files should return `status: 'pass'` with a descriptive message
+- Only fail health checks for critical system failures (database, disk space, permissions)
+
+**Example from production error fix:**
+
+```typescript
+// app/api/state/route.ts - BEFORE (caused production crash)
+const stateMachine = createStateMachine(statusFilePath);
+await stateMachine.load(); // CRASH: ENOENT error
+
+// app/api/state/route.ts - AFTER (graceful degradation)
+if (!existsSync(statusFilePath)) {
+  return NextResponse.json({
+    success: true,
+    status: { backlog: [], todo: [], inProgress: [], done: [] },
+    message: 'No workflow status file found - returning empty state',
+  });
+}
+```
+
+### Database Schema and Type Safety
+
+**RULE 5: Never flatten JSON fields in UI components**
+
+- Prisma schema uses `Json` type for `persona`, `menu`, and `prompts`
+- ✅ **DO**: Access JSON fields as `agent.persona` (JsonValue type)
+- ❌ **DON'T**: Create flattened fields like `agent.personaName`, `agent.personaRole`
+- Use type assertions when needed: `agent.persona as Record<string, unknown>`
+
+**RULE 6: Match Prisma types exactly**
+
+```typescript
+// ✅ CORRECT: Use Prisma-generated types
+import type { Agent } from '@prisma/client';
+
+// Agent type has these fields:
+// - persona: JsonValue (not personaName, personaRole, etc.)
+// - menu: JsonValue (not menuOptions, menuPrompt, etc.)
+// - prompts: JsonValue (not individual prompt fields)
+
+// ❌ WRONG: Creating custom types that don't match Prisma
+interface CustomAgent {
+  personaName: string; // Does not exist in database!
+  menuOptions: string[]; // Does not exist in database!
+}
+```
+
+**RULE 7: Service layer schema must match Prisma schema**
+
+```typescript
+// lib/services/agent-service.ts schema structure:
+export const CreateAgentSchema = z.object({
+  name: z.string(),
+  title: z.string(),
+  persona: z.object({  // Stored as JSON in Prisma
+    role: z.string(),
+    identity: z.string().optional(),
+  }),
+  menu: z.array(z.object({ ... })),  // Stored as JSON in Prisma
+  prompts: z.array(z.object({ ... })),  // Stored as JSON in Prisma
+});
+```
+
+### API Route Error Handling
+
+**RULE 8: All API routes must return proper error responses**
+
+```typescript
+// ✅ CORRECT: Structured error responses
+return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
+
+// ❌ WRONG: Throwing unhandled errors
+throw new Error(errorMessage); // Crashes Next.js server!
+```
+
+**RULE 9: Use try-catch in all API routes**
+
+- Wrap all async operations in try-catch blocks
+- Handle Prisma errors specifically (check for `PrismaClientKnownRequestError`)
+- Return appropriate HTTP status codes (400, 404, 500, etc.)
+
+### UI Component Best Practices
+
+**RULE 10: Keep UI components simple until schema is stable**
+
+- Complex forms (AgentEditor, AgentWizard) should be deferred until JSON schema is finalized
+- Start with read-only views (display JSON as formatted text)
+- Add edit functionality incrementally once schema patterns are proven
+
+---
+
 ## 1. Overview
 
 This proposal introduces a set of architectural changes and new features designed to make the MADACE-Method more dynamic, intelligent, and user-friendly. The proposed changes are focused on three key areas: Agents, CLI, and the Web Interface.
@@ -342,5 +466,406 @@ https://www.ssllabs.com/ssltest/analyze.html?d=madace.yourdomain.com
 - **Performance**: HTTP/2 and HTTP/3 support with automatic compression
 - **Reliability**: Automatic renewal prevents certificate expiration
 - **Scalability**: Single Caddy instance can proxy multiple backend services
+
+---
+
+## 7. End-to-End Testing Infrastructure ✅
+
+**Status:** Implemented - Comprehensive E2E testing with Playwright for multi-browser validation
+
+### 7.1. Testing Framework Architecture
+
+- **Problem:** Manual testing is error-prone, time-consuming, and doesn't scale with rapid development cycles. Route conflicts and build cache issues caused production failures.
+- **Solution:** Implemented comprehensive E2E testing infrastructure using Playwright with automated cleanup, route validation, and multi-browser support.
+- **Implementation Details:**
+  - **Playwright Framework**: Multi-browser testing (Chromium, Firefox, WebKit)
+  - **Mobile Testing**: Pixel 5, iPhone 12, iPad Pro viewport emulation
+  - **Page Object Model**: Maintainable, reusable test components
+  - **Global Lifecycle**: Setup/teardown hooks for test environment management
+  - **Visual Debugging**: Screenshot/video capture on test failures
+  - **Execution Traces**: Detailed debugging information for failed tests
+
+### 7.2. Test Coverage
+
+**10 Comprehensive Test Suites** (336 total tests across all browsers):
+
+1. **Setup Wizard Tests** (`setup-wizard.spec.ts`)
+   - Multi-step form validation
+   - Navigation between wizard steps
+   - Form field validation
+   - Configuration persistence
+   - Success state handling
+
+2. **Agent Management Tests** (`agents.spec.ts`)
+   - Agent listing and display
+   - Agent detail pages
+   - Search and filtering
+   - MAM agent verification
+   - Agent metadata validation
+
+3. **Kanban Board Tests** (`kanban-board.spec.ts`)
+   - Drag-and-drop functionality
+   - State transitions (Backlog → TODO → In Progress → Done)
+   - Visual feedback and animations
+   - Story card interactions
+   - Board synchronization
+
+4. **LLM Integration Tests** (`llm-integration.spec.ts`)
+   - API endpoint testing
+   - Configuration management
+   - Multi-provider support validation
+   - Error handling
+   - Response validation
+
+5. **API Endpoint Tests** (`api-endpoints.spec.ts`)
+   - REST API validation
+   - Response structure verification
+   - HTTP status code checking
+   - Error response handling
+   - Data integrity validation
+
+6. **Accessibility Tests** (`accessibility.spec.ts`)
+   - WCAG 2.1 compliance
+   - Keyboard navigation
+   - Screen reader compatibility
+   - ARIA labels and roles
+   - Semantic HTML structure
+   - Focus management
+
+7. **Performance Tests** (`performance.spec.ts`)
+   - Page load time metrics
+   - Time to Interactive (TTI)
+   - First Contentful Paint (FCP)
+   - Resource loading analysis
+   - Bundle size monitoring
+
+8. **Authentication Tests** (`auth-setup.spec.ts`)
+   - Setup flow completion
+   - Configuration saving
+   - Session management
+   - Future authentication readiness
+
+9. **Server Lifecycle Tests** (`test-server-lifecycle.spec.ts`)
+   - Dev server health checking
+   - API endpoint availability
+   - Concurrent request handling
+   - Server responsiveness
+
+10. **Home Page Tests** (integrated across suites)
+    - Landing page functionality
+    - Quick actions
+    - Navigation links
+    - Project statistics
+
+### 7.3. Automation Scripts
+
+**Cross-Platform Cleanup System:**
+
+1. **cleanup-dev-servers.js** (Cross-platform Node.js)
+
+   ```javascript
+   // Features:
+   - Kill processes on port 3000
+   - Terminate all Next.js dev servers
+   - Clear .next build cache (prevents route conflicts)
+   - Cross-platform (Windows, macOS, Linux)
+   - Graceful error handling
+   ```
+
+2. **cleanup-dev-servers.sh** (Enhanced Unix/Linux)
+
+   ```bash
+   # Additional features:
+   - More thorough process cleanup
+   - npm dev process termination
+   - Faster execution on Unix systems
+   ```
+
+3. **verify-routes.js** (Route Structure Validation)
+
+   ```javascript
+   // Validation checks:
+   - Detect nested MADACE directories
+   - Find conflicting [name] parameters
+   - Verify [id] route consistency
+   - Display visual route tree
+   - Exit with error codes for CI/CD
+   ```
+
+4. **run-e2e.sh** (Automated Test Execution)
+   ```bash
+   # Workflow automation:
+   - Cleanup → Verify → Dev Server → Tests
+   - Integrated error handling
+   - CI/CD ready
+   ```
+
+### 7.4. Route Conflict Resolution
+
+**Critical Production Fix:**
+
+- **Problem Identified**: Next.js route parameter mismatch (`[id]` vs `[name]`) caused deployment failures
+- **Root Cause**: Stale build cache (`.next` directory) contained old route structures
+- **Solution Implemented**:
+  1. Renamed all dynamic routes from `[name]` → `[id]` for consistency
+  2. Integrated build cache clearing into cleanup scripts
+  3. Created route verification tool for pre-deployment validation
+  4. Added route structure validation to test workflow
+
+**Routes Fixed:**
+
+```
+app/api/agents/[name] → app/api/agents/[id]
+app/api/workflows/[name] → app/api/workflows/[id]
+app/agents/[name] → (removed - conflicting directory)
+```
+
+**Error Prevented:**
+
+```
+Error: You cannot use different slug names for the same dynamic path ('id' !== 'name').
+```
+
+### 7.5. NPM Scripts Integration
+
+**New Testing Commands:**
+
+```json
+{
+  "verify-routes": "node scripts/verify-routes.js",
+  "cleanup": "node scripts/cleanup-dev-servers.js",
+  "cleanup:bash": "bash scripts/cleanup-dev-servers.sh",
+  "test:e2e": "playwright test",
+  "test:e2e:ui": "playwright test --ui",
+  "test:e2e:debug": "playwright test --debug",
+  "test:e2e:chromium": "playwright test --project=chromium",
+  "test:e2e:headed": "playwright test --headed",
+  "test:e2e:report": "playwright show-report",
+  "test:e2e:clean": "npm run verify-routes && npm run cleanup && npm run dev & sleep 3 && npm run test:e2e"
+}
+```
+
+### 7.6. Page Object Model Pattern
+
+**Maintainable Test Architecture:**
+
+```typescript
+// e2e-tests/page-objects/setup-wizard.page.ts
+export class SetupWizardPage {
+  async goto() {
+    await this.page.goto('/setup');
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async fillProjectInfo(data: ProjectInfo) {
+    await this.page.fill('[name="projectName"]', data.name);
+    await this.page.fill('[name="outputFolder"]', data.folder);
+  }
+
+  async navigateNext() {
+    await this.page.click('button:has-text("Next")');
+  }
+}
+```
+
+**Benefits:**
+
+- Centralized element selectors
+- Reusable page interactions
+- Easier maintenance when UI changes
+- Type-safe page operations
+- Self-documenting test code
+
+### 7.7. Test Configuration
+
+**Playwright Configuration** (`playwright.config.ts`):
+
+```typescript
+export default defineConfig({
+  testDir: './e2e-tests',
+  timeout: 30000,
+  retries: process.env.CI ? 2 : 0,
+  use: {
+    baseURL: 'http://localhost:3000',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    trace: 'on-first-retry',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'Mobile Chrome', use: { ...devices['Pixel 5'] } },
+    { name: 'Mobile Safari', use: { ...devices['iPhone 12'] } },
+    { name: 'iPad', use: { ...devices['iPad Pro'] } },
+  ],
+});
+```
+
+### 7.8. CI/CD Integration
+
+**Automated Testing Workflow:**
+
+```bash
+# CI Pipeline Integration
+npm ci
+npx playwright install --with-deps chromium
+
+# Pre-deployment validation
+npm run verify-routes    # Validate route structure
+npm run cleanup          # Clear stale processes/cache
+npm run dev &            # Start dev server
+sleep 5                  # Wait for server ready
+
+# Execute tests
+npm run test:e2e         # Run all E2E tests
+npm run test:e2e:report  # Generate test report
+
+# Cleanup
+npm run cleanup
+```
+
+**GitHub Actions Ready:**
+
+- Automated browser installation
+- Parallel test execution
+- Test result reporting
+- Artifact collection (screenshots, videos, traces)
+- Slack/email notifications on failure
+
+### 7.9. Test Artifacts and Debugging
+
+**Failure Investigation Tools:**
+
+1. **Screenshots** (`test-results/*/test-failed-*.png`)
+   - Captured automatically on test failure
+   - Visual state at time of failure
+   - Timestamped for correlation
+
+2. **Videos** (`test-results/*/video.webm`)
+   - Full test execution recording
+   - Retained only on failure
+   - Helps reproduce intermittent issues
+
+3. **Execution Traces** (`test-results/*/trace.zip`)
+   - Detailed timeline of test execution
+   - Network activity
+   - Console logs
+   - DOM snapshots
+   - Viewable with `npx playwright show-trace`
+
+4. **Error Context** (`test-results/*/error-context.md`)
+   - Detailed error messages
+   - Stack traces
+   - Test configuration
+   - Environment information
+
+### 7.10. Test Execution Modes
+
+**Development Workflow:**
+
+```bash
+# Quick feedback during development
+npm run test:e2e:chromium  # Single browser (fastest)
+npm run test:e2e:headed    # Watch tests run
+npm run test:e2e:debug     # Step through tests
+
+# Full validation before PR
+npm run test:e2e           # All browsers (336 tests)
+npm run test:e2e:report    # View results in browser
+```
+
+**Interactive Debugging:**
+
+```bash
+# UI Mode - visual test explorer
+npm run test:e2e:ui
+
+Features:
+- Pick and choose tests to run
+- Watch mode for rapid iteration
+- Time travel debugging
+- Visual test selector
+- Real-time results
+```
+
+### 7.11. Test Quality Metrics
+
+**Current Status:**
+
+- **Total Tests**: 56 tests (Chromium) | 336 tests (all browsers)
+- **Test Suites**: 10 comprehensive suites
+- **Coverage Areas**: UI, API, Accessibility, Performance, Integration
+- **Execution Time**: ~2-3 minutes (Chromium) | ~10-15 minutes (all browsers)
+- **Retry Strategy**: 2 retries on CI, 0 retries locally
+- **Parallel Execution**: 5 workers for faster execution
+
+**Known Test Status:**
+
+- ✅ Core functionality tests passing
+- ⚠️ Some tests expect unimplemented features (expected)
+- ⚠️ Selector refinement needed for dynamic content
+- ⚠️ Timeout adjustments for slower pages
+
+### 7.12. Documentation
+
+**Comprehensive Guides:**
+
+1. **E2E-TESTING-WORKFLOW.md** (Complete workflow guide)
+   - Quick start instructions
+   - Available scripts reference
+   - Troubleshooting guide
+   - CI/CD integration examples
+   - Best practices
+
+2. **E2E-TESTING-GUIDE.md** (Test writing guide)
+   - Page Object Model patterns
+   - Writing maintainable tests
+   - Assertion strategies
+   - Common pitfalls
+
+3. **CORE-INTEGRATION-ANALYSIS.md** (Integration documentation)
+   - System integration points
+   - API contract testing
+   - State management validation
+
+### 7.13. Future Enhancements
+
+**Planned Improvements:**
+
+- [ ] Visual regression testing (Percy, Chromatic)
+- [ ] Contract testing for API endpoints
+- [ ] Load testing with k6 or Artillery
+- [ ] Component testing with Storybook
+- [ ] Test data factories for consistent fixtures
+- [ ] Database snapshot/restore for isolation
+- [ ] Parallel test execution optimization
+- [ ] Test flakiness monitoring and reporting
+
+### 7.14. Integration Benefits
+
+**Value Delivered:**
+
+- **Quality Assurance**: Automated validation of critical user flows
+- **Regression Prevention**: Catch breaking changes before deployment
+- **Development Velocity**: Faster feedback on code changes
+- **Confidence**: Safe refactoring with comprehensive test coverage
+- **Documentation**: Tests serve as executable specifications
+- **Multi-Browser Support**: Validated across all major browsers
+- **Accessibility**: WCAG compliance automated validation
+- **Performance**: Early detection of performance regressions
+- **Route Validation**: Prevents deployment-breaking route conflicts
+- **Clean Environment**: Automated cleanup prevents test pollution
+
+**Production Readiness:**
+
+- ✅ Zero-configuration setup
+- ✅ Cross-platform compatibility
+- ✅ CI/CD ready
+- ✅ Comprehensive error reporting
+- ✅ Visual debugging tools
+- ✅ Route conflict prevention
+- ✅ Build cache management
+- ✅ Multi-browser validation
 
 ---

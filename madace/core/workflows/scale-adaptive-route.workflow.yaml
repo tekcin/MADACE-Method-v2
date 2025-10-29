@@ -1,0 +1,375 @@
+workflow:
+  metadata:
+    name: 'Scale-Adaptive Router'
+    version: '1.0.0'
+    description: 'Assesses project complexity and routes to appropriate workflow path'
+    module: 'core'
+    author: 'MADACE Team'
+    tags:
+      - 'routing'
+      - 'complexity-assessment'
+      - 'adaptive-workflow'
+
+  variables:
+    # Input variables (set by CLI or API)
+    project_input: null
+    complexity_result: null
+    report_markdown: null
+    selected_workflow: null
+
+  steps:
+    - id: 'elicit-project-info'
+      action: 'elicit'
+      description: 'Gather project information via interactive CLI prompts'
+      prompt_template: 'cli_complexity_prompts'
+      prompts:
+        - id: 'project_type'
+          question: 'What type of project are you building?'
+          type: 'select'
+          options:
+            - 'Tutorial/Prototype'
+            - 'Simple Feature'
+            - 'Standard Application'
+            - 'Complex System'
+            - 'Enterprise Platform'
+
+        - id: 'team_size'
+          question: 'How many developers will work on this project?'
+          type: 'number'
+          validation:
+            min: 1
+            max: 100
+
+        - id: 'timeline'
+          question: 'What is your estimated timeline?'
+          type: 'select'
+          options:
+            - '< 1 week'
+            - '1-4 weeks'
+            - '1-3 months'
+            - '3-6 months'
+            - '> 6 months'
+
+        - id: 'tech_stack_count'
+          question: 'How many primary technologies/frameworks will you use?'
+          type: 'number'
+          validation:
+            min: 1
+            max: 20
+
+        - id: 'integration_count'
+          question: 'How many external systems/APIs will you integrate?'
+          type: 'number'
+          validation:
+            min: 0
+            max: 50
+
+        - id: 'has_database'
+          question: 'Does your project require a database?'
+          type: 'boolean'
+
+        - id: 'has_auth'
+          question: 'Does your project require authentication/authorization?'
+          type: 'boolean'
+
+        - id: 'deployment_complexity'
+          question: 'What is your deployment complexity?'
+          type: 'select'
+          options:
+            - 'Simple (single server/container)'
+            - 'Moderate (multi-container/basic cloud)'
+            - 'Complex (microservices/multi-region)'
+
+      output_var: 'project_input'
+      next: 'assess-complexity'
+
+    - id: 'assess-complexity'
+      action: 'action'
+      description: 'Calculate complexity score and determine project level'
+      function: 'assessComplexity'
+      input: '{{project_input}}'
+      algorithm:
+        description: 'Scoring algorithm based on 8 dimensions (0-40 points total)'
+        dimensions:
+          - name: 'team_size'
+            weights:
+              1: 0
+              2-3: 1
+              4-5: 2
+              6-10: 3
+              '10+': 4
+
+          - name: 'timeline'
+            weights:
+              '< 1 week': 0
+              '1-4 weeks': 1
+              '1-3 months': 2
+              '3-6 months': 3
+              '> 6 months': 4
+
+          - name: 'tech_stack_count'
+            weights:
+              1: 0
+              2-3: 1
+              4-5: 2
+              6-8: 3
+              '8+': 4
+
+          - name: 'integration_count'
+            weights:
+              0: 0
+              1-2: 1
+              3-5: 2
+              6-10: 3
+              '10+': 4
+
+          - name: 'database_complexity'
+            weights:
+              none: 0
+              single: 2
+              multiple: 4
+
+          - name: 'auth_complexity'
+            weights:
+              none: 0
+              basic: 2
+              advanced: 4
+
+          - name: 'deployment_complexity'
+            weights:
+              simple: 0
+              moderate: 2
+              complex: 4
+
+          - name: 'project_type'
+            weights:
+              'Tutorial/Prototype': 0
+              'Simple Feature': 1
+              'Standard Application': 2
+              'Complex System': 3
+              'Enterprise Platform': 4
+
+        level_ranges:
+          0:
+            min: 0
+            max: 7
+            label: 'Tutorial/Prototype'
+            description: 'Minimal complexity - learning project or quick prototype'
+
+          1:
+            min: 8
+            max: 15
+            label: 'Simple Feature'
+            description: 'Low complexity - small feature or simple application'
+
+          2:
+            min: 16
+            max: 23
+            label: 'Standard Project'
+            description: 'Moderate complexity - typical web/mobile application'
+
+          3:
+            min: 24
+            max: 31
+            label: 'Complex System'
+            description: 'High complexity - enterprise application with integrations'
+
+          4:
+            min: 32
+            max: 40
+            label: 'Enterprise Platform'
+            description: 'Very high complexity - large-scale distributed system'
+
+      output_var: 'complexity_result'
+      output_schema:
+        score: 'number'
+        level: 'number'
+        level_label: 'string'
+        level_description: 'string'
+        dimension_scores:
+          team_size: 'number'
+          timeline: 'number'
+          tech_stack_count: 'number'
+          integration_count: 'number'
+          database_complexity: 'number'
+          auth_complexity: 'number'
+          deployment_complexity: 'number'
+          project_type: 'number'
+        recommendations: 'array<string>'
+
+      next: 'generate-report'
+
+    - id: 'generate-report'
+      action: 'template'
+      description: 'Generate complexity assessment report from Handlebars template'
+      template: 'assessment-report.hbs'
+      template_path: 'madace/core/templates/assessment-report.hbs'
+      input: '{{complexity_result}}'
+      context:
+        project_input: '{{project_input}}'
+        complexity_result: '{{complexity_result}}'
+        timestamp: '{{current_timestamp}}'
+        madace_version: '2.0.0'
+
+      output_var: 'report_markdown'
+      output_format: 'markdown'
+      next: 'display-report'
+
+    - id: 'display-report'
+      action: 'action'
+      description: 'Display assessment report to user (CLI or web UI)'
+      function: 'displayMarkdown'
+      input: '{{report_markdown}}'
+      display_options:
+        format: 'markdown'
+        syntax_highlighting: true
+        show_timestamp: true
+        enable_copy: true
+
+      user_confirmation:
+        required: true
+        message: 'Review the assessment report. Do you want to proceed with the recommended workflow?'
+        options:
+          - label: 'Yes, proceed'
+            value: 'proceed'
+          - label: 'No, adjust settings'
+            value: 'restart'
+            action: 'goto:elicit-project-info'
+          - label: 'Cancel'
+            value: 'cancel'
+            action: 'exit'
+
+      next: 'route-to-workflow'
+
+    - id: 'route-to-workflow'
+      action: 'action'
+      description: 'Route to appropriate workflow based on complexity level'
+      function: 'routeWorkflow'
+      input: '{{complexity_result.level}}'
+
+      routing:
+        description: 'Workflow routing table based on complexity level'
+
+        rules:
+          0:
+            level: 0
+            label: 'Tutorial/Prototype'
+            workflow: 'minimal-path.workflow.yaml'
+            workflow_path: 'madace/mam/workflows/minimal-path.workflow.yaml'
+            description: 'Lightweight workflow for prototypes and learning projects'
+            estimated_duration: '< 1 week'
+            phases: ['Quick Setup', 'Basic Implementation', 'Simple Testing']
+
+          1:
+            level: 1
+            label: 'Simple Feature'
+            workflow: 'simple-path.workflow.yaml'
+            workflow_path: 'madace/mam/workflows/simple-path.workflow.yaml'
+            description: 'Streamlined workflow for simple features and small projects'
+            estimated_duration: '1-4 weeks'
+            phases: ['Planning', 'Development', 'Testing', 'Deployment']
+
+          2:
+            level: 2
+            label: 'Standard Project'
+            workflow: 'standard-path.workflow.yaml'
+            workflow_path: 'madace/mam/workflows/standard-path.workflow.yaml'
+            description: 'Balanced workflow for typical web/mobile applications'
+            estimated_duration: '1-3 months'
+            phases: ['Requirements', 'Architecture', 'Implementation', 'QA', 'Deployment']
+
+          3:
+            level: 3
+            label: 'Complex System'
+            workflow: 'comprehensive-path.workflow.yaml'
+            workflow_path: 'madace/mam/workflows/comprehensive-path.workflow.yaml'
+            description: 'Comprehensive workflow for complex enterprise systems'
+            estimated_duration: '3-6 months'
+            phases:
+              [
+                'Discovery',
+                'Architecture',
+                'Iterative Development',
+                'Integration Testing',
+                'Staged Rollout',
+              ]
+
+          4:
+            level: 4
+            label: 'Enterprise Platform'
+            workflow: 'enterprise-path.workflow.yaml'
+            workflow_path: 'madace/mam/workflows/enterprise-path.workflow.yaml'
+            description: 'Full enterprise workflow for large-scale distributed systems'
+            estimated_duration: '> 6 months'
+            phases:
+              [
+                'Strategy',
+                'Design',
+                'Incremental Delivery',
+                'Continuous Integration',
+                'Production Monitoring',
+              ]
+
+        default:
+          workflow: 'standard-path.workflow.yaml'
+          workflow_path: 'madace/mam/workflows/standard-path.workflow.yaml'
+          description: 'Fallback to standard workflow if level cannot be determined'
+
+      output_var: 'selected_workflow'
+
+      next: 'execute-selected-workflow'
+
+    - id: 'execute-selected-workflow'
+      action: 'sub-workflow'
+      description: 'Execute the selected workflow based on routing decision'
+      workflow: '{{selected_workflow.workflow_path}}'
+      input:
+        project_input: '{{project_input}}'
+        complexity_assessment: '{{complexity_result}}'
+        parent_workflow: 'scale-adaptive-route'
+
+      on_complete:
+        action: 'log'
+        message: 'Completed {{selected_workflow.label}} workflow'
+
+      on_error:
+        action: 'log'
+        level: 'error'
+        message: 'Error executing {{selected_workflow.label}} workflow'
+        fallback: 'standard-path.workflow.yaml'
+
+  error_handling:
+    - condition: 'validation_error'
+      action: 'retry'
+      max_retries: 3
+      message: 'Invalid input. Please try again.'
+
+    - condition: 'workflow_not_found'
+      action: 'fallback'
+      fallback_workflow: 'standard-path.workflow.yaml'
+      message: 'Selected workflow not found. Falling back to standard workflow.'
+
+    - condition: 'user_cancelled'
+      action: 'exit'
+      message: 'Workflow cancelled by user.'
+
+  hooks:
+    on_start:
+      - action: 'log'
+        message: 'Starting Scale-Adaptive Router workflow'
+
+    on_complete:
+      - action: 'log'
+        message: 'Successfully routed to {{selected_workflow.label}}'
+
+      - action: 'save_state'
+        path: '{{workflow_state_dir}}/.scale-adaptive-route.state.json'
+
+    on_error:
+      - action: 'log'
+        level: 'error'
+        message: 'Error in routing workflow: {{error_message}}'
+
+      - action: 'notify'
+        recipients: ['system']
+        message: 'Routing workflow failed'

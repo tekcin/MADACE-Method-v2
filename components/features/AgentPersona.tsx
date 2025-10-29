@@ -128,7 +128,9 @@ export function AgentPersona({ agent, onActionClick }: AgentPersonaProps) {
             {agent.menu.map((menuItem, index) => (
               <button
                 key={index}
-                onClick={() => handleActionClick(menuItem.action)}
+                onClick={() =>
+                  handleActionClick(menuItem.action || menuItem.workflow || menuItem.exec || '')
+                }
                 className="flex w-full items-start rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-blue-300 hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
               >
                 <div className="flex-1">

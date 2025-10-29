@@ -19,7 +19,7 @@ services:
     # Named volume on host system
     # All user data, config, and generated files persist here
     volumes:
-      - madace-data:/app/data
+      - ./madace-data:/app/data
 
     # Environment variables for container
     environment:
@@ -53,8 +53,6 @@ services:
         reservations:
           cpus: '0.5'
           memory: 512M
-# Optional: Named volumes (alternative to bind mount)
-# Uncomment if you prefer Docker-managed volumes over host folders
-volumes:
-  madace-data:
-    driver: local
+
+    # Create website data directory and start the application
+    command: sh -c "mkdir -p /app/data/website && npm start"

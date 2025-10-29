@@ -1,0 +1,26 @@
+# Example Child Workflow - Data Processing
+# This workflow can be called as a sub-workflow from parent workflows
+# Demonstrates context inheritance and independent state tracking
+
+workflow:
+  name: 'data-processing'
+  description: 'Process and validate data files'
+  agent: 'dev'
+  phase: 2
+  steps:
+    - name: 'Load Data'
+      action: guide
+      prompt: 'Loading data from {input_file}'
+
+    - name: 'Transform Data'
+      action: guide
+      prompt: 'Transforming data with business rules'
+
+    - name: 'Validate Data'
+      action: validate
+      condition: 'data_valid == true'
+      error_message: 'Data validation failed. Please check data quality.'
+
+    - name: 'Save Results'
+      action: guide
+      prompt: 'Saving processed data to {output_dir}'

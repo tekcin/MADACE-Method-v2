@@ -154,6 +154,19 @@ export function registerStandardHelpers(): void {
     return roles[name.toLowerCase()] || 'Unknown Role';
   });
 
+  // Assessment-specific helpers
+  Handlebars.registerHelper('badge', function (level: number) {
+    const badges: Record<number, string> = {
+      0: '🟢',
+      1: '🟡',
+      2: '🟠',
+      3: '🔴',
+      4: '🟣',
+    };
+
+    return badges[level] || '⚪';
+  });
+
   // Utility helpers
   Handlebars.registerHelper('default', function (value: unknown, defaultValue: unknown) {
     return value ?? defaultValue;

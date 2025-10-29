@@ -1,315 +1,214 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  ViewColumnsIcon,
-  BeakerIcon,
-  Cog6ToothIcon,
-  RocketLaunchIcon,
-  CheckCircleIcon,
-  ClockIcon,
-} from '@heroicons/react/24/outline';
-import type { WorkflowStatus } from '@/lib/state/types';
-
-interface DashboardStats {
-  projectName: string;
-  totalCompleted: number;
-  totalPoints: number;
-  inProgress: number;
-  backlog: number;
-}
 
 export default function Home() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
-    try {
-      // Load workflow status
-      const stateResponse = await fetch('/api/state');
-      const stateData = await stateResponse.json();
-
-      if (stateData.success) {
-        const status: WorkflowStatus = stateData.status;
-        const totalPoints = status.done.reduce((sum, story) => sum + (story.points || 0), 0);
-
-        setStats({
-          projectName: 'MADACE-Method v2.0',
-          totalCompleted: status.done.length,
-          totalPoints,
-          inProgress: status.inProgress.length,
-          backlog: status.backlog.length,
-        });
-      }
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-      // Set default stats
-      setStats({
-        projectName: 'MADACE-Method v2.0',
-        totalCompleted: 0,
-        totalPoints: 0,
-        inProgress: 0,
-        backlog: 0,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      {/* Hero Section */}
-      <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">MADACE-Method v2.0</h1>
-        <p className="text-muted-foreground mt-4 text-lg">
-          Methodology for AI-Driven Agile Collaboration Engine
-        </p>
-        <p className="text-muted-foreground mt-2 text-base">
-          Build complex software systems using AI-powered multi-agent workflows
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* Page header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">MADACE Web UI</h1>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
+          Methodology for AI-Driven Agile Collaboration Engine - v2.0
         </p>
       </div>
 
-      {/* Statistics Cards */}
-      {loading ? (
-        <div className="mt-12 text-center">
-          <div className="border-primary inline-block h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
-          <p className="text-muted-foreground mt-2 text-sm">Loading project statistics...</p>
+      {/* Status overview */}
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+          <div className="text-sm text-gray-600 dark:text-gray-400">Total Agents</div>
+          <div className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">22</div>
+          <div className="mt-1 text-xs text-gray-500 dark:text-gray-500">All Modules</div>
         </div>
-      ) : stats ? (
-        <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div className="bg-card rounded-lg border p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted-foreground text-sm">Completed</p>
-                <p className="mt-2 text-3xl font-bold text-green-600 dark:text-green-400">
-                  {stats.totalCompleted}
-                </p>
-              </div>
-              <CheckCircleIcon className="h-10 w-10 text-green-600 dark:text-green-400" />
-            </div>
-          </div>
-
-          <div className="bg-card rounded-lg border p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted-foreground text-sm">Total Points</p>
-                <p className="mt-2 text-3xl font-bold text-purple-600 dark:text-purple-400">
-                  {stats.totalPoints}
-                </p>
-              </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900">
-                <span className="text-xl">🎯</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card rounded-lg border p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted-foreground text-sm">In Progress</p>
-                <p className="mt-2 text-3xl font-bold text-yellow-600 dark:text-yellow-400">
-                  {stats.inProgress}
-                </p>
-              </div>
-              <ClockIcon className="h-10 w-10 text-yellow-600 dark:text-yellow-400" />
-            </div>
-          </div>
-
-          <div className="bg-card rounded-lg border p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-muted-foreground text-sm">Backlog</p>
-                <p className="mt-2 text-3xl font-bold">{stats.backlog}</p>
-              </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-                <span className="text-xl">📋</span>
-              </div>
-            </div>
-          </div>
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+          <div className="text-sm text-gray-600 dark:text-gray-400">Active Workflows</div>
+          <div className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">0</div>
+          <div className="mt-1 text-xs text-gray-500 dark:text-gray-500">Ready to start</div>
         </div>
-      ) : null}
+        <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+          <div className="text-sm text-gray-600 dark:text-gray-400">System Status</div>
+          <div className="mt-1 flex items-center">
+            <div className="size-3 rounded-full bg-green-500"></div>
+            <span className="ml-2 text-lg font-bold text-gray-900 dark:text-white">
+              Operational
+            </span>
+          </div>
+          <div className="mt-1 text-xs text-gray-500 dark:text-gray-500">All systems running</div>
+        </div>
+      </div>
 
-      {/* Quick Actions */}
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold">Quick Actions</h2>
-        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Quick actions */}
+      <div className="mb-8">
+        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Link
-            href="/kanban"
-            className="group bg-card hover:border-primary rounded-lg border p-6 transition-colors"
+            href="/setup"
+            className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
           >
-            <ViewColumnsIcon className="text-primary h-12 w-12" />
-            <h3 className="mt-4 text-lg font-semibold">Kanban Board</h3>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Visual workflow tracking with drag-and-drop
-            </p>
-          </Link>
-
-          <Link
-            href="/llm-test"
-            className="group bg-card hover:border-primary rounded-lg border p-6 transition-colors"
-          >
-            <BeakerIcon className="text-primary h-12 w-12" />
-            <h3 className="mt-4 text-lg font-semibold">Test LLM</h3>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Test your LLM provider configuration
-            </p>
+            <div className="flex items-center space-x-3">
+              <div className="flex size-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
+                <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Setup Wizard</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Configure your installation
+                </p>
+              </div>
+            </div>
           </Link>
 
           <Link
             href="/agents"
-            className="group bg-card hover:border-primary rounded-lg border p-6 transition-colors"
+            className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
           >
-            <div className="bg-primary flex h-12 w-12 items-center justify-center rounded-lg text-2xl">
-              🤖
+            <div className="flex items-center space-x-3">
+              <div className="flex size-12 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300">
+                <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Agents</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">View and manage agents</p>
+              </div>
             </div>
-            <h3 className="mt-4 text-lg font-semibold">AI Agents</h3>
-            <p className="text-muted-foreground mt-2 text-sm">Explore specialized AI agents</p>
+          </Link>
+
+          <Link
+            href="/kanban"
+            className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="flex size-12 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300">
+                <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Kanban Board</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Track story lifecycle</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/workflows"
+            className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="flex size-12 items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-300">
+                <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Workflows</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Execute workflows</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/llm-test"
+            className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="flex size-12 items-center justify-center rounded-full bg-pink-100 text-pink-600 dark:bg-pink-900 dark:text-pink-300">
+                <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">LLM Test</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Test LLM connections</p>
+              </div>
+            </div>
           </Link>
 
           <Link
             href="/settings"
-            className="group bg-card hover:border-primary rounded-lg border p-6 transition-colors"
+            className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900"
           >
-            <Cog6ToothIcon className="text-primary h-12 w-12" />
-            <h3 className="mt-4 text-lg font-semibold">Settings</h3>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Configure your project and preferences
-            </p>
+            <div className="flex items-center space-x-3">
+              <div className="flex size-12 items-center justify-center rounded-full bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+                <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Settings</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Configure application</p>
+              </div>
+            </div>
           </Link>
         </div>
       </div>
 
-      {/* Features Grid */}
-      <div className="mt-16">
-        <h2 className="text-2xl font-bold">Core Features</h2>
-        <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="bg-card relative rounded-lg border p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600">
-              <span className="text-2xl">🤖</span>
-            </div>
-            <h3 className="mt-4 text-lg font-semibold">AI-Powered Agents</h3>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Specialized AI agents for Product Management, Architecture, Development, and Scrum
-              Master roles. Each agent brings domain expertise to your project.
-            </p>
-            <div className="mt-4">
-              <Link href="/agents" className="text-primary text-sm font-medium hover:underline">
-                Explore agents →
-              </Link>
-            </div>
-          </div>
-
-          <div className="bg-card relative rounded-lg border p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600">
-              <span className="text-2xl">🔄</span>
-            </div>
-            <h3 className="mt-4 text-lg font-semibold">Workflow Automation</h3>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Automated workflows guide you through story creation, implementation planning, and
-              iterative development. State machine ensures proper story lifecycle.
-            </p>
-            <div className="mt-4">
-              <Link href="/kanban" className="text-primary text-sm font-medium hover:underline">
-                View Kanban →
-              </Link>
-            </div>
-          </div>
-
-          <div className="bg-card relative rounded-lg border p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600">
-              <span className="text-2xl">⚡</span>
-            </div>
-            <h3 className="mt-4 text-lg font-semibold">Multi-LLM Support</h3>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Choose from Google Gemini, Anthropic Claude, OpenAI GPT, or local models (Ollama). Mix
-              and match providers for different agents and use cases.
-            </p>
-            <div className="mt-4">
-              <Link href="/llm-test" className="text-primary text-sm font-medium hover:underline">
-                Test connection →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Getting Started */}
-      <div className="bg-card mt-16 rounded-lg border p-8">
-        <div className="flex items-start gap-6">
-          <RocketLaunchIcon className="text-primary h-12 w-12 flex-shrink-0" />
-          <div className="flex-1">
-            <h2 className="text-2xl font-bold">Getting Started</h2>
-            <p className="text-muted-foreground mt-2">
-              New to MADACE? Follow these steps to get up and running:
-            </p>
-            <ol className="mt-4 space-y-2 text-sm">
-              <li className="flex items-start gap-2">
-                <span className="bg-primary/10 text-primary flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium">
-                  1
-                </span>
-                <span>
-                  <Link href="/setup" className="text-primary font-medium hover:underline">
-                    Complete the setup wizard
-                  </Link>{' '}
-                  to configure your project and LLM provider
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="bg-primary/10 text-primary flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium">
-                  2
-                </span>
-                <span>
-                  <Link href="/llm-test" className="text-primary font-medium hover:underline">
-                    Test your LLM connection
-                  </Link>{' '}
-                  to verify your API key and model selection
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="bg-primary/10 text-primary flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium">
-                  3
-                </span>
-                <span>
-                  <Link href="/agents" className="text-primary font-medium hover:underline">
-                    Explore AI agents
-                  </Link>{' '}
-                  to understand their roles and capabilities
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="bg-primary/10 text-primary flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium">
-                  4
-                </span>
-                <span>
-                  <Link href="/kanban" className="text-primary font-medium hover:underline">
-                    View the Kanban board
-                  </Link>{' '}
-                  to track your project&apos;s progress
-                </span>
-              </li>
-            </ol>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer CTA */}
-      <div className="mt-16 text-center">
-        <p className="text-muted-foreground text-sm">
-          Need help?{' '}
-          <a
-            href="https://github.com/tekcin/MADACE-METHOD"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary font-medium hover:underline"
-          >
-            View documentation
-          </a>
+      {/* Getting started */}
+      <div className="rounded-lg border border-blue-200 bg-blue-50 p-6 dark:border-blue-700 dark:bg-blue-900/20">
+        <h2 className="mb-3 text-lg font-bold text-blue-900 dark:text-blue-100">Getting Started</h2>
+        <p className="mb-4 text-sm text-blue-700 dark:text-blue-300">
+          Welcome to the MADACE Web UI! This interface provides access to all MADACE features:
         </p>
+        <ol className="list-inside list-decimal space-y-2 text-sm text-blue-700 dark:text-blue-300">
+          <li>
+            <strong>Setup Wizard</strong> - Configure project settings and LLM provider
+          </li>
+          <li>
+            <strong>Agents</strong> - View and interact with AI agents (PM, Analyst, Architect, SM,
+            DEV)
+          </li>
+          <li>
+            <strong>Kanban Board</strong> - Visual workflow state tracking (BACKLOG → TODO → IN
+            PROGRESS → DONE)
+          </li>
+          <li>
+            <strong>Workflows</strong> - Execute automated development workflows
+          </li>
+          <li>
+            <strong>LLM Test</strong> - Verify your LLM provider configuration
+          </li>
+          <li>
+            <strong>Settings</strong> - Manage application and module settings
+          </li>
+        </ol>
       </div>
     </div>
   );
