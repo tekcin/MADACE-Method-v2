@@ -87,7 +87,7 @@ test.describe('API Endpoint Integration', () => {
     await page.waitForLoadState('networkidle');
 
     // Check for dashboard elements
-    await expect(page.getByText('MADACE-Method v2.0')).toBeVisible();
+    await expect(page.getByText('MADACE-Method v3.0')).toBeVisible();
     await expect(page.getByText('Quick Actions')).toBeVisible();
 
     // Statistics should load (or show loading state)

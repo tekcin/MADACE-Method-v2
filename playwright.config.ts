@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Playwright Configuration for MADACE-Method v2.0
+ * Playwright Configuration for MADACE-Method v3.0
  *
  * This configuration enables Claude Code to run comprehensive E2E tests
  * that validate the entire application stack from user interactions

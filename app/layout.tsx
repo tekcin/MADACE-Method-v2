@@ -8,7 +8,7 @@ import Script from 'next/script';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'MADACE-Method v2.0',
+  title: 'MADACE-Method v3.0',
   description: 'Multi-Agent Development Architecture for Complex Ecosystems',
   keywords: ['MADACE', 'Multi-Agent', 'Development', 'AI', 'Workflow'],
 };

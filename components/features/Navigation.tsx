@@ -41,7 +41,7 @@ export function Navigation() {
               <Link href="/" className="text-xl font-bold text-blue-600">
                 MADACE
               </Link>
-              <span className="ml-2 text-sm text-gray-500">v2.0</span>
+              <span className="ml-2 text-sm text-gray-500">v3.0</span>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navigation.map((item) => {

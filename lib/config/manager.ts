@@ -460,7 +460,7 @@ export class ConfigurationManager {
       output_folder: 'docs',
       user_name: 'User',
       communication_language: 'English',
-      madace_version: '2.0.0-alpha',
+      madace_version: '3.0.0-alpha',
       installed_at: new Date().toISOString(),
       modules: {
         mam: { enabled: true },

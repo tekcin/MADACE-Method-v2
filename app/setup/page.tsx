@@ -18,7 +18,7 @@ export default function SetupPage() {
   const [error, setError] = useState<string | null>(null);
   const [config, setConfig] = useState<SetupConfig>({
     projectInfo: {
-      projectName: 'MADACE-Method v2.0',
+      projectName: 'MADACE-Method v3.0',
       outputFolder: 'docs',
       userName: '',
       communicationLanguage: 'en',

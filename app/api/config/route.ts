@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       output_folder: config.output_folder,
       user_name: config.user_name,
       communication_language: config.communication_language,
-      madace_version: '2.0.0-alpha',
+      madace_version: '3.0.0-alpha',
       installed_at: new Date().toISOString(),
       modules: {
         mam: {

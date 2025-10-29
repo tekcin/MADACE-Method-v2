@@ -19,13 +19,18 @@ declare global {
  * Global Prisma Client instance
  *
  * Configuration:
- * - log: ['query', 'warn', 'error'] in development
+ * - log: [] in test (disable all logging for clean test output)
  * - log: ['error'] in production
+ * - log: ['query', 'warn', 'error'] in development
  */
 export const prisma =
   global.prisma ||
   new PrismaClient({
-    log: process.env.NODE_ENV === 'production' ? ['error'] : ['query', 'warn', 'error'],
+    log: process.env.NODE_ENV === 'test'
+      ? []
+      : process.env.NODE_ENV === 'production'
+      ? ['error']
+      : ['query', 'warn', 'error'],
   });
 
 // In development, store the Prisma client globally to reuse across hot reloads

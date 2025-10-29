@@ -97,6 +97,6 @@ export async function generateMetadata({ params }: DocPageProps) {
 
   return {
     title: doc ? `${doc.title} - Documentation` : 'Documentation',
-    description: `MADACE-Method v2.0 Documentation: ${decodedSlug.join('/')}`,
+    description: `MADACE-Method v3.0 Documentation: ${decodedSlug.join('/')}`,
   };
 }

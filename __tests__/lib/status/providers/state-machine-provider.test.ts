@@ -636,7 +636,7 @@ Some text **[STORY-004]** (not counted - not a list item)
     it('should handle real-world status file format', async () => {
       const realWorldContent = `# MADACE Workflow Status
 
-**Project:** MADACE-Method v2.0
+**Project:** MADACE-Method v3.0
 **Last Updated:** 2025-10-29
 
 ## BACKLOG

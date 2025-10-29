@@ -217,7 +217,7 @@ export class StateMachine {
       '**MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine'
     );
     lines.push('');
-    lines.push('**Project:** MADACE-Method v2.0 - Experimental Next.js Full-Stack Implementation');
+    lines.push('**Project:** MADACE-Method v3.0 - Experimental Next.js Full-Stack Implementation');
     lines.push(`**Last Updated:** ${new Date().toISOString().split('T')[0]}`);
     lines.push('');
     lines.push('---');

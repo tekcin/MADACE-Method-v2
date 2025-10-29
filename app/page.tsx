@@ -7,7 +7,7 @@ export default function Home() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">MADACE Web UI</h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Methodology for AI-Driven Agile Collaboration Engine - v2.0
+          Methodology for AI-Driven Agile Collaboration Engine - v3.0
         </p>
       </div>
 

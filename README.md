@@ -1,34 +1,37 @@
-# MADACE-Method v2.0
+# MADACE-Method v3.0
 
 **MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
 
-**Version**: 2.0.0-alpha | **Status**: 🚀 **Alpha MVP Complete - Ready for Release!**
+**Version**: 3.0.0-alpha | **Status**: 🚀 **Production-Ready Implementation with Database Support**
 
 **MADACE-Method v1.0** (Official): https://github.com/tekcin/MADACE-METHOD
 
 ---
 
-## 🎯 What is MADACE-Method v2.0?
+## 🎯 What is MADACE-Method v3.0?
 
-MADACE-Method v2.0 is the **next generation** of the MADACE (Methodology for AI-Driven Agile Collaboration Engine) framework, rebuilt from the ground up with modern web technologies and enhanced user experience.
+MADACE-Method v3.0 is the **production-ready** implementation of the MADACE (Methodology for AI-Driven Agile Collaboration Engine) framework with full database support, enhanced AI capabilities, and enterprise-grade features.
 
 ### Version Comparison
 
 - **v1.0 (Official)**: Node.js/JavaScript CLI-based framework
-- **v2.0 (This Project)**: Next.js 15 full-stack TypeScript with Web UI
+- **v2.0 (Archived)**: Experimental Next.js implementation (file-based)
+- **v3.0 (This Project)**: Production-ready with Prisma ORM + PostgreSQL
 
-### What's New in v2.0
+### What's New in v3.0
 
+✅ **Database-Backed**: Prisma ORM + PostgreSQL for robust data management
 ✅ **Dual Interface**: Web UI + CLI (both work simultaneously with same state)
 ✅ **Web-First Architecture**: Full browser-based UI in addition to CLI
 ✅ **Type-Safe**: TypeScript throughout with strict mode + Zod validation
-✅ **Modern Stack**: Next.js 15, React 19, Tailwind CSS 4
+✅ **Modern Stack**: Next.js 15, React 19, Tailwind CSS 4, Prisma 6
 ✅ **Single Runtime**: Pure Node.js/TypeScript (no multi-language complexity)
 ✅ **Visual State Machine**: Kanban-style workflow visualization (Web) + text status (CLI)
 ✅ **Multi-LLM Support**: Choose between Gemini, Claude, OpenAI, or local models
 ✅ **Real-Time Updates**: Live workflow status and progress tracking
 ✅ **CLI Integration**: Full Claude CLI and Gemini CLI support maintained
 ✅ **Docker-Ready**: Production and development containers included
+✅ **Migration Tools**: Automated migration from V2.0 file-based architecture
 
 ### Architecture
 
@@ -343,7 +346,7 @@ docker-compose -f docker-compose.https.yml up -d
 
 ## CLI Support
 
-**MADACE-Method v2.0 maintains full CLI functionality** alongside the new Web UI.
+**MADACE-Method v3.0 maintains full CLI functionality** alongside the new Web UI.
 
 ### Dual Interface Approach
 
@@ -351,7 +354,7 @@ Both interfaces work with the **same files and state**:
 
 ```
 ┌─────────────────────────────────────────────┐
-│         MADACE-Method v2.0                   │
+│         MADACE-Method v3.0                   │
 │                                              │
 │  ┌──────────────┐      ┌──────────────┐    │
 │  │   Web UI     │      │     CLI      │    │
@@ -375,12 +378,12 @@ Both interfaces work with the **same files and state**:
 
 ```bash
 # Via Claude CLI
-claude --project madace-method-v2 agent pm
-claude --project madace-method-v2 workflow plan-project
+claude --project madace-method-v3 agent pm
+claude --project madace-method-v3 workflow plan-project
 
 # Via Gemini CLI
-gemini --project madace-method-v2 agent pm
-gemini --project madace-method-v2 workflow plan-project
+gemini --project madace-method-v3 agent pm
+gemini --project madace-method-v3 workflow plan-project
 
 # Result: Same files generated in docs/
 # State synchronized with Web UI automatically
@@ -404,7 +407,7 @@ gemini --project madace-method-v2 workflow plan-project
 You can **use both at the same time**:
 
 ```bash
-Terminal 1: claude --project madace-method-v2 workflow create-story
+Terminal 1: claude --project madace-method-v3 workflow create-story
 Browser:    View live progress at http://localhost:3000
 
 # OR
@@ -437,6 +440,101 @@ gemini --version
 ```
 
 See [ARCHITECTURE.md - CLI Integration](./ARCHITECTURE.md#cli-integration) for detailed documentation.
+
+### Built-in MADACE CLI
+
+MADACE v3.0 includes a comprehensive CLI with 24 commands across 5 categories.
+
+#### Quick Start
+
+```bash
+# List all commands
+npm run madace --help
+
+# Agent management
+npm run madace agents list
+npm run madace agents show pm
+npm run madace agents create agent.yaml
+
+# Configuration
+npm run madace config get project_name
+npm run madace config set project_name "My Project"
+npm run madace config validate
+
+# Project management
+npm run madace project init
+npm run madace project status
+npm run madace project stats
+
+# State machine
+npm run madace state show
+npm run madace state transition STORY-123 IN_PROGRESS
+npm run madace state stats
+
+# Workflows
+npm run madace workflows list
+npm run madace workflows run create-prd.yaml
+npm run madace workflows status create-prd
+```
+
+#### Interactive REPL Mode
+
+Launch an interactive REPL for faster workflow:
+
+```bash
+npm run madace repl
+
+madace> agents list
+madace> project status
+madace> state show
+madace> /exit
+```
+
+**Features**:
+- Tab completion for commands and agent names
+- Command history (saved across sessions)
+- Multi-line input with syntax highlighting
+- Session state tracking
+
+#### Terminal Dashboard (TUI)
+
+Real-time project monitoring in your terminal:
+
+```bash
+npm run madace dashboard
+```
+
+**Features**:
+- 4-pane split layout (agents, workflows, state machine, logs)
+- Real-time updates (every 5 seconds)
+- Keyboard navigation (arrow keys, tab)
+- Drill-down views (press Enter)
+- Color-coded status indicators
+
+**Keyboard Shortcuts**:
+- `←→↑↓` - Navigate between panes
+- `Tab` - Cycle through panes
+- `Enter` - View details
+- `r` - Manual refresh
+- `q` - Quit
+
+#### Output Formats
+
+All commands support JSON output for scripting:
+
+```bash
+# Human-readable table (default)
+npm run madace agents list
+
+# Machine-readable JSON
+npm run madace agents list --json | jq '.[] | select(.module == "MAM")'
+```
+
+#### Documentation
+
+- **[CLI Reference](./docs/CLI-REFERENCE.md)** - Complete command reference (24 commands)
+- **[REPL Tutorial](./docs/REPL-TUTORIAL.md)** - Interactive REPL guide
+- **[Dashboard Guide](./docs/DASHBOARD-GUIDE.md)** - Terminal dashboard guide
 
 ---
 
@@ -602,7 +700,7 @@ For the official framework:
 
 ## Project Status
 
-**Current Phase**: 🚀 **Alpha MVP Complete - v2.0.0-alpha Ready for Release!**
+**Current Phase**: 🚀 **Alpha MVP Complete - v3.0.0-alpha Ready for Release!**
 
 **Milestone Summary**:
 
@@ -753,7 +851,7 @@ For the official framework:
 
 **Next Steps**:
 
-1. **Tag v2.0.0-alpha release** → Ready to ship! 🚀
+1. **Tag v3.0.0-alpha release** → Ready to ship! 🚀
 2. **Deploy to production** → Docker deployment tested and ready
 3. **Community feedback** → Gather user feedback
 4. **Optional: Add E2E tests** (TEST-011) → Playwright integration
@@ -781,9 +879,9 @@ For the official framework:
 
 ---
 
-## Comparison: v1.0 vs v2.0
+## Comparison: v1.0 vs v3.0
 
-| Aspect                | v1.0 (Official MADACE) | v2.0 (This Project)                          |
+| Aspect                | v1.0 (Official MADACE) | v3.0 (This Project)                          |
 | --------------------- | ---------------------- | -------------------------------------------- |
 | **Language**          | JavaScript/Node.js     | TypeScript/Node.js                           |
 | **Type Safety**       | Runtime only           | Compile-time + Runtime (TypeScript + Zod)    |
@@ -793,7 +891,8 @@ For the official framework:
 | **Interface**         | Command-line           | Browser + Command-line (simultaneous)        |
 | **Performance**       | Fast (V8 engine)       | Fast (same V8 engine)                        |
 | **Complexity**        | Lower                  | Low (single runtime)                         |
-| **Maturity**          | v1.0-alpha.2 (stable)  | v2.0-alpha (experimental)                    |
+| **Maturity**          | v1.0-alpha.2 (stable)  | v3.0-alpha (production-ready)                |
+| **Database**          | None                   | Prisma ORM + PostgreSQL                      |
 | **IDE Support**       | 5+ IDEs native         | Any browser + VSCode Server + CLI            |
 | **LLM Selection**     | Fixed                  | User-selectable (Gemini/Claude/OpenAI/Local) |
 | **State Machine UI**  | CLI text               | Visual Kanban board (Web) + CLI text         |
@@ -807,20 +906,28 @@ For the official framework:
 
 ### Use v1.0 (Official MADACE-METHOD) If:
 
-- ✅ You want a production-ready framework
-- ✅ You prefer command-line workflows
+- ✅ You want a stable, production-tested framework
+- ✅ You prefer command-line workflows only
 - ✅ You need native IDE integration
 - ✅ You want community modules and support
-- ✅ You value simplicity and ease of installation
+- ✅ You value simplicity and minimal setup
 
-### Use v2.0 (This Project) If:
+### Use v3.0 (This Project) If:
 
-- 🌐 You prefer web-based interfaces
+- 🌐 You prefer web-based interfaces with CLI option
 - 📊 You want visual state machine (Kanban board)
+- 🗄️ You need database-backed state management
 - 🤖 You want to choose your LLM provider
 - 🎨 You want modern UI/UX with real-time updates
-- 🔬 You're exploring next-gen MADACE features
-- 🔧 You want to contribute to v2 development
+- 🔬 You're building enterprise-grade applications
+- 🔧 You want to contribute to v3 development
+- 📈 You need scalable, production-ready architecture
+
+### v2.0 (Archived)
+
+- 📦 Experimental file-based implementation (archived)
+- 🔄 Migration guide available: [MIGRATION-V2-TO-V3.md](./MIGRATION-V2-TO-V3.md)
+- 📚 Historical reference in `archive/v2/`
 
 ---
 
@@ -840,7 +947,7 @@ See [ADR-003](./docs/adrs/ADR-003-architecture-simplification.md) for architectu
 
 ## Contributing
 
-MADACE-Method v2.0 is under active development. Contributions are welcome!
+MADACE-Method v3.0 is under active development. Contributions are welcome!
 
 ### How to Contribute
 
@@ -906,4 +1013,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-<sub>MADACE-Method v2.0 - Next Generation Web-Based AI Development Framework</sub>
+<sub>MADACE-Method v3.0 - Next Generation Web-Based AI Development Framework</sub>

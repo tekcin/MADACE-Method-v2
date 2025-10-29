@@ -20,7 +20,7 @@ test.describe('Performance Metrics', () => {
     expect(loadTime).toBeLessThan(3000);
 
     // Verify page is properly loaded
-    await expect(page.getByText('MADACE-Method v2.0')).toBeVisible();
+    await expect(page.getByText('MADACE-Method v3.0')).toBeVisible();
   });
 
   test('critical resources load without errors', async ({ page }) => {

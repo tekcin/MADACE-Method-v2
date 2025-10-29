@@ -12,7 +12,7 @@ const execAsync = promisify(exec);
 
 /**
  * Extract JSON from npm output
- * npm run adds lines like "> madace-method-v2@2.0.0-alpha madace" before actual output
+ * npm run adds lines like "> madace-method-v3@2.0.0-alpha madace" before actual output
  */
 function extractJSON(stdout: string): string {
   // Split into lines and filter out npm output lines (start with ">")

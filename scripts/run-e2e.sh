@@ -1,5 +1,5 @@
 #!/bin/bash
-# MADACE-Method v2.0 E2E Test Runner
+# MADACE-Method v3.0 E2E Test Runner
 # Script to run Playwright tests with proper setup and cleanup
 
 set -e
@@ -17,7 +17,7 @@ BASE_URL="http://localhost:${PORT}"
 PLAYWRIGHT_REPORT_DIR="playwright-report"
 TEST_RESULTS_FILE="test-results.json"
 
-echo -e "${BLUE}🚀 MADACE-Method v2.0 E2E Test Runner${NC}"
+echo -e "${BLUE}🚀 MADACE-Method v3.0 E2E Test Runner${NC}"
 echo -e "${BLUE}========================================${NC}"
 
 # Function to check if a command exists

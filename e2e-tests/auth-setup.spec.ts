@@ -26,7 +26,7 @@ test.describe('Setup and Authentication Flow', () => {
     await page.goto('/');
 
     // Verify landing page loads correctly
-    await expect(page.getByText('MADACE-Method v2.0')).toBeVisible();
+    await expect(page.getByText('MADACE-Method v3.0')).toBeVisible();
     await expect(
       page.getByText('Methodology for AI-Driven Agile Collaboration Engine')
     ).toBeVisible();
@@ -109,7 +109,7 @@ test.describe('Setup and Authentication Flow', () => {
     } else {
       // Should redirect to main dashboard
       await page.waitForURL('/', { timeout: 5000 });
-      await expect(page.getByText('MADACE-Method v2.0')).toBeVisible();
+      await expect(page.getByText('MADACE-Method v3.0')).toBeVisible();
     }
   });
 

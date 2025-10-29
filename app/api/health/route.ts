@@ -217,7 +217,7 @@ export async function GET(_request: NextRequest) {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     checks,
-    version: process.env.npm_package_version || '2.0.0-alpha',
+    version: '3.0.0-alpha',
     environment: process.env.NODE_ENV || 'development',
   };
 

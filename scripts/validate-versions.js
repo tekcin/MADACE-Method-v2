@@ -3,7 +3,7 @@
 /**
  * Version Validation Script
  *
- * MADACE-Method v2.0 - STRICT VERSION ENFORCEMENT
+ * MADACE-Method v3.0 - STRICT VERSION ENFORCEMENT
  *
  * This script enforces EXACT versions for the core tech stack:
  * - Next.js: 15.5.6 (LOCKED)
@@ -236,7 +236,7 @@ function printSummary(results) {
 
 function main() {
   log('\n╔════════════════════════════════════════════════════════════╗', 'cyan');
-  log('║   MADACE-Method v2.0 - VERSION VALIDATION                 ║', 'bold');
+  log('║   MADACE-Method v3.0 - VERSION VALIDATION                 ║', 'bold');
   log('║   Enforcing EXACT versions for core tech stack            ║', 'cyan');
   log('╚════════════════════════════════════════════════════════════╝\n', 'cyan');
 

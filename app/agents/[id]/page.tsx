@@ -1,5 +1,5 @@
 /**
- * Agent Detail Page (v2.0)
+ * Agent Detail Page (v3.0)
  *
  * Displays details of a MADACE agent loaded from YAML files.
  * Uses /api/agents/[name] endpoint with file-based architecture.

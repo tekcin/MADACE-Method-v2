@@ -84,7 +84,7 @@ export default async function DocsPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Documentation</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Browse all available documentation files for MADACE-Method v2.0
+            Browse all available documentation files for MADACE-Method v3.0
           </p>
         </div>
 
