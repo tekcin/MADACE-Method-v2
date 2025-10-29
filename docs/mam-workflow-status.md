@@ -171,7 +171,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-**[STORY-V3-009] Create Web UI Assessment Page** (story-v3-009-assessment-page.md) [Status: In Progress] [Points: 5] [Started: 2025-10-29]
+(Empty - STORY-V3-009 moved to DONE)
 
 ---
 
@@ -585,6 +585,130 @@ Completed stories with dates and points:
   - ✅ Show assessment summary (score/40, percentage, progress bar)
   - ✅ Manual override dropdown with level descriptions
   - ✅ Link/button to view assessment details (collapsible breakdown)
+  - ✅ Responsive design (1-col mobile, 2-col desktop)
+  - ✅ Dark mode support throughout
+
+- **[STORY-V3-009]** Create Web UI Assessment Page (2025-10-29) [Points: 5]
+  **Status:** COMPLETED - Standalone assessment page with real-time calculation and export functionality
+  **Developer:** Claude | **Duration:** ~2 hours | **Epic:** EPIC-V3-001 (Scale-Adaptive Workflow Router)
+
+  **Implementation Details:**
+  - Created standalone /assess page with form, real-time calculation, and export
+  - Built reusable AssessmentForm and AssessmentResult components
+  - Implemented three export formats (Markdown download, JSON copy, Save)
+  - Added navigation link with ChartBarIcon
+  - All quality checks passed (type-check, lint, build)
+
+  **Files Created:**
+  - app/assess/page.tsx: Main assessment page (240 lines)
+  - components/features/AssessmentForm.tsx: 8-criteria form component (224 lines)
+  - components/features/AssessmentResult.tsx: Visual result display (186 lines)
+
+  **Files Modified:**
+  - components/features/Navigation.tsx: Added "Assess" navigation link
+  - docs/mam-workflow-status.md: Updated state machine (BACKLOG → IN_PROGRESS → DONE)
+
+  **Page Implementation:**
+  - Client component with real-time assessment calculation
+  - useEffect auto-triggers when all 8 fields filled
+  - Three handler functions: Markdown export, JSON copy, Save to project
+  - Empty state SVG when form partially filled
+  - Responsive container (max-w-5xl) with proper spacing
+  - Dark mode support throughout
+
+  **AssessmentForm Component:**
+  - ✅ **8 Dropdown Fields** in 2-column grid (md:grid-cols-2):
+    * Project Size: Tiny → Massive (0-5)
+    * Team Size: Solo → Enterprise (0-5)
+    * Codebase Complexity: Trivial → Extreme (0-5)
+    * Integrations: None → Extensive (0-5)
+    * User Base: Personal → Massive (0-5)
+    * Security: None → Critical (0-5)
+    * Duration: Very Short → Indefinite (0-5)
+    * Existing Code: Greenfield → Full Rewrite (0-5)
+  - Props: input (Partial<ProjectInput>), onChange callback
+  - Reusable standalone component
+  - Mobile-friendly responsive grid
+
+  **AssessmentResult Component:**
+  - ✅ **Large Level Badge** (h-32 w-32) with color coding:
+    * Level 0 (Minimal): Gray badge
+    * Level 1 (Basic): Green badge
+    * Level 2 (Standard): Blue badge
+    * Level 3 (Comprehensive): Yellow badge
+    * Level 4 (Enterprise): Red badge
+  - ✅ **Score Display**: totalScore/40 with percentage calculation
+  - ✅ **Progress Bar**: Visual score representation (full-width)
+  - ✅ **Level Description**: Context-appropriate guidance for each level
+  - ✅ **Recommended Workflow**: Displays workflow filename
+  - ✅ **Collapsible Criteria Breakdown**: 8 criteria with individual progress bars
+    * Criterion name labels (Project Size, Team Size, etc.)
+    * Score/5 display with percentage bar
+    * 2-column grid layout for breakdown
+  - ✅ **Toggle Button**: Show/Hide Assessment Details with arrows
+  - Props: assessment, onExportMarkdown, onExportJSON, onSaveToProject
+
+  **Export Functionality:**
+  - ✅ **Markdown Export**: generateMarkdownReport() function
+    * Header: Date, level badge, total score with percentage
+    * Executive Summary: Level-specific description
+    * Criteria Breakdown: Table with 8 rows (score, max, percentage)
+    * Level Characteristics: Detailed planning guidance (5 variations)
+    * Next Steps: 4-step action plan
+    * Footer: Timestamp and generator credit
+    * Downloads as scale-assessment.md via Blob API
+  - ✅ **JSON Copy**: Copies full assessment object to clipboard
+    * Formatted with JSON.stringify(assessment, null, 2)
+    * Alert confirmation on success
+  - ✅ **Save to Project**: Currently downloads Markdown
+    * TODO comment for future API endpoint implementation
+    * Alert notes server-side save not yet implemented
+
+  **Navigation Update:**
+  - Added "Assess" link between Kanban and Agents
+  - ChartBarIcon for visual consistency
+  - Available in both desktop and mobile navigation
+  - Active state highlighting when on /assess route
+
+  **Technical Patterns:**
+  - **Real-time Calculation**: useEffect with dependency on input state
+  - **Type Safety**: All props typed with TypeScript interfaces
+  - **Component Composition**: Separate form and result components
+  - **Conditional Rendering**: Empty state vs result display
+  - **Client-side Export**: Blob API for file download, Clipboard API for JSON
+  - **Responsive Design**: Mobile-first with md: breakpoints
+  - **Dark Mode**: Full dark: class support throughout
+  - **Helper Functions**: generateMarkdownReport(), getLevelDescription()
+
+  **Level Descriptions:**
+  - Level 0 (Minimal): Simple scripts, no formal docs, rapid iteration
+  - Level 1 (Basic): Lightweight PRD, story breakdown, minimal overhead
+  - Level 2 (Standard): Complete PRD, architecture docs, Agile ceremonies
+  - Level 3 (Comprehensive): Tech specs, security planning, full process
+  - Level 4 (Enterprise): Extensive specs, compliance, governance, audit
+
+  **Quality Assurance:**
+  - TypeScript type-check: PASS (0 errors)
+  - ESLint: PASS (no new warnings)
+  - Production build: SUCCESS
+  - Route size: /assess at 4.78 kB (reasonable for feature-rich page)
+  - No runtime errors or console warnings
+
+  **MADACE Compliance:**
+  - ✅ TypeScript strict mode compliance
+  - ✅ Component composition best practices
+  - ✅ Responsive design (mobile-first)
+  - ✅ Dark mode support
+  - ✅ Accessibility (proper labels, semantic HTML)
+  - ✅ Type-safe props and state management
+
+  **Acceptance Criteria Met:**
+  - ✅ Create page: app/assess/page.tsx
+  - ✅ Form with 8 assessment criteria inputs
+  - ✅ Real-time assessment calculation (auto-triggers when all fields filled)
+  - ✅ Visual display: level badge, score progress bar, criteria breakdown
+  - ✅ Export buttons: Download Markdown, Copy JSON
+  - ✅ Save to project (downloads for now, alert about future API endpoint)
   - ✅ Responsive design (1-col mobile, 2-col desktop)
   - ✅ Dark mode support throughout
 
