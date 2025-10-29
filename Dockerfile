@@ -7,6 +7,10 @@ FROM node:20-alpine AS deps
 # Set working directory
 WORKDIR /app
 
+# Install build dependencies for native addons (bufferutil, utf-8-validate)
+# These are needed for WebSocket performance optimizations
+RUN apk add --no-cache python3 make g++
+
 # Copy package files
 COPY package.json package-lock.json* ./
 
@@ -19,6 +23,9 @@ RUN if [ -f package-lock.json ]; then npm ci --only=production; \
 FROM node:20-alpine AS builder
 
 WORKDIR /app
+
+# Install build dependencies (needed for dev dependencies too)
+RUN apk add --no-cache python3 make g++
 
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules

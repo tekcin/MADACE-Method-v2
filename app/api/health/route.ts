@@ -64,7 +64,8 @@ export async function GET(_request: NextRequest) {
   // Check 1: File System Access
   try {
     const fsStart = Date.now();
-    const dataPath = path.join(process.cwd(), 'madace-data');
+    // Use MADACE_DATA_DIR env var or default to madace-data
+    const dataPath = process.env.MADACE_DATA_DIR || path.join(process.cwd(), 'madace-data');
 
     // Try to create data directory if it doesn't exist
     await fs.mkdir(dataPath, { recursive: true });
@@ -145,7 +146,8 @@ export async function GET(_request: NextRequest) {
   // Check 3: Configuration
   try {
     const configStart = Date.now();
-    const configPath = path.join(process.cwd(), 'madace-data', 'config', 'config.yaml');
+    const dataPath = process.env.MADACE_DATA_DIR || path.join(process.cwd(), 'madace-data');
+    const configPath = path.join(dataPath, 'config', 'config.yaml');
 
     try {
       await fs.access(configPath);
