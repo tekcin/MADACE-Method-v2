@@ -171,7 +171,7 @@ Story ready for drafting (only ONE at a time):
 
 Story being implemented (only ONE at a time):
 
-(Empty - STORY-V3-008 moved to DONE)
+**[STORY-V3-009] Create Web UI Assessment Page** (story-v3-009-assessment-page.md) [Status: In Progress] [Points: 5] [Started: 2025-10-29]
 
 ---
 
