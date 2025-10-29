@@ -93,3 +93,45 @@ export interface WorkflowHierarchy {
   depth: number; // Nesting level (0 = root, 1 = first-level child, etc.)
   children: WorkflowHierarchy[]; // Child workflows
 }
+
+/**
+ * Complexity Assessment Types (v3.0 - Scale-Adaptive Workflow Router)
+ */
+
+export type ProjectSize = 'small' | 'medium' | 'large' | 'enterprise';
+export type UserBase = 'internal' | 'small' | 'medium' | 'large';
+export type SecurityRequirements = 'basic' | 'standard' | 'high' | 'critical';
+
+export interface ComplexityAssessment {
+  projectSize: ProjectSize; // Scale of project (small = single feature, enterprise = platform)
+  teamSize: number; // Number of developers on the team
+  existingCodebase: boolean; // Is this a greenfield or brownfield project?
+  codebaseSize?: number; // Lines of code (optional, required if existingCodebase=true)
+  integrationCount: number; // Number of external integrations (APIs, services, databases)
+  userBase: UserBase; // Expected user base size
+  securityRequirements: SecurityRequirements; // Security/compliance requirements
+  estimatedDuration: number; // Project duration in weeks
+}
+
+export interface CriterionScore {
+  criterion: string; // Name of the criterion
+  score: number; // Points awarded (0-5)
+  maxScore: number; // Maximum possible points (usually 5)
+  details: string; // Human-readable explanation
+}
+
+export interface ComplexityResult {
+  level: number; // Complexity level (0-4)
+  levelName: string; // Human-readable level name
+  score: number; // Total score (0-40)
+  maxScore: number; // Maximum possible score (40)
+  breakdown: CriterionScore[]; // Individual criterion scores
+  recommendations: string[]; // Recommended workflows/documentation
+  risks: string[]; // Identified risks
+}
+
+/**
+ * Project input is an alias for ComplexityAssessment
+ * Kept for API clarity - input vs internal assessment representation
+ */
+export type ProjectInput = ComplexityAssessment;
