@@ -17,6 +17,10 @@ export interface FileTreeItem {
   extension?: string;
 }
 
+export interface GitStatus {
+  [filePath: string]: 'M' | 'A' | 'D' | 'U' | '??' | 'MM' | 'AM';
+}
+
 export interface FileTreeNodeProps {
   /** Tree item */
   item: FileTreeItem;
@@ -28,6 +32,8 @@ export interface FileTreeNodeProps {
   onContextMenu?: (item: FileTreeItem, event: React.MouseEvent) => void;
   /** Currently selected file path */
   selectedPath?: string;
+  /** Git status for files */
+  gitStatus?: GitStatus;
 }
 
 /**
@@ -41,10 +47,41 @@ export default function FileTreeNode({
   onFileClick,
   onContextMenu,
   selectedPath,
+  gitStatus = {},
 }: FileTreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(level === 0); // Root folders expanded by default
   const isFolder = item.type === 'folder';
   const isSelected = item.path === selectedPath;
+
+  /**
+   * Get Git status badge
+   */
+  const getGitStatusBadge = () => {
+    const status = gitStatus[item.path];
+    if (!status || isFolder) return null;
+
+    const badges = {
+      M: { label: 'M', color: 'bg-yellow-600 text-yellow-100', title: 'Modified' },
+      MM: { label: 'M', color: 'bg-yellow-600 text-yellow-100', title: 'Modified (staged and unstaged)' },
+      A: { label: 'A', color: 'bg-green-600 text-green-100', title: 'Added (staged)' },
+      AM: { label: 'A', color: 'bg-green-600 text-green-100', title: 'Added and modified' },
+      D: { label: 'D', color: 'bg-red-600 text-red-100', title: 'Deleted' },
+      U: { label: 'U', color: 'bg-green-500 text-green-100', title: 'Untracked' },
+      '??': { label: 'U', color: 'bg-green-500 text-green-100', title: 'Untracked' },
+    };
+
+    const badge = badges[status];
+    if (!badge) return null;
+
+    return (
+      <span
+        className={`text-xs font-bold px-1 py-0.5 rounded ${badge.color} ml-2`}
+        title={badge.title}
+      >
+        {badge.label}
+      </span>
+    );
+  };
 
   /**
    * Get icon for file/folder
@@ -191,6 +228,9 @@ export default function FileTreeNode({
 
         {/* Name */}
         <span className="flex-1 truncate">{item.name}</span>
+
+        {/* Git status badge */}
+        {getGitStatusBadge()}
       </div>
 
       {/* Children (for expanded folders) */}
@@ -204,6 +244,7 @@ export default function FileTreeNode({
               onFileClick={onFileClick}
               onContextMenu={onContextMenu}
               selectedPath={selectedPath}
+              gitStatus={gitStatus}
             />
           ))}
         </div>

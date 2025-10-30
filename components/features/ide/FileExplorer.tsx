@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import FileTreeNode, { FileTreeItem } from './FileTreeNode';
 
+import { GitStatus } from './FileTreeNode';
+
 export interface FileExplorerProps {
   /** Root folder */
   root: FileTreeItem;
@@ -12,6 +14,8 @@ export interface FileExplorerProps {
   onFileClick?: (item: FileTreeItem) => void;
   /** Callback when file tree changes */
   onChange?: (root: FileTreeItem) => void;
+  /** Git status for files */
+  gitStatus?: GitStatus;
 }
 
 interface ContextMenuState {
@@ -31,6 +35,7 @@ export default function FileExplorer({
   selectedPath,
   onFileClick,
   onChange,
+  gitStatus = {},
 }: FileExplorerProps) {
   const [fileTree, setFileTree] = useState<FileTreeItem>(root);
   const [contextMenu, setContextMenu] = useState<ContextMenuState>({
@@ -275,6 +280,7 @@ export default function FileExplorer({
           onFileClick={onFileClick}
           onContextMenu={handleContextMenu}
           selectedPath={selectedPath}
+          gitStatus={gitStatus}
         />
 
         {/* New item input */}

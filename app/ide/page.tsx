@@ -5,6 +5,7 @@ import MonacoEditor from '@/components/features/ide/MonacoEditor';
 import EditorToolbar from '@/components/features/ide/EditorToolbar';
 import TabBar, { FileTab } from '@/components/features/ide/TabBar';
 import FileExplorer from '@/components/features/ide/FileExplorer';
+import FileSearch, { GitStatus } from '@/components/features/ide/FileSearch';
 import { FileTreeItem } from '@/components/features/ide/FileTreeNode';
 
 /**
@@ -41,6 +42,9 @@ export default function IDEPage() {
     'config.json': { content: SAMPLE_JSON, language: 'json' },
     'config.yaml': { content: SAMPLE_YAML, language: 'yaml' },
   };
+
+  // Git status state
+  const [gitStatus, setGitStatus] = useState<GitStatus>({});
 
   // File tree structure
   const [fileTree] = useState<FileTreeItem>({
@@ -131,6 +135,57 @@ export default function IDEPage() {
       },
     ],
   });
+
+  /**
+   * Flatten file tree into a list of all files (for search)
+   */
+  const flattenFileTree = (tree: FileTreeItem): FileTreeItem[] => {
+    const files: FileTreeItem[] = [];
+
+    const traverse = (item: FileTreeItem) => {
+      if (item.type === 'file') {
+        files.push(item);
+      }
+      if (item.children) {
+        item.children.forEach(traverse);
+      }
+    };
+
+    traverse(tree);
+    return files;
+  };
+
+  const allFiles = flattenFileTree(fileTree);
+
+  /**
+   * Fetch Git status from API
+   */
+  const fetchGitStatus = async () => {
+    try {
+      const response = await fetch('/api/v3/git/status');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data.statusMap) {
+          setGitStatus(data.data.statusMap);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch Git status:', error);
+    }
+  };
+
+  /**
+   * Poll Git status every 10 seconds
+   */
+  useEffect(() => {
+    // Initial fetch
+    fetchGitStatus();
+
+    // Poll every 10 seconds
+    const interval = setInterval(fetchGitStatus, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   /**
    * Initialize with first file
@@ -371,6 +426,7 @@ export default function IDEPage() {
               root={fileTree}
               selectedPath={activeTab ? `/project/${activeTab.fileName}` : undefined}
               onFileClick={handleFileTreeClick}
+              gitStatus={gitStatus}
             />
           </div>
         )}
@@ -448,6 +504,13 @@ export default function IDEPage() {
           </div>
         </div>
       </div>
+
+      {/* File Search (Ctrl+P / Cmd+P) */}
+      <FileSearch
+        files={allFiles}
+        gitStatus={gitStatus}
+        onFileSelect={handleFileTreeClick}
+      />
     </div>
   );
 }
