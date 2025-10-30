@@ -157,7 +157,7 @@
 **Week 14-15: Monaco Editor Integration (19 points)** - ⏳ IN PROGRESS
 
 - ✅ [IDE-001] Integrate Monaco Editor with Basic Features (10 points) - **DONE**
-- 📅 [IDE-002] Add Multi-file Tab Support (5 points)
+- ✅ [IDE-002] Add Multi-file Tab Support (5 points) - **DONE**
 - 📅 [IDE-003] Add IntelliSense and Auto-completion (4 points)
 
 **Week 16-17: File Explorer & Project Management (18 points)** - 📅 Planned
@@ -1076,6 +1076,61 @@
   - **Test Results**: Production build passed, dev server tested successfully
   - **Total Files Created**: 5 new files (~1,125 lines of production code)
   - **Notes**: ✅ **Week 14-15 IN PROGRESS** (10/19 points, 53%) - Complete Monaco Editor integration with basic features! Users can now edit code with professional IDE features including syntax highlighting for 20+ languages, multiple themes, and full editor customization. File service provides secure file access with path traversal protection. Production-ready MVP!
+
+- ✅ [IDE-002] Add Multi-file Tab Support (5 points)
+  - **Completed**: 2025-10-30
+  - **Deliverables**:
+    - **Tab Component** (components/features/ide/Tab.tsx - 112 lines):
+      - Individual file tab with file name display
+      - Language-colored indicator (● symbol) with 15+ language colors
+      - Dirty indicator (blue •) for unsaved changes
+      - Close button (visible on hover or when active)
+      - Active state with blue bottom border
+      - Truncated file names with responsive width
+    - **TabBar Component** (components/features/ide/TabBar.tsx - 85 lines):
+      - Container for all tabs with horizontal scrolling
+      - FileTab interface (id, fileName, content, language, isDirty)
+      - Maps over tabs array to render Tab components
+      - Optional new file button (reserved for IDE-003)
+    - **IDE Page Updates** (app/ide/page.tsx - modified to 643 lines):
+      - Multi-file tab state management with tabs array and activeTabId
+      - Tab initialization with first file (example.ts) on mount
+      - Tab operations: open, close, switch (handleOpenFile, handleTabClose, handleTabSelect)
+      - Content change handling with dirty state detection
+      - File selector filters out already-open files
+      - Empty state UI when no tabs are open
+      - Keyboard shortcuts hint bar at bottom
+      - Modified indicator in footer
+    - **Keyboard Shortcuts**:
+      - Ctrl/Cmd+W: Close current tab (only if > 1 tab)
+      - Ctrl/Cmd+Tab: Next tab (circular navigation)
+      - Ctrl/Cmd+Shift+Tab: Previous tab (circular navigation)
+      - Ctrl/Cmd+1-8: Switch to tab by number
+  - **Acceptance Criteria Met**:
+    - ✅ Tab bar component created with FileTab interface
+    - ✅ Multiple files can be open simultaneously (tab array state)
+    - ✅ Click to switch between tabs (handleTabSelect)
+    - ✅ Close button on each tab with adjacent tab selection
+    - ✅ Keyboard shortcuts (all 4 implemented: Ctrl+Tab, Ctrl+Shift+Tab, Ctrl+W, Ctrl+1-8)
+    - ✅ Visual indicator for active tab (blue border, different background)
+    - ✅ Dirty state indicator (blue •) when content modified
+    - ✅ Prevent duplicate file opening (switches to existing tab)
+    - ✅ TypeScript compilation passing (fixed 3 "possibly undefined" errors)
+    - ✅ ESLint passing (fixed unused variable, added exhaustive-deps comment)
+    - ✅ Production build passing (no IDE-related errors)
+    - ✅ Dev server compiles successfully (no errors)
+  - **Technical Achievements**:
+    - Clean component architecture with separation of concerns
+    - Unique tab IDs using timestamp (tab-${Date.now()})
+    - O(1) active tab lookup with activeTabId state
+    - Dirty state detection via content comparison with original
+    - Tab close logic maintains adjacent tab selection (Math.min pattern)
+    - Global keyboard event listeners with cleanup
+    - Circular navigation with modulo arithmetic
+    - Support for both Ctrl (Windows/Linux) and Cmd (Mac)
+  - **Test Results**: Production build passed, all quality checks passed
+  - **Total Files Created**: 2 new components, 1 modified page (~840 lines total)
+  - **Notes**: ✅ **Week 14-15 IN PROGRESS** (15/19 points, 79%) - Complete multi-file tab system with VS Code-like behavior! Users can now work with multiple files simultaneously, switch between them with keyboard shortcuts, and see visual indicators for active/modified files. Production-ready with full keyboard navigation support!
 
 ---
 

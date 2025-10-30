@@ -1,19 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MonacoEditor from '@/components/features/ide/MonacoEditor';
 import EditorToolbar from '@/components/features/ide/EditorToolbar';
+import TabBar, { FileTab } from '@/components/features/ide/TabBar';
 
 /**
  * IDE Page Component
  *
  * Full-featured code editor powered by Monaco Editor (VS Code engine)
- * Supports 20+ programming languages with syntax highlighting
+ * Supports multi-file tab editing with keyboard shortcuts
  */
 export default function IDEPage() {
-  // Editor state
-  const [content, setContent] = useState(SAMPLE_TYPESCRIPT);
-  const [language, setLanguage] = useState<string>('typescript');
+  // Tab state
+  const [tabs, setTabs] = useState<FileTab[]>([]);
+  const [activeTabId, setActiveTabId] = useState<string>('');
+
+  // Editor options state
   const [theme, setTheme] = useState<'vs-dark' | 'vs-light' | 'hc-black' | 'hc-light'>(
     'vs-dark'
   );
@@ -21,57 +24,90 @@ export default function IDEPage() {
   const [minimap, setMinimap] = useState(true);
   const [lineNumbers, setLineNumbers] = useState<'on' | 'off' | 'relative'>('on');
   const [fontSize, setFontSize] = useState(14);
-  const [fileName, setFileName] = useState('example.ts');
-  const [isLoading, setIsLoading] = useState(false);
 
   // Sample files for demonstration
   const sampleFiles: Record<string, { content: string; language: string }> = {
-    'example.ts': {
-      content: SAMPLE_TYPESCRIPT,
-      language: 'typescript',
-    },
-    'example.py': {
-      content: SAMPLE_PYTHON,
-      language: 'python',
-    },
-    'example.rs': {
-      content: SAMPLE_RUST,
-      language: 'rust',
-    },
-    'example.go': {
-      content: SAMPLE_GO,
-      language: 'go',
-    },
-    'README.md': {
-      content: SAMPLE_MARKDOWN,
-      language: 'markdown',
-    },
-    'styles.css': {
-      content: SAMPLE_CSS,
-      language: 'css',
-    },
-    'config.json': {
-      content: SAMPLE_JSON,
-      language: 'json',
-    },
-    'config.yaml': {
-      content: SAMPLE_YAML,
-      language: 'yaml',
-    },
+    'example.ts': { content: SAMPLE_TYPESCRIPT, language: 'typescript' },
+    'example.py': { content: SAMPLE_PYTHON, language: 'python' },
+    'example.rs': { content: SAMPLE_RUST, language: 'rust' },
+    'example.go': { content: SAMPLE_GO, language: 'go' },
+    'README.md': { content: SAMPLE_MARKDOWN, language: 'markdown' },
+    'styles.css': { content: SAMPLE_CSS, language: 'css' },
+    'config.json': { content: SAMPLE_JSON, language: 'json' },
+    'config.yaml': { content: SAMPLE_YAML, language: 'yaml' },
   };
 
   /**
-   * Handle file selection
+   * Initialize with first file
    */
-  const handleFileChange = (newFileName: string) => {
-    const file = sampleFiles[newFileName];
+  useEffect(() => {
+    const firstFileName = 'example.ts';
+    const firstFile = sampleFiles[firstFileName];
+    if (firstFile) {
+      const initialTab: FileTab = {
+        id: 'tab-0',
+        fileName: firstFileName,
+        content: firstFile.content,
+        language: firstFile.language,
+      };
+      setTabs([initialTab]);
+      setActiveTabId(initialTab.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * Get active tab
+   */
+  const activeTab = tabs.find((tab) => tab.id === activeTabId);
+
+  /**
+   * Handle tab selection
+   */
+  const handleTabSelect = (tabId: string) => {
+    setActiveTabId(tabId);
+  };
+
+  /**
+   * Handle tab close
+   */
+  const handleTabClose = (tabId: string) => {
+    const tabIndex = tabs.findIndex((t) => t.id === tabId);
+    const newTabs = tabs.filter((t) => t.id !== tabId);
+    setTabs(newTabs);
+
+    // Select adjacent tab if closing active tab
+    if (tabId === activeTabId && newTabs.length > 0) {
+      const newActiveIndex = Math.min(tabIndex, newTabs.length - 1);
+      const newActiveTab = newTabs[newActiveIndex];
+      if (newActiveTab) {
+        setActiveTabId(newActiveTab.id);
+      }
+    }
+  };
+
+  /**
+   * Open a new file
+   */
+  const handleOpenFile = (fileName: string) => {
+    // Check if file is already open
+    const existingTab = tabs.find((t) => t.fileName === fileName);
+    if (existingTab) {
+      setActiveTabId(existingTab.id);
+      return;
+    }
+
+    // Open new tab
+    const file = sampleFiles[fileName];
     if (file) {
-      setIsLoading(true);
-      setFileName(newFileName);
-      setLanguage(file.language);
-      setContent(file.content);
-      // Simulate file loading delay
-      setTimeout(() => setIsLoading(false), 300);
+      const newTab: FileTab = {
+        id: `tab-${Date.now()}`,
+        fileName,
+        content: file.content,
+        language: file.language,
+      };
+      setTabs([...tabs, newTab]);
+      setActiveTabId(newTab.id);
     }
   };
 
@@ -79,8 +115,69 @@ export default function IDEPage() {
    * Handle content change
    */
   const handleContentChange = (value: string | undefined) => {
-    setContent(value || '');
+    if (activeTab) {
+      const newTabs = tabs.map((tab) =>
+        tab.id === activeTabId
+          ? { ...tab, content: value || '', isDirty: value !== sampleFiles[tab.fileName]?.content }
+          : tab
+      );
+      setTabs(newTabs);
+    }
   };
+
+  /**
+   * Handle keyboard shortcuts
+   */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + W: Close current tab
+      if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+        e.preventDefault();
+        if (activeTabId && tabs.length > 1) {
+          handleTabClose(activeTabId);
+        }
+      }
+
+      // Ctrl/Cmd + Tab: Next tab
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Tab' && !e.shiftKey) {
+        e.preventDefault();
+        if (tabs.length > 0) {
+          const currentIndex = tabs.findIndex((t) => t.id === activeTabId);
+          const nextIndex = (currentIndex + 1) % tabs.length;
+          const nextTab = tabs[nextIndex];
+          if (nextTab) {
+            setActiveTabId(nextTab.id);
+          }
+        }
+      }
+
+      // Ctrl/Cmd + Shift + Tab: Previous tab
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Tab' && e.shiftKey) {
+        e.preventDefault();
+        if (tabs.length > 0) {
+          const currentIndex = tabs.findIndex((t) => t.id === activeTabId);
+          const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+          const prevTab = tabs[prevIndex];
+          if (prevTab) {
+            setActiveTabId(prevTab.id);
+          }
+        }
+      }
+
+      // Ctrl/Cmd + 1-8: Switch to tab by number
+      if ((e.ctrlKey || e.metaKey) && e.key >= '1' && e.key <= '8') {
+        e.preventDefault();
+        const tabIndex = parseInt(e.key) - 1;
+        if (tabs[tabIndex]) {
+          setActiveTabId(tabs[tabIndex].id);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabs, activeTabId]);
 
   return (
     <div className="flex flex-col h-screen bg-gray-900">
@@ -93,71 +190,108 @@ export default function IDEPage() {
           </span>
         </div>
 
-        {/* File selector */}
+        {/* File selector for opening files */}
         <div className="flex items-center space-x-3">
           <label htmlFor="file-select" className="text-gray-400 text-sm">
             Open File:
           </label>
           <select
             id="file-select"
-            value={fileName}
-            onChange={(e) => handleFileChange(e.target.value)}
+            value=""
+            onChange={(e) => {
+              if (e.target.value) {
+                handleOpenFile(e.target.value);
+                e.target.value = ''; // Reset selection
+              }
+            }}
             className="bg-gray-700 text-gray-200 text-sm rounded px-3 py-1.5 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {Object.keys(sampleFiles).map((file) => (
-              <option key={file} value={file}>
-                {file}
-              </option>
-            ))}
+            <option value="">Select a file...</option>
+            {Object.keys(sampleFiles)
+              .filter((fileName) => !tabs.find((t) => t.fileName === fileName))
+              .map((file) => (
+                <option key={file} value={file}>
+                  {file}
+                </option>
+              ))}
           </select>
         </div>
       </div>
 
-      {/* Editor toolbar */}
-      <EditorToolbar
-        theme={theme}
-        onThemeChange={setTheme}
-        wordWrap={wordWrap}
-        onWordWrapToggle={() => setWordWrap(!wordWrap)}
-        minimap={minimap}
-        onMinimapToggle={() => setMinimap(!minimap)}
-        lineNumbers={lineNumbers}
-        onLineNumbersChange={setLineNumbers}
-        fontSize={fontSize}
-        onFontSizeChange={setFontSize}
-        fileName={fileName}
-        language={language}
+      {/* Tab bar */}
+      <TabBar
+        tabs={tabs}
+        activeTabId={activeTabId}
+        onTabSelect={handleTabSelect}
+        onTabClose={handleTabClose}
       />
+
+      {/* Editor toolbar */}
+      {activeTab && (
+        <EditorToolbar
+          theme={theme}
+          onThemeChange={setTheme}
+          wordWrap={wordWrap}
+          onWordWrapToggle={() => setWordWrap(!wordWrap)}
+          minimap={minimap}
+          onMinimapToggle={() => setMinimap(!minimap)}
+          lineNumbers={lineNumbers}
+          onLineNumbersChange={setLineNumbers}
+          fontSize={fontSize}
+          onFontSizeChange={setFontSize}
+          fileName={activeTab.fileName}
+          language={activeTab.language}
+        />
+      )}
 
       {/* Monaco Editor */}
       <div className="flex-1 overflow-hidden">
-        <MonacoEditor
-          value={content}
-          language={language}
-          theme={theme}
-          onChange={handleContentChange}
-          wordWrap={wordWrap ? 'on' : 'off'}
-          minimap={minimap}
-          lineNumbers={lineNumbers}
-          fontSize={fontSize}
-          loading={isLoading}
-        />
+        {activeTab ? (
+          <MonacoEditor
+            value={activeTab.content}
+            language={activeTab.language}
+            theme={theme}
+            onChange={handleContentChange}
+            wordWrap={wordWrap ? 'on' : 'off'}
+            minimap={minimap}
+            lineNumbers={lineNumbers}
+            fontSize={fontSize}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full bg-gray-900 text-gray-400">
+            <div className="text-center">
+              <p className="text-lg mb-2">No files open</p>
+              <p className="text-sm">Select a file from the dropdown above to get started</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Footer */}
-      <div className="h-8 bg-gray-800 border-t border-gray-700 flex items-center justify-between px-6 text-xs text-gray-400">
-        <div>
-          Lines: {content.split('\n').length} | Characters: {content.length}
+      {activeTab && (
+        <div className="h-8 bg-gray-800 border-t border-gray-700 flex items-center justify-between px-6 text-xs text-gray-400">
+          <div>
+            Lines: {activeTab.content.split('\n').length} | Characters: {activeTab.content.length}
+            {activeTab.isDirty && <span className="ml-2 text-blue-400">• Modified</span>}
+          </div>
+          <div>
+            Language: {activeTab.language.toUpperCase()} | Encoding: UTF-8 | Tab Size: 2
+          </div>
         </div>
-        <div>
-          Language: {language.toUpperCase()} | Encoding: UTF-8 | Tab Size: 2
-        </div>
+      )}
+
+      {/* Keyboard shortcuts hint */}
+      <div className="h-6 bg-gray-900 border-t border-gray-800 flex items-center justify-center text-xs text-gray-500">
+        <span>
+          Shortcuts: Ctrl/Cmd+Tab (next tab) | Ctrl/Cmd+Shift+Tab (prev tab) | Ctrl/Cmd+W (close) |
+          Ctrl/Cmd+1-8 (tab #)
+        </span>
       </div>
     </div>
   );
 }
 
-// Sample file contents
+// Sample file contents (unchanged from IDE-001)
 const SAMPLE_TYPESCRIPT = `/**
  * MADACE Method - TypeScript Example
  * Demonstrates syntax highlighting for TypeScript
@@ -384,7 +518,7 @@ console.log(greeting);
 |---------|--------|
 | Monaco Editor | ✅ Implemented |
 | Syntax Highlighting | ✅ Working |
-| File Loading | 🚧 In Progress |
+| Multi-file Tabs | ✅ Complete |
 `;
 
 const SAMPLE_CSS = `/* MADACE Method - CSS Example */
@@ -514,6 +648,7 @@ llm:
 features:
   ide:
     monaco_editor: true
+    multi_file_tabs: true
     file_explorer: true
     integrated_terminal: true
   collaboration:
