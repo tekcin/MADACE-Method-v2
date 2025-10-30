@@ -34,6 +34,11 @@ npm run test:e2e           # Run Playwright E2E tests
 
 # Agent Management
 npm run import-madace-v3   # Import MADACE agents to database
+
+# CLI Tools
+npm run madace repl        # Interactive REPL mode with autocomplete
+npm run madace dashboard   # Terminal dashboard (TUI)
+npm run madace chat        # Chat with AI agents
 ```
 
 **Key File Locations:**
@@ -263,7 +268,7 @@ const yamlAgent = await loadAgent('/path/to/agent.yaml');
 
 ### API Routes (V3)
 
-**Database-backed endpoints**:
+**Agent Management**:
 
 - `GET /api/v3/agents` - List all agents (from DB)
 - `GET /api/v3/agents/[id]` - Get agent by ID
@@ -274,6 +279,16 @@ const yamlAgent = await loadAgent('/path/to/agent.yaml');
 - `POST /api/v3/agents/[id]/export` - Export as JSON
 - `POST /api/v3/agents/import` - Import agent from JSON
 - `GET /api/v3/agents/search?q=query` - Search agents
+
+**Chat & NLU**:
+
+- `POST /api/v3/nlu/parse` - Parse natural language queries
+- `GET /api/v3/nlu/parse` - Check NLU service status
+- `POST /api/v3/chat/sessions` - Create chat session
+- `GET /api/v3/chat/sessions` - List chat sessions
+- `GET /api/v3/chat/sessions/[id]/messages` - Get chat messages
+- `POST /api/v3/chat/sessions/[id]/messages` - Send message
+- `POST /api/v3/chat/stream` - Stream LLM responses (SSE)
 
 **Workflow Operations**:
 
@@ -376,6 +391,12 @@ steps:
 - `/agents` - Agent selector and list
 - `/agents/[id]` - Agent detail view
 - `/agents/manage` - CRUD interface for agents
+
+**Chat & Collaboration**:
+
+- `/chat` - Conversational chat interface with AI agents
+- Real-time streaming responses via Server-Sent Events
+- Message history and threading support
 
 **Workflow & Status**:
 
@@ -638,31 +659,44 @@ npm run test:e2e:debug       # Step through tests
 
 ## Project Status
 
-**Current Phase**: V3 Alpha - Database Integration Complete
+**Current Phase**: V3 Alpha - Milestone 3.3 In Progress (Conversational AI & NLU)
 
-**Completed**:
+**Milestone Progress**:
 
-- ✅ Prisma ORM integration
-- ✅ Database schema design
-- ✅ Agent CRUD API (V3)
-- ✅ Agent management UI
-- ✅ LLM multi-provider client
-- ✅ E2E testing framework
-- ✅ Docker deployment
+- ✅ **Milestone 3.1: Database Migration** - COMPLETE (48/48 points)
+- ✅ **Milestone 3.2: CLI Enhancements** - COMPLETE (35/35 points)
+- ⏳ **Milestone 3.3: Conversational AI & NLU** - IN PROGRESS (33/55 points, 60%)
+- 📋 **Milestone 3.4: Web IDE & Collaboration** - PLANNED
+
+**Recently Completed**:
+
+- ✅ Prisma ORM integration with PostgreSQL/SQLite
+- ✅ Database schema design (8 models)
+- ✅ Agent CRUD API (V3) with search and duplication
+- ✅ Agent management UI with responsive design
+- ✅ LLM multi-provider client (Gemini/Claude/OpenAI/Local)
+- ✅ Interactive REPL mode with autocomplete and history
+- ✅ Terminal dashboard (TUI) with 4-pane layout
+- ✅ Full CLI feature parity (24 commands across 5 categories)
+- ✅ NLU integration with Dialogflow CX
+- ✅ Entity extraction and fuzzy matching
+- ✅ Chat UI for Web and CLI with streaming responses
+- ✅ E2E testing framework with Playwright
+- ✅ Docker deployment (HTTP/HTTPS)
 
 **In Progress**:
 
-- ⏳ Workflow engine with DB persistence
-- ⏳ State machine with DB sync
-- ⏳ NLU integration
+- ⏳ Message history and threading ([CHAT-002])
+- ⏳ Markdown rendering and code highlighting ([CHAT-003])
 
 **Planned**:
 
-- 📋 Real-time collaboration features
+- 📋 Agent memory system (persistent and contextual)
+- 📋 Real-time collaboration features (Web IDE)
 - 📋 Advanced agent orchestration
 - 📋 Plugin system
 
-See [docs/workflow-status.md](./docs/workflow-status.md) for current stories.
+See [docs/workflow-status.md](./docs/workflow-status.md) for detailed story tracking.
 
 ---
 
