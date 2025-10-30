@@ -157,7 +157,6 @@ export default function MonacoEditor({
         showFiles: true,
         showReferences: true,
         showFolders: true,
-        showTypeParameters: true,
         showIssues: true,
         showUsers: true,
         showStructs: true,

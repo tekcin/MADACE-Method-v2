@@ -160,9 +160,9 @@
 - ✅ [IDE-002] Add Multi-file Tab Support (5 points) - **DONE**
 - ✅ [IDE-003] Add IntelliSense and Auto-completion (4 points) - **DONE**
 
-**Week 16-17: File Explorer & Project Management (18 points)** - 📅 Planned
+**Week 16-17: File Explorer & Project Management (18 points)** - 🔄 **IN PROGRESS**
 
-- 📅 [FILES-001] Build File Tree Explorer with CRUD Operations (10 points)
+- ✅ [FILES-001] Build File Tree Explorer with CRUD Operations (10 points) - **DONE**
 - 📅 [FILES-002] Add File Search and Git Status Indicators (8 points)
 
 **Week 18-19: Real-time Collaboration Foundation (21 points)** - 📅 Planned
@@ -191,7 +191,7 @@
 
 ## IN PROGRESS
 
-(Empty - No stories in IN PROGRESS)
+(Empty - No stories in progress)
 
 **MADACE Rule**: Maximum ONE story in IN PROGRESS at a time.
 

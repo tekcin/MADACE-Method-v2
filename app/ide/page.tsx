@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import MonacoEditor from '@/components/features/ide/MonacoEditor';
 import EditorToolbar from '@/components/features/ide/EditorToolbar';
 import TabBar, { FileTab } from '@/components/features/ide/TabBar';
+import FileExplorer from '@/components/features/ide/FileExplorer';
+import { FileTreeItem } from '@/components/features/ide/FileTreeNode';
 
 /**
  * IDE Page Component
@@ -15,6 +17,9 @@ export default function IDEPage() {
   // Tab state
   const [tabs, setTabs] = useState<FileTab[]>([]);
   const [activeTabId, setActiveTabId] = useState<string>('');
+
+  // Sidebar state
+  const [showSidebar, setShowSidebar] = useState(true);
 
   // Editor options state
   const [theme, setTheme] = useState<'vs-dark' | 'vs-light' | 'hc-black' | 'hc-light'>(
@@ -36,6 +41,96 @@ export default function IDEPage() {
     'config.json': { content: SAMPLE_JSON, language: 'json' },
     'config.yaml': { content: SAMPLE_YAML, language: 'yaml' },
   };
+
+  // File tree structure
+  const [fileTree] = useState<FileTreeItem>({
+    id: 'root',
+    name: 'project',
+    type: 'folder',
+    path: '/project',
+    children: [
+      {
+        id: 'src',
+        name: 'src',
+        type: 'folder',
+        path: '/project/src',
+        children: [
+          {
+            id: 'example-ts',
+            name: 'example.ts',
+            type: 'file',
+            path: '/project/src/example.ts',
+            extension: 'ts',
+          },
+          {
+            id: 'example-py',
+            name: 'example.py',
+            type: 'file',
+            path: '/project/src/example.py',
+            extension: 'py',
+          },
+          {
+            id: 'example-rs',
+            name: 'example.rs',
+            type: 'file',
+            path: '/project/src/example.rs',
+            extension: 'rs',
+          },
+          {
+            id: 'example-go',
+            name: 'example.go',
+            type: 'file',
+            path: '/project/src/example.go',
+            extension: 'go',
+          },
+        ],
+      },
+      {
+        id: 'styles',
+        name: 'styles',
+        type: 'folder',
+        path: '/project/styles',
+        children: [
+          {
+            id: 'styles-css',
+            name: 'styles.css',
+            type: 'file',
+            path: '/project/styles/styles.css',
+            extension: 'css',
+          },
+        ],
+      },
+      {
+        id: 'config',
+        name: 'config',
+        type: 'folder',
+        path: '/project/config',
+        children: [
+          {
+            id: 'config-json',
+            name: 'config.json',
+            type: 'file',
+            path: '/project/config/config.json',
+            extension: 'json',
+          },
+          {
+            id: 'config-yaml',
+            name: 'config.yaml',
+            type: 'file',
+            path: '/project/config/config.yaml',
+            extension: 'yaml',
+          },
+        ],
+      },
+      {
+        id: 'readme',
+        name: 'README.md',
+        type: 'file',
+        path: '/project/README.md',
+        extension: 'md',
+      },
+    ],
+  });
 
   /**
    * Initialize with first file
@@ -87,7 +182,34 @@ export default function IDEPage() {
   };
 
   /**
-   * Open a new file
+   * Open a new file from file tree
+   */
+  const handleFileTreeClick = (item: FileTreeItem) => {
+    if (item.type !== 'file') return;
+
+    // Check if file is already open
+    const existingTab = tabs.find((t) => t.fileName === item.name);
+    if (existingTab) {
+      setActiveTabId(existingTab.id);
+      return;
+    }
+
+    // Open new tab
+    const file = sampleFiles[item.name];
+    if (file) {
+      const newTab: FileTab = {
+        id: `tab-${Date.now()}`,
+        fileName: item.name,
+        content: file.content,
+        language: file.language,
+      };
+      setTabs([...tabs, newTab]);
+      setActiveTabId(newTab.id);
+    }
+  };
+
+  /**
+   * Open a new file by name (for dropdown)
    */
   const handleOpenFile = (fileName: string) => {
     // Check if file is already open
@@ -184,6 +306,28 @@ export default function IDEPage() {
       {/* Header */}
       <div className="h-14 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-6">
         <div className="flex items-center space-x-4">
+          {/* Sidebar toggle button */}
+          <button
+            onClick={() => setShowSidebar(!showSidebar)}
+            className="p-2 hover:bg-gray-700 rounded transition-colors"
+            title={showSidebar ? 'Hide sidebar' : 'Show sidebar'}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5 text-gray-400"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+              />
+            </svg>
+          </button>
+
           <h1 className="text-xl font-bold text-white">MADACE IDE</h1>
           <span className="text-sm text-gray-400">
             Powered by Monaco Editor (VS Code)
@@ -218,74 +362,91 @@ export default function IDEPage() {
         </div>
       </div>
 
-      {/* Tab bar */}
-      <TabBar
-        tabs={tabs}
-        activeTabId={activeTabId}
-        onTabSelect={handleTabSelect}
-        onTabClose={handleTabClose}
-      />
-
-      {/* Editor toolbar */}
-      {activeTab && (
-        <EditorToolbar
-          theme={theme}
-          onThemeChange={setTheme}
-          wordWrap={wordWrap}
-          onWordWrapToggle={() => setWordWrap(!wordWrap)}
-          minimap={minimap}
-          onMinimapToggle={() => setMinimap(!minimap)}
-          lineNumbers={lineNumbers}
-          onLineNumbersChange={setLineNumbers}
-          fontSize={fontSize}
-          onFontSizeChange={setFontSize}
-          fileName={activeTab.fileName}
-          language={activeTab.language}
-        />
-      )}
-
-      {/* Monaco Editor */}
-      <div className="flex-1 overflow-hidden">
-        {activeTab ? (
-          <MonacoEditor
-            value={activeTab.content}
-            language={activeTab.language}
-            theme={theme}
-            onChange={handleContentChange}
-            wordWrap={wordWrap ? 'on' : 'off'}
-            minimap={minimap}
-            lineNumbers={lineNumbers}
-            fontSize={fontSize}
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full bg-gray-900 text-gray-400">
-            <div className="text-center">
-              <p className="text-lg mb-2">No files open</p>
-              <p className="text-sm">Select a file from the dropdown above to get started</p>
-            </div>
+      {/* Main content area with sidebar and editor */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* File Explorer Sidebar */}
+        {showSidebar && (
+          <div className="w-64 border-r border-gray-700 overflow-y-auto">
+            <FileExplorer
+              root={fileTree}
+              selectedPath={activeTab ? `/project/${activeTab.fileName}` : undefined}
+              onFileClick={handleFileTreeClick}
+            />
           </div>
         )}
-      </div>
 
-      {/* Footer */}
-      {activeTab && (
-        <div className="h-8 bg-gray-800 border-t border-gray-700 flex items-center justify-between px-6 text-xs text-gray-400">
-          <div>
-            Lines: {activeTab.content.split('\n').length} | Characters: {activeTab.content.length}
-            {activeTab.isDirty && <span className="ml-2 text-blue-400">• Modified</span>}
+        {/* Editor area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Tab bar */}
+          <TabBar
+            tabs={tabs}
+            activeTabId={activeTabId}
+            onTabSelect={handleTabSelect}
+            onTabClose={handleTabClose}
+          />
+
+          {/* Editor toolbar */}
+          {activeTab && (
+            <EditorToolbar
+              theme={theme}
+              onThemeChange={setTheme}
+              wordWrap={wordWrap}
+              onWordWrapToggle={() => setWordWrap(!wordWrap)}
+              minimap={minimap}
+              onMinimapToggle={() => setMinimap(!minimap)}
+              lineNumbers={lineNumbers}
+              onLineNumbersChange={setLineNumbers}
+              fontSize={fontSize}
+              onFontSizeChange={setFontSize}
+              fileName={activeTab.fileName}
+              language={activeTab.language}
+            />
+          )}
+
+          {/* Monaco Editor */}
+          <div className="flex-1 overflow-hidden">
+            {activeTab ? (
+              <MonacoEditor
+                value={activeTab.content}
+                language={activeTab.language}
+                theme={theme}
+                onChange={handleContentChange}
+                wordWrap={wordWrap ? 'on' : 'off'}
+                minimap={minimap}
+                lineNumbers={lineNumbers}
+                fontSize={fontSize}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full bg-gray-900 text-gray-400">
+                <div className="text-center">
+                  <p className="text-lg mb-2">No files open</p>
+                  <p className="text-sm">Select a file from the dropdown above to get started</p>
+                </div>
+              </div>
+            )}
           </div>
-          <div>
-            Language: {activeTab.language.toUpperCase()} | Encoding: UTF-8 | Tab Size: 2
+
+          {/* Footer */}
+          {activeTab && (
+            <div className="h-8 bg-gray-800 border-t border-gray-700 flex items-center justify-between px-6 text-xs text-gray-400">
+              <div>
+                Lines: {activeTab.content.split('\n').length} | Characters: {activeTab.content.length}
+                {activeTab.isDirty && <span className="ml-2 text-blue-400">• Modified</span>}
+              </div>
+              <div>
+                Language: {activeTab.language.toUpperCase()} | Encoding: UTF-8 | Tab Size: 2
+              </div>
+            </div>
+          )}
+
+          {/* Keyboard shortcuts hint */}
+          <div className="h-6 bg-gray-900 border-t border-gray-800 flex items-center justify-center text-xs text-gray-500">
+            <span>
+              Shortcuts: Ctrl/Cmd+Tab (next tab) | Ctrl/Cmd+Shift+Tab (prev tab) | Ctrl/Cmd+W (close) |
+              Ctrl/Cmd+1-8 (tab #)
+            </span>
           </div>
         </div>
-      )}
-
-      {/* Keyboard shortcuts hint */}
-      <div className="h-6 bg-gray-900 border-t border-gray-800 flex items-center justify-center text-xs text-gray-500">
-        <span>
-          Shortcuts: Ctrl/Cmd+Tab (next tab) | Ctrl/Cmd+Shift+Tab (prev tab) | Ctrl/Cmd+W (close) |
-          Ctrl/Cmd+1-8 (tab #)
-        </span>
       </div>
     </div>
   );
