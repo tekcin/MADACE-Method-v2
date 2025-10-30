@@ -160,7 +160,7 @@ Stories TBD - Awaiting breakdown from PM/Architect
 
 ## TODO
 
-- [ ] [NLU-002] Entity Extraction and Parameter Binding (10 points)
+(Empty - [NLU-002] moved to IN PROGRESS)
 
 **MADACE Rule**: Maximum ONE story in TODO at a time.
 
@@ -168,7 +168,18 @@ Stories TBD - Awaiting breakdown from PM/Architect
 
 ## IN PROGRESS
 
-(Empty - [NLU-001] moved to DONE)
+- 🔄 [NLU-002] Entity Extraction and Parameter Binding (10 points)
+  - **Priority**: P1
+  - **Milestone**: 3.3 (Week 8-9)
+  - **Started**: 2025-10-29
+  - **Dependencies**: [NLU-001] complete ✅
+  - **Deliverables**:
+    - Entity validator (`lib/nlu/entity-validator.ts`)
+    - Entity resolver with fuzzy matching (`lib/nlu/entity-resolver.ts`)
+    - Updated intent handler with entity validation
+    - Unit tests for validator and resolver
+  - **Acceptance Criteria**: See `docs/milestone-3.3-stories.md` (lines 113-190)
+  - **Progress**: Starting entity validation implementation
 
 **MADACE Rule**: Maximum ONE story in IN PROGRESS at a time.
 
