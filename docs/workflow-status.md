@@ -590,6 +590,46 @@ Stories TBD - Awaiting breakdown from PM/Architect
 
 ### Milestone 3.3 - Week 10-11: Chat Interface (10 points completed)
 
+- ✅ [CHAT-002] Add Message History and Threading (5 points)
+  - **Completed**: 2025-10-29
+  - **Deliverables**:
+    - **Web UI Features**:
+      - components/features/chat/ChatInterface.tsx (+67 lines)
+        - Infinite scroll pagination (scroll to top loads older messages)
+        - Load more indicator with spinner
+        - Reply-to state management with visual indicator bar
+        - Prepend older messages without losing scroll position
+        - 50 messages per page with timestamp-based pagination
+      - components/features/chat/Message.tsx (+14 lines)
+        - Reply button (visible on hover) at bottom-right of bubble
+        - Reply icon with hover effects
+    - **CLI Commands** (lib/cli/commands/chat.ts +68 lines):
+      - `/search` - Search messages in current session with interactive prompt
+      - `/export` - Export chat as Markdown file with default filename
+    - **API Endpoints** (created in commit a0e5eae):
+      - POST/GET /api/v3/chat/search - Full-text search with filters
+      - GET /api/v3/chat/export/[sessionId] - Markdown export
+      - GET /api/v3/chat/messages/[id]/thread - Thread retrieval
+    - **Service Functions** (lib/services/chat-service.ts +163 lines):
+      - getMessageThread() - Recursive thread fetching with root traversal
+      - exportSessionAsMarkdown() - Formatted Markdown export
+      - searchMessages() - Already existed, used by new endpoints
+    - **Tests** (__tests__/lib/services/chat-threading.test.ts +267 lines):
+      - 7 test cases: threading (2), export (2), search (3)
+      - All tests passing (7/7)
+      - Integration tests with real Prisma client
+  - **Acceptance Criteria Met**:
+    - ✅ Web UI: Infinite scroll with pagination
+    - ✅ Web UI: Reply button on messages
+    - ✅ Web UI: Visual reply indicators
+    - ✅ CLI: /search command implemented
+    - ✅ CLI: /export command implemented
+    - ✅ API: All 3 endpoints functional
+    - ✅ Tests: 7/7 passing
+  - **Test Results**: 7/7 tests passing (100%)
+  - **Files Modified**: 6 files (+455 lines)
+  - **Notes**: ✅ **YOLO MODE COMPLETE** - Full feature delivery in single session! Infinite scroll, threading UI, CLI commands, and comprehensive tests. Week 10-11 now 83% complete (15/18 points).
+
 - ✅ [CHAT-001] Build Chat UI for Web and CLI (10 points)
   - **Completed**: 2025-10-29
   - **Deliverables**:
