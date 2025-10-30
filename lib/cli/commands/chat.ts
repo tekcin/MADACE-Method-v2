@@ -18,10 +18,11 @@ import {
   endSession,
   searchMessages,
   exportSessionAsMarkdown,
-  type ChatSessionWithMessages,
 } from '@/lib/services/chat-service';
 import { createLLMClient } from '@/lib/llm/client';
 import { getLLMConfigFromEnv } from '@/lib/llm/config';
+import { buildPromptMessages, limitPromptContext } from '@/lib/llm/prompt-builder';
+import { extractAndSaveMemories } from '@/lib/nlu/memory-extractor';
 
 /**
  * Chat session state
@@ -95,7 +96,7 @@ function displayWelcome(agent: Agent) {
 }
 
 /**
- * Get agent response from LLM
+ * Get agent response from LLM (memory-aware)
  */
 async function getAgentResponse(
   state: ChatState,
@@ -110,29 +111,38 @@ async function getAgentResponse(
       content: userMessage,
     });
 
+    // Extract and save memories from user message (async, non-blocking)
+    const userMessages = conversationHistory
+      .filter((m) => m.role === 'user')
+      .map((m) => m.content);
+    extractAndSaveMemories(
+      state.agent.id,
+      state.userId,
+      userMessage,
+      userMessages
+    ).catch((error) => {
+      console.error(chalk.yellow('[Memory] Error extracting memories:'), error);
+      // Don't block on memory extraction errors
+    });
+
     // Get LLM client
     const llmConfig = getLLMConfigFromEnv();
     const llmClient = createLLMClient(llmConfig);
 
-    // Build system prompt from agent persona
-    const persona = state.agent.persona as { role?: string; identity?: string };
-    const systemPrompt = `You are ${state.agent.title}. ${persona.role || ''} ${persona.identity || ''}`;
+    // Build memory-aware prompt with agent persona and user's memory context
+    const messages = await buildPromptMessages(
+      state.agent,
+      state.userId,
+      conversationHistory,
+      userMessage,
+      true // includeMemory = true
+    );
 
-    // Prepare messages for LLM
-    const messages = [
-      {
-        role: 'system' as const,
-        content: systemPrompt,
-      },
-      ...conversationHistory,
-      {
-        role: 'user' as const,
-        content: userMessage,
-      },
-    ];
+    // Limit context to avoid exceeding token limits
+    const limitedMessages = limitPromptContext(messages, 4000);
 
-    // Get response from LLM
-    const response = await llmClient.chat({ messages });
+    // Get response from LLM with memory-aware context
+    const response = await llmClient.chat({ messages: limitedMessages });
 
     // Save agent response
     await createMessage({

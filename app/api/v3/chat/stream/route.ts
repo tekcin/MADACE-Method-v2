@@ -9,6 +9,8 @@ import { createMessage, getMessage, getSession } from '@/lib/services/chat-servi
 import { createLLMClient } from '@/lib/llm/client';
 import { getLLMConfigFromEnv } from '@/lib/llm/config';
 import { getAgentByName } from '@/lib/services/agent-service';
+import { buildPromptMessages, formatConversationHistory, limitPromptContext } from '@/lib/llm/prompt-builder';
+import { extractAndSaveMemories } from '@/lib/nlu/memory-extractor';
 
 /**
  * POST /api/v3/chat/stream
@@ -37,32 +39,42 @@ export async function POST(request: NextRequest) {
       return new Response('Agent not found', { status: 404 });
     }
 
-    // Get previous message for context
-    const previousMessage = replyToId ? await getMessage(replyToId) : null;
+    // Build conversation history (last 10 messages for context, excluding the current user message)
+    const recentMessages = session.messages.slice(-11, -1); // Exclude last message (current user input)
+    const conversationHistory = formatConversationHistory(recentMessages);
 
-    // Build conversation history (last 10 messages for context)
-    const recentMessages = session.messages.slice(-10);
-    const conversationHistory = recentMessages.map((msg) => ({
-      role: msg.role === 'agent' ? ('assistant' as const) : (msg.role as 'user' | 'system'),
-      content: msg.content,
-    }));
+    // Get the current user message (last message in session)
+    const currentMessage = session.messages[session.messages.length - 1]?.content || '';
+
+    // Extract and save memories from user message (async, non-blocking)
+    const conversationHistoryContent = recentMessages
+      .filter((m) => m.role === 'user')
+      .map((m) => m.content);
+    extractAndSaveMemories(
+      agent.id,
+      session.userId,
+      currentMessage,
+      conversationHistoryContent
+    ).catch((error) => {
+      console.error('[Chat Stream] Error extracting memories:', error);
+      // Don't block on memory extraction errors
+    });
 
     // Create LLM client
     const llmConfig = getLLMConfigFromEnv();
     const llmClient = createLLMClient(llmConfig);
 
-    // Build system prompt from agent persona
-    const persona = agent.persona as { role?: string; identity?: string };
-    const systemPrompt = `You are ${agent.title}. ${persona.role || ''} ${persona.identity || ''}`;
+    // Build memory-aware prompt with agent persona and user's memory context
+    const messages = await buildPromptMessages(
+      agent,
+      session.userId,
+      conversationHistory,
+      currentMessage,
+      true // includeMemory = true
+    );
 
-    // Prepare messages for LLM
-    const messages = [
-      {
-        role: 'system' as const,
-        content: systemPrompt,
-      },
-      ...conversationHistory,
-    ];
+    // Limit context to avoid exceeding token limits
+    const limitedMessages = limitPromptContext(messages, 4000);
 
     // Create streaming response
     const stream = new ReadableStream({
@@ -70,8 +82,8 @@ export async function POST(request: NextRequest) {
         try {
           let fullResponse = '';
 
-          // Stream from LLM
-          for await (const chunk of llmClient.chatStream({ messages })) {
+          // Stream from LLM with memory-aware context
+          for await (const chunk of llmClient.chatStream({ messages: limitedMessages })) {
             fullResponse += chunk.content;
 
             // Send chunk as SSE
