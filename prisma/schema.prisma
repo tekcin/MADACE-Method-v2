@@ -38,19 +38,30 @@ model Agent {
 }
 
 model AgentMemory {
-  id          String   @id @default(cuid())
-  agentId     String
-  userId      String
-  context     Json     // Conversation context
-  type        String   // "short-term" | "long-term"
-  createdAt   DateTime @default(now())
-  expiresAt   DateTime?
+  id              String   @id @default(cuid())
+  agentId         String
+  userId          String
+  context         Json     // Full memory context
+  type            String   // "short-term" | "long-term"
+  category        String   // "user_preference" | "project_context" | "conversation_summary" | "user_fact"
+  key             String   // Memory key (e.g., "communication_style", "project_name")
+  value           String   // Memory value (stored as string, can be JSON)
+  importance      Int      @default(5) // 1-10 scale
+  source          String   @default("inferred_from_chat") // "inferred_from_chat" | "user_input" | "system"
+  lastAccessedAt  DateTime @default(now())
+  accessCount     Int      @default(0)
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime?
+  updatedAt       DateTime @updatedAt
 
   agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([agentId, userId])
   @@index([expiresAt])
+  @@index([importance])
+  @@index([lastAccessedAt])
+  @@index([category])
 }
 
 // ==============================================================================
