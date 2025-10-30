@@ -14,6 +14,7 @@ export interface MessageProps {
   agentName?: string;
   userName?: string;
   isStreaming?: boolean;
+  onReply?: () => void;
 }
 
 /**
@@ -43,7 +44,7 @@ function getInitials(name: string): string {
   return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
 }
 
-export default function Message({ message, agentName, userName, isStreaming }: MessageProps) {
+export default function Message({ message, agentName, userName, isStreaming, onReply }: MessageProps) {
   const isUser = message.role === 'user';
   const isSystem = message.role === 'system';
 
@@ -85,7 +86,7 @@ export default function Message({ message, agentName, userName, isStreaming }: M
         </div>
 
         {/* Content */}
-        <div className={`rounded-lg border ${bubbleBg} ${bubbleBorder} p-3 shadow-sm`}>
+        <div className={`rounded-lg border ${bubbleBg} ${bubbleBorder} p-3 shadow-sm group relative`}>
           <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">{message.content}</p>
 
           {/* Streaming Indicator */}
@@ -94,6 +95,19 @@ export default function Message({ message, agentName, userName, isStreaming }: M
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               <span className="text-xs text-gray-500 dark:text-gray-400">Typing...</span>
             </div>
+          )}
+
+          {/* Reply button (visible on hover) */}
+          {onReply && !isStreaming && (
+            <button
+              onClick={onReply}
+              className="absolute -bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full p-1.5 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
+              title="Reply to this message"
+            >
+              <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+            </button>
           )}
         </div>
       </div>

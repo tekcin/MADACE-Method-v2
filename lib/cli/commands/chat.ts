@@ -6,6 +6,8 @@
 
 import inquirer from 'inquirer';
 import chalk from 'chalk';
+import * as fs from 'fs';
+import * as path from 'path';
 import type { Agent } from '@prisma/client';
 import { listAgents } from '@/lib/services/agent-service';
 import {
@@ -13,6 +15,8 @@ import {
   createMessage,
   listMessages,
   endSession,
+  searchMessages,
+  exportSessionAsMarkdown,
   type ChatSessionWithMessages,
 } from '@/lib/services/chat-service';
 import { createLLMClient } from '@/lib/llm/client';
@@ -82,6 +86,8 @@ function displayWelcome(agent: Agent) {
   console.log(chalk.dim('Commands:'));
   console.log(chalk.dim('  /exit    - End chat session'));
   console.log(chalk.dim('  /history - Show last 10 messages'));
+  console.log(chalk.dim('  /search  - Search messages in this session'));
+  console.log(chalk.dim('  /export  - Export chat as Markdown file'));
   console.log(chalk.dim('  /multi   - Enter multi-line mode (end with /end)'));
   console.log(chalk.dim('  \\        - Line continuation (type \\ at end of line)\n'));
 }
@@ -200,6 +206,73 @@ async function chatLoop(state: ChatState) {
     if (trimmed === '/history') {
       const messages = await listMessages(state.sessionId, { limit: 50 });
       displayHistory(messages);
+      continue;
+    }
+
+    if (trimmed === '/search') {
+      const { query } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'query',
+          message: chalk.yellow('Search query:'),
+        },
+      ]);
+
+      if (!query.trim()) {
+        console.log(chalk.red('Search query cannot be empty.\n'));
+        continue;
+      }
+
+      console.log(chalk.dim('\nSearching...\n'));
+
+      try {
+        const results = await searchMessages(query, { limit: 20 });
+        const sessionResults = results.filter(m => m.sessionId === state.sessionId);
+
+        if (sessionResults.length === 0) {
+          console.log(chalk.yellow(`No messages found matching "${query}".\n`));
+        } else {
+          console.log(chalk.green(`Found ${sessionResults.length} message(s):\n`));
+
+          for (const msg of sessionResults) {
+            const timestamp = chalk.dim(`[${formatTimestamp(msg.timestamp)}]`);
+            const role = msg.role === 'user' ? chalk.blue('You') : chalk.green('Agent');
+            const preview = msg.content.substring(0, 100) + (msg.content.length > 100 ? '...' : '');
+
+            console.log(`${role} ${timestamp}: ${chalk.white(preview)}`);
+          }
+          console.log('');
+        }
+      } catch (error) {
+        console.error(chalk.red('Search error:'), error);
+      }
+
+      continue;
+    }
+
+    if (trimmed === '/export') {
+      try {
+        const { filename } = await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'filename',
+            message: chalk.yellow('Export filename:'),
+            default: `chat-${state.agent.name}-${new Date().toISOString().split('T')[0]}.md`,
+          },
+        ]);
+
+        console.log(chalk.dim('\nExporting...\n'));
+
+        const markdown = await exportSessionAsMarkdown(state.sessionId);
+        const filepath = path.resolve(process.cwd(), filename);
+
+        fs.writeFileSync(filepath, markdown, 'utf-8');
+
+        console.log(chalk.green(`✓ Chat exported to: ${filepath}\n`));
+      } catch (error) {
+        console.error(chalk.red('Export error:'), error);
+      }
+
       continue;
     }
 

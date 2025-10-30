@@ -1,7 +1,7 @@
 # MADACE v3.0 Workflow Status
 
-**Current Phase:** ✅ Milestone 3.3 IN PROGRESS (33/55 points, 60%) - Conversational AI & NLU - [CHAT-001] COMPLETE
-**Last Updated:** 2025-10-29 (Week 10-11 COMPLETE! 10/18 points delivered)
+**Current Phase:** ✅ Milestone 3.3 IN PROGRESS (38/55 points, 69%) - Conversational AI & NLU - [CHAT-002] COMPLETE!
+**Last Updated:** 2025-10-29 (Week 10-11: 83% COMPLETE! 15/18 points delivered)
 
 ---
 
@@ -49,9 +49,9 @@
 
 ## Story Counts
 
-### Total Completed: 26 stories | 129 points (Milestone 0.0 + Milestone 3.1 + Milestone 3.2 + Week 8-9 + Week 10-11 [CHAT-001] COMPLETE!)
+### Total Completed: 27 stories | 134 points (Milestone 0.0 + Milestone 3.1 + Milestone 3.2 + Week 8-9 + Week 10-11 [CHAT-001 & CHAT-002] COMPLETE!)
 
-### Total Remaining: 7 stories | 24 points (1 setup story + Milestone 3.3 remaining), Milestone 3.4 TBD
+### Total Remaining: 6 stories | 19 points (1 setup story + Milestone 3.3 remaining), Milestone 3.4 TBD
 
 **Velocity:**
 
@@ -138,10 +138,10 @@
 - ✅ [NLU-001] Integrate NLU Service and Intent Classification (13 points) - **DONE**
 - ✅ [NLU-002] Entity Extraction and Parameter Binding (10 points) - **DONE**
 
-**Week 10-11: Chat Interface (18 points)** - 🔄 **IN PROGRESS** (10/18 points, 56%)
+**Week 10-11: Chat Interface (18 points)** - 🔄 **IN PROGRESS** (15/18 points, 83%)
 
 - ✅ [CHAT-001] Build Chat UI for Web and CLI (10 points) - **DONE**
-- 🔄 [CHAT-002] Add Message History and Threading (5 points) - **IN TODO**
+- ✅ [CHAT-002] Add Message History and Threading (5 points) - **DONE**
 - [ ] [CHAT-003] Add Markdown Rendering and Code Highlighting (3 points)
 
 **Week 12-13: Agent Memory (14 points)** - 📅 **Planned**
@@ -161,11 +161,7 @@ Stories TBD - Awaiting breakdown from PM/Architect
 
 ## TODO
 
-- [ ] [CHAT-002] Add Message History and Threading (5 points)
-  - **Status**: TODO
-  - **Started**: 2025-10-29
-  - **Dependencies**: [CHAT-001] complete ✅
-  - **Goal**: Add infinite scroll, message threading, search, and export functionality
+(Empty - No stories in TODO)
 
 **MADACE Rule**: Maximum ONE story in TODO at a time.
 

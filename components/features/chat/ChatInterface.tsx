@@ -32,6 +32,9 @@ export default function ChatInterface({
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -45,20 +48,62 @@ export default function ChatInterface({
     scrollToBottom();
   }, [messages]);
 
-  const loadMessages = async () => {
+  const loadMessages = async (before?: Date) => {
     try {
-      setIsLoading(true);
-      const response = await fetch(`/api/v3/chat/sessions/${sessionId}/messages`);
+      if (before) {
+        setIsLoadingMore(true);
+      } else {
+        setIsLoading(true);
+      }
+
+      const params = new URLSearchParams({
+        limit: '50',
+        ...(before && { before: before.toISOString() }),
+      });
+
+      const response = await fetch(`/api/v3/chat/sessions/${sessionId}/messages?${params}`);
       if (!response.ok) throw new Error('Failed to load messages');
 
       const data = await response.json();
-      setMessages(data.messages || []);
+      const newMessages = data.messages || [];
+
+      if (before) {
+        // Prepend older messages for infinite scroll
+        setMessages((prev) => [...newMessages, ...prev]);
+        setHasMore(newMessages.length === 50);
+      } else {
+        // Initial load
+        setMessages(newMessages);
+        setHasMore(newMessages.length === 50);
+      }
     } catch (error) {
       console.error('Error loading messages:', error);
     } finally {
       setIsLoading(false);
+      setIsLoadingMore(false);
     }
   };
+
+  // Infinite scroll handler
+  const handleScroll = () => {
+    const container = messagesContainerRef.current;
+    if (!container || isLoadingMore || !hasMore) return;
+
+    // Check if scrolled to top (with 100px threshold)
+    if (container.scrollTop < 100 && messages.length > 0) {
+      const oldestMessage = messages[0];
+      loadMessages(new Date(oldestMessage.timestamp));
+    }
+  };
+
+  // Add scroll listener
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [messages, isLoadingMore, hasMore]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -75,15 +120,19 @@ export default function ChatInterface({
         role: 'user',
         content,
         timestamp: new Date(),
-        replyToId: null,
+        replyToId: replyingTo?.id || null,
       };
       setMessages((prev) => [...prev, userMessage]);
+
+      // Clear reply state
+      const replyToId = replyingTo?.id;
+      setReplyingTo(null);
 
       // Send to API
       const response = await fetch(`/api/v3/chat/sessions/${sessionId}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: 'user', content }),
+        body: JSON.stringify({ role: 'user', content, replyToId }),
       });
 
       if (!response.ok) throw new Error('Failed to send message');
@@ -244,6 +293,20 @@ export default function ChatInterface({
           </div>
         ) : (
           <div>
+            {/* Load more indicator */}
+            {isLoadingMore && (
+              <div className="flex items-center justify-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
+                <span className="ml-2 text-sm text-gray-500">Loading more messages...</span>
+              </div>
+            )}
+
+            {!hasMore && messages.length > 50 && (
+              <div className="text-center py-4">
+                <span className="text-sm text-gray-500">You've reached the beginning of this conversation</span>
+              </div>
+            )}
+
             {messages.map((message) => (
               <Message
                 key={message.id}
@@ -251,12 +314,35 @@ export default function ChatInterface({
                 agentName={agentName}
                 userName={userName}
                 isStreaming={isStreaming && message.id.startsWith('streaming-')}
+                onReply={() => setReplyingTo(message)}
               />
             ))}
             <div ref={messagesEndRef} />
           </div>
         )}
       </div>
+
+      {/* Reply indicator */}
+      {replyingTo && (
+        <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border-t border-blue-200 dark:border-blue-800 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+            </svg>
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              Replying to: {replyingTo.content.substring(0, 50)}...
+            </span>
+          </div>
+          <button
+            onClick={() => setReplyingTo(null)}
+            className="p-1 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+          >
+            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Input */}
       <ChatInput onSend={handleSend} disabled={isSending || isStreaming} />
