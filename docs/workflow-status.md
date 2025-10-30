@@ -1,7 +1,7 @@
 # MADACE v3.0 Workflow Status
 
-**Current Phase:** ✅ Milestone 3.2 COMPLETE (35/35 points) - CLI Enhancements DONE! 🎉
-**Last Updated:** 2025-10-29 (CLI fully documented and tested, 51/51 CLI tests passing)
+**Current Phase:** 📅 Milestone 3.3 READY (55 points) - Conversational AI & NLU - [NLU-001] in TODO
+**Last Updated:** 2025-10-29 (Milestone 3.3 story breakdown complete, ready to start NLU integration)
 
 ---
 
@@ -35,7 +35,7 @@
 
 - **Priority**: P1 (High - UX Innovation)
 - **Timeline**: 4-6 weeks
-- **Points**: 50-60 points
+- **Points**: 55 points
 - **Status**: 📅 Planned
 
 ### Milestone 3.4: Web IDE & Real-time Collaboration
@@ -51,7 +51,7 @@
 
 ### Total Completed: 23 stories | 96 points (Milestone 0.0 + Milestone 3.1 + Milestone 3.2 COMPLETE!)
 
-### Total Remaining: 1 setup story | 2 points (Milestone 0.0), Milestones 3.3-3.4 TBD
+### Total Remaining: 10 stories | 57 points (1 setup story + Milestone 3.3), Milestone 3.4 TBD
 
 **Velocity:**
 
@@ -64,7 +64,7 @@
 - ✅ Milestone 0.0: Planning & PRD Complete (13 points)
 - ✅ **Milestone 3.1: Database Migration COMPLETE (48 points)** - 100%
 - ✅ **Milestone 3.2: CLI Enhancements COMPLETE (35 points)** - 100% 🎉
-- 📅 Milestone 3.3: Conversational AI (50-60 points) - NOT STARTED
+- 📅 Milestone 3.3: Conversational AI (55 points) - READY (story breakdown complete)
 - 📅 Milestone 3.4: Web IDE & Collaboration (60-80 points) - NOT STARTED
 
 **Combined Milestones 3.1 + 3.2**: 83 points completed in ~7 weeks!
@@ -131,9 +131,27 @@
 **Milestone 3.2 Total**: 7 stories | 35 points
 **Detailed Breakdown**: See `docs/milestone-3.2-stories.md`
 
-### Milestone 3.3: Conversational AI & NLU
+### Milestone 3.3: Conversational AI & NLU (55 points)
 
-Stories TBD - Awaiting breakdown from PM/Architect
+**Week 8-9: NLU Integration (23 points)** - 📅 **Planned**
+
+- [ ] [NLU-001] Integrate NLU Service and Intent Classification (13 points) - **IN TODO**
+- [ ] [NLU-002] Entity Extraction and Parameter Binding (10 points)
+
+**Week 10-11: Chat Interface (18 points)** - 📅 **Planned**
+
+- [ ] [CHAT-001] Build Chat UI for Web and CLI (10 points)
+- [ ] [CHAT-002] Add Message History and Threading (5 points)
+- [ ] [CHAT-003] Add Markdown Rendering and Code Highlighting (3 points)
+
+**Week 12-13: Agent Memory (14 points)** - 📅 **Planned**
+
+- [ ] [MEMORY-001] Implement Persistent Agent Memory (8 points)
+- [ ] [MEMORY-002] Add Memory Management UI (3 points)
+- [ ] [MEMORY-003] Memory-Aware Agent Responses (3 points)
+
+**Milestone 3.3 Total**: 9 stories | 55 points
+**Detailed Breakdown**: See `docs/milestone-3.3-stories.md`
 
 ### Milestone 3.4: Web IDE & Real-time Collaboration
 
@@ -143,7 +161,20 @@ Stories TBD - Awaiting breakdown from PM/Architect
 
 ## TODO
 
-(Empty - Milestone 3.2 complete! Ready for Milestone 3.3 story breakdown)
+- [ ] [NLU-001] Integrate NLU Service and Intent Classification (13 points)
+  - **Priority**: P1
+  - **Milestone**: 3.3 (Week 8-9)
+  - **Dependencies**: Milestone 3.1 complete (database), Milestone 3.2 complete (CLI foundation)
+  - **Deliverables**:
+    - Dialogflow CX account setup and configuration
+    - NLU client wrapper (`lib/nlu/dialogflow-client.ts`)
+    - Intent handler mapper (`lib/nlu/intent-handler.ts`)
+    - Parse API endpoint (`app/api/v3/nlu/parse/route.ts`)
+    - 20 core intents trained (create_agent, run_workflow, check_status, etc.)
+    - Confidence threshold logic (> 70%)
+    - Fallback to menu mode (< 70%)
+  - **Acceptance Criteria**: See `docs/milestone-3.3-stories.md` (lines 27-133)
+  - **Next**: Set up Google Cloud project → Enable Dialogflow CX API → Install dependencies
 
 **MADACE Rule**: Maximum ONE story in TODO at a time.
 
@@ -632,8 +663,8 @@ Stories TBD - Awaiting breakdown from PM/Architect
 6. ✅ Break down Milestone 3.2 into stories (CLI Enhancements) ← **DONE**
 7. ✅ Complete Milestone 3.2 implementation (REPL, Terminal Dashboard) ← **DONE** (35/35 points)
 8. ✅ Tag v3.2-alpha release ← **DONE** (2025-10-29)
-9. ⏭️ **NEXT**: Break down Milestone 3.3 into stories (Conversational AI & NLU)
-10. ⏭️ Begin Milestone 3.3 implementation
+9. ✅ Break down Milestone 3.3 into stories (Conversational AI & NLU) ← **DONE** (2025-10-29)
+10. ⏭️ **NEXT**: Begin Milestone 3.3 implementation (NLU-001: NLU Service Integration)
 
 ---
 
