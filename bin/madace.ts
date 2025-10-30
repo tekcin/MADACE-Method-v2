@@ -15,6 +15,7 @@ import {
 } from '../lib/cli/commands';
 import { startREPL } from '../lib/cli/repl';
 import { startDashboard } from '../lib/cli/dashboard';
+import { chatCommand } from '../lib/cli/commands/chat';
 
 const program = new Command();
 
@@ -45,6 +46,14 @@ program
   .description('Launch terminal dashboard (TUI)')
   .action(async () => {
     await startDashboard();
+  });
+
+// Chat command
+program
+  .command('chat [agent-name]')
+  .description('Start interactive chat session with an AI agent')
+  .action(async (agentName?: string) => {
+    await chatCommand(agentName);
   });
 
 // Parse command line arguments
