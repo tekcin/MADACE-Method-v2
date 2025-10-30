@@ -16,6 +16,7 @@ import {
 import { startREPL } from '../lib/cli/repl';
 import { startDashboard } from '../lib/cli/dashboard';
 import { chatCommand } from '../lib/cli/commands/chat';
+import { registerMemoryCommands } from '../lib/cli/commands/memory';
 
 const program = new Command();
 
@@ -55,6 +56,9 @@ program
   .action(async (agentName?: string) => {
     await chatCommand(agentName);
   });
+
+// Memory commands
+registerMemoryCommands(program);
 
 // Parse command line arguments
 program.parse(process.argv);
