@@ -38,6 +38,7 @@
   "dependencies": {
     "@google-cloud/dialogflow-cx": "5.4.0",
     "@heroicons/react": "2.2.0",
+    "@monaco-editor/react": "4.7.0",
     "@prisma/client": "6.17.1",
     "@types/marked-terminal": "6.1.1",
     "@types/sanitize-html": "2.16.0",
