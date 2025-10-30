@@ -9,11 +9,24 @@
 import type { CollabUser } from './websocket-server';
 
 /**
+ * Chat message in a room
+ */
+export interface ChatMessage {
+  id: string; // Unique message ID
+  userId: string; // User ID who sent the message
+  userName: string; // User name for display
+  userAvatar?: string; // User avatar URL (optional)
+  content: string; // Message content (max 500 chars)
+  timestamp: number; // Unix timestamp
+}
+
+/**
  * Room information
  */
 export interface RoomInfo {
   id: string; // Room ID (typically project ID)
   users: Map<string, CollabUser>; // Socket ID -> User
+  messages: ChatMessage[]; // Chat messages (max 100, in-memory only)
   createdAt: Date;
   lastActivity: Date;
 }
@@ -50,6 +63,7 @@ export class RoomManager {
     const room: RoomInfo = {
       id: roomId,
       users: new Map(),
+      messages: [],
       createdAt: new Date(),
       lastActivity: new Date(),
     };
@@ -116,9 +130,12 @@ export class RoomManager {
 
     // Clean up empty rooms after 5 minutes of inactivity
     if (room.users.size === 0) {
-      setTimeout(() => {
-        this.cleanupEmptyRoom(roomId);
-      }, 5 * 60 * 1000); // 5 minutes
+      setTimeout(
+        () => {
+          this.cleanupEmptyRoom(roomId);
+        },
+        5 * 60 * 1000
+      ); // 5 minutes
     }
   }
 
@@ -159,6 +176,56 @@ export class RoomManager {
   isUserInRoom(roomId: string, socketId: string): boolean {
     const room = this.getRoom(roomId);
     return room ? room.users.has(socketId) : false;
+  }
+
+  /**
+   * Add chat message to room
+   *
+   * @param roomId - Room identifier
+   * @param message - Chat message to add
+   */
+  addMessage(roomId: string, message: ChatMessage): void {
+    const room = this.getRoom(roomId);
+
+    if (!room) {
+      console.warn(`[RoomManager] Cannot add message: room ${roomId} not found`);
+      return;
+    }
+
+    // Add message to the beginning (most recent first)
+    room.messages.unshift(message);
+
+    // Trim to max 100 messages (keep only last 100)
+    if (room.messages.length > 100) {
+      room.messages = room.messages.slice(0, 100);
+    }
+
+    room.lastActivity = new Date();
+
+    console.log(
+      `[RoomManager] Added message from ${message.userName} to room ${roomId}. Total: ${room.messages.length}`
+    );
+  }
+
+  /**
+   * Get chat messages from room
+   *
+   * @param roomId - Room identifier
+   * @param limit - Maximum number of messages to return (default: 50, max: 100)
+   * @returns Array of chat messages (most recent first)
+   */
+  getMessages(roomId: string, limit: number = 50): ChatMessage[] {
+    const room = this.getRoom(roomId);
+
+    if (!room) {
+      return [];
+    }
+
+    // Limit to max 100 messages
+    const actualLimit = Math.min(limit, 100);
+
+    // Return messages (already stored most recent first)
+    return room.messages.slice(0, actualLimit);
   }
 
   /**
@@ -291,9 +358,7 @@ export class RoomManager {
       this.removeUser(roomId, socketId);
     });
 
-    console.log(
-      `[RoomManager] Removed user ${socketId} from ${userRooms.length} rooms`
-    );
+    console.log(`[RoomManager] Removed user ${socketId} from ${userRooms.length} rooms`);
   }
 
   /**

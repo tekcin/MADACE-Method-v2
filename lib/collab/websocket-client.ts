@@ -8,7 +8,8 @@
 'use client';
 
 import { io, Socket } from 'socket.io-client';
-import type { CollabUser, FileOperationPayload } from './websocket-server';
+import type { CollabUser, FileOperationPayload, ChatMessagePayload } from './websocket-server';
+import type { ChatMessage } from './room-manager';
 
 /**
  * WebSocket connection status
@@ -27,6 +28,8 @@ export enum ConnectionStatus {
 export type ConnectionStatusCallback = (status: ConnectionStatus) => void;
 export type RoomUsersCallback = (users: CollabUser[]) => void;
 export type FileOperationCallback = (payload: FileOperationPayload) => void;
+export type ChatMessageCallback = (message: ChatMessage) => void;
+export type ChatHistoryCallback = (messages: ChatMessage[]) => void;
 
 /**
  * WebSocket Client Manager
@@ -47,6 +50,8 @@ export class WebSocketClient {
   private fileEditCallbacks: Set<FileOperationCallback> = new Set();
   private fileCloseCallbacks: Set<FileOperationCallback> = new Set();
   private fileSaveCallbacks: Set<FileOperationCallback> = new Set();
+  private chatMessageCallbacks: Set<ChatMessageCallback> = new Set();
+  private chatHistoryCallbacks: Set<ChatHistoryCallback> = new Set();
 
   /**
    * Connect to WebSocket server
@@ -141,6 +146,15 @@ export class WebSocketClient {
     this.socket.on('file:save', (payload: FileOperationPayload) => {
       this.notifyFileSave(payload);
     });
+
+    // Chat events
+    this.socket.on('chat:message', (message: ChatMessage) => {
+      this.notifyChatMessage(message);
+    });
+
+    this.socket.on('chat:history', (messages: ChatMessage[]) => {
+      this.notifyChatHistory(messages);
+    });
   }
 
   /**
@@ -210,11 +224,7 @@ export class WebSocketClient {
   /**
    * Send file operation event
    */
-  private sendFileOperation(
-    event: string,
-    filePath: string,
-    data?: unknown
-  ): void {
+  private sendFileOperation(event: string, filePath: string, data?: unknown): void {
     if (!this.socket?.connected || !this.currentRoomId || !this.currentUser) {
       return;
     }
@@ -228,6 +238,48 @@ export class WebSocketClient {
     };
 
     this.socket.emit(event, payload);
+  }
+
+  /**
+   * Send chat message
+   */
+  sendChatMessage(
+    roomId: string,
+    content: string,
+    userId: string,
+    userName: string,
+    userAvatar?: string
+  ): void {
+    if (!this.socket?.connected) {
+      console.error('[WebSocketClient] Cannot send chat message: not connected');
+      return;
+    }
+
+    const payload: ChatMessagePayload = {
+      roomId,
+      content,
+      userId,
+      userName,
+      userAvatar,
+    };
+
+    this.socket.emit('chat:message', payload);
+
+    console.log(`[WebSocketClient] Sent chat message to room ${roomId}`);
+  }
+
+  /**
+   * Request chat history for a room
+   */
+  requestChatHistory(roomId: string): void {
+    if (!this.socket?.connected) {
+      console.error('[WebSocketClient] Cannot request chat history: not connected');
+      return;
+    }
+
+    this.socket.emit('chat:history', roomId);
+
+    console.log(`[WebSocketClient] Requested chat history for room ${roomId}`);
   }
 
   /**
@@ -311,6 +363,17 @@ export class WebSocketClient {
   }
 
   /**
+   * Notify chat callbacks
+   */
+  private notifyChatMessage(message: ChatMessage): void {
+    this.chatMessageCallbacks.forEach((callback) => callback(message));
+  }
+
+  private notifyChatHistory(messages: ChatMessage[]): void {
+    this.chatHistoryCallbacks.forEach((callback) => callback(messages));
+  }
+
+  /**
    * Get current connection status
    */
   getStatus(): ConnectionStatus {
@@ -353,6 +416,28 @@ export class WebSocketClient {
   }
 
   /**
+   * Generic event listener (for compatibility with ChatPanel)
+   */
+  on(event: string, callback: (data: unknown) => void): void {
+    if (event === 'chat:message') {
+      this.chatMessageCallbacks.add(callback as ChatMessageCallback);
+    } else if (event === 'chat:history') {
+      this.chatHistoryCallbacks.add(callback as ChatHistoryCallback);
+    }
+  }
+
+  /**
+   * Generic event unsubscriber
+   */
+  off(event: string, callback: (data: unknown) => void): void {
+    if (event === 'chat:message') {
+      this.chatMessageCallbacks.delete(callback as ChatMessageCallback);
+    } else if (event === 'chat:history') {
+      this.chatHistoryCallbacks.delete(callback as ChatHistoryCallback);
+    }
+  }
+
+  /**
    * Clean up all callbacks
    */
   cleanup(): void {
@@ -362,6 +447,8 @@ export class WebSocketClient {
     this.fileEditCallbacks.clear();
     this.fileCloseCallbacks.clear();
     this.fileSaveCallbacks.clear();
+    this.chatMessageCallbacks.clear();
+    this.chatHistoryCallbacks.clear();
   }
 }
 

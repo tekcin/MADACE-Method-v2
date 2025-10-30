@@ -165,11 +165,11 @@
 - ✅ [FILES-001] Build File Tree Explorer with CRUD Operations (10 points) - **DONE**
 - ✅ [FILES-002] Add File Search and Git Status Indicators (8 points) - **DONE**
 
-**Week 18-19: Real-time Collaboration Foundation (21 points)** - 🔄 **IN PROGRESS**
+**Week 18-19: Real-time Collaboration Foundation (21 points)** - ✅ **COMPLETE**
 
 - ✅ [COLLAB-001] Set up WebSocket Server and Basic Sync (10 points) - **DONE**
 - ✅ [COLLAB-002] Add Presence Awareness and Shared Cursors (8 points) - **DONE**
-- 📅 [COLLAB-003] Build In-app Team Chat (3 points)
+- ✅ [COLLAB-003] Build In-app Team Chat (3 points) - **DONE**
 
 **Week 20-21: Integrated Terminal & Testing (13 points)** - 📅 Planned
 
@@ -569,14 +569,14 @@
       - docs/CLI-TEST-STATUS.md (~460 lines) - Test progress tracking document
       - README.md updated with "Built-in MADACE CLI" section
     - **Test Infrastructure**:
-      - __tests__/helpers/cli-runner.ts - CLI command execution helper
-      - __tests__/helpers/repl-spawner.ts - REPL session spawning helper
-      - __tests__/helpers/temp-files.ts - Temporary file/project creation helper
+      - **tests**/helpers/cli-runner.ts - CLI command execution helper
+      - **tests**/helpers/repl-spawner.ts - REPL session spawning helper
+      - **tests**/helpers/temp-files.ts - Temporary file/project creation helper
       - Jest configuration updated (ESM module support, Prisma logging disabled in tests)
     - **Tests** (51/51 passing, 100% pass rate):
-      - __tests__/cli/formatters/table-formatter.test.ts (13 tests)
-      - __tests__/cli/formatters/json-formatter.test.ts (11 tests)
-      - __tests__/cli/commands/cli-integration.test.ts (27 tests - all CLI commands tested end-to-end)
+      - **tests**/cli/formatters/table-formatter.test.ts (13 tests)
+      - **tests**/cli/formatters/json-formatter.test.ts (11 tests)
+      - **tests**/cli/commands/cli-integration.test.ts (27 tests - all CLI commands tested end-to-end)
     - **lib/database/client.ts** - Disabled Prisma query logging in test environment for clean output
   - **Test Coverage**:
     - Formatter tests: 73% coverage (24/24 passing)
@@ -606,7 +606,7 @@
     - lib/nlu/index.ts (Barrel export for NLU module)
     - app/api/v3/nlu/parse/route.ts (172 lines - POST/GET endpoints with graceful fallback)
     - .env.example updated with Dialogflow CX configuration
-    - __tests__/lib/nlu/intent-handler.test.ts (314 lines - 13/13 tests passing)
+    - **tests**/lib/nlu/intent-handler.test.ts (314 lines - 13/13 tests passing)
     - @google-cloud/dialogflow-cx package installed
   - **Acceptance Criteria Met**:
     - ✅ Dialogflow CX SDK installed and configured
@@ -630,8 +630,8 @@
     - lib/nlu/entity-validator.ts (322 lines - validates 8 entity types)
     - lib/nlu/entity-resolver.ts (338 lines - fuzzy matching with Fuse.js)
     - lib/nlu/index.ts (updated - added entity-validator and entity-resolver exports)
-    - __tests__/lib/nlu/entity-validator.test.ts (365 lines - 25 test cases)
-    - __tests__/lib/nlu/entity-resolver.test.ts (343 lines - 14 test cases)
+    - **tests**/lib/nlu/entity-validator.test.ts (365 lines - 25 test cases)
+    - **tests**/lib/nlu/entity-resolver.test.ts (343 lines - 14 test cases)
   - **Acceptance Criteria Met**:
     - ✅ Entity validation for 8 types (agent, workflow, story, state, file_path, config_key, number, date)
     - ✅ Database lookups for dynamic entities (agents, stories)
@@ -677,7 +677,7 @@
     - **CLI Integration** (lib/cli/commands/chat.ts, +3 lines):
       - Agent responses now rendered with markdown formatting
       - History display with markdown rendering
-    - **Tests** (__tests__/components/chat/MarkdownMessage.test.tsx, new, 231 lines):
+    - **Tests** (**tests**/components/chat/MarkdownMessage.test.tsx, new, 231 lines):
       - 9 test suites covering all markdown features
       - XSS prevention tests (script tags, onclick handlers, iframes, data URLs)
       - Basic markdown tests (bold, italic, headers, lists, links, blockquotes)
@@ -733,7 +733,7 @@
       - getMessageThread() - Recursive thread fetching with root traversal
       - exportSessionAsMarkdown() - Formatted Markdown export
       - searchMessages() - Already existed, used by new endpoints
-    - **Tests** (__tests__/lib/services/chat-threading.test.ts +267 lines):
+    - **Tests** (**tests**/lib/services/chat-threading.test.ts +267 lines):
       - 7 test cases: threading (2), export (2), search (3)
       - All tests passing (7/7)
       - Integration tests with real Prisma client
@@ -782,7 +782,7 @@
     - **CLI Registration** (bin/madace.ts):
       - Added `chat [agent-name]` command
       - Supports both interactive and direct agent selection
-    - **Tests** (__tests__/lib/services/chat-service.test.ts - 420 lines):
+    - **Tests** (**tests**/lib/services/chat-service.test.ts - 420 lines):
       - 26 test cases across 3 describe blocks
       - Session tests (6 tests): create, get, list, filter, end, delete
       - Message tests (9 tests): create, get, list, pagination, count, delete, threading
@@ -866,7 +866,7 @@
     - **Cron Job** (2 files - 140 lines total):
       - lib/cron/memory-pruner.ts: Daily maintenance (adjust importance + prune)
       - app/api/v3/cron/memory-pruning/route.ts: Manual trigger endpoint (POST/GET)
-    - **Tests** (__tests__/lib/services/memory-service.test.ts - 453 lines):
+    - **Tests** (**tests**/lib/services/memory-service.test.ts - 453 lines):
       - 27 test cases across 16 test suites
       - CRUD operations (saveMemory, getMemory, updateMemory, deleteMemory)
       - Query operations (getMemories with filters, searchMemories, getMemoryCount, getMemoryStats)
@@ -977,7 +977,7 @@
         - Role: "I'm a X developer", "I work as X"
         - Preferences: concise/detailed style, prefers examples
       - All extracted memories saved as long-term with "inferred" source
-    - **Tests** (__tests__/lib/nlu/memory-extractor.test.ts - NEW, 263 lines):
+    - **Tests** (**tests**/lib/nlu/memory-extractor.test.ts - NEW, 263 lines):
       - 20+ test cases covering all extraction patterns
       - User name extraction (3 patterns tested)
       - Work/project context extraction (3 patterns)
@@ -1203,6 +1203,67 @@
   - **Total Files Modified**: 1 component (~80 lines added)
   - **Notes**: ✅ **Week 14-15 COMPLETE!** (19/19 points, 100%) - Full IntelliSense and auto-completion support! Users now get VS Code-level code intelligence with auto-completion for all TypeScript/JavaScript constructs, parameter hints, hover information, and auto-formatting. React and Next.js types are available out of the box. Production-ready professional IDE experience! 🎉
 
+### Milestone 3.4 - Week 18-19: Real-time Collaboration Foundation (21 points completed)
+
+- ✅ [COLLAB-003] Build In-app Team Chat (3 points)
+  - **Completed**: 2025-10-30
+  - **Deliverables**:
+    - **Chat Storage** (lib/collab/room-manager.ts - modified):
+      - ChatMessage interface (id, userId, userName, userAvatar, content, timestamp)
+      - RoomInfo.messages array (max 100 messages in-memory)
+      - addMessage() method with automatic trimming
+      - getMessages() method (returns last 50 messages)
+    - **WebSocket Events** (lib/collab/websocket-server.ts - modified):
+      - CollabEvent.CHAT_MESSAGE and CollabEvent.CHAT_HISTORY enum values
+      - ChatMessagePayload interface
+      - handleChatMessage() handler with 500-char validation
+      - handleChatHistory() handler
+      - Broadcasting to all users in room
+    - **WebSocket Client** (lib/collab/websocket-client.ts - modified):
+      - sendChatMessage() method
+      - requestChatHistory() method
+      - Chat event callbacks (chatMessageCallbacks, chatHistoryCallbacks)
+      - Generic on()/off() methods for event subscription
+    - **UI Components** (2 new files - 284 lines):
+      - components/features/ide/ChatMessage.tsx (98 lines)
+        - Individual message display with avatar, name, timestamp
+        - Relative timestamps (Just now, Xm ago, Xh ago)
+        - Initials fallback for avatars
+        - Color-coded for own messages vs others
+      - components/features/ide/ChatPanel.tsx (186 lines)
+        - Collapsible chat panel with message list
+        - Text input with 500 char limit and counter
+        - Send button + Enter key support
+        - Auto-scroll to bottom on new messages
+        - Empty state UI
+        - Load last 50 messages on mount
+    - **IDE Integration** (app/ide/page.tsx - modified):
+      - Added ChatPanel to right sidebar with PresenceList
+      - State management for chat visibility
+      - Demo user configuration (user-001, Demo User)
+  - **Acceptance Criteria Met**:
+    - ✅ Collapsible chat panel in right sidebar
+    - ✅ Message list with avatars, names, timestamps
+    - ✅ Text input with Send button + Enter key
+    - ✅ Max 500 characters with counter
+    - ✅ Real-time WebSocket broadcasting
+    - ✅ Load last 50 messages on open
+    - ✅ In-memory storage (no database)
+    - ✅ Max 100 messages per room
+    - ✅ TypeScript compilation passing
+    - ✅ ESLint passing (minor img tag warning only)
+    - ✅ Prettier formatting applied
+  - **Technical Achievements**:
+    - Clean separation: storage (room-manager), transport (websocket), UI (components)
+    - Lightweight in-memory chat (no database overhead)
+    - Message trimming prevents memory growth
+    - Auto-scroll with useRef for smooth UX
+    - Character counter with visual feedback
+    - Collapsible UI to save screen space
+  - **Test Results**: Production build passed, quality checks passed
+  - **Total Files Created/Modified**: 2 new components, 3 modified lib files, 1 modified page (~600 lines total)
+  - **Notes**: ✅ **Week 18-19 COMPLETE!** (21/21 points, 100%) - Lightweight team chat integrated into IDE! Users can now communicate in real-time with WebSocket broadcasting. All messages stored in-memory with automatic pruning. Production-ready with clean architecture! **MILESTONE 3.4 WEEK 18-19 DONE! 🎉**
+
 ---
 
 ## Velocity Tracking
@@ -1337,6 +1398,7 @@
 - **Duration**: 7 weeks
 
 **Key Features**:
+
 - ✅ Complete CLI with 24 commands across 5 categories
 - ✅ Interactive REPL mode with tab completion and history
 - ✅ Terminal dashboard (TUI) with 4-pane layout
@@ -1345,6 +1407,7 @@
 - ✅ Full test coverage (51 CLI tests passing, 98.3% overall)
 
 **Documentation**:
+
 - CLI Reference Guide (docs/CLI-REFERENCE.md)
 - REPL Tutorial (docs/REPL-TUTORIAL.md)
 - Dashboard Guide (docs/DASHBOARD-GUIDE.md)
@@ -1352,6 +1415,7 @@
 - Test Status (docs/CLI-TEST-STATUS.md)
 
 **Test Results**:
+
 - 51/51 CLI tests passing (100%)
 - 689/701 total tests passing (98.3%)
 - 73% formatter coverage
@@ -1365,6 +1429,7 @@
 **Status**: ✅ **Week 10-11 COMPLETE!** (18/18 points, 100%) | ✅ **Milestone 3.3: 75% COMPLETE** (41/55 points)
 
 **🎊 Week 10-11 ACHIEVEMENT 🎊**
+
 - [CHAT-001] Complete conversational chat system for Web UI and CLI (10 points)
 - [CHAT-002] Message history, threading, search, and export (5 points)
 - [CHAT-003] Markdown rendering with syntax highlighting and XSS protection (3 points)

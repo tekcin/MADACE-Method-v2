@@ -15,7 +15,7 @@
 import { Server as SocketIOServer } from 'socket.io';
 import { Server as HTTPServer } from 'http';
 import type { Socket } from 'socket.io';
-import { RoomManager } from './room-manager';
+import { RoomManager, type ChatMessage } from './room-manager';
 
 /**
  * Collaboration event types
@@ -40,6 +40,10 @@ export enum CollabEvent {
   // Yjs sync events (handled by y-websocket)
   YJS_SYNC = 'yjs:sync',
   YJS_AWARENESS = 'yjs:awareness',
+
+  // Chat events
+  CHAT_MESSAGE = 'chat:message',
+  CHAT_HISTORY = 'chat:history',
 }
 
 /**
@@ -70,6 +74,17 @@ export interface FileOperationPayload {
   userId: string;
   timestamp: number;
   data?: unknown; // For file content or delta
+}
+
+/**
+ * Chat message payload
+ */
+export interface ChatMessagePayload {
+  roomId: string;
+  content: string; // Message content (max 500 chars)
+  userId: string;
+  userName: string;
+  userAvatar?: string;
 }
 
 /**
@@ -153,6 +168,16 @@ export class WebSocketServer {
         this.handleFileOperation(socket, CollabEvent.FILE_SAVE, payload);
       });
 
+      // Handle chat messages
+      socket.on(CollabEvent.CHAT_MESSAGE, (payload: ChatMessagePayload) => {
+        this.handleChatMessage(socket, payload);
+      });
+
+      // Handle chat history request
+      socket.on(CollabEvent.CHAT_HISTORY, (roomId: string) => {
+        this.handleChatHistory(socket, roomId);
+      });
+
       // Handle disconnection
       socket.on(CollabEvent.DISCONNECT, () => {
         this.handleDisconnect(socket);
@@ -212,6 +237,56 @@ export class WebSocketServer {
 
     console.log(
       `[WebSocketServer] ${event} from ${socket.id} in room ${roomId}: ${payload.filePath}`
+    );
+  }
+
+  /**
+   * Handle chat message
+   */
+  private handleChatMessage(socket: Socket, payload: ChatMessagePayload): void {
+    const { roomId, content, userId, userName, userAvatar } = payload;
+
+    // Validate message content length (max 500 chars)
+    if (content.length > 500) {
+      socket.emit(CollabEvent.ERROR, {
+        message: 'Message too long (max 500 characters)',
+      });
+      return;
+    }
+
+    // Create chat message
+    const message: ChatMessage = {
+      id: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      userId,
+      userName,
+      userAvatar,
+      content,
+      timestamp: Date.now(),
+    };
+
+    // Store message in room
+    this.roomManager.addMessage(roomId, message);
+
+    // Broadcast to all users in room (including sender)
+    this.io?.to(roomId).emit(CollabEvent.CHAT_MESSAGE, message);
+
+    console.log(
+      `[WebSocketServer] Chat message from ${userName} in room ${roomId}: ${content.substring(0, 50)}${content.length > 50 ? '...' : ''}`
+    );
+  }
+
+  /**
+   * Handle chat history request
+   */
+  private handleChatHistory(socket: Socket, roomId: string): void {
+    // Get last 50 messages from room
+    const messages = this.roomManager.getMessages(roomId, 50);
+
+    // Send history to requesting client only
+    socket.emit(CollabEvent.CHAT_HISTORY, messages);
+
+    console.log(
+      `[WebSocketServer] Sent ${messages.length} chat messages to ${socket.id} for room ${roomId}`
     );
   }
 

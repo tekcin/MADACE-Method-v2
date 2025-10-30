@@ -9,6 +9,7 @@ import FileSearch, { GitStatus } from '@/components/features/ide/FileSearch';
 import ConnectionStatus from '@/components/features/ide/ConnectionStatus';
 import PresenceList from '@/components/features/ide/PresenceList';
 import ToastContainer from '@/components/features/ide/Toast';
+import ChatPanel from '@/components/features/ide/ChatPanel';
 import { FileTreeItem } from '@/components/features/ide/FileTreeNode';
 
 /**
@@ -24,13 +25,12 @@ export default function IDEPage() {
 
   // Sidebar state
   const [showSidebar, setShowSidebar] = useState(true);
-  const [showPresenceList, setShowPresenceList] = useState(true);
-  const [onlineUserCount, setOnlineUserCount] = useState(0);
+  const [showPresenceList] = useState(true); // TODO: Add toggle button
+  const [showChatPanel, setShowChatPanel] = useState(true);
+  const [_onlineUserCount, setOnlineUserCount] = useState(0); // Prefix with _ to indicate intentionally unused
 
   // Editor options state
-  const [theme, setTheme] = useState<'vs-dark' | 'vs-light' | 'hc-black' | 'hc-light'>(
-    'vs-dark'
-  );
+  const [theme, setTheme] = useState<'vs-dark' | 'vs-light' | 'hc-black' | 'hc-light'>('vs-dark');
   const [wordWrap, setWordWrap] = useState(false);
   const [minimap, setMinimap] = useState(true);
   const [lineNumbers, setLineNumbers] = useState<'on' | 'off' | 'relative'>('on');
@@ -362,14 +362,14 @@ export default function IDEPage() {
   }, [tabs, activeTabId]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900">
+    <div className="flex h-screen flex-col bg-gray-900">
       {/* Header */}
-      <div className="h-14 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-6">
+      <div className="flex h-14 items-center justify-between border-b border-gray-700 bg-gray-800 px-6">
         <div className="flex items-center space-x-4">
           {/* Sidebar toggle button */}
           <button
             onClick={() => setShowSidebar(!showSidebar)}
-            className="p-2 hover:bg-gray-700 rounded transition-colors"
+            className="rounded p-2 transition-colors hover:bg-gray-700"
             title={showSidebar ? 'Hide sidebar' : 'Show sidebar'}
           >
             <svg
@@ -378,7 +378,7 @@ export default function IDEPage() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5 text-gray-400"
+              className="h-5 w-5 text-gray-400"
             >
               <path
                 strokeLinecap="round"
@@ -389,9 +389,7 @@ export default function IDEPage() {
           </button>
 
           <h1 className="text-xl font-bold text-white">MADACE IDE</h1>
-          <span className="text-sm text-gray-400">
-            Powered by Monaco Editor (VS Code)
-          </span>
+          <span className="text-sm text-gray-400">Powered by Monaco Editor (VS Code)</span>
         </div>
 
         {/* File selector and connection status */}
@@ -401,7 +399,7 @@ export default function IDEPage() {
 
           {/* File selector */}
           <div className="flex items-center space-x-3">
-            <label htmlFor="file-select" className="text-gray-400 text-sm">
+            <label htmlFor="file-select" className="text-sm text-gray-400">
               Open File:
             </label>
             <select
@@ -413,7 +411,7 @@ export default function IDEPage() {
                   e.target.value = ''; // Reset selection
                 }
               }}
-              className="bg-gray-700 text-gray-200 text-sm rounded px-3 py-1.5 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="rounded border border-gray-600 bg-gray-700 px-3 py-1.5 text-sm text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
               <option value="">Select a file...</option>
               {Object.keys(sampleFiles)
@@ -432,7 +430,7 @@ export default function IDEPage() {
       <div className="flex flex-1 overflow-hidden">
         {/* File Explorer Sidebar */}
         {showSidebar && (
-          <div className="w-64 border-r border-gray-700 overflow-y-auto">
+          <div className="w-64 overflow-y-auto border-r border-gray-700">
             <FileExplorer
               root={fileTree}
               selectedPath={activeTab ? `/project/${activeTab.fileName}` : undefined}
@@ -443,7 +441,7 @@ export default function IDEPage() {
         )}
 
         {/* Editor area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col overflow-hidden">
           {/* Tab bar */}
           <TabBar
             tabs={tabs}
@@ -484,9 +482,9 @@ export default function IDEPage() {
                 fontSize={fontSize}
               />
             ) : (
-              <div className="flex items-center justify-center h-full bg-gray-900 text-gray-400">
+              <div className="flex h-full items-center justify-center bg-gray-900 text-gray-400">
                 <div className="text-center">
-                  <p className="text-lg mb-2">No files open</p>
+                  <p className="mb-2 text-lg">No files open</p>
                   <p className="text-sm">Select a file from the dropdown above to get started</p>
                 </div>
               </div>
@@ -495,9 +493,10 @@ export default function IDEPage() {
 
           {/* Footer */}
           {activeTab && (
-            <div className="h-8 bg-gray-800 border-t border-gray-700 flex items-center justify-between px-6 text-xs text-gray-400">
+            <div className="flex h-8 items-center justify-between border-t border-gray-700 bg-gray-800 px-6 text-xs text-gray-400">
               <div>
-                Lines: {activeTab.content.split('\n').length} | Characters: {activeTab.content.length}
+                Lines: {activeTab.content.split('\n').length} | Characters:{' '}
+                {activeTab.content.length}
                 {activeTab.isDirty && <span className="ml-2 text-blue-400">• Modified</span>}
               </div>
               <div>
@@ -507,20 +506,34 @@ export default function IDEPage() {
           )}
 
           {/* Keyboard shortcuts hint */}
-          <div className="h-6 bg-gray-900 border-t border-gray-800 flex items-center justify-center text-xs text-gray-500">
+          <div className="flex h-6 items-center justify-center border-t border-gray-800 bg-gray-900 text-xs text-gray-500">
             <span>
-              Shortcuts: Ctrl/Cmd+Tab (next tab) | Ctrl/Cmd+Shift+Tab (prev tab) | Ctrl/Cmd+W (close) |
-              Ctrl/Cmd+1-8 (tab #)
+              Shortcuts: Ctrl/Cmd+Tab (next tab) | Ctrl/Cmd+Shift+Tab (prev tab) | Ctrl/Cmd+W
+              (close) | Ctrl/Cmd+1-8 (tab #)
             </span>
           </div>
         </div>
 
-        {/* Presence List Sidebar (right side) */}
-        {showPresenceList && (
-          <PresenceList
-            visible={showPresenceList}
-            onUserCountChange={setOnlineUserCount}
-          />
+        {/* Right Sidebar: Presence List + Chat Panel */}
+        {(showPresenceList || showChatPanel) && (
+          <div className="flex flex-col border-l border-gray-800">
+            {/* Presence List */}
+            {showPresenceList && (
+              <PresenceList visible={showPresenceList} onUserCountChange={setOnlineUserCount} />
+            )}
+
+            {/* Chat Panel */}
+            {showChatPanel && (
+              <ChatPanel
+                roomId="demo-project" // Demo room ID
+                userId="user-001" // Demo user ID
+                userName="Demo User" // Demo user name
+                userAvatar={undefined} // No avatar for demo
+                visible={showChatPanel}
+                onClose={() => setShowChatPanel(false)}
+              />
+            )}
+          </div>
         )}
       </div>
 
@@ -528,11 +541,7 @@ export default function IDEPage() {
       <ToastContainer />
 
       {/* File Search (Ctrl+P / Cmd+P) */}
-      <FileSearch
-        files={allFiles}
-        gitStatus={gitStatus}
-        onFileSelect={handleFileTreeClick}
-      />
+      <FileSearch files={allFiles} gitStatus={gitStatus} onFileSelect={handleFileTreeClick} />
     </div>
   );
 }
