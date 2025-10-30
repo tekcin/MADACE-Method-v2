@@ -1,7 +1,7 @@
 # MADACE v3.0 Workflow Status
 
-**Current Phase:** 🔄 Milestone 3.3 IN PROGRESS (23/55 points, 42%) - Conversational AI & NLU - Week 8-9 COMPLETE! 🎉
-**Last Updated:** 2025-10-29 (NLU-001 & NLU-002 COMPLETE! Entity validation & fuzzy matching ready!)
+**Current Phase:** 🔄 Milestone 3.3 IN PROGRESS (23/55 points, 42%) - Conversational AI & NLU - [CHAT-001] IN PROGRESS
+**Last Updated:** 2025-10-29 (Week 8-9 COMPLETE! Starting Week 10-11: Chat Interface)
 
 ---
 
@@ -161,7 +161,7 @@ Stories TBD - Awaiting breakdown from PM/Architect
 
 ## TODO
 
-(Empty - Week 8-9 COMPLETE! Next: Week 10-11 Chat Interface)
+(Empty - [CHAT-001] moved to IN PROGRESS)
 
 **MADACE Rule**: Maximum ONE story in TODO at a time.
 
@@ -169,7 +169,21 @@ Stories TBD - Awaiting breakdown from PM/Architect
 
 ## IN PROGRESS
 
-(Empty - [NLU-002] moved to DONE)
+- 🔄 [CHAT-001] Build Chat UI for Web and CLI (10 points)
+  - **Priority**: P1
+  - **Milestone**: 3.3 (Week 10-11)
+  - **Started**: 2025-10-29
+  - **Dependencies**: [NLU-001] complete ✅, [NLU-002] complete ✅
+  - **Deliverables**:
+    - Prisma schema with ChatMessage and ChatSession models
+    - Chat service (lib/services/chat-service.ts)
+    - Web UI chat components (ChatInterface, Message, ChatInput)
+    - Chat page route (/chat)
+    - Chat API endpoints (chat, streaming)
+    - CLI chat mode (lib/cli/commands/chat.ts)
+    - Tests for chat service and UI
+  - **Acceptance Criteria**: See `docs/milestone-3.3-stories.md` (lines 195-283)
+  - **Progress**: Starting database schema design
 
 **MADACE Rule**: Maximum ONE story in IN PROGRESS at a time.
 

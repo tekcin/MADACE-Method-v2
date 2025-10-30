@@ -14,10 +14,12 @@ import {
   ViewColumnsIcon,
   ArrowPathIcon,
   ChartBarIcon,
+  ChatBubbleLeftIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
+  { name: 'Chat', href: '/chat', icon: ChatBubbleLeftIcon },
   { name: 'Kanban', href: '/kanban', icon: ViewColumnsIcon },
   { name: 'Assess', href: '/assess', icon: ChartBarIcon },
   { name: 'Agents', href: '/agents', icon: UserGroupIcon },

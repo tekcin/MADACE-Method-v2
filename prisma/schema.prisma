@@ -30,6 +30,7 @@ model Agent {
   projectId   String?
 
   memories    AgentMemory[]
+  chatSessions ChatSession[]
   project     Project?  @relation(fields: [projectId], references: [id])
 
   @@index([projectId])
@@ -107,6 +108,46 @@ model StateMachine {
 }
 
 // ==============================================================================
+// CHAT SYSTEM
+// ==============================================================================
+
+model ChatSession {
+  id          String   @id @default(cuid())
+  userId      String
+  agentId     String
+  startedAt   DateTime @default(now())
+  endedAt     DateTime?
+  projectId   String?
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  messages    ChatMessage[]
+
+  @@index([userId])
+  @@index([agentId])
+  @@index([projectId])
+  @@index([startedAt])
+}
+
+model ChatMessage {
+  id          String   @id @default(cuid())
+  sessionId   String
+  role        String   // "user" | "agent" | "system"
+  content     String
+  timestamp   DateTime @default(now())
+  replyToId   String?  // Optional: for threading (CHAT-002)
+
+  session     ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  replyTo     ChatMessage? @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies     ChatMessage[] @relation("MessageReplies")
+
+  @@index([sessionId])
+  @@index([timestamp])
+  @@index([replyToId])
+}
+
+// ==============================================================================
 // PROJECTS & USERS
 // ==============================================================================
 
@@ -121,6 +162,7 @@ model Project {
   workflows   Workflow[]
   configs     Config[]
   stories     StateMachine[]
+  chatSessions ChatSession[]
   members     ProjectMember[]
 }
 
@@ -131,6 +173,7 @@ model User {
   createdAt   DateTime @default(now())
 
   memories    AgentMemory[]
+  chatSessions ChatSession[]
   projects    ProjectMember[]
 }
 
