@@ -51,7 +51,7 @@
 
 ### Total Completed: 31 stories | 150 points (Milestone 0.0 + Milestone 3.1 + Milestone 3.2 + Milestone 3.3 COMPLETE!)
 
-### Total Remaining: 0 stories | 0 points (All planning stories complete!), Milestone 3.4 TBD
+### Total Remaining: 11 stories | 71 points (Milestone 3.4: Web IDE & Real-time Collaboration)
 
 **Velocity:**
 
@@ -65,7 +65,7 @@
 - ✅ **Milestone 3.1: Database Migration COMPLETE (48 points)** - 100%
 - ✅ **Milestone 3.2: CLI Enhancements COMPLETE (35 points)** - 100%
 - ✅ **Milestone 3.3: Conversational AI & NLU COMPLETE (55 points)** - 100% 🎉
-- 📅 Milestone 3.4: Web IDE & Collaboration (60-80 points) - NOT STARTED
+- 📅 Milestone 3.4: Web IDE & Collaboration (71 points) - PLANNED (11 stories defined)
 
 **Combined Milestones 3.1 + 3.2**: 83 points completed in ~7 weeks!
 
@@ -152,9 +152,32 @@
 **Milestone 3.3 Total**: 9 stories | 55 points
 **Detailed Breakdown**: See `docs/milestone-3.3-stories.md`
 
-### Milestone 3.4: Web IDE & Real-time Collaboration
+### Milestone 3.4: Web IDE & Real-time Collaboration (71 points)
 
-Stories TBD - Awaiting breakdown from PM/Architect
+**Week 14-15: Monaco Editor Integration (19 points)** - 📅 Planned
+
+- 📅 [IDE-001] Integrate Monaco Editor with Basic Features (10 points)
+- 📅 [IDE-002] Add Multi-file Tab Support (5 points)
+- 📅 [IDE-003] Add IntelliSense and Auto-completion (4 points)
+
+**Week 16-17: File Explorer & Project Management (18 points)** - 📅 Planned
+
+- 📅 [FILES-001] Build File Tree Explorer with CRUD Operations (10 points)
+- 📅 [FILES-002] Add File Search and Git Status Indicators (8 points)
+
+**Week 18-19: Real-time Collaboration Foundation (21 points)** - 📅 Planned
+
+- 📅 [COLLAB-001] Set up WebSocket Server and Basic Sync (10 points)
+- 📅 [COLLAB-002] Add Presence Awareness and Shared Cursors (8 points)
+- 📅 [COLLAB-003] Build In-app Team Chat (3 points)
+
+**Week 20-21: Integrated Terminal & Testing (13 points)** - 📅 Planned
+
+- 📅 [IDE-004] Add Integrated Terminal with Command Execution (8 points)
+- 📅 [IDE-005] Testing, Optimization, and v3.0-beta Release (5 points)
+
+**Milestone 3.4 Total**: 11 stories | 71 points
+**Detailed Breakdown**: See `docs/milestone-3.4-stories.md`
 
 ---
 
