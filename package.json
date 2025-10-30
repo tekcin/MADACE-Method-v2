@@ -45,6 +45,8 @@
     "@prisma/client": "6.17.1",
     "@types/marked-terminal": "6.1.1",
     "@types/sanitize-html": "2.16.0",
+    "@xterm/addon-fit": "0.10.0",
+    "@xterm/xterm": "5.5.0",
     "blessed": "0.1.81",
     "bufferutil": "4.0.9",
     "chokidar": "4.0.3",

@@ -10,6 +10,7 @@ import ConnectionStatus from '@/components/features/ide/ConnectionStatus';
 import PresenceList from '@/components/features/ide/PresenceList';
 import ToastContainer from '@/components/features/ide/Toast';
 import ChatPanel from '@/components/features/ide/ChatPanel';
+import Terminal from '@/components/features/ide/Terminal';
 import { FileTreeItem } from '@/components/features/ide/FileTreeNode';
 
 /**
@@ -28,6 +29,9 @@ export default function IDEPage() {
   const [showPresenceList] = useState(true); // TODO: Add toggle button
   const [showChatPanel, setShowChatPanel] = useState(true);
   const [_onlineUserCount, setOnlineUserCount] = useState(0); // Prefix with _ to indicate intentionally unused
+
+  // Terminal state
+  const [showTerminal, setShowTerminal] = useState(false);
 
   // Editor options state
   const [theme, setTheme] = useState<'vs-dark' | 'vs-light' | 'hc-black' | 'hc-light'>('vs-dark');
@@ -354,6 +358,12 @@ export default function IDEPage() {
           setActiveTabId(tabs[tabIndex].id);
         }
       }
+
+      // Ctrl + ` (backtick): Toggle terminal
+      if (e.ctrlKey && e.key === '`') {
+        e.preventDefault();
+        setShowTerminal((prev) => !prev);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -506,12 +516,28 @@ export default function IDEPage() {
           )}
 
           {/* Keyboard shortcuts hint */}
-          <div className="flex h-6 items-center justify-center border-t border-gray-800 bg-gray-900 text-xs text-gray-500">
+          <div className="flex h-6 items-center justify-between border-t border-gray-800 bg-gray-900 px-6 text-xs text-gray-500">
             <span>
               Shortcuts: Ctrl/Cmd+Tab (next tab) | Ctrl/Cmd+Shift+Tab (prev tab) | Ctrl/Cmd+W
-              (close) | Ctrl/Cmd+1-8 (tab #)
+              (close) | Ctrl/Cmd+1-8 (tab #) | Ctrl+` (terminal)
             </span>
+            <button
+              onClick={() => setShowTerminal(!showTerminal)}
+              className="rounded px-2 py-0.5 transition-colors hover:bg-gray-800 hover:text-white"
+              title={showTerminal ? 'Hide terminal' : 'Show terminal'}
+            >
+              {showTerminal ? '▼ Terminal' : '▲ Terminal'}
+            </button>
           </div>
+
+          {/* Integrated Terminal */}
+          <Terminal
+            projectPath="/Users/nimda/MADACE-Method-v2.0"
+            visible={showTerminal}
+            onHeightChange={(_height) => {
+              // Terminal height changed callback
+            }}
+          />
         </div>
 
         {/* Right Sidebar: Presence List + Chat Panel */}
