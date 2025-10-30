@@ -69,11 +69,11 @@ This milestone transforms MADACE from a menu-driven system to a truly conversati
 ```typescript
 // Core intent → MADACE action mapping
 const INTENT_ACTIONS = {
-  'create_agent': (params) => agentService.create(params),
-  'run_workflow': (params) => workflowEngine.execute(params),
-  'check_status': () => stateMachine.getStatus(),
-  'list_agents': (params) => agentService.list(params),
-  'edit_config': (params) => configService.set(params.key, params.value),
+  create_agent: (params) => agentService.create(params),
+  run_workflow: (params) => workflowEngine.execute(params),
+  check_status: () => stateMachine.getStatus(),
+  list_agents: (params) => agentService.list(params),
+  edit_config: (params) => configService.set(params.key, params.value),
   // ... 15 more mappings
 };
 ```
@@ -699,6 +699,7 @@ Entities: { workflow: "planning", agent: "PM", path: "docs" }
 **Technical Architecture Notes**:
 
 **NLU Flow**:
+
 ```
 User Input → NLU Service (Dialogflow) → Intent + Entities + Confidence
           ↓
@@ -712,6 +713,7 @@ Fallback to Menu Mode
 ```
 
 **Memory Flow**:
+
 ```
 User Message → Memory Extractor → New Facts
                                ↓
@@ -721,6 +723,7 @@ Agent Response ← LLM ← Prompt Builder ← Load Memories
 ```
 
 **Chat Architecture**:
+
 ```
 Web UI → ChatInput → POST /api/v3/chat → Chat Service → LLM
                                               ↓

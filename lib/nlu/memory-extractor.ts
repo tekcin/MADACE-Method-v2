@@ -115,7 +115,8 @@ function inferPreferences(message: string, conversationHistory: string[]): Extra
   const preferences: ExtractedMemory[] = [];
 
   // Detect preference for concise responses if user messages are short
-  const avgMessageLength = conversationHistory.reduce((sum, msg) => sum + msg.length, 0) /
+  const avgMessageLength =
+    conversationHistory.reduce((sum, msg) => sum + msg.length, 0) /
     (conversationHistory.length || 1);
 
   if (conversationHistory.length >= 3 && avgMessageLength < 50) {

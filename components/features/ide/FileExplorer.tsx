@@ -51,10 +51,7 @@ export default function FileExplorer({
   /**
    * Find item by path in tree
    */
-  const findItemByPath = (
-    tree: FileTreeItem,
-    path: string
-  ): FileTreeItem | null => {
+  const findItemByPath = (tree: FileTreeItem, path: string): FileTreeItem | null => {
     if (tree.path === path) return tree;
     if (tree.children) {
       for (const child of tree.children) {
@@ -251,13 +248,13 @@ export default function FileExplorer({
   }, [contextMenu.visible, newItemParent, renaming]);
 
   return (
-    <div className="relative h-full bg-gray-900 text-gray-300 overflow-y-auto">
+    <div className="relative h-full overflow-y-auto bg-gray-900 text-gray-300">
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 bg-gray-800 border-b border-gray-700">
+      <div className="flex items-center justify-between border-b border-gray-700 bg-gray-800 px-3 py-2">
         <span className="text-sm font-semibold text-gray-200">EXPLORER</span>
         <button
           onClick={() => handleNewFile(fileTree)}
-          className="p-1 hover:bg-gray-700 rounded transition-colors"
+          className="rounded p-1 transition-colors hover:bg-gray-700"
           title="New File"
         >
           <svg
@@ -266,7 +263,7 @@ export default function FileExplorer({
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-4 h-4 text-gray-400"
+            className="h-4 w-4 text-gray-400"
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
@@ -300,41 +297,42 @@ export default function FileExplorer({
                 }
               }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full px-2 py-1 text-sm bg-gray-800 border border-blue-500 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded border border-blue-500 bg-gray-800 px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none"
             />
           </div>
         )}
 
         {/* Rename input */}
-        {renaming && (() => {
-          const item = findItemByPath(fileTree, renaming);
-          if (!item) return null;
-          return (
-            <div className="px-2 py-1">
-              <input
-                data-rename-input
-                type="text"
-                defaultValue={item.name}
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    renameItem(e.currentTarget.value);
-                  } else if (e.key === 'Escape') {
-                    setRenaming(null);
-                  }
-                }}
-                onClick={(e) => e.stopPropagation()}
-                className="w-full px-2 py-1 text-sm bg-gray-800 border border-blue-500 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-          );
-        })()}
+        {renaming &&
+          (() => {
+            const item = findItemByPath(fileTree, renaming);
+            if (!item) return null;
+            return (
+              <div className="px-2 py-1">
+                <input
+                  data-rename-input
+                  type="text"
+                  defaultValue={item.name}
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      renameItem(e.currentTarget.value);
+                    } else if (e.key === 'Escape') {
+                      setRenaming(null);
+                    }
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-full rounded border border-blue-500 bg-gray-800 px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+            );
+          })()}
       </div>
 
       {/* Context menu */}
       {contextMenu.visible && contextMenu.item && (
         <div
-          className="fixed z-50 bg-gray-800 border border-gray-700 rounded shadow-lg py-1 min-w-[160px]"
+          className="fixed z-50 min-w-[160px] rounded border border-gray-700 bg-gray-800 py-1 shadow-lg"
           style={{
             left: `${contextMenu.x}px`,
             top: `${contextMenu.y}px`,
@@ -345,28 +343,28 @@ export default function FileExplorer({
             <>
               <button
                 onClick={() => handleNewFile(contextMenu.item!)}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-700 transition-colors"
+                className="w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-700"
               >
                 New File
               </button>
               <button
                 onClick={() => handleNewFolder(contextMenu.item!)}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-700 transition-colors"
+                className="w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-700"
               >
                 New Folder
               </button>
-              <div className="border-t border-gray-700 my-1" />
+              <div className="my-1 border-t border-gray-700" />
             </>
           )}
           <button
             onClick={() => handleRename(contextMenu.item!)}
-            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-700 transition-colors"
+            className="w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-700"
           >
             Rename
           </button>
           <button
             onClick={() => handleDelete(contextMenu.item!)}
-            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-700 text-red-400 transition-colors"
+            className="w-full px-4 py-2 text-left text-sm text-red-400 transition-colors hover:bg-gray-700"
           >
             Delete
           </button>

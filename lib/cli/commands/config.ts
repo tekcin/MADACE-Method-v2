@@ -274,10 +274,7 @@ export function createConfigCommand(): Command {
 /**
  * Flatten nested object to dot notation
  */
-function flattenObject(
-  obj: Record<string, unknown>,
-  prefix = ''
-): Record<string, unknown> {
+function flattenObject(obj: Record<string, unknown>, prefix = ''): Record<string, unknown> {
   const result: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(obj)) {

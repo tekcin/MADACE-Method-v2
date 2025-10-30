@@ -12,16 +12,16 @@ This document tracks the progress of CLI testing for MADACE v3.0.
 
 ### Overall Progress
 
-| Category | Status | Tests | Coverage |
-|----------|--------|-------|----------|
-| **Documentation** | ✅ Complete | N/A | 100% |
-| **Test Infrastructure** | ✅ Complete | N/A | 100% |
-| **Unit Tests - Formatters** | ✅ Complete | 24/24 | 73% |
-| **Integration Tests - CLI Commands** | ✅ Complete | 27/27 | 100% |
-| **Integration Tests - REPL** | ⬜ Pending | 0/10 | 0% |
-| **Integration Tests - Dashboard** | ⬜ Pending | 0/8 | 0% |
-| **E2E Tests** | ⬜ Pending | 0/3 | 0% |
-| **CI/CD** | ⬜ Pending | N/A | 0% |
+| Category                             | Status      | Tests | Coverage |
+| ------------------------------------ | ----------- | ----- | -------- |
+| **Documentation**                    | ✅ Complete | N/A   | 100%     |
+| **Test Infrastructure**              | ✅ Complete | N/A   | 100%     |
+| **Unit Tests - Formatters**          | ✅ Complete | 24/24 | 73%      |
+| **Integration Tests - CLI Commands** | ✅ Complete | 27/27 | 100%     |
+| **Integration Tests - REPL**         | ⬜ Pending  | 0/10  | 0%       |
+| **Integration Tests - Dashboard**    | ⬜ Pending  | 0/8   | 0%       |
+| **E2E Tests**                        | ⬜ Pending  | 0/3   | 0%       |
+| **CI/CD**                            | ⬜ Pending  | N/A   | 0%       |
 
 **Total Tests Implemented**: 51/72 (71%)
 **Total Tests Passing**: 51/51 (100%)
@@ -123,6 +123,7 @@ All test infrastructure components have been implemented:
 **Status**: ✅ 27/27 tests passing (100%)
 
 **Test Cases**:
+
 - ✅ `madace --help` - Show help message (2 tests)
 - ✅ `madace assess-scale` - Project complexity assessment (3 tests)
 - ✅ `madace agents` - Agent management (6 tests)
@@ -134,6 +135,7 @@ All test infrastructure components have been implemented:
 - ✅ Global options (2 tests)
 
 **Key Features**:
+
 - Tests actual CLI command execution using spawned processes
 - Handles both success and error states gracefully
 - Validates JSON output parsing
@@ -153,6 +155,7 @@ All test infrastructure components have been implemented:
 **Coverage**: 73.21% statements | 79.31% branches | 70% functions | 74.54% lines
 
 **Test Cases**:
+
 - ✅ Format simple table
 - ✅ Handle empty data
 - ✅ Format table without title
@@ -172,6 +175,7 @@ All test infrastructure components have been implemented:
 **Coverage**: Included in formatter coverage above
 
 **Test Cases**:
+
 - ✅ Format simple object
 - ✅ Format array
 - ✅ Format nested objects
@@ -196,6 +200,7 @@ All test infrastructure components have been implemented:
 
 **Status**: ⬜ Created but needs fixing (mocking issues)
 **Test Cases Planned**: 25 tests
+
 - `agents list` (4 tests)
 - `agents show <name>` (4 tests)
 - `agents create <file>` (4 tests)
@@ -205,6 +210,7 @@ All test infrastructure components have been implemented:
 - `agents import <file>` (3 tests)
 
 **Issues**:
+
 - Mock setup for `agent-service` needs adjustment
 - Commander.js integration needs proper testing approach
 
@@ -212,6 +218,7 @@ All test infrastructure components have been implemented:
 
 **Status**: ⬜ Not yet created
 **Test Cases Planned**: 12 tests
+
 - `config get <key>` (3 tests)
 - `config set <key> <value>` (3 tests)
 - `config list` (2 tests)
@@ -221,6 +228,7 @@ All test infrastructure components have been implemented:
 
 **Status**: ⬜ Not yet created
 **Test Cases Planned**: 10 tests
+
 - `project init` (3 tests)
 - `project status` (3 tests)
 - `project stats` (2 tests)
@@ -229,6 +237,7 @@ All test infrastructure components have been implemented:
 
 **Status**: ⬜ Not yet created
 **Test Cases Planned**: 15 tests
+
 - `state show` (5 tests)
 - `state transition <story> <state>` (5 tests)
 - `state stats` (2 tests)
@@ -237,6 +246,7 @@ All test infrastructure components have been implemented:
 
 **Status**: ⬜ Not yet created
 **Test Cases Planned**: 20 tests
+
 - `workflows list` (3 tests)
 - `workflows show <name>` (2 tests)
 - `workflows run <file>` (3 tests)
@@ -257,6 +267,7 @@ All test infrastructure components have been implemented:
 **Test Cases Planned**: 10 tests
 
 **Files Planned**:
+
 1. `repl-session.test.ts` (6 tests)
    - Start REPL and execute command
    - Maintain session state
@@ -277,6 +288,7 @@ All test infrastructure components have been implemented:
 **Test Cases Planned**: 8 tests
 
 **Files Planned**:
+
 1. `dashboard-render.test.ts` (4 tests)
    - Render 4-pane layout
    - Render agents pane with 5 agents
@@ -299,6 +311,7 @@ All test infrastructure components have been implemented:
 **Test Cases Planned**: 3 tests
 
 **Files Planned**:
+
 1. `agent-workflow.e2e.ts` (1 test)
    - Complete agent management workflow (list, show, create)
 
@@ -316,6 +329,7 @@ All test infrastructure components have been implemented:
 **Status**: ⬜ Not yet created
 
 **Planned Components**:
+
 1. GitHub Actions workflow (`.github/workflows/test.yml`)
    - Multi-version testing (Node.js 20.x, 22.x)
    - Coverage upload to Codecov
@@ -333,14 +347,15 @@ All test infrastructure components have been implemented:
 
 **Current Coverage by Module**:
 
-| Module | Target | Current | Status |
-|--------|--------|---------|--------|
-| `lib/cli/formatters/` | 90% | 73% | ⏳ In Progress |
-| `lib/cli/commands/` | 85% | 0% | ⬜ Pending |
-| `lib/cli/repl/` | 75% | 0% | ⬜ Pending |
-| `lib/cli/dashboard/` | 70% | 0% | ⬜ Pending |
+| Module                | Target | Current | Status         |
+| --------------------- | ------ | ------- | -------------- |
+| `lib/cli/formatters/` | 90%    | 73%     | ⏳ In Progress |
+| `lib/cli/commands/`   | 85%    | 0%      | ⬜ Pending     |
+| `lib/cli/repl/`       | 75%    | 0%      | ⬜ Pending     |
+| `lib/cli/dashboard/`  | 70%    | 0%      | ⬜ Pending     |
 
 **Overall Progress**:
+
 - **Current**: ~15% (formatters only)
 - **Target**: 80%
 - **Gap**: 65 percentage points
@@ -393,6 +408,7 @@ All test infrastructure components have been implemented:
 ### [CLI-007] Acceptance Criteria
 
 **Testing**:
+
 - ✅ CLI integration tests for all command categories - **Complete (27 tests passing)**
 - ✅ Unit tests for formatters (coverage > 70%) - **Complete (24 tests, 73% coverage)**
 - ⬜ Integration tests for REPL session flows - **0% complete**
@@ -401,6 +417,7 @@ All test infrastructure components have been implemented:
 - ⬜ All tests pass in CI/CD - **51/51 CLI tests passing locally, CI/CD not configured**
 
 **Documentation**:
+
 - ✅ CLI reference guide (`docs/CLI-REFERENCE.md`) - **Complete**
 - ✅ REPL tutorial (`docs/REPL-TUTORIAL.md`) - **Complete**
 - ✅ Dashboard guide (`docs/DASHBOARD-GUIDE.md`) - **Complete**
@@ -436,6 +453,7 @@ All infrastructure is in place to continue testing implementation.
 ## Conclusion
 
 **Status**:
+
 - ✅ Documentation: 100% complete (5/5 documents)
 - ✅ Test Infrastructure: 100% complete (helpers, Jest config)
 - ✅ CLI Integration Tests: 100% complete (51/51 tests passing)
@@ -448,6 +466,7 @@ All infrastructure is in place to continue testing implementation.
 **Recommendation**: The core CLI functionality is well-tested with comprehensive integration tests. REPL/Dashboard integration tests and E2E tests are optional for MVP. Consider marking [CLI-007] as DONE if the current test coverage is sufficient for the 4-point story.
 
 **Remaining Work** (if pursuing 100% completion):
+
 - REPL integration tests (2-3 hours)
 - Dashboard integration tests (2-3 hours)
 - E2E tests (1-2 hours)

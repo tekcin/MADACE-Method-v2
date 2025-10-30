@@ -1,24 +1,24 @@
-# Release Notes - MADACE v2.0.0-alpha
+# MADACE Method v3.0-beta Release Notes
 
-**Release Date:** 2025-10-22
-**Version:** 2.0.0-alpha
-**Status:** Alpha Release - Experimental Implementation
+**Release Date:** 2025-10-30
+**Version:** 3.0.0-beta
+**Status:** Beta Release - Production-Ready
 
 ---
 
 ## 🎉 Overview
 
-MADACE v2.0.0-alpha is the first public release of the experimental Next.js full-stack implementation of the MADACE methodology. This release represents a complete Alpha MVP with all core features implemented, tested, and documented.
+MADACE v3.0-beta represents a major milestone in the evolution of the MADACE methodology. This release transforms MADACE from an experimental proof-of-concept into a production-ready platform with database persistence, full-featured Web IDE, real-time collaboration, and comprehensive testing.
 
 **What is MADACE?**
 
 **MADACE** = **M**ethodology for **A**I-**D**riven **A**gile **C**ollaboration **E**ngine
 
-MADACE is a revolutionary approach to software development that combines AI-powered agents, workflow automation, and agile methodologies to streamline the development process.
+MADACE combines AI-powered agents, workflow automation, and agile methodologies to revolutionize software development.
 
 **This Release:**
 
-This v2.0.0-alpha release is an **experimental** web-based implementation using Next.js 15, TypeScript, and modern full-stack patterns. It differs from the official Node.js CLI-based MADACE-METHOD but shares the same core concepts and agent definitions.
+v3.0-beta is a **production-ready** implementation with Prisma ORM, PostgreSQL/SQLite support, Monaco Editor-powered IDE, real-time collaboration via WebSocket, and 75+ E2E tests covering all major features.
 
 ---
 

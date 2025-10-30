@@ -66,31 +66,23 @@ export default function Tab({
   return (
     <div
       onClick={onClick}
-      className={`
-        group relative flex items-center gap-2 px-4 py-2 cursor-pointer
-        border-r border-gray-700 transition-colors min-w-[120px] max-w-[200px]
-        ${
-          isActive
-            ? 'bg-gray-900 text-white border-b-2 border-blue-500'
-            : 'bg-gray-800 text-gray-400 hover:bg-gray-750 hover:text-gray-200'
-        }
-      `}
+      className={`group relative flex max-w-[200px] min-w-[120px] cursor-pointer items-center gap-2 border-r border-gray-700 px-4 py-2 transition-colors ${
+        isActive
+          ? 'border-b-2 border-blue-500 bg-gray-900 text-white'
+          : 'hover:bg-gray-750 bg-gray-800 text-gray-400 hover:text-gray-200'
+      } `}
     >
       {/* File name with language color */}
-      <div className="flex items-center gap-1.5 flex-1 min-w-0">
+      <div className="flex min-w-0 flex-1 items-center gap-1.5">
         <span className={`text-xs ${getLanguageColor(language)}`}>●</span>
-        <span className="text-sm truncate">{fileName}</span>
+        <span className="truncate text-sm">{fileName}</span>
         {isDirty && <span className="text-xs text-blue-400">•</span>}
       </div>
 
       {/* Close button */}
       <button
         onClick={handleClose}
-        className={`
-          flex items-center justify-center w-5 h-5 rounded
-          transition-colors hover:bg-gray-700
-          ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
-        `}
+        className={`flex h-5 w-5 items-center justify-center rounded transition-colors hover:bg-gray-700 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} `}
         title="Close file"
         aria-label={`Close ${fileName}`}
       >
@@ -100,13 +92,9 @@ export default function Tab({
           viewBox="0 0 24 24"
           strokeWidth={2}
           stroke="currentColor"
-          className="w-3.5 h-3.5"
+          className="h-3.5 w-3.5"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M6 18L18 6M6 6l12 12"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>

@@ -88,7 +88,10 @@ export class EntityResolver {
     // State synonyms
     { canonical: 'BACKLOG', synonyms: ['backlog', 'planned', 'icebox'] },
     { canonical: 'TODO', synonyms: ['todo', 'to do', 'ready', 'queued'] },
-    { canonical: 'IN_PROGRESS', synonyms: ['in progress', 'in-progress', 'wip', 'working', 'active'] },
+    {
+      canonical: 'IN_PROGRESS',
+      synonyms: ['in progress', 'in-progress', 'wip', 'working', 'active'],
+    },
     { canonical: 'DONE', synonyms: ['done', 'complete', 'finished', 'closed'] },
   ];
 
@@ -138,11 +141,16 @@ export class EntityResolver {
   /**
    * Try exact match (case-insensitive)
    */
-  private async tryExactMatch(entity: NLUEntity, value: string): Promise<EntityResolutionResult | null> {
+  private async tryExactMatch(
+    entity: NLUEntity,
+    value: string
+  ): Promise<EntityResolutionResult | null> {
     const candidates = await this.getCandidates(entity);
 
     // Case-insensitive exact match
-    const exactMatch = candidates.find((candidate) => candidate.toLowerCase() === value.toLowerCase());
+    const exactMatch = candidates.find(
+      (candidate) => candidate.toLowerCase() === value.toLowerCase()
+    );
 
     if (exactMatch) {
       return {
@@ -186,7 +194,10 @@ export class EntityResolver {
   /**
    * Try fuzzy match using Fuse.js
    */
-  private async tryFuzzyMatch(entity: NLUEntity, value: string): Promise<EntityResolutionResult | null> {
+  private async tryFuzzyMatch(
+    entity: NLUEntity,
+    value: string
+  ): Promise<EntityResolutionResult | null> {
     const candidates = await this.getCandidates(entity);
 
     if (candidates.length === 0) {
@@ -293,12 +304,7 @@ export class EntityResolver {
       await stateMachine.load();
 
       const status = stateMachine.getStatus();
-      const allStories = [
-        ...status.backlog,
-        ...status.todo,
-        ...status.inProgress,
-        ...status.done,
-      ];
+      const allStories = [...status.backlog, ...status.todo, ...status.inProgress, ...status.done];
 
       const storyIds = allStories.map((story) => story.id);
 

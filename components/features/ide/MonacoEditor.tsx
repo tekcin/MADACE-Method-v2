@@ -123,8 +123,14 @@ export default function MonacoEditor({
       `;
 
       // Add type definitions to Monaco's extra libs
-      monaco.languages.typescript.typescriptDefaults.addExtraLib(reactTypes, 'file:///node_modules/@types/react/index.d.ts');
-      monaco.languages.typescript.typescriptDefaults.addExtraLib(nextTypes, 'file:///node_modules/@types/next/index.d.ts');
+      monaco.languages.typescript.typescriptDefaults.addExtraLib(
+        reactTypes,
+        'file:///node_modules/@types/react/index.d.ts'
+      );
+      monaco.languages.typescript.typescriptDefaults.addExtraLib(
+        nextTypes,
+        'file:///node_modules/@types/next/index.d.ts'
+      );
     }
 
     // Configure editor with comprehensive IntelliSense
@@ -246,12 +252,12 @@ export default function MonacoEditor({
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="flex h-full w-full flex-col">
       {/* Loading indicator */}
       {loading && !isEditorReady && (
-        <div className="flex items-center justify-center h-full bg-gray-900">
-          <div className="text-gray-400 text-sm">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+        <div className="flex h-full items-center justify-center bg-gray-900">
+          <div className="text-sm text-gray-400">
+            <div className="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
             Loading editor...
           </div>
         </div>
@@ -266,9 +272,9 @@ export default function MonacoEditor({
         onChange={handleEditorChange}
         onMount={handleEditorDidMount}
         loading={
-          <div className="flex items-center justify-center h-full bg-gray-900">
-            <div className="text-gray-400 text-sm">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          <div className="flex h-full items-center justify-center bg-gray-900">
+            <div className="text-sm text-gray-400">
+              <div className="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
               Initializing Monaco Editor...
             </div>
           </div>

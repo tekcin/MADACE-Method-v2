@@ -232,11 +232,7 @@ describe('Memory Extractor', () => {
     });
 
     it('should save memories as long-term and inferred source', async () => {
-      await extractAndSaveMemories(
-        testAgentId,
-        testUserId,
-        'I am a software developer'
-      );
+      await extractAndSaveMemories(testAgentId, testUserId, 'I am a software developer');
 
       expect(mockSaveMemory).toHaveBeenCalledWith(
         testAgentId,
@@ -251,11 +247,7 @@ describe('Memory Extractor', () => {
     it('should handle errors gracefully', async () => {
       mockSaveMemory.mockRejectedValue(new Error('Database error'));
 
-      const savedCount = await extractAndSaveMemories(
-        testAgentId,
-        testUserId,
-        'My name is Alex'
-      );
+      const savedCount = await extractAndSaveMemories(testAgentId, testUserId, 'My name is Alex');
 
       // Should return 0 on error, not throw
       expect(savedCount).toBe(0);

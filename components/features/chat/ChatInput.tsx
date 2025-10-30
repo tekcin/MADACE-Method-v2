@@ -62,10 +62,10 @@ export default function ChatInput({
   const isOverLimit = charCount > maxLength;
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+    <div className="border-t border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
       <div className="flex items-end gap-2">
         {/* Textarea */}
-        <div className="flex-1 relative">
+        <div className="relative flex-1">
           <textarea
             ref={textareaRef}
             value={input}
@@ -77,7 +77,7 @@ export default function ChatInput({
               isOverLimit
                 ? 'border-red-500 dark:border-red-400'
                 : 'border-gray-300 dark:border-gray-600'
-            } bg-white dark:bg-gray-800 px-4 py-3 pr-12 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed resize-none overflow-hidden`}
+            } resize-none overflow-hidden bg-white px-4 py-3 pr-12 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400`}
             rows={1}
             style={{ minHeight: '52px', maxHeight: '200px' }}
           />
@@ -85,7 +85,7 @@ export default function ChatInput({
           {/* Character Count */}
           {charCount > maxLength * 0.8 && (
             <div
-              className={`absolute bottom-2 right-12 text-xs ${
+              className={`absolute right-12 bottom-2 text-xs ${
                 isOverLimit ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'
               }`}
             >
@@ -98,10 +98,10 @@ export default function ChatInput({
         <button
           onClick={handleSend}
           disabled={disabled || !input.trim() || isOverLimit}
-          className="flex-shrink-0 px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex-shrink-0 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 active:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
           title="Send (Enter)"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -114,7 +114,15 @@ export default function ChatInput({
 
       {/* Hint Text */}
       <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-        Press <kbd className="px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600">Enter</kbd> to send, <kbd className="px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600">Shift+Enter</kbd> for new line
+        Press{' '}
+        <kbd className="rounded border border-gray-300 bg-gray-100 px-1 py-0.5 dark:border-gray-600 dark:bg-gray-800">
+          Enter
+        </kbd>{' '}
+        to send,{' '}
+        <kbd className="rounded border border-gray-300 bg-gray-100 px-1 py-0.5 dark:border-gray-600 dark:bg-gray-800">
+          Shift+Enter
+        </kbd>{' '}
+        for new line
       </p>
     </div>
   );

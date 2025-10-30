@@ -52,7 +52,10 @@ function formatTimestamp(date: Date): string {
 /**
  * Display chat history (last N messages)
  */
-function displayHistory(messages: Array<{ role: string; content: string; timestamp: Date }>, limit = 10) {
+function displayHistory(
+  messages: Array<{ role: string; content: string; timestamp: Date }>,
+  limit = 10
+) {
   const recent = messages.slice(-limit);
 
   console.log(chalk.dim('\n─────────────────────────────────────────────'));
@@ -112,18 +115,13 @@ async function getAgentResponse(
     });
 
     // Extract and save memories from user message (async, non-blocking)
-    const userMessages = conversationHistory
-      .filter((m) => m.role === 'user')
-      .map((m) => m.content);
-    extractAndSaveMemories(
-      state.agent.id,
-      state.userId,
-      userMessage,
-      userMessages
-    ).catch((error) => {
-      console.error(chalk.yellow('[Memory] Error extracting memories:'), error);
-      // Don't block on memory extraction errors
-    });
+    const userMessages = conversationHistory.filter((m) => m.role === 'user').map((m) => m.content);
+    extractAndSaveMemories(state.agent.id, state.userId, userMessage, userMessages).catch(
+      (error) => {
+        console.error(chalk.yellow('[Memory] Error extracting memories:'), error);
+        // Don't block on memory extraction errors
+      }
+    );
 
     // Get LLM client
     const llmConfig = getLLMConfigFromEnv();
@@ -239,7 +237,7 @@ async function chatLoop(state: ChatState) {
 
       try {
         const results = await searchMessages(query, { limit: 20 });
-        const sessionResults = results.filter(m => m.sessionId === state.sessionId);
+        const sessionResults = results.filter((m) => m.sessionId === state.sessionId);
 
         if (sessionResults.length === 0) {
           console.log(chalk.yellow(`No messages found matching "${query}".\n`));
@@ -375,7 +373,7 @@ export async function chatCommand(agentName?: string) {
 
     if (agentName) {
       // Agent specified as argument
-      selectedAgent = agents.find(a => a.name.toLowerCase() === agentName.toLowerCase());
+      selectedAgent = agents.find((a) => a.name.toLowerCase() === agentName.toLowerCase());
 
       if (!selectedAgent) {
         console.log(chalk.red(`\n❌ Agent "${agentName}" not found.\n`));
@@ -393,14 +391,14 @@ export async function chatCommand(agentName?: string) {
           type: 'list',
           name: 'agentId',
           message: 'Select an agent to chat with:',
-          choices: agents.map(a => ({
+          choices: agents.map((a) => ({
             name: `${a.title} (${a.name})`,
             value: a.id,
           })),
         },
       ]);
 
-      selectedAgent = agents.find(a => a.id === agentId);
+      selectedAgent = agents.find((a) => a.id === agentId);
     }
 
     if (!selectedAgent) {
@@ -428,7 +426,6 @@ export async function chatCommand(agentName?: string) {
 
     // Start chat loop
     await chatLoop(state);
-
   } catch (error) {
     console.error(chalk.red('\n❌ Chat error:'), error);
     process.exit(1);

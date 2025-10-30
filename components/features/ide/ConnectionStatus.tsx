@@ -99,7 +99,7 @@ export default function ConnectionStatus({
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            className="w-4 h-4 text-green-500"
+            className="h-4 w-4 text-green-500"
           >
             <path
               fillRule="evenodd"
@@ -115,7 +115,7 @@ export default function ConnectionStatus({
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            className="w-4 h-4 text-yellow-500 animate-spin"
+            className="h-4 w-4 animate-spin text-yellow-500"
           >
             <path
               fillRule="evenodd"
@@ -130,7 +130,7 @@ export default function ConnectionStatus({
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            className="w-4 h-4 text-gray-500"
+            className="h-4 w-4 text-gray-500"
           >
             <path
               fillRule="evenodd"
@@ -145,7 +145,7 @@ export default function ConnectionStatus({
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            className="w-4 h-4 text-red-500"
+            className="h-4 w-4 text-red-500"
           >
             <path
               fillRule="evenodd"
@@ -163,19 +163,19 @@ export default function ConnectionStatus({
     <div className="relative inline-flex items-center gap-2">
       {/* Status indicator */}
       <div
-        className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-750 transition-colors cursor-pointer"
+        className="hover:bg-gray-750 flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-3 py-1.5 transition-colors"
         onMouseEnter={() => showDetails && setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >
         {/* Status dot */}
-        <div className={`w-2 h-2 rounded-full ${getStatusColor()}`} />
+        <div className={`h-2 w-2 rounded-full ${getStatusColor()}`} />
 
         {/* Status icon */}
         {getStatusIcon()}
 
         {/* User count (if connected and showUserCount is true) */}
         {showUserCount && status === Status.CONNECTED && users.length > 0 && (
-          <span className="text-sm text-gray-300 font-medium">
+          <span className="text-sm font-medium text-gray-300">
             {users.length} {users.length === 1 ? 'user' : 'users'}
           </span>
         )}
@@ -183,9 +183,9 @@ export default function ConnectionStatus({
 
       {/* Tooltip with details */}
       {showDetails && showTooltip && (
-        <div className="absolute top-full left-0 mt-2 p-3 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50 min-w-[200px]">
+        <div className="absolute top-full left-0 z-50 mt-2 min-w-[200px] rounded-lg border border-gray-700 bg-gray-900 p-3 shadow-lg">
           {/* Status */}
-          <div className="flex items-center gap-2 mb-2">
+          <div className="mb-2 flex items-center gap-2">
             <span className="text-sm font-semibold text-gray-200">Status:</span>
             <span className="text-sm text-gray-400">{getStatusText()}</span>
           </div>
@@ -193,25 +193,17 @@ export default function ConnectionStatus({
           {/* Users list (if connected) */}
           {status === Status.CONNECTED && users.length > 0 && (
             <>
-              <div className="border-t border-gray-700 my-2" />
-              <div className="text-sm font-semibold text-gray-200 mb-1">
+              <div className="my-2 border-t border-gray-700" />
+              <div className="mb-1 text-sm font-semibold text-gray-200">
                 Online Users ({users.length}):
               </div>
               <div className="max-h-[120px] overflow-y-auto">
                 {users.map((user) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center gap-2 py-1"
-                  >
+                  <div key={user.id} className="flex items-center gap-2 py-1">
                     {/* User color indicator */}
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: user.color }}
-                    />
+                    <div className="h-2 w-2 rounded-full" style={{ backgroundColor: user.color }} />
                     {/* User name */}
-                    <span className="text-xs text-gray-300 truncate">
-                      {user.name}
-                    </span>
+                    <span className="truncate text-xs text-gray-300">{user.name}</span>
                   </div>
                 ))}
               </div>
@@ -221,20 +213,16 @@ export default function ConnectionStatus({
           {/* Disconnected message */}
           {status === Status.DISCONNECTED && (
             <>
-              <div className="border-t border-gray-700 my-2" />
-              <p className="text-xs text-gray-400">
-                Real-time collaboration unavailable
-              </p>
+              <div className="my-2 border-t border-gray-700" />
+              <p className="text-xs text-gray-400">Real-time collaboration unavailable</p>
             </>
           )}
 
           {/* Error message */}
           {status === Status.ERROR && (
             <>
-              <div className="border-t border-gray-700 my-2" />
-              <p className="text-xs text-red-400">
-                Failed to connect to server
-              </p>
+              <div className="my-2 border-t border-gray-700" />
+              <p className="text-xs text-red-400">Failed to connect to server</p>
             </>
           )}
         </div>

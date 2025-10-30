@@ -64,14 +64,14 @@ export default function EditorToolbar({
   const fontSizes = [10, 12, 14, 16, 18, 20, 22, 24];
 
   return (
-    <div className="h-10 bg-gray-800 border-b border-gray-700 flex items-center justify-between px-4 text-sm">
+    <div className="flex h-10 items-center justify-between border-b border-gray-700 bg-gray-800 px-4 text-sm">
       {/* Left: File info */}
       <div className="flex items-center space-x-4 text-gray-300">
         {fileName && (
           <div className="flex items-center space-x-2">
             <span className="font-medium">{fileName}</span>
             {language && (
-              <span className="px-2 py-0.5 bg-gray-700 rounded text-xs text-gray-400">
+              <span className="rounded bg-gray-700 px-2 py-0.5 text-xs text-gray-400">
                 {language}
               </span>
             )}
@@ -83,18 +83,16 @@ export default function EditorToolbar({
       <div className="flex items-center space-x-4">
         {/* Theme selector */}
         <div className="flex items-center space-x-2">
-          <label htmlFor="theme-select" className="text-gray-400 text-xs">
+          <label htmlFor="theme-select" className="text-xs text-gray-400">
             Theme:
           </label>
           <select
             id="theme-select"
             value={theme}
             onChange={(e) =>
-              onThemeChange(
-                e.target.value as 'vs-dark' | 'vs-light' | 'hc-black' | 'hc-light'
-              )
+              onThemeChange(e.target.value as 'vs-dark' | 'vs-light' | 'hc-black' | 'hc-light')
             }
-            className="bg-gray-700 text-gray-200 text-xs rounded px-2 py-1 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="rounded border border-gray-600 bg-gray-700 px-2 py-1 text-xs text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             {themes.map((t) => (
               <option key={t.value} value={t.value}>
@@ -106,14 +104,14 @@ export default function EditorToolbar({
 
         {/* Font size selector */}
         <div className="flex items-center space-x-2">
-          <label htmlFor="font-size-select" className="text-gray-400 text-xs">
+          <label htmlFor="font-size-select" className="text-xs text-gray-400">
             Font:
           </label>
           <select
             id="font-size-select"
             value={fontSize}
             onChange={(e) => onFontSizeChange(Number(e.target.value))}
-            className="bg-gray-700 text-gray-200 text-xs rounded px-2 py-1 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="rounded border border-gray-600 bg-gray-700 px-2 py-1 text-xs text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             {fontSizes.map((size) => (
               <option key={size} value={size}>
@@ -125,16 +123,14 @@ export default function EditorToolbar({
 
         {/* Line numbers toggle */}
         <div className="flex items-center space-x-2">
-          <label htmlFor="line-numbers-select" className="text-gray-400 text-xs">
+          <label htmlFor="line-numbers-select" className="text-xs text-gray-400">
             Lines:
           </label>
           <select
             id="line-numbers-select"
             value={lineNumbers}
-            onChange={(e) =>
-              onLineNumbersChange(e.target.value as 'on' | 'off' | 'relative')
-            }
-            className="bg-gray-700 text-gray-200 text-xs rounded px-2 py-1 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => onLineNumbersChange(e.target.value as 'on' | 'off' | 'relative')}
+            className="rounded border border-gray-600 bg-gray-700 px-2 py-1 text-xs text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             {lineNumberModes.map((mode) => (
               <option key={mode.value} value={mode.value}>
@@ -147,10 +143,10 @@ export default function EditorToolbar({
         {/* Word wrap toggle */}
         <button
           onClick={onWordWrapToggle}
-          className={`px-3 py-1 rounded text-xs border transition-colors ${
+          className={`rounded border px-3 py-1 text-xs transition-colors ${
             wordWrap
-              ? 'bg-blue-600 border-blue-500 text-white'
-              : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+              ? 'border-blue-500 bg-blue-600 text-white'
+              : 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600'
           }`}
           title="Toggle word wrap"
         >
@@ -160,10 +156,10 @@ export default function EditorToolbar({
         {/* Minimap toggle */}
         <button
           onClick={onMinimapToggle}
-          className={`px-3 py-1 rounded text-xs border transition-colors ${
+          className={`rounded border px-3 py-1 text-xs transition-colors ${
             minimap
-              ? 'bg-blue-600 border-blue-500 text-white'
-              : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+              ? 'border-blue-500 bg-blue-600 text-white'
+              : 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600'
           }`}
           title="Toggle minimap"
         >

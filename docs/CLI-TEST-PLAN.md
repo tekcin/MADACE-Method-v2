@@ -83,12 +83,14 @@ __tests__/
 **Purpose**: Test individual CLI commands in isolation
 
 **Characteristics**:
+
 - Fast execution (< 100ms per test)
 - No external dependencies
 - Mock all I/O (fs, blessed, inquirer)
 - Test one command per file
 
 **Coverage**:
+
 - All 24 CLI commands
 - All output formatters
 - All helper functions
@@ -98,12 +100,14 @@ __tests__/
 **Purpose**: Test interactions between components
 
 **Characteristics**:
+
 - Moderate execution time (< 500ms per test)
 - Mock only external APIs (LLM, network)
 - Use real file system (temp directories)
 - Test multi-step flows
 
 **Coverage**:
+
 - REPL session flows
 - Dashboard rendering and navigation
 - Workflow execution with state persistence
@@ -113,12 +117,14 @@ __tests__/
 **Purpose**: Test complete user workflows
 
 **Characteristics**:
+
 - Slower execution (< 2s per test)
 - Minimal mocking (only LLM APIs)
 - Use real file system, state machine
 - Test real-world scenarios
 
 **Coverage**:
+
 - Common CLI workflows
 - End-to-end REPL sessions
 - Dashboard monitoring scenarios
@@ -842,16 +848,16 @@ describe('E2E: REPL Session', () => {
 
 **Per-Module Targets**:
 
-| Module | Target Coverage | Priority |
-|--------|----------------|----------|
-| `bin/cli/commands/` | 85% | High |
-| `bin/cli/formatters/` | 90% | High |
-| `bin/cli/repl/` | 75% | Medium |
-| `bin/cli/dashboard/` | 70% | Medium |
-| `lib/agents/` | 85% | High |
-| `lib/state/` | 85% | High |
-| `lib/workflows/` | 80% | High |
-| `lib/config/` | 80% | High |
+| Module                | Target Coverage | Priority |
+| --------------------- | --------------- | -------- |
+| `bin/cli/commands/`   | 85%             | High     |
+| `bin/cli/formatters/` | 90%             | High     |
+| `bin/cli/repl/`       | 75%             | Medium   |
+| `bin/cli/dashboard/`  | 70%             | Medium   |
+| `lib/agents/`         | 85%             | High     |
+| `lib/state/`          | 85%             | High     |
+| `lib/workflows/`      | 80%             | High     |
+| `lib/config/`         | 80%             | High     |
 
 ### Coverage Metrics
 
@@ -880,6 +886,7 @@ npm test -- --coverage --coverageReporters=json-summary
 ### Setup
 
 **Dependencies**:
+
 ```json
 {
   "jest": "30.2.0",
@@ -891,18 +898,14 @@ npm test -- --coverage --coverageReporters=json-summary
 ```
 
 **Configuration** (`jest.config.mjs`):
+
 ```javascript
 export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/__tests__'],
   testMatch: ['**/*.test.ts', '**/*.spec.ts'],
-  collectCoverageFrom: [
-    'bin/**/*.ts',
-    'lib/**/*.ts',
-    '!**/*.d.ts',
-    '!**/node_modules/**',
-  ],
+  collectCoverageFrom: ['bin/**/*.ts', 'lib/**/*.ts', '!**/*.d.ts', '!**/node_modules/**'],
   coverageThreshold: {
     global: {
       lines: 80,
@@ -917,6 +920,7 @@ export default {
 ### Mocking Strategy
 
 **File System**:
+
 ```typescript
 jest.mock('fs/promises');
 const mockFs = fs as jest.Mocked<typeof fs>;
@@ -924,6 +928,7 @@ mockFs.readFile.mockResolvedValue('...');
 ```
 
 **Blessed (TUI)**:
+
 ```typescript
 jest.mock('blessed', () => ({
   screen: jest.fn(() => ({
@@ -940,6 +945,7 @@ jest.mock('blessed', () => ({
 ```
 
 **Inquirer (REPL)**:
+
 ```typescript
 jest.mock('inquirer', () => ({
   prompt: jest.fn().mockResolvedValue({ command: 'agents list' }),
@@ -948,6 +954,7 @@ jest.mock('inquirer', () => ({
 ```
 
 **LLM Clients**:
+
 ```typescript
 jest.mock('@/lib/llm/client', () => ({
   createLLMClient: jest.fn(() => ({
@@ -959,6 +966,7 @@ jest.mock('@/lib/llm/client', () => ({
 ### Test Utilities
 
 **Helper Functions**:
+
 ```typescript
 // __tests__/helpers/cli-runner.ts
 export async function runCLI(args: string[]) {

@@ -491,6 +491,7 @@ madace> /exit
 ```
 
 **Features**:
+
 - Tab completion for commands and agent names
 - Command history (saved across sessions)
 - Multi-line input with syntax highlighting
@@ -505,6 +506,7 @@ npm run madace dashboard
 ```
 
 **Features**:
+
 - 4-pane split layout (agents, workflows, state machine, logs)
 - Real-time updates (every 5 seconds)
 - Keyboard navigation (arrow keys, tab)
@@ -512,6 +514,7 @@ npm run madace dashboard
 - Color-coded status indicators
 
 **Keyboard Shortcuts**:
+
 - `←→↑↓` - Navigate between panes
 - `Tab` - Cycle through panes
 - `Enter` - View details

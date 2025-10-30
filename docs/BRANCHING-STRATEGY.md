@@ -16,6 +16,7 @@ MADACE v3.0 uses a **simplified Git Flow** branching model with three types of b
 3. **Task Branches** (`task/XXX`) - Feature/fix development
 
 This strategy supports:
+
 - Parallel feature development
 - Clean release history
 - MADACE Method workflow (BACKLOG → TODO → IN PROGRESS → DONE)
@@ -30,6 +31,7 @@ This strategy supports:
 **Purpose**: Production-ready, stable code
 
 **Rules**:
+
 - Always deployable
 - Protected branch (no direct commits)
 - All changes via pull requests
@@ -37,6 +39,7 @@ This strategy supports:
 - Tagged with release versions (e.g., `v3.2-alpha`)
 
 **Workflow**:
+
 ```bash
 # Never commit directly to main
 # Always merge via PR from task branches or develop/v3
@@ -47,12 +50,14 @@ This strategy supports:
 **Purpose**: Integration branch for v3.0 development
 
 **Rules**:
+
 - Contains latest v3.0 development work
 - May be temporarily unstable during integration
 - Periodically merged to `main` for releases
 - Protected branch (no direct commits recommended)
 
 **Workflow**:
+
 ```bash
 # Merge completed task branches to develop/v3
 git checkout develop/v3
@@ -72,6 +77,7 @@ git push origin main --tags
 **Purpose**: Individual story/feature development
 
 **Naming Convention**:
+
 ```
 task/<story-number>
 task/<story-id>
@@ -84,12 +90,14 @@ Examples:
 ```
 
 **Rules**:
+
 - Branch from `develop/v3` or `main`
 - One branch per MADACE story (matches IN PROGRESS state)
 - Delete after merging (keep git history clean)
 - Small, focused changes (< 1000 lines recommended)
 
 **Workflow**:
+
 ```bash
 # 1. Create task branch
 git checkout develop/v3
@@ -134,12 +142,12 @@ main (production)
 
 The branching strategy aligns with MADACE state machine:
 
-| MADACE State | Git Action |
-|---|---|
-| **BACKLOG** | Story exists, no branch yet |
-| **TODO** | Story ready, no branch yet |
-| **IN PROGRESS** | Create `task/XXX` branch |
-| **DONE** | Merge branch, delete task branch |
+| MADACE State    | Git Action                       |
+| --------------- | -------------------------------- |
+| **BACKLOG**     | Story exists, no branch yet      |
+| **TODO**        | Story ready, no branch yet       |
+| **IN PROGRESS** | Create `task/XXX` branch         |
+| **DONE**        | Merge branch, delete task branch |
 
 **Example Workflow**:
 
@@ -171,6 +179,7 @@ Use **Conventional Commits** format:
 ```
 
 **Types**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -180,6 +189,7 @@ Use **Conventional Commits** format:
 - `style`: Code style changes (formatting, no logic change)
 
 **Examples**:
+
 ```bash
 feat(chat): Add message threading support
 fix(memory): Correct importance decay calculation
@@ -196,6 +206,7 @@ chore(deps): Update Next.js to 15.5.6
 ### Main Branch (`main`)
 
 **Required**:
+
 - ✅ Require pull request before merging
 - ✅ Require status checks to pass
   - TypeScript compilation (`npm run type-check`)
@@ -209,6 +220,7 @@ chore(deps): Update Next.js to 15.5.6
 ### Development Branch (`develop/v3`)
 
 **Recommended**:
+
 - ⚠️ Allow direct commits (for quick fixes during development)
 - ✅ Require status checks to pass
 - ✅ No force pushes
@@ -216,6 +228,7 @@ chore(deps): Update Next.js to 15.5.6
 ### Task Branches (`task/XXX`)
 
 **Flexible**:
+
 - No restrictions (developer freedom)
 - Can be force-pushed during development
 - Can be rebased before merging
@@ -263,6 +276,7 @@ MADACE v3.0 uses **alpha releases** during development:
 
 1. **Complete a Milestone** (e.g., Milestone 3.3)
 2. **Merge to Main**:
+
    ```bash
    git checkout main
    git pull origin main
@@ -271,6 +285,7 @@ MADACE v3.0 uses **alpha releases** during development:
    ```
 
 3. **Tag Release**:
+
    ```bash
    git tag v3.3-alpha
    git push origin v3.3-alpha
@@ -378,6 +393,7 @@ git branch -d hotfix/critical-bug
 ## Best Practices
 
 ### DO:
+
 - ✅ Keep task branches small and focused
 - ✅ Commit frequently with meaningful messages
 - ✅ Pull latest `develop/v3` before creating task branch
@@ -388,6 +404,7 @@ git branch -d hotfix/critical-bug
 - ✅ Tag all milestone releases
 
 ### DON'T:
+
 - ❌ Commit directly to `main`
 - ❌ Force push to `main` or `develop/v3`
 - ❌ Leave stale branches for > 30 days
@@ -411,6 +428,7 @@ A: Ideally **one** per developer, matching the MADACE rule (one story IN PROGRES
 **Q: What if my task branch conflicts with `develop/v3`?**
 
 A: Merge `develop/v3` into your task branch and resolve conflicts:
+
 ```bash
 git checkout task/XXX
 git merge develop/v3
@@ -431,6 +449,7 @@ A: Break them into smaller sub-stories with separate task branches. Merge increm
 **Q: What if I need to switch stories mid-development?**
 
 A: Commit or stash your work, then create a new branch:
+
 ```bash
 git add .
 git stash

@@ -62,7 +62,11 @@ export default function FileTreeNode({
 
     const badges = {
       M: { label: 'M', color: 'bg-yellow-600 text-yellow-100', title: 'Modified' },
-      MM: { label: 'M', color: 'bg-yellow-600 text-yellow-100', title: 'Modified (staged and unstaged)' },
+      MM: {
+        label: 'M',
+        color: 'bg-yellow-600 text-yellow-100',
+        title: 'Modified (staged and unstaged)',
+      },
       A: { label: 'A', color: 'bg-green-600 text-green-100', title: 'Added (staged)' },
       AM: { label: 'A', color: 'bg-green-600 text-green-100', title: 'Added and modified' },
       D: { label: 'D', color: 'bg-red-600 text-red-100', title: 'Deleted' },
@@ -75,7 +79,7 @@ export default function FileTreeNode({
 
     return (
       <span
-        className={`text-xs font-bold px-1 py-0.5 rounded ${badge.color} ml-2`}
+        className={`rounded px-1 py-0.5 text-xs font-bold ${badge.color} ml-2`}
         title={badge.title}
       >
         {badge.label}
@@ -96,7 +100,7 @@ export default function FileTreeNode({
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-4 h-4 text-yellow-500"
+          className="h-4 w-4 text-yellow-500"
         >
           <path
             strokeLinecap="round"
@@ -112,7 +116,7 @@ export default function FileTreeNode({
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-4 h-4 text-yellow-500"
+          className="h-4 w-4 text-yellow-500"
         >
           <path
             strokeLinecap="round"
@@ -144,7 +148,7 @@ export default function FileTreeNode({
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className={`w-4 h-4 ${color}`}
+        className={`h-4 w-4 ${color}`}
       >
         <path
           strokeLinecap="round"
@@ -183,21 +187,17 @@ export default function FileTreeNode({
         onClick={handleClick}
         onContextMenu={handleContextMenu}
         style={{ paddingLeft: `${level * 16}px` }}
-        className={`
-          flex items-center gap-1.5 px-2 py-1 cursor-pointer text-sm
-          hover:bg-gray-700 transition-colors
-          ${isSelected ? 'bg-blue-900 bg-opacity-30 text-white' : 'text-gray-300'}
-        `}
+        className={`flex cursor-pointer items-center gap-1.5 px-2 py-1 text-sm transition-colors hover:bg-gray-700 ${isSelected ? 'bg-opacity-30 bg-blue-900 text-white' : 'text-gray-300'} `}
       >
         {/* Expand/collapse arrow for folders */}
         {isFolder && (
-          <div className="w-4 flex items-center justify-center">
+          <div className="flex w-4 items-center justify-center">
             {isExpanded ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                className="w-3 h-3 text-gray-400"
+                className="h-3 w-3 text-gray-400"
               >
                 <path
                   fillRule="evenodd"
@@ -210,7 +210,7 @@ export default function FileTreeNode({
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                className="w-3 h-3 text-gray-400"
+                className="h-3 w-3 text-gray-400"
               >
                 <path
                   fillRule="evenodd"

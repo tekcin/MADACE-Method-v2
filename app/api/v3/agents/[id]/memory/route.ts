@@ -22,10 +22,7 @@ import {
  * GET /api/v3/agents/:id/memory
  * List memories for an agent
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const agentId = params.id;
     const { searchParams } = new URL(request.url);
@@ -35,7 +32,11 @@ export async function GET(
     const category = searchParams.get('category');
     const minImportance = searchParams.get('minImportance');
     const limit = searchParams.get('limit');
-    const orderBy = searchParams.get('orderBy') as 'createdAt' | 'lastAccessedAt' | 'importance' | null;
+    const orderBy = searchParams.get('orderBy') as
+      | 'createdAt'
+      | 'lastAccessedAt'
+      | 'importance'
+      | null;
     const order = searchParams.get('order') as 'asc' | 'desc' | null;
     const query = searchParams.get('q');
     const stats = searchParams.get('stats') === 'true';
@@ -61,12 +62,7 @@ export async function GET(
 
     // Search memories
     if (query) {
-      const memories = await searchMemories(
-        agentId,
-        userId,
-        query,
-        limit ? parseInt(limit) : 20
-      );
+      const memories = await searchMemories(agentId, userId, query, limit ? parseInt(limit) : 20);
       return NextResponse.json({
         success: true,
         data: memories,
@@ -106,10 +102,7 @@ export async function GET(
  * POST /api/v3/agents/:id/memory
  * Create a new memory
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const agentId = params.id;
     const body = await request.json();
@@ -168,10 +161,7 @@ export async function POST(
  * DELETE /api/v3/agents/:id/memory
  * Clear all memories for an agent
  */
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const agentId = params.id;
     const { searchParams } = new URL(request.url);

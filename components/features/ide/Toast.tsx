@@ -75,21 +75,19 @@ function Toast({ message, onDismiss }: ToastProps) {
 
   return (
     <div
-      className={`${getBackgroundColor()} rounded-lg shadow-lg p-4 mb-3 transition-all duration-300 transform ${
+      className={`${getBackgroundColor()} mb-3 transform rounded-lg p-4 shadow-lg transition-all duration-300 ${
         isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
       }`}
       style={{ minWidth: '300px', maxWidth: '400px' }}
     >
       <div className="flex items-start space-x-3">
         {/* Icon */}
-        <div className="text-white text-xl font-bold flex-shrink-0">{getIcon()}</div>
+        <div className="flex-shrink-0 text-xl font-bold text-white">{getIcon()}</div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0">
-          <p className="text-white font-semibold text-sm">{message.title}</p>
-          {message.message && (
-            <p className="text-white/90 text-xs mt-1">{message.message}</p>
-          )}
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-white">{message.title}</p>
+          {message.message && <p className="mt-1 text-xs text-white/90">{message.message}</p>}
         </div>
 
         {/* Close button */}
@@ -98,7 +96,7 @@ function Toast({ message, onDismiss }: ToastProps) {
             setIsVisible(false);
             setTimeout(() => onDismiss(message.id), 300);
           }}
-          className="text-white/70 hover:text-white text-lg flex-shrink-0"
+          className="flex-shrink-0 text-lg text-white/70 hover:text-white"
           aria-label="Close"
         >
           ×
@@ -139,10 +137,7 @@ export default function ToastContainer() {
   }
 
   return (
-    <div
-      className="fixed top-4 right-4 z-50 pointer-events-none"
-      style={{ maxWidth: '400px' }}
-    >
+    <div className="pointer-events-none fixed top-4 right-4 z-50" style={{ maxWidth: '400px' }}>
       <div className="pointer-events-auto">
         {toasts.map((toast) => (
           <Toast key={toast.id} message={toast} onDismiss={dismissToast} />

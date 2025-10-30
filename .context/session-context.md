@@ -15,6 +15,7 @@
 **Status**: DONE (committed: ca10eb4)
 
 **What Was Delivered**:
+
 1. **CLI Chat Mode** (lib/cli/commands/chat.ts - 360 lines)
    - Interactive agent selection with inquirer
    - Direct selection: `npm run madace chat PM`
@@ -27,7 +28,7 @@
 2. **CLI Registration** (bin/madace.ts)
    - Added `chat [agent-name]` command
 
-3. **Tests** (__tests__/lib/services/chat-service.test.ts - 420 lines)
+3. **Tests** (**tests**/lib/services/chat-service.test.ts - 420 lines)
    - 26 test cases (100% passing)
    - Session tests (6), Message tests (9), Analytics tests (3)
    - Using real Prisma client (integration tests)
@@ -59,15 +60,18 @@
 ### Milestone 3.3: Conversational AI & NLU (33/55 points, 60%)
 
 **Week 8-9: NLU Integration** ✅ COMPLETE (23/23 points)
+
 - ✅ [NLU-001] NLU Service Integration (13 points)
 - ✅ [NLU-002] Entity Extraction (10 points)
 
 **Week 10-11: Chat Interface** 🔄 IN PROGRESS (10/18 points, 56%)
+
 - ✅ [CHAT-001] Chat UI for Web and CLI (10 points) - **JUST COMPLETED**
 - ⬜ [CHAT-002] Message History and Threading (5 points) - **NEXT**
 - ⬜ [CHAT-003] Markdown Rendering (3 points)
 
 **Week 12-13: Agent Memory** 📅 Planned (0/14 points)
+
 - ⬜ [MEMORY-001] Persistent Agent Memory (8 points)
 - ⬜ [MEMORY-002] Memory Management UI (3 points)
 - ⬜ [MEMORY-003] Memory-Aware Responses (3 points)
@@ -94,6 +98,7 @@
 ### Chat System (From Previous Session)
 
 **Already Implemented (commit 6b57325)**:
+
 - Database schema: ChatSession, ChatMessage models
 - Chat service: 14 functions (lib/services/chat-service.ts - 450 lines)
 - Web UI components:
@@ -136,6 +141,7 @@
 ### Development Servers
 
 **Background Processes Running**:
+
 - Bash 02d1c1: `rm -rf .next && npm run dev` (running)
 - Bash 4d58a1: `sleep 2 && npm run dev` (running)
 
@@ -144,6 +150,7 @@
 ### Quality Checks
 
 All passing before commit:
+
 - ✅ TypeScript compilation (`npm run type-check`)
 - ✅ ESLint (`npm run lint`)
 - ✅ Prettier formatting (`npm run format`)
@@ -154,6 +161,7 @@ All passing before commit:
 ## 📝 Important Files
 
 ### Recently Modified
+
 - `lib/cli/commands/chat.ts` (NEW - 360 lines)
 - `__tests__/lib/services/chat-service.test.ts` (NEW - 420 lines)
 - `docs/CHAT-GUIDE.md` (NEW - 850 lines)
@@ -161,6 +169,7 @@ All passing before commit:
 - `docs/workflow-status.md` (MODIFIED - [CHAT-001] moved to DONE)
 
 ### Core Files (Unchanged)
+
 - `prisma/schema.prisma` - Database schema
 - `lib/services/chat-service.ts` - Chat service (from previous commit)
 - `components/features/chat/*` - Web UI components (from previous commit)
@@ -168,6 +177,7 @@ All passing before commit:
 - `app/chat/page.tsx` - Chat page (from previous commit)
 
 ### Configuration
+
 - `.env` - Environment variables (git-ignored)
 - `.env.example` - Environment template
 - `madace/core/config.yaml` - MADACE configuration
@@ -184,10 +194,12 @@ All passing before commit:
 ### Acceptance Criteria (from docs/milestone-3.3-stories.md)
 
 **Database**:
+
 - ⬜ Use existing `replyToId` field in ChatMessage model (already implemented)
 - ⬜ Query messages with thread structure (replies relation)
 
 **Web UI**:
+
 - ⬜ Infinite scroll pagination for message history
 - ⬜ "Reply" button on each message
 - ⬜ Visual thread indicators (indentation, reply lines)
@@ -195,15 +207,18 @@ All passing before commit:
 - ⬜ Collapse/expand threads
 
 **CLI**:
+
 - ⬜ `/thread <message-id>` command to view thread
 - ⬜ Reply with `@<message-id>` syntax
 - ⬜ Thread view with indentation
 
 **API**:
+
 - ⬜ GET /api/v3/chat/messages/<id>/thread - Get message thread
 - ⬜ Update POST /api/v3/chat/sessions/[id]/messages to accept `replyToId`
 
 **Tests**:
+
 - ⬜ Thread structure tests
 - ⬜ Pagination tests
 - ⬜ Reply functionality tests
@@ -238,7 +253,7 @@ All passing before commit:
 ### Testing Philosophy
 
 - Integration tests over unit tests (use real Prisma client)
-- Follow existing test patterns (see __tests__/lib/services/agent-service.test.ts)
+- Follow existing test patterns (see **tests**/lib/services/agent-service.test.ts)
 - All tests must pass before commit (`npm test`)
 - Test coverage goal: >70% for new code
 
@@ -249,18 +264,21 @@ All passing before commit:
 ### Immediate Actions
 
 1. **Verify Environment**:
+
    ```bash
    node --version  # Should be v24.10.0
    npm --version   # Should be >=9.0.0
    ```
 
 2. **Check Git Status**:
+
    ```bash
    git status      # Should be clean (all changes committed)
    git log -1      # Should show commit ca10eb4
    ```
 
 3. **Restart Dev Server**:
+
    ```bash
    # Stop any running processes
    lsof -ti:3000 | xargs kill -9  # If needed
@@ -270,6 +288,7 @@ All passing before commit:
    ```
 
 4. **Verify Database**:
+
    ```bash
    # Check database health
    npx prisma studio  # Opens database GUI at localhost:5555
@@ -284,6 +303,7 @@ All passing before commit:
 ### Resume Work
 
 To start [CHAT-002]:
+
 1. Read `docs/milestone-3.3-stories.md` (lines for CHAT-002 details)
 2. Update workflow-status.md: Move [CHAT-002] from BACKLOG to TODO
 3. Read existing ChatMessage schema to understand threading structure
@@ -297,12 +317,14 @@ To start [CHAT-002]:
 ### How We Got Here
 
 **Previous Session Summary**:
+
 - User requested "YOLO mode" to complete [CHAT-001] at maximum velocity
 - Web UI for chat was already done (commit 6b57325)
 - Needed to add: CLI chat mode, tests, documentation
 - All tasks completed in rapid succession with minimal errors
 
 **Key Decisions Made**:
+
 - Used inquirer for interactive prompts (consistent with REPL)
 - Used chalk for colored output (blue/green/gray/yellow scheme)
 - Real Prisma client for tests (not mocks)
@@ -310,6 +332,7 @@ To start [CHAT-002]:
 - Conversation context: last 10 exchanges (20 messages total)
 
 **Technical Highlights**:
+
 - CLI chat integrates seamlessly with existing LLM client
 - Agent persona (role + identity) used to build system prompt
 - All messages saved to database (full persistence)

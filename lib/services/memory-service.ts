@@ -83,10 +83,7 @@ export async function getMemories(
       // Only get non-expired memories
       AND: [
         {
-          OR: [
-            { expiresAt: null },
-            { expiresAt: { gt: new Date() } },
-          ],
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
         },
       ],
     },
@@ -185,9 +182,7 @@ export async function trackMemoryAccess(memoryId: string): Promise<void> {
  * Track multiple memory accesses at once
  */
 export async function trackMemoryAccesses(memoryIds: string[]): Promise<void> {
-  await Promise.all(
-    memoryIds.map((id) => trackMemoryAccess(id))
-  );
+  await Promise.all(memoryIds.map((id) => trackMemoryAccess(id)));
 }
 
 /**
@@ -205,10 +200,7 @@ export async function getMemoryCount(
       ...(type && { type }),
       AND: [
         {
-          OR: [
-            { expiresAt: null },
-            { expiresAt: { gt: new Date() } },
-          ],
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
         },
       ],
     },
@@ -230,16 +222,10 @@ export async function searchMemories(
       userId,
       AND: [
         {
-          OR: [
-            { key: { contains: query } },
-            { value: { contains: query } },
-          ],
+          OR: [{ key: { contains: query } }, { value: { contains: query } }],
         },
         {
-          OR: [
-            { expiresAt: null },
-            { expiresAt: { gt: new Date() } },
-          ],
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
         },
       ],
     },
@@ -271,10 +257,7 @@ export async function getMemoryStats(
       userId,
       AND: [
         {
-          OR: [
-            { expiresAt: null },
-            { expiresAt: { gt: new Date() } },
-          ],
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
         },
       ],
     },
@@ -300,8 +283,7 @@ export async function getMemoryStats(
 
   // Calculate average importance
   if (memories.length > 0) {
-    stats.avgImportance =
-      memories.reduce((sum, m) => sum + m.importance, 0) / memories.length;
+    stats.avgImportance = memories.reduce((sum, m) => sum + m.importance, 0) / memories.length;
   }
 
   return stats;

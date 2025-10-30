@@ -25,16 +25,16 @@ const categoryColors: Record<string, string> = {
 
 const importanceColors = [
   'bg-gray-200', // 0 (not used)
-  'bg-red-200',   // 1
-  'bg-red-300',   // 2
+  'bg-red-200', // 1
+  'bg-red-300', // 2
   'bg-orange-200', // 3
   'bg-orange-300', // 4
   'bg-yellow-200', // 5
   'bg-yellow-300', // 6
-  'bg-green-200',  // 7
-  'bg-green-300',  // 8
-  'bg-blue-200',   // 9
-  'bg-blue-300',   // 10
+  'bg-green-200', // 7
+  'bg-green-300', // 8
+  'bg-blue-200', // 9
+  'bg-blue-300', // 10
 ];
 
 export function MemoryCard({ memory, onDelete, onUpdate }: MemoryCardProps) {
@@ -71,43 +71,48 @@ export function MemoryCard({ memory, onDelete, onUpdate }: MemoryCardProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
       {/* Header */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="mb-3 flex items-start justify-between">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="mb-1 flex items-center gap-2">
             <h3 className="font-semibold text-gray-900 dark:text-gray-100">{memory.key}</h3>
             <span
-              className={`text-xs px-2 py-0.5 rounded-full ${
+              className={`rounded-full px-2 py-0.5 text-xs ${
                 categoryColors[memory.category] || 'bg-gray-100 text-gray-800'
               }`}
             >
               {categoryLabels[memory.category] || memory.category}
             </span>
             <span
-              className={`text-xs px-2 py-0.5 rounded-full ${memory.type === 'long-term' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-600'}`}
+              className={`rounded-full px-2 py-0.5 text-xs ${memory.type === 'long-term' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-600'}`}
             >
               {memory.type}
             </span>
           </div>
-          <p className="text-gray-700 dark:text-gray-300 text-sm">{memory.value}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300">{memory.value}</p>
         </div>
 
         {/* Delete button */}
         <button
           onClick={() => onDelete(memory.id)}
-          className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 ml-2"
+          className="ml-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
           title="Delete memory"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
           </svg>
         </button>
       </div>
 
       {/* Importance Slider */}
       <div className="mb-3">
-        <div className="flex items-center justify-between mb-1">
+        <div className="mb-1 flex items-center justify-between">
           <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
             Importance: {importance}/10
           </label>
@@ -115,13 +120,13 @@ export function MemoryCard({ memory, onDelete, onUpdate }: MemoryCardProps) {
             <div className="flex gap-2">
               <button
                 onClick={handleSave}
-                className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="rounded bg-blue-600 px-2 py-1 text-xs text-white hover:bg-blue-700"
               >
                 Save
               </button>
               <button
                 onClick={handleCancel}
-                className="text-xs px-2 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                className="rounded bg-gray-300 px-2 py-1 text-xs text-gray-700 hover:bg-gray-400"
               >
                 Cancel
               </button>
@@ -142,14 +147,14 @@ export function MemoryCard({ memory, onDelete, onUpdate }: MemoryCardProps) {
           value={importance}
           onChange={(e) => setImportance(parseInt(e.target.value))}
           disabled={!isEditing}
-          className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
+          className={`h-2 w-full cursor-pointer appearance-none rounded-lg ${
             importanceColors[importance]
-          } ${isEditing ? '' : 'opacity-60 cursor-not-allowed'}`}
+          } ${isEditing ? '' : 'cursor-not-allowed opacity-60'}`}
         />
       </div>
 
       {/* Metadata */}
-      <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+      <div className="space-y-1 text-xs text-gray-500 dark:text-gray-400">
         <div className="flex justify-between">
           <span>Created: {timeSince(memory.createdAt)}</span>
           <span>Accessed: {memory.accessCount}×</span>
@@ -167,7 +172,7 @@ export function MemoryCard({ memory, onDelete, onUpdate }: MemoryCardProps) {
 
       {/* Details (collapsed by default) */}
       {showDetails && (
-        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-xs space-y-1">
+        <div className="mt-3 space-y-1 border-t border-gray-200 pt-3 text-xs dark:border-gray-700">
           <div className="flex justify-between">
             <span className="text-gray-600 dark:text-gray-400">Source:</span>
             <span className="text-gray-900 dark:text-gray-100">{memory.source}</span>
@@ -178,12 +183,16 @@ export function MemoryCard({ memory, onDelete, onUpdate }: MemoryCardProps) {
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600 dark:text-gray-400">Last accessed:</span>
-            <span className="text-gray-900 dark:text-gray-100">{formatDate(memory.lastAccessedAt)}</span>
+            <span className="text-gray-900 dark:text-gray-100">
+              {formatDate(memory.lastAccessedAt)}
+            </span>
           </div>
           {memory.expiresAt && (
             <div className="flex justify-between">
               <span className="text-gray-600 dark:text-gray-400">Expires:</span>
-              <span className="text-gray-900 dark:text-gray-100">{formatDate(memory.expiresAt)}</span>
+              <span className="text-gray-900 dark:text-gray-100">
+                {formatDate(memory.expiresAt)}
+              </span>
             </div>
           )}
         </div>

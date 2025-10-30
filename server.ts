@@ -45,9 +45,7 @@ app.prepare().then(() => {
   server.listen(port, () => {
     console.log(`> Ready on http://${hostname}:${port}`);
     console.log(`> WebSocket server running on ws://${hostname}:${port}/api/v3/collab/ws`);
-    console.log(
-      `> Environment: ${dev ? 'development' : 'production'}`
-    );
+    console.log(`> Environment: ${dev ? 'development' : 'production'}`);
   });
 
   // Graceful shutdown

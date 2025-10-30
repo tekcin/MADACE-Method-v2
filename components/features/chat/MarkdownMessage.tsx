@@ -35,7 +35,7 @@ const components: Components = {
       // Inline code
       return (
         <code
-          className="bg-gray-200 dark:bg-gray-700 text-red-600 dark:text-red-400 px-1.5 py-0.5 rounded text-sm font-mono"
+          className="rounded bg-gray-200 px-1.5 py-0.5 font-mono text-sm text-red-600 dark:bg-gray-700 dark:text-red-400"
           {...props}
         >
           {children}
@@ -51,7 +51,7 @@ const components: Components = {
   a: ({ node, children, href, ...props }) => (
     <a
       href={href}
-      className="text-blue-600 dark:text-blue-400 hover:underline"
+      className="text-blue-600 hover:underline dark:text-blue-400"
       target="_blank"
       rel="noopener noreferrer"
       {...props}
@@ -62,29 +62,29 @@ const components: Components = {
 
   // Headers with proper styling
   h1: ({ node, children, ...props }) => (
-    <h1 className="text-2xl font-bold mt-4 mb-2 text-gray-900 dark:text-gray-100" {...props}>
+    <h1 className="mt-4 mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100" {...props}>
       {children}
     </h1>
   ),
   h2: ({ node, children, ...props }) => (
-    <h2 className="text-xl font-bold mt-3 mb-2 text-gray-900 dark:text-gray-100" {...props}>
+    <h2 className="mt-3 mb-2 text-xl font-bold text-gray-900 dark:text-gray-100" {...props}>
       {children}
     </h2>
   ),
   h3: ({ node, children, ...props }) => (
-    <h3 className="text-lg font-bold mt-2 mb-1 text-gray-900 dark:text-gray-100" {...props}>
+    <h3 className="mt-2 mb-1 text-lg font-bold text-gray-900 dark:text-gray-100" {...props}>
       {children}
     </h3>
   ),
 
   // Lists with proper styling
   ul: ({ node, children, ...props }) => (
-    <ul className="list-disc list-inside my-2 space-y-1" {...props}>
+    <ul className="my-2 list-inside list-disc space-y-1" {...props}>
       {children}
     </ul>
   ),
   ol: ({ node, children, ...props }) => (
-    <ol className="list-decimal list-inside my-2 space-y-1" {...props}>
+    <ol className="my-2 list-inside list-decimal space-y-1" {...props}>
       {children}
     </ol>
   ),
@@ -97,7 +97,7 @@ const components: Components = {
   // Blockquotes
   blockquote: ({ node, children, ...props }) => (
     <blockquote
-      className="border-l-4 border-blue-500 pl-4 py-2 my-2 italic text-gray-700 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20"
+      className="my-2 border-l-4 border-blue-500 bg-blue-50 py-2 pl-4 text-gray-700 italic dark:bg-blue-900/20 dark:text-gray-300"
       {...props}
     >
       {children}
@@ -112,12 +112,17 @@ const components: Components = {
   ),
 
   // Horizontal rules
-  hr: ({ node, ...props }) => <hr className="my-4 border-gray-300 dark:border-gray-600" {...props} />,
+  hr: ({ node, ...props }) => (
+    <hr className="my-4 border-gray-300 dark:border-gray-600" {...props} />
+  ),
 
   // Tables
   table: ({ node, children, ...props }) => (
-    <div className="overflow-x-auto my-4">
-      <table className="min-w-full border-collapse border border-gray-300 dark:border-gray-600" {...props}>
+    <div className="my-4 overflow-x-auto">
+      <table
+        className="min-w-full border-collapse border border-gray-300 dark:border-gray-600"
+        {...props}
+      >
         {children}
       </table>
     </div>
@@ -149,7 +154,7 @@ const components: Components = {
     <img
       src={src}
       alt={alt}
-      className="max-w-full h-auto rounded-lg my-2"
+      className="my-2 h-auto max-w-full rounded-lg"
       loading="lazy"
       {...props}
     />

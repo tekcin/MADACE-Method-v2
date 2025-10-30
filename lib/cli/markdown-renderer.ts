@@ -107,9 +107,7 @@ export function formatMessageForCLI(
   timestamp?: Date,
   isMarkdown = true
 ): string {
-  const timeStr = timestamp
-    ? chalk.dim(`[${timestamp.toLocaleTimeString()}]`)
-    : '';
+  const timeStr = timestamp ? chalk.dim(`[${timestamp.toLocaleTimeString()}]`) : '';
 
   const authorColor = author === 'You' ? chalk.blue : chalk.green;
   const authorStr = authorColor.bold(`${author}:`);

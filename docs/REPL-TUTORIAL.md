@@ -30,6 +30,7 @@ REPL (Read-Eval-Print Loop) is an interactive programming environment that:
 MADACE REPL provides a conversational interface to execute MADACE commands without typing `madace` prefix every time.
 
 **Benefits**:
+
 - Faster workflow (no `madace` prefix needed)
 - Tab completion for commands and agents
 - Command history across sessions
@@ -66,6 +67,7 @@ madace> help
 ```
 
 **Output**:
+
 ```
 Available Commands:
 
@@ -101,6 +103,7 @@ madace> agents list
 ```
 
 **Output**:
+
 ```
 Agents
 
@@ -124,6 +127,7 @@ madace> agents show pm
 ```
 
 **Output**:
+
 ```
 Agent: pm
 
@@ -147,6 +151,7 @@ madace> project status
 ```
 
 **Output**:
+
 ```
 MADACE Project Status
 
@@ -173,6 +178,7 @@ madace> state show
 ```
 
 **Output**:
+
 ```
 State Machine Status
 
@@ -257,6 +263,7 @@ REPL remembers your commands across sessions.
 - **Down arrow (↓)**: Move forward in history
 
 **Example**:
+
 ```bash
 madace> agents list
 (output shown)
@@ -276,6 +283,7 @@ madace> agents list
 Commands are saved to `~/.madace_history` (max 1000 commands).
 
 **View history**:
+
 ```bash
 $ cat ~/.madace_history
 agents list
@@ -458,6 +466,7 @@ madace> agents list --json > agents.json
 ### 3. Use Tab Completion Extensively
 
 Press **Tab** early and often to:
+
 - Autocomplete commands
 - Discover available options
 - Avoid typos
@@ -585,6 +594,7 @@ madace> /exit
 **Cause**: inquirer-autocomplete-prompt not installed
 
 **Solution**:
+
 ```bash
 npm install inquirer-autocomplete-prompt@3.0.1
 ```
@@ -594,6 +604,7 @@ npm install inquirer-autocomplete-prompt@3.0.1
 **Cause**: Permission issue with `~/.madace_history`
 
 **Solution**:
+
 ```bash
 touch ~/.madace_history
 chmod 644 ~/.madace_history
@@ -610,6 +621,7 @@ chmod 644 ~/.madace_history
 **Cause**: Forgot to type `/end`
 
 **Solution**:
+
 ```bash
 multi> /end
 (exits multi-line mode)
@@ -621,31 +633,31 @@ Or press **Ctrl+C** to cancel.
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| **Tab** | Autocomplete command/parameter |
-| **↑** (Up arrow) | Previous command in history |
-| **↓** (Down arrow) | Next command in history |
-| **Ctrl+C** | Interrupt current command / Exit REPL (press twice) |
-| **Ctrl+L** | Clear screen (same as `/clear`) |
-| **Ctrl+A** | Move cursor to start of line |
-| **Ctrl+E** | Move cursor to end of line |
-| **Ctrl+U** | Delete from cursor to start |
-| **Ctrl+K** | Delete from cursor to end |
-| **Ctrl+W** | Delete previous word |
+| Shortcut           | Action                                              |
+| ------------------ | --------------------------------------------------- |
+| **Tab**            | Autocomplete command/parameter                      |
+| **↑** (Up arrow)   | Previous command in history                         |
+| **↓** (Down arrow) | Next command in history                             |
+| **Ctrl+C**         | Interrupt current command / Exit REPL (press twice) |
+| **Ctrl+L**         | Clear screen (same as `/clear`)                     |
+| **Ctrl+A**         | Move cursor to start of line                        |
+| **Ctrl+E**         | Move cursor to end of line                          |
+| **Ctrl+U**         | Delete from cursor to start                         |
+| **Ctrl+K**         | Delete from cursor to end                           |
+| **Ctrl+W**         | Delete previous word                                |
 
 ---
 
 ## Comparison: REPL vs Standard CLI
 
-| Feature | Standard CLI | REPL |
-|---------|-------------|------|
-| Prefix | `madace` required | No prefix needed |
-| Tab completion | Limited | Full support |
-| Command history | Bash history | MADACE history + recent suggestions |
-| Multi-line | Not supported | `/multi` mode with syntax highlighting |
-| Session state | None | Tracks selected agent, workflow |
-| Speed | Slower (new process per command) | Faster (persistent session) |
+| Feature         | Standard CLI                     | REPL                                   |
+| --------------- | -------------------------------- | -------------------------------------- |
+| Prefix          | `madace` required                | No prefix needed                       |
+| Tab completion  | Limited                          | Full support                           |
+| Command history | Bash history                     | MADACE history + recent suggestions    |
+| Multi-line      | Not supported                    | `/multi` mode with syntax highlighting |
+| Session state   | None                             | Tracks selected agent, workflow        |
+| Speed           | Slower (new process per command) | Faster (persistent session)            |
 
 ---
 

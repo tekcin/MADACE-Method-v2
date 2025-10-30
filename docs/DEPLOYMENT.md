@@ -1,9 +1,9 @@
 # MADACE Deployment Guide
 
-**Version:** 2.0.0-alpha
-**Last Updated:** 2025-10-22
+**Version:** 3.0.0-beta
+**Last Updated:** 2025-10-30
 
-This guide covers deploying MADACE v2.0 to production environments.
+This guide covers deploying MADACE v3.0 to production environments with full database support, Web IDE, and collaboration features.
 
 ---
 
@@ -193,6 +193,11 @@ NODE_ENV=production
 PORT=3000
 HOST=0.0.0.0
 
+# Database (Prisma)
+DATABASE_URL=postgresql://user:password@localhost:5432/madace
+# For SQLite (development/single-user):
+# DATABASE_URL=file:./madace-data/madace.db
+
 # LLM Providers (configure at least one)
 GEMINI_API_KEY=your-gemini-api-key
 GEMINI_MODEL=gemini-2.0-flash-exp
@@ -207,9 +212,15 @@ OPENAI_MODEL=gpt-4o-latest
 LOCAL_LLM_BASE_URL=http://localhost:11434
 LOCAL_LLM_MODEL=llama3.1
 
-# WebSocket Sync Service
-SYNC_SERVICE_PORT=3001
-SYNC_SERVICE_AUTO_START=false
+# WebSocket Collaboration Service
+WEBSOCKET_PORT=3001
+WEBSOCKET_AUTO_START=true
+
+# NLU Service (Dialogflow CX)
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
+DIALOGFLOW_PROJECT_ID=your-project-id
+DIALOGFLOW_LOCATION=us-central1
+DIALOGFLOW_AGENT_ID=your-agent-id
 
 # Data Paths
 DATA_DIR=./madace-data
@@ -218,6 +229,10 @@ CONFIG_PATH=./madace-data/config/config.yaml
 # Logging
 LOG_LEVEL=info
 LOG_FILE=./madace-data/logs/application.log
+
+# Performance
+NEXT_TELEMETRY_DISABLED=1
+ANALYZE=false  # Set to true for bundle analysis
 ```
 
 ### Loading Environment Variables
@@ -242,14 +257,18 @@ npm start
 ### Pre-Deployment
 
 - [ ] **Code Review** - All changes reviewed and approved
-- [ ] **Tests Pass** - `npm test` succeeds
+- [ ] **Unit Tests Pass** - `npm test` succeeds
+- [ ] **E2E Tests Pass** - `npm run test:e2e` succeeds
 - [ ] **Linting** - `npm run lint` passes
 - [ ] **Type Check** - `npm run type-check` succeeds
+- [ ] **Quality Checks** - `npm run check-all` passes
 - [ ] **Build Successful** - `npm run build` completes
+- [ ] **Bundle Analysis** - `npm run build:analyze` reviewed
+- [ ] **Database Migrations** - `npm run db:migrate` applied
 - [ ] **Security Audit** - `npm audit` shows no critical vulnerabilities
 - [ ] **Dependencies Updated** - All packages up-to-date
-- [ ] **Environment Variables** - All secrets configured
-- [ ] **Data Backup** - Existing data backed up
+- [ ] **Environment Variables** - All secrets configured (DATABASE_URL, API keys)
+- [ ] **Data Backup** - Database and file system backed up
 
 ### Deployment
 
@@ -414,40 +433,74 @@ sudo certbot renew --dry-run
 
 ---
 
-## Database (Future)
+## Database (Prisma ORM)
 
-**Current Version:** File-based storage (YAML, JSON)
+**Version 3.0+:** Prisma ORM with PostgreSQL/SQLite support
 
-**Future Versions:** PostgreSQL for structured data
+### Database Setup
 
-### Migration Plan
+```bash
+# 1. Configure DATABASE_URL in .env
+DATABASE_URL=postgresql://user:password@localhost:5432/madace
 
-```sql
--- Users table
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+# 2. Run migrations
+npm run db:migrate
 
--- Projects table
-CREATE TABLE projects (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    name VARCHAR(255) NOT NULL,
-    config JSONB,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+# 3. Generate Prisma Client
+npm run db:generate
 
--- Workflows table
-CREATE TABLE workflows (
-    id SERIAL PRIMARY KEY,
-    project_id INTEGER REFERENCES projects(id),
-    name VARCHAR(255) NOT NULL,
-    state JSONB,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
+# 4. Import MADACE agents (first-time setup)
+npm run import-madace-v3
+
+# 5. Verify database
+npm run db:studio  # Opens Prisma Studio at http://localhost:5555
+```
+
+### Database Models
+
+**Key tables in v3.0:**
+
+- **Agent** - AI agent definitions (PM, SM, DEV, etc.)
+- **WorkflowState** - Workflow execution state
+- **ChatSession** - Chat conversation sessions
+- **ChatMessage** - Individual chat messages
+- **MemoryEntry** - Agent memory/context storage
+- **User** - User accounts (future)
+- **Project** - Project management (future)
+
+See `prisma/schema.prisma` for complete schema.
+
+### Database Migrations
+
+```bash
+# Create new migration
+npm run db:migrate
+
+# Reset database (WARNING: deletes all data)
+npm run db:reset
+
+# Push schema changes (dev only)
+npm run db:push
+```
+
+### Production Database
+
+```bash
+# PostgreSQL setup
+sudo apt-get install postgresql postgresql-contrib
+
+# Create database
+sudo -u postgres createdb madace
+
+# Create user
+sudo -u postgres createuser madace_user -P
+
+# Grant permissions
+sudo -u postgres psql
+GRANT ALL PRIVILEGES ON DATABASE madace TO madace_user;
+
+# Update DATABASE_URL in .env.production
+DATABASE_URL=postgresql://madace_user:password@localhost:5432/madace
 ```
 
 ---
@@ -780,5 +833,5 @@ For deployment issues:
 
 ---
 
-**Last Updated:** 2025-10-22
-**Version:** 2.0.0-alpha
+**Last Updated:** 2025-10-30
+**Version:** 3.0.0-beta

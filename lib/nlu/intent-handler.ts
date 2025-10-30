@@ -43,7 +43,8 @@ const handleCreateAgent: IntentActionHandler = async (intent, entities) => {
         success: false,
         message: 'I need to know what type of agent you want to create.',
         requiresFollowUp: true,
-        followUpQuestion: 'What type of agent would you like? (e.g., PM, Analyst, Architect, SM, DEV)',
+        followUpQuestion:
+          'What type of agent would you like? (e.g., PM, Analyst, Architect, SM, DEV)',
       };
     }
 
@@ -171,7 +172,7 @@ const handleGetConfig: IntentActionHandler = async (intent, entities) => {
       return {
         success: true,
         data: config,
-        message: 'Here\'s the full configuration.',
+        message: "Here's the full configuration.",
       };
     }
 
@@ -403,9 +404,6 @@ export function getAvailableIntents(): string[] {
  *
  * Allows dynamic registration of custom intent handlers
  */
-export function registerIntentHandler(
-  intentName: string,
-  handler: IntentActionHandler
-): void {
+export function registerIntentHandler(intentName: string, handler: IntentActionHandler): void {
   intentRegistry[intentName] = handler;
 }

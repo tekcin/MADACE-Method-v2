@@ -93,10 +93,7 @@ export function createTempFile(filename: string, content: string): string {
  * @param customFields - Custom agent fields
  * @returns File path
  */
-export function createTempAgent(
-  name: string,
-  customFields?: Record<string, any>
-): string {
+export function createTempAgent(name: string, customFields?: Record<string, any>): string {
   const content = `agent:
   metadata:
     name: ${name}
@@ -138,7 +135,15 @@ export function createTempWorkflow(
     version: 1.0.0
     description: Test workflow
   steps:
-${steps.map((step) => `    - action: ${step.action}\n      ${Object.entries(step).filter(([k]) => k !== 'action').map(([k, v]) => `${k}: ${v}`).join('\n      ')}`).join('\n')}
+${steps
+  .map(
+    (step) =>
+      `    - action: ${step.action}\n      ${Object.entries(step)
+        .filter(([k]) => k !== 'action')
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n      ')}`
+  )
+  .join('\n')}
 `;
   return createTempFile(`${name}.workflow.yaml`, content);
 }

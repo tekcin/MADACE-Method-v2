@@ -6,21 +6,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  createMessage,
-  listMessages,
-  type CreateMessageInput,
-} from '@/lib/services/chat-service';
+import { createMessage, listMessages, type CreateMessageInput } from '@/lib/services/chat-service';
 import { z } from 'zod';
 
 /**
  * GET /api/v3/chat/sessions/[id]/messages
  * List messages in session
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: sessionId } = await params;
     const { searchParams } = new URL(request.url);
@@ -55,10 +48,7 @@ export async function GET(
  * POST /api/v3/chat/sessions/[id]/messages
  * Send message
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: sessionId } = await params;
     const body = await request.json();

@@ -124,12 +124,7 @@ export class FocusManager {
       return;
     }
 
-    const cycle: PanePosition[] = [
-      'top-left',
-      'top-right',
-      'bottom-right',
-      'bottom-left',
-    ];
+    const cycle: PanePosition[] = ['top-left', 'top-right', 'bottom-right', 'bottom-left'];
 
     const currentIndex = cycle.indexOf(this.currentPosition);
     const nextIndex = (currentIndex + 1) % cycle.length;

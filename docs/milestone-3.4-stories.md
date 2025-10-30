@@ -845,6 +845,7 @@ This milestone transforms MADACE into a fully collaborative development platform
 **Technical Architecture Notes**:
 
 **IDE Architecture**:
+
 ```
 Browser (React)
      │
@@ -862,6 +863,7 @@ Browser (React)
 ```
 
 **Real-time Sync Flow**:
+
 ```
 User A: Type in Monaco → Yjs CRDT → WebSocket Server
                                           ↓

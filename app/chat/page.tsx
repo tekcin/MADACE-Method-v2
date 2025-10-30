@@ -81,7 +81,7 @@ export default function ChatPage() {
   // Show chat interface if session is active
   if (sessionId && selectedAgent) {
     return (
-      <div className="h-screen flex flex-col">
+      <div className="flex h-screen flex-col">
         <ChatInterface
           sessionId={sessionId}
           agentId={selectedAgent.id}
@@ -96,10 +96,10 @@ export default function ChatPage() {
 
   // Show agent selection screen
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+    <div className="min-h-screen bg-gray-50 py-12 dark:bg-gray-900">
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="mb-12 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">
             Chat with AI Agents
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -108,56 +108,76 @@ export default function ChatPage() {
         </div>
 
         {error && (
-          <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
             <p className="text-red-800 dark:text-red-200">{error}</p>
           </div>
         )}
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+            <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600" />
           </div>
         ) : agents.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          <div className="py-20 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+              <svg
+                className="h-8 w-8 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No Agents Available</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+              No Agents Available
+            </h3>
+            <p className="mb-6 text-gray-600 dark:text-gray-400">
               Create your first agent to start chatting
             </p>
             <button
               onClick={() => router.push('/agents')}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700"
             >
               Go to Agents
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {agents.map((agent) => (
               <button
                 key={agent.id}
                 onClick={() => startChat(agent)}
-                className="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-lg transition-all text-left group"
+                className="group rounded-xl border border-gray-200 bg-white p-6 text-left transition-all hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-400"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center text-white font-medium text-lg flex-shrink-0">
+                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-500 text-lg font-medium text-white">
                     {agent.name.substring(0, 2).toUpperCase()}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1 truncate">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="mb-1 truncate text-lg font-semibold text-gray-900 dark:text-gray-100">
                       {agent.title}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                      {agent.name}
-                    </p>
-                    <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 group-hover:underline">
+                    <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">{agent.name}</p>
+                    <div className="flex items-center text-sm text-blue-600 group-hover:underline dark:text-blue-400">
                       <span>Start Chat</span>
-                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </div>
                   </div>

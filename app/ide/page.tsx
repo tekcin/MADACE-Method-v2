@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import MonacoEditor from '@/components/features/ide/MonacoEditor';
+import dynamic from 'next/dynamic';
 import EditorToolbar from '@/components/features/ide/EditorToolbar';
 import TabBar, { FileTab } from '@/components/features/ide/TabBar';
 import FileExplorer from '@/components/features/ide/FileExplorer';
@@ -10,8 +10,29 @@ import ConnectionStatus from '@/components/features/ide/ConnectionStatus';
 import PresenceList from '@/components/features/ide/PresenceList';
 import ToastContainer from '@/components/features/ide/Toast';
 import ChatPanel from '@/components/features/ide/ChatPanel';
-import Terminal from '@/components/features/ide/Terminal';
 import { FileTreeItem } from '@/components/features/ide/FileTreeNode';
+
+// Lazy load heavy components for better performance
+const MonacoEditor = dynamic(() => import('@/components/features/ide/MonacoEditor'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full items-center justify-center bg-gray-900">
+      <div className="text-sm text-gray-400">
+        <div className="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
+        Loading Monaco Editor...
+      </div>
+    </div>
+  ),
+});
+
+const Terminal = dynamic(() => import('@/components/features/ide/Terminal'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-20 items-center justify-center bg-gray-800">
+      <div className="text-sm text-gray-400">Loading Terminal...</div>
+    </div>
+  ),
+});
 
 /**
  * IDE Page Component

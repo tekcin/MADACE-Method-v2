@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { getWebSocketClient } from '@/lib/collab/websocket-client';
-import { CollabEvent } from '@/lib/collab/websocket-server';
+import { CollabEvent } from '@/lib/collab/types';
 import type { ChatMessage as ChatMessageType } from '@/lib/collab/room-manager';
 import ChatMessage from './ChatMessage';
 

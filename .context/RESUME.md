@@ -26,13 +26,15 @@ npm test          # All tests (including 26 chat tests)
 ## 📊 Current State
 
 **Progress**:
+
 - ✅ 26 stories | 129 points completed
 - 🔄 Milestone 3.3: 33/55 points (60%)
 - 🔄 Week 10-11: 10/18 points (56%)
 
 **Just Completed**: [CHAT-001] CLI Chat Mode
+
 - lib/cli/commands/chat.ts (360 lines)
-- __tests__/lib/services/chat-service.test.ts (420 lines)
+- **tests**/lib/services/chat-service.test.ts (420 lines)
 - docs/CHAT-GUIDE.md (850 lines)
 - bin/madace.ts (chat command added)
 - docs/workflow-status.md (updated)
@@ -45,6 +47,7 @@ npm test          # All tests (including 26 chat tests)
 **Goal**: Add infinite scroll + message threading to chat
 
 **Key Tasks**:
+
 1. Web UI: Infinite scroll pagination
 2. Web UI: Reply button + thread indicators
 3. CLI: `/thread` command
@@ -52,6 +55,7 @@ npm test          # All tests (including 26 chat tests)
 5. Tests: Thread structure + pagination
 
 **Start By**:
+
 1. Read docs/milestone-3.3-stories.md (CHAT-002 section)
 2. Move [CHAT-002] to TODO in workflow-status.md
 3. Review existing ChatMessage.replyToId field in schema
@@ -81,13 +85,15 @@ npm run dev
 ## 📁 Important Files
 
 **Modified This Session**:
+
 - lib/cli/commands/chat.ts
-- __tests__/lib/services/chat-service.test.ts
+- **tests**/lib/services/chat-service.test.ts
 - docs/CHAT-GUIDE.md
 - bin/madace.ts
 - docs/workflow-status.md
 
 **Review for CHAT-002**:
+
 - prisma/schema.prisma (ChatMessage model)
 - lib/services/chat-service.ts (getMessage with replies)
 - components/features/chat/Message.tsx

@@ -16,9 +16,7 @@ const DEFAULT_USER_ID = 'default-user'; // TODO: Get from auth/session
  * Register memory commands
  */
 export function registerMemoryCommands(program: Command): void {
-  const memory = program
-    .command('memory')
-    .description('Manage agent memories');
+  const memory = program.command('memory').description('Manage agent memories');
 
   // List memories
   memory
@@ -36,10 +34,7 @@ export function registerMemoryCommands(program: Command): void {
         if (options.agent) {
           const agent = await prisma.agent.findFirst({
             where: {
-              OR: [
-                { id: options.agent },
-                { name: options.agent },
-              ],
+              OR: [{ id: options.agent }, { name: options.agent }],
             },
           });
 
@@ -114,17 +109,19 @@ export function registerMemoryCommands(program: Command): void {
             accessCount: m.accessCount.toString(),
           }));
 
-          console.log(formatTable({
-            columns: [
-              { key: 'key', label: 'Key', width: 20 },
-              { key: 'value', label: 'Value', width: 40 },
-              { key: 'type', label: 'Type', width: 12 },
-              { key: 'category', label: 'Category', width: 20 },
-              { key: 'importance', label: 'Importance', width: 12 },
-              { key: 'accessCount', label: 'Access Count', width: 14 },
-            ],
-            data: tableData,
-          }));
+          console.log(
+            formatTable({
+              columns: [
+                { key: 'key', label: 'Key', width: 20 },
+                { key: 'value', label: 'Value', width: 40 },
+                { key: 'type', label: 'Type', width: 12 },
+                { key: 'category', label: 'Category', width: 20 },
+                { key: 'importance', label: 'Importance', width: 12 },
+                { key: 'accessCount', label: 'Access Count', width: 14 },
+              ],
+              data: tableData,
+            })
+          );
         }
       } catch (error) {
         console.error('Error:', error instanceof Error ? error.message : 'Unknown error');
@@ -235,10 +232,7 @@ export function registerMemoryCommands(program: Command): void {
         // Get agent
         const agent = await prisma.agent.findFirst({
           where: {
-            OR: [
-              { id: options.agent },
-              { name: options.agent },
-            ],
+            OR: [{ id: options.agent }, { name: options.agent }],
           },
         });
 
@@ -305,10 +299,7 @@ export function registerMemoryCommands(program: Command): void {
         if (options.agent) {
           const agent = await prisma.agent.findFirst({
             where: {
-              OR: [
-                { id: options.agent },
-                { name: options.agent },
-              ],
+              OR: [{ id: options.agent }, { name: options.agent }],
             },
           });
 

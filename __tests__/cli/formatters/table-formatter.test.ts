@@ -73,9 +73,7 @@ describe('Table Formatter', () => {
     });
 
     it('should handle null and undefined values', () => {
-      const data = [
-        { name: 'Alice', age: null, role: undefined },
-      ];
+      const data = [{ name: 'Alice', age: null, role: undefined }];
 
       const output = formatTable({
         columns: [

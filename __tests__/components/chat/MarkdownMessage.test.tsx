@@ -33,24 +33,22 @@ describe('MarkdownMessage', () => {
     });
 
     it('should render headers', () => {
-      const { container } = render(<MarkdownMessage content="# Header 1\n## Header 2\n### Header 3" />);
+      const { container } = render(
+        <MarkdownMessage content="# Header 1\n## Header 2\n### Header 3" />
+      );
       expect(container.querySelector('h1')).toBeInTheDocument();
       expect(container.querySelector('h2')).toBeInTheDocument();
       expect(container.querySelector('h3')).toBeInTheDocument();
     });
 
     it('should render unordered lists', () => {
-      const { container } = render(
-        <MarkdownMessage content="- Item 1\n- Item 2\n- Item 3" />
-      );
+      const { container } = render(<MarkdownMessage content="- Item 1\n- Item 2\n- Item 3" />);
       const listItems = container.querySelectorAll('li');
       expect(listItems).toHaveLength(3);
     });
 
     it('should render ordered lists', () => {
-      const { container } = render(
-        <MarkdownMessage content="1. First\n2. Second\n3. Third" />
-      );
+      const { container } = render(<MarkdownMessage content="1. First\n2. Second\n3. Third" />);
       const ol = container.querySelector('ol');
       expect(ol).toBeInTheDocument();
       const listItems = container.querySelectorAll('li');
@@ -64,9 +62,7 @@ describe('MarkdownMessage', () => {
     });
 
     it('should render links with target=_blank', () => {
-      const { container } = render(
-        <MarkdownMessage content="[Click here](https://example.com)" />
-      );
+      const { container } = render(<MarkdownMessage content="[Click here](https://example.com)" />);
       const link = container.querySelector('a');
       expect(link).toBeInTheDocument();
       expect(link?.getAttribute('href')).toBe('https://example.com');
@@ -136,7 +132,8 @@ describe('MarkdownMessage', () => {
     });
 
     it('should sanitize style tags with javascript', () => {
-      const maliciousContent = '<style>body { background: url("javascript:alert(\'XSS\')") }</style>';
+      const maliciousContent =
+        '<style>body { background: url("javascript:alert(\'XSS\')") }</style>';
       const { container } = render(<MarkdownMessage content={maliciousContent} />);
       const style = container.querySelector('style');
       expect(style).not.toBeInTheDocument();

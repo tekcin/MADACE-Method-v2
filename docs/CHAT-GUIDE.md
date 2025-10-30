@@ -69,12 +69,14 @@ npm run madace chat Analyst
 ### Message Features
 
 **Sending Messages**:
+
 - Type in the textarea at the bottom
 - Press **Enter** to send
 - Press **Shift+Enter** for new line without sending
 - Character limit: 4,000 characters
 
 **Message Display**:
+
 - User messages: Blue bubbles on right side
 - Agent messages: Green bubbles on left side
 - System messages: Gray bubbles on left side
@@ -82,6 +84,7 @@ npm run madace chat Analyst
 - Relative timestamps ("Just now", "5m ago")
 
 **Real-time Streaming**:
+
 - Agent responses appear word-by-word
 - Typing indicator with animated pulse dot
 - Automatic scroll to latest message
@@ -110,22 +113,24 @@ madace chat Architect
 
 Once in chat mode, you have access to these commands:
 
-| Command | Description |
-|---------|-------------|
-| `/exit` | End chat session and return to terminal |
-| `/history` | Show last 10 messages in current session |
-| `/multi` | Enter multi-line mode (type `/end` to finish) |
-| `\` | Line continuation (add \ at end of line) |
+| Command    | Description                                   |
+| ---------- | --------------------------------------------- |
+| `/exit`    | End chat session and return to terminal       |
+| `/history` | Show last 10 messages in current session      |
+| `/multi`   | Enter multi-line mode (type `/end` to finish) |
+| `\`        | Line continuation (add \ at end of line)      |
 
 ### Examples
 
 **Simple Chat**:
+
 ```
 You → Hello! Can you help me plan a project?
 Agent: Of course! I'd be happy to help you plan your project...
 ```
 
 **Multi-line Input with `\`**:
+
 ```
 You → I need help with:
 ... → 1. Database design \
@@ -136,6 +141,7 @@ Agent: Let me help you with all three aspects...
 ```
 
 **Multi-line Mode with `/multi`**:
+
 ```
 You → /multi
 Multi-line mode (type /end to finish):
@@ -151,6 +157,7 @@ Agent: This is a good start for your users table...
 ```
 
 **View History**:
+
 ```
 You → /history
 
@@ -211,6 +218,7 @@ model ChatMessage {
 ### Chat Sessions
 
 **Create Session**:
+
 ```http
 POST /api/v3/chat/sessions
 Content-Type: application/json
@@ -236,6 +244,7 @@ Response: 201 Created
 ```
 
 **List User Sessions**:
+
 ```http
 GET /api/v3/chat/sessions?userId=user-123&limit=20&offset=0
 
@@ -261,6 +270,7 @@ Response: 200 OK
 ### Chat Messages
 
 **List Messages**:
+
 ```http
 GET /api/v3/chat/sessions/{sessionId}/messages?limit=50&offset=0
 
@@ -290,6 +300,7 @@ Response: 200 OK
 ```
 
 **Send Message**:
+
 ```http
 POST /api/v3/chat/sessions/{sessionId}/messages
 Content-Type: application/json
@@ -317,6 +328,7 @@ Response: 201 Created
 ### Streaming
 
 **Stream Agent Response**:
+
 ```http
 POST /api/v3/chat/stream
 Content-Type: application/json
@@ -364,19 +376,19 @@ import {
 const session = await createSession({
   userId: 'user-123',
   agentId: 'agent-456',
-  projectId: 'project-789',  // Optional
+  projectId: 'project-789', // Optional
 });
 
 // Get session with messages
 const sessionWithMessages = await getSession('session-abc', {
   limit: 50,
   offset: 0,
-  before: new Date(),  // Optional: for infinite scroll
+  before: new Date(), // Optional: for infinite scroll
 });
 
 // List user's sessions
 const sessions = await listSessionsByUser('user-123', {
-  agentId: 'agent-456',  // Optional filter
+  agentId: 'agent-456', // Optional filter
   limit: 20,
   offset: 0,
 });
@@ -392,7 +404,7 @@ const message = await createMessage({
   sessionId: 'session-abc',
   role: 'user',
   content: 'Hello, agent!',
-  replyToId: 'msg-1',  // Optional
+  replyToId: 'msg-1', // Optional
 });
 
 // Get message with replies
@@ -402,7 +414,7 @@ const messageWithReplies = await getMessage('msg-1');
 const messages = await listMessages('session-abc', {
   limit: 50,
   offset: 0,
-  before: new Date(),  // Optional
+  before: new Date(), // Optional
 });
 
 // Count messages
@@ -524,13 +536,13 @@ agent:
     title: Project Manager
     version: 1.0.0
   persona:
-    role: "Project Manager responsible for planning and coordination"
-    identity: "I am detail-oriented and focused on successful project delivery"
-    communication_style: "Professional, clear, and action-oriented"
+    role: 'Project Manager responsible for planning and coordination'
+    identity: 'I am detail-oriented and focused on successful project delivery'
+    communication_style: 'Professional, clear, and action-oriented'
     principles:
-      - "Always clarify requirements before starting"
-      - "Keep stakeholders informed"
-      - "Focus on delivering value"
+      - 'Always clarify requirements before starting'
+      - 'Keep stakeholders informed'
+      - 'Focus on delivering value'
 ```
 
 The chat system uses `persona.role` and `persona.identity` to build the LLM system prompt.
@@ -540,15 +552,18 @@ The chat system uses `persona.role` and `persona.identity` to build the LLM syst
 ### Web UI Issues
 
 **Chat page shows "No Agents Available"**:
+
 - Create agents at http://localhost:3000/agents
 - Or use the agent loader to load MAM agents
 
 **Messages not streaming**:
+
 - Check browser console for errors
 - Verify LLM API key is configured in `.env`
 - Check `/api/v3/chat/stream` endpoint returns SSE
 
 **Session creation fails**:
+
 - Check database is running (`prisma/dev.db`)
 - Verify user ID is valid
 - Check agent ID exists
@@ -556,6 +571,7 @@ The chat system uses `persona.role` and `persona.identity` to build the LLM syst
 ### CLI Issues
 
 **`madace chat` command not found**:
+
 ```bash
 # Rebuild CLI
 npm run build
@@ -565,6 +581,7 @@ npm run madace chat
 ```
 
 **Agent not found error**:
+
 ```bash
 # List available agents
 npm run madace agents list
@@ -575,6 +592,7 @@ npm run madace chat pm  # Also works (case-insensitive)
 ```
 
 **LLM connection error**:
+
 - Verify API key in `.env`
 - Test LLM at http://localhost:3000/llm-test
 - Check internet connection for cloud APIs
@@ -650,6 +668,7 @@ npm run madace chat pm  # Also works (case-insensitive)
 MADACE v2.0 did not have a chat system. This is a new feature in v3.0.
 
 If migrating agents from v2.0:
+
 1. Export agents from v2.0 (if you have custom agents)
 2. Import to v3.0 using `/agents` page or API
 3. Start chatting with your agents immediately!

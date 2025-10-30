@@ -26,11 +26,12 @@ declare global {
 export const prisma =
   global.prisma ||
   new PrismaClient({
-    log: process.env.NODE_ENV === 'test'
-      ? []
-      : process.env.NODE_ENV === 'production'
-      ? ['error']
-      : ['query', 'warn', 'error'],
+    log:
+      process.env.NODE_ENV === 'test'
+        ? []
+        : process.env.NODE_ENV === 'production'
+          ? ['error']
+          : ['query', 'warn', 'error'],
   });
 
 // In development, store the Prisma client globally to reuse across hot reloads

@@ -29,6 +29,7 @@ The MADACE Dashboard is a real-time terminal user interface (TUI) that provides:
 - **Color-coded indicators** (Green/Yellow/Red/Gray)
 
 **Benefits**:
+
 - Monitor project health at a glance
 - No need to run multiple `madace` commands
 - Track agent status and workflow progress
@@ -75,15 +76,15 @@ Last refresh: 2025-10-29 10:30:20
 
 ### Keyboard Shortcuts Quick Reference
 
-| Key | Action |
-|-----|--------|
-| **← → ↑ ↓** | Navigate between panes |
-| **Tab** | Cycle through panes (clockwise) |
-| **Enter** | Drill down into item details |
-| **Escape** | Return to main view |
-| **r** | Manual refresh |
-| **q** | Quit dashboard |
-| **Ctrl+C** | Force quit |
+| Key         | Action                          |
+| ----------- | ------------------------------- |
+| **← → ↑ ↓** | Navigate between panes          |
+| **Tab**     | Cycle through panes (clockwise) |
+| **Enter**   | Drill down into item details    |
+| **Escape**  | Return to main view             |
+| **r**       | Manual refresh                  |
+| **q**       | Quit dashboard                  |
+| **Ctrl+C**  | Force quit                      |
 
 ---
 
@@ -110,10 +111,12 @@ The dashboard consists of **4 panes** arranged in a 2x2 grid:
 Shows all agents with status indicators.
 
 **Columns**:
+
 - **Icon + Name**: Agent icon and identifier
 - **Status**: Current agent status (● ACTIVE, ○ IDLE, ✗ ERROR)
 
 **Example**:
+
 ```
 ┌─ Agents (5) ──────────────────┐
 │ 🎯 pm          ● ACTIVE        │
@@ -127,6 +130,7 @@ Shows all agents with status indicators.
 ```
 
 **Status Indicators**:
+
 - **● ACTIVE** (Green) - Agent is running
 - **○ IDLE** (Gray) - Agent is available but not running
 - **⚠ PENDING** (Yellow) - Agent is queued
@@ -137,10 +141,12 @@ Shows all agents with status indicators.
 Shows all workflows with progress indicators.
 
 **Columns**:
+
 - **Workflow Name**: Workflow identifier
 - **Status**: Current workflow status
 
 **Example**:
+
 ```
 ┌─ Workflows (3) ───────────────┐
 │ create-prd     ● RUNNING  60% │
@@ -152,6 +158,7 @@ Shows all workflows with progress indicators.
 ```
 
 **Status Indicators**:
+
 - **● RUNNING** (Green) - Workflow is executing
 - **○ IDLE** (Gray) - Workflow is available
 - **⚠ PAUSED** (Yellow) - Workflow is paused
@@ -163,10 +170,12 @@ Shows all workflows with progress indicators.
 Shows story counts and validation status.
 
 **Sections**:
+
 - **Story Counts**: By state (BACKLOG, TODO, IN PROGRESS, DONE)
 - **Validation**: MADACE rule compliance
 
 **Example**:
+
 ```
 ┌─ State Machine ───────────────┐
 │ BACKLOG:     0                │
@@ -184,11 +193,13 @@ Shows story counts and validation status.
 ```
 
 **Validation States**:
+
 - **✅ State valid** (Green) - All MADACE rules obeyed
 - **⚠ Warnings** (Yellow) - Minor issues detected
 - **❌ Invalid** (Red) - MADACE rules violated
 
 **MADACE Rules**:
+
 - Only ONE story in TODO at a time
 - Only ONE story in IN PROGRESS at a time
 
@@ -199,6 +210,7 @@ Shows recent log messages (last 20 lines).
 **Log Format**: `[HH:MM:SS] LEVEL: Message`
 
 **Example**:
+
 ```
 ┌─ Logs ─────────────────────────┐
 │ [10:30:15] INFO: Dashboard     │
@@ -219,6 +231,7 @@ Shows recent log messages (last 20 lines).
 ```
 
 **Log Levels**:
+
 - **INFO** (White) - Informational messages
 - **WARN** (Yellow) - Warning messages
 - **ERROR** (Red) - Error messages
@@ -239,6 +252,7 @@ Move focus between panes:
 - **↓** (Down): Move to bottom pane
 
 **Example**:
+
 ```
 Start at Agents (top-left)
 Press → : Move to Workflows (top-right)
@@ -396,20 +410,20 @@ Press **Escape** to return to the main 4-pane view.
 
 ### Status Colors
 
-| Color | Meaning | Example |
-|-------|---------|---------|
-| **Green** | Active / Running / Success | ● ACTIVE, ✓ COMPLETED |
-| **Yellow** | Pending / Warning / Paused | ⚠ PENDING, ⚠ PAUSED |
-| **Red** | Error / Failed / Critical | ✗ ERROR, ❌ FAILED |
-| **Gray** | Idle / Inactive / Disabled | ○ IDLE, ○ AVAILABLE |
-| **Cyan** | Information / Neutral | Unfocused pane borders |
+| Color      | Meaning                    | Example                |
+| ---------- | -------------------------- | ---------------------- |
+| **Green**  | Active / Running / Success | ● ACTIVE, ✓ COMPLETED  |
+| **Yellow** | Pending / Warning / Paused | ⚠ PENDING, ⚠ PAUSED  |
+| **Red**    | Error / Failed / Critical  | ✗ ERROR, ❌ FAILED     |
+| **Gray**   | Idle / Inactive / Disabled | ○ IDLE, ○ AVAILABLE    |
+| **Cyan**   | Information / Neutral      | Unfocused pane borders |
 
 ### Border Colors
 
-| Color | Meaning |
-|-------|---------|
+| Color      | Meaning                       |
+| ---------- | ----------------------------- |
 | **Yellow** | Focused pane (keyboard focus) |
-| **Cyan** | Unfocused panes |
+| **Cyan**   | Unfocused panes               |
 
 ---
 
@@ -420,6 +434,7 @@ Press **Escape** to return to the main 4-pane view.
 Dashboard automatically refreshes **every 5 seconds**.
 
 **What gets updated**:
+
 - Agent status (checks database)
 - Workflow progress (checks state files)
 - State machine counts (parses workflow-status.md)
@@ -458,6 +473,7 @@ This updates every 5 seconds or when you press **r**.
 **Solution**: Launch dashboard and watch the Workflows pane update in real-time.
 
 **Steps**:
+
 1. Run workflow: `madace workflows run create-prd.yaml`
 2. Launch dashboard: `npm run madace dashboard`
 3. Focus on Workflows pane (press Tab)
@@ -474,6 +490,7 @@ This updates every 5 seconds or when you press **r**.
 **Solution**: Keep dashboard open while transitioning stories.
 
 **Steps**:
+
 1. Launch dashboard: `npm run madace dashboard`
 2. Focus on State Machine pane (press Tab twice)
 3. Check validation status: ✅ or ❌
@@ -490,6 +507,7 @@ This updates every 5 seconds or when you press **r**.
 **Solution**: Use dashboard to identify failing agent and view logs.
 
 **Steps**:
+
 1. Launch dashboard: `npm run madace dashboard`
 2. Scan Agents pane for ✗ ERROR indicators
 3. Focus on Agents pane and press Enter on failing agent
@@ -507,6 +525,7 @@ This updates every 5 seconds or when you press **r**.
 **Solution**: Launch dashboard for at-a-glance project health.
 
 **Steps**:
+
 1. Launch dashboard: `npm run madace dashboard`
 2. Scan all 4 panes:
    - Agents: All active? (green indicators)
@@ -527,11 +546,13 @@ This updates every 5 seconds or when you press **r**.
 **Error**: `npm run madace dashboard` shows error
 
 **Possible Causes**:
+
 1. blessed not installed
 2. Terminal doesn't support 256 colors
 3. Node.js < v20
 
 **Solutions**:
+
 ```bash
 # 1. Install blessed
 npm install blessed@0.1.81 @types/blessed@0.1.25
@@ -567,6 +588,7 @@ echo $COLUMNS x $LINES
 **Cause**: Terminal doesn't support key events
 
 **Solution**: Try a different terminal emulator:
+
 - macOS: iTerm2 (recommended), Terminal.app
 - Linux: gnome-terminal, konsole, alacritty
 - Windows: Windows Terminal, WSL2
@@ -578,6 +600,7 @@ echo $COLUMNS x $LINES
 **Cause**: Terminal doesn't support colors
 
 **Solution**: Set TERM environment variable:
+
 ```bash
 export TERM=xterm-256color
 npm run madace dashboard
@@ -608,6 +631,7 @@ npm run madace dashboard
 Leave dashboard open in a dedicated terminal while working in another.
 
 **Setup**:
+
 - Terminal 1: `npm run madace dashboard` (monitoring)
 - Terminal 2: `npm run madace repl` (commands)
 
@@ -620,6 +644,7 @@ Leave dashboard open in a dedicated terminal while working in another.
 Keep dashboard running even when disconnected.
 
 **With tmux**:
+
 ```bash
 # Create session
 tmux new -s madace-dashboard
@@ -638,11 +663,13 @@ npm run madace dashboard
 Use both dashboard and REPL simultaneously:
 
 **Terminal 1** (top half):
+
 ```bash
 npm run madace dashboard
 ```
 
 **Terminal 2** (bottom half):
+
 ```bash
 npm run madace repl
 ```
@@ -656,6 +683,7 @@ npm run madace repl
 Capture dashboard for documentation:
 
 **Using asciinema** (recommended):
+
 ```bash
 # Install asciinema
 brew install asciinema  # macOS
@@ -675,6 +703,7 @@ asciinema upload dashboard-demo.cast
 ```
 
 **Using screenshot tool**:
+
 - macOS: Cmd+Shift+4
 - Linux: Flameshot, Spectacle
 - Windows: Snipping Tool

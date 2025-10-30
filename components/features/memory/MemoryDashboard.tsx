@@ -118,9 +118,7 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
       const data = await response.json();
 
       if (data.success) {
-        setMemories(
-          memories.map((m) => (m.id === memoryId ? { ...m, importance } : m))
-        );
+        setMemories(memories.map((m) => (m.id === memoryId ? { ...m, importance } : m)));
         loadStats(); // Refresh stats
       } else {
         alert('Failed to update memory: ' + data.error);
@@ -155,10 +153,7 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
   const filteredMemories = memories.filter((memory) => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      return (
-        memory.key.toLowerCase().includes(query) ||
-        memory.value.toLowerCase().includes(query)
-      );
+      return memory.key.toLowerCase().includes(query) || memory.value.toLowerCase().includes(query);
     }
     return true;
   });
@@ -166,19 +161,24 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Agent Memory</h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="mt-1 text-gray-600 dark:text-gray-400">
             Manage persistent agent memories and preferences
           </p>
         </div>
         <button
           onClick={() => setShowClearDialog(true)}
-          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center gap-2"
+          className="flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
           </svg>
           Clear All
         </button>
@@ -186,22 +186,30 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
 
       {/* Stats */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-            <div className="text-blue-900 dark:text-blue-100 font-semibold">Total Memories</div>
-            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">{stats.total}</div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+            <div className="font-semibold text-blue-900 dark:text-blue-100">Total Memories</div>
+            <div className="mt-1 text-3xl font-bold text-blue-600 dark:text-blue-400">
+              {stats.total}
+            </div>
           </div>
-          <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-            <div className="text-green-900 dark:text-green-100 font-semibold">Long-term</div>
-            <div className="text-3xl font-bold text-green-600 dark:text-green-400 mt-1">{stats.longTerm}</div>
+          <div className="rounded-lg bg-green-50 p-4 dark:bg-green-900/20">
+            <div className="font-semibold text-green-900 dark:text-green-100">Long-term</div>
+            <div className="mt-1 text-3xl font-bold text-green-600 dark:text-green-400">
+              {stats.longTerm}
+            </div>
           </div>
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
-            <div className="text-purple-900 dark:text-purple-100 font-semibold">Short-term</div>
-            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-1">{stats.shortTerm}</div>
+          <div className="rounded-lg bg-purple-50 p-4 dark:bg-purple-900/20">
+            <div className="font-semibold text-purple-900 dark:text-purple-100">Short-term</div>
+            <div className="mt-1 text-3xl font-bold text-purple-600 dark:text-purple-400">
+              {stats.shortTerm}
+            </div>
           </div>
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
-            <div className="text-yellow-900 dark:text-yellow-100 font-semibold">Avg. Importance</div>
-            <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mt-1">
+          <div className="rounded-lg bg-yellow-50 p-4 dark:bg-yellow-900/20">
+            <div className="font-semibold text-yellow-900 dark:text-yellow-100">
+              Avg. Importance
+            </div>
+            <div className="mt-1 text-3xl font-bold text-yellow-600 dark:text-yellow-400">
               {stats.avgImportance.toFixed(1)}
             </div>
           </div>
@@ -209,11 +217,11 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
       )}
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           {/* Search */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Search
             </label>
             <input
@@ -221,19 +229,19 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search memories..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-gray-100"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
 
           {/* Type filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Type
             </label>
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-gray-100"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
             >
               <option value="all">All Types</option>
               <option value="short-term">Short-term</option>
@@ -243,13 +251,13 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
 
           {/* Category filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Category
             </label>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-gray-100"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
             >
               <option value="all">All Categories</option>
               <option value="user_preference">User Preference</option>
@@ -261,14 +269,14 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
 
           {/* Sort */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Sort By
             </label>
             <div className="flex gap-2">
               <select
                 value={sortField}
                 onChange={(e) => setSortField(e.target.value as SortField)}
-                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-gray-100"
+                className="flex-1 rounded-md border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
               >
                 <option value="createdAt">Created</option>
                 <option value="lastAccessedAt">Last Accessed</option>
@@ -276,7 +284,7 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
               </select>
               <button
                 onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="rounded-md border border-gray-300 px-3 py-2 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
                 title={`Sort ${sortOrder === 'asc' ? 'ascending' : 'descending'}`}
               >
                 {sortOrder === 'asc' ? '↑' : '↓'}
@@ -288,18 +296,28 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
 
       {/* Memory List */}
       {loading ? (
-        <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="py-12 text-center">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400">Loading memories...</p>
         </div>
       ) : error ? (
-        <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 text-red-600 dark:text-red-400">
+        <div className="rounded-lg bg-red-50 p-4 text-red-600 dark:bg-red-900/20 dark:text-red-400">
           {error}
         </div>
       ) : filteredMemories.length === 0 ? (
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-12 text-center">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+        <div className="rounded-lg bg-gray-50 p-12 text-center dark:bg-gray-800">
+          <svg
+            className="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+            />
           </svg>
           <p className="mt-4 text-gray-600 dark:text-gray-400">
             {searchQuery
@@ -308,7 +326,7 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {filteredMemories.map((memory) => (
             <MemoryCard
               key={memory.id}
@@ -322,24 +340,25 @@ export function MemoryDashboard({ agentId }: MemoryDashboardProps) {
 
       {/* Clear All Confirmation Dialog */}
       {showClearDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
+            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
               Clear All Memories?
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              This will permanently delete all memories for this agent. This action cannot be undone.
+            <p className="mb-6 text-gray-600 dark:text-gray-400">
+              This will permanently delete all memories for this agent. This action cannot be
+              undone.
             </p>
-            <div className="flex gap-3 justify-end">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowClearDialog(false)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+                className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 Cancel
               </button>
               <button
                 onClick={handleClearAll}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
               >
                 Clear All Memories
               </button>

@@ -110,9 +110,7 @@ describe('Intent Handler', () => {
     });
 
     it('should filter agents by module', async () => {
-      const mockAgents = [
-        { id: '1', name: 'PM', title: 'Project Manager', module: 'MAM' },
-      ];
+      const mockAgents = [{ id: '1', name: 'PM', title: 'Project Manager', module: 'MAM' }];
 
       mockAgentService.listAgents.mockResolvedValue(mockAgents as any);
 
@@ -287,9 +285,7 @@ describe('Intent Handler', () => {
 
   describe('handleIntent - error handling', () => {
     it('should handle service errors gracefully', async () => {
-      mockAgentService.listAgents.mockRejectedValue(
-        new Error('Database connection failed')
-      );
+      mockAgentService.listAgents.mockRejectedValue(new Error('Database connection failed'));
 
       const intent: NLUIntent = {
         name: 'list_agents',

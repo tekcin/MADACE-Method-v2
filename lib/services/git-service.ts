@@ -144,9 +144,7 @@ export function isFileIgnored(filePath: string, patterns: string[]): boolean {
 
     // Wildcard match (basic)
     if (pattern.includes('*')) {
-      const regex = new RegExp(
-        '^' + pattern.replace(/\*/g, '.*').replace(/\?/g, '.') + '$'
-      );
+      const regex = new RegExp('^' + pattern.replace(/\*/g, '.*').replace(/\?/g, '.') + '$');
       if (regex.test(filePath)) return true;
     }
 

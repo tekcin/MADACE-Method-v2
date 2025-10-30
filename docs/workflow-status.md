@@ -171,12 +171,12 @@
 - ✅ [COLLAB-002] Add Presence Awareness and Shared Cursors (8 points) - **DONE**
 - ✅ [COLLAB-003] Build In-app Team Chat (3 points) - **DONE**
 
-**Week 20-21: Integrated Terminal & Testing (13 points)** - 🔄 In Progress
+**Week 20-21: Integrated Terminal & Testing (13 points)** - ✅ **COMPLETE**
 
 - ✅ [IDE-004] Add Integrated Terminal with Command Execution (8 points) - **DONE**
-- 📅 [IDE-005] Testing, Optimization, and v3.0-beta Release (5 points)
+- ✅ [IDE-005] Testing, Optimization, and v3.0-beta Release (5 points) - **DONE**
 
-**Milestone 3.4 Total**: 11 stories | 71 points
+**Milestone 3.4 Total**: 11 stories | 71 points ✅ **COMPLETE**
 **Detailed Breakdown**: See `docs/milestone-3.4-stories.md`
 
 ---

@@ -46,16 +46,10 @@ describe('CLI Integration Tests', () => {
         userBase: 2,
         security: 2,
         duration: 2,
-        existingCode: 0
+        existingCode: 0,
       });
 
-      const result = await runCLI([
-        'assess-scale',
-        '--json',
-        jsonInput,
-        '--format',
-        'table'
-      ]);
+      const result = await runCLI(['assess-scale', '--json', jsonInput, '--format', 'table']);
 
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain('Level:');
@@ -71,16 +65,10 @@ describe('CLI Integration Tests', () => {
         userBase: 2,
         security: 2,
         duration: 2,
-        existingCode: 0
+        existingCode: 0,
       });
 
-      const result = await runCLI([
-        'assess-scale',
-        '--json',
-        jsonInput,
-        '--format',
-        'json'
-      ]);
+      const result = await runCLI(['assess-scale', '--json', jsonInput, '--format', 'json']);
 
       expect(result.exitCode).toBe(0);
       const parsed = JSON.parse(result.stdout);

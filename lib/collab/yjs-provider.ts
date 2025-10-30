@@ -77,18 +77,13 @@ export class YjsProviderManager {
     const doc = new Y.Doc();
 
     // Create WebSocket provider for this document
-    const provider = new WebsocketProvider(
-      this.serverUrl,
-      docId,
-      doc,
-      {
-        connect: true,
-        params: {
-          roomId,
-          filePath,
-        },
-      }
-    );
+    const provider = new WebsocketProvider(this.serverUrl, docId, doc, {
+      connect: true,
+      params: {
+        roomId,
+        filePath,
+      },
+    });
 
     // Get shared text type for Monaco Editor binding
     const text = doc.getText('monaco');
@@ -199,10 +194,7 @@ export class MonacoYjsBinding {
   private monacoDisposable: { dispose: () => void } | null = null;
   private yjsObserver: ((event: Y.YTextEvent) => void) | null = null;
 
-  constructor(
-    editor: MonacoEditor.IStandaloneCodeEditor,
-    yText: Y.Text
-  ) {
+  constructor(editor: MonacoEditor.IStandaloneCodeEditor, yText: Y.Text) {
     this.editor = editor;
     this.yText = yText;
 
@@ -266,9 +258,7 @@ export class MonacoYjsBinding {
           if (op.retain) {
             offset += op.retain;
           } else if (op.insert) {
-            const insertText = Array.isArray(op.insert)
-              ? op.insert.join('')
-              : String(op.insert);
+            const insertText = Array.isArray(op.insert) ? op.insert.join('') : String(op.insert);
 
             const position = model.getPositionAt(offset);
             const range = {
@@ -278,11 +268,7 @@ export class MonacoYjsBinding {
               endColumn: position.column,
             };
 
-            model.pushEditOperations(
-              [],
-              [{ range, text: insertText }],
-              () => null
-            );
+            model.pushEditOperations([], [{ range, text: insertText }], () => null);
 
             offset += insertText.length;
           } else if (op.delete) {
@@ -297,11 +283,7 @@ export class MonacoYjsBinding {
               endColumn: endPosition.column,
             };
 
-            model.pushEditOperations(
-              [],
-              [{ range, text: '' }],
-              () => null
-            );
+            model.pushEditOperations([], [{ range, text: '' }], () => null);
           }
         });
       }

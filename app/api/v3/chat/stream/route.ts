@@ -5,11 +5,15 @@
  */
 
 import { NextRequest } from 'next/server';
-import { createMessage, getMessage, getSession } from '@/lib/services/chat-service';
+import { createMessage, getSession } from '@/lib/services/chat-service';
 import { createLLMClient } from '@/lib/llm/client';
 import { getLLMConfigFromEnv } from '@/lib/llm/config';
 import { getAgentByName } from '@/lib/services/agent-service';
-import { buildPromptMessages, formatConversationHistory, limitPromptContext } from '@/lib/llm/prompt-builder';
+import {
+  buildPromptMessages,
+  formatConversationHistory,
+  limitPromptContext,
+} from '@/lib/llm/prompt-builder';
 import { extractAndSaveMemories } from '@/lib/nlu/memory-extractor';
 
 /**

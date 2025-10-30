@@ -195,28 +195,33 @@ npm run start:collab
 ```
 
 Pros:
+
 - Simple deployment
 - Single port (3000)
 - Shared HTTP/WS server
 
 Cons:
+
 - Vertical scaling only
 - All traffic on one server
 
 ### Option 2: Separate WebSocket Server (Scalable)
 
 1. **App Server** (Next.js):
+
    ```bash
    npm run start  # Standard Next.js server
    ```
 
 2. **WebSocket Server** (separate process):
+
    ```bash
    # Create dedicated WS server
    npx tsx lib/collab/standalone-ws-server.ts
    ```
 
 3. **Nginx Configuration**:
+
    ```nginx
    # Proxy WebSocket requests to WS server
    location /api/v3/collab/ws {
@@ -233,11 +238,13 @@ Cons:
    ```
 
 Pros:
+
 - Horizontal scaling
 - Isolate WebSocket load
 - Better resource management
 
 Cons:
+
 - More complex deployment
 - Two services to manage
 
@@ -291,7 +298,7 @@ services:
   madace-web:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       - HOSTNAME=0.0.0.0
@@ -307,12 +314,14 @@ services:
 ### Issue: WebSocket connection fails
 
 **Solution 1**: Check if custom server is running:
+
 ```bash
 # Should show WebSocket server message
 npm run dev:collab
 ```
 
 **Solution 2**: Verify WebSocket URL:
+
 ```typescript
 console.log(process.env.NEXT_PUBLIC_WS_URL);
 ```
@@ -320,13 +329,11 @@ console.log(process.env.NEXT_PUBLIC_WS_URL);
 ### Issue: CORS errors
 
 **Solution**: Update server CORS configuration:
+
 ```typescript
 // In server.ts
 const wsServer = initializeWebSocketServer(server, {
-  origin: [
-    'http://localhost:3000',
-    'https://yourdomain.com',
-  ],
+  origin: ['http://localhost:3000', 'https://yourdomain.com'],
   methods: ['GET', 'POST'],
   credentials: true,
 });
@@ -335,6 +342,7 @@ const wsServer = initializeWebSocketServer(server, {
 ### Issue: Connection drops frequently
 
 **Solution**: Increase ping timeout:
+
 ```typescript
 // In websocket-client.ts
 client.connect(undefined, {
@@ -406,7 +414,8 @@ const eventCounts = new Map<string, number>();
 function rateLimit(socketId: string): boolean {
   const count = eventCounts.get(socketId) || 0;
 
-  if (count > 100) { // Max 100 events per second
+  if (count > 100) {
+    // Max 100 events per second
     return false;
   }
 

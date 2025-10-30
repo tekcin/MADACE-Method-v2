@@ -6,10 +6,7 @@ import { getMessageThread } from '@/lib/services/chat-service';
  *
  * Get full thread for a message (root + all replies)
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
 
@@ -23,10 +20,7 @@ export async function GET(
     const thread = await getMessageThread(id);
 
     if (thread.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Message not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Message not found' }, { status: 404 });
     }
 
     return NextResponse.json({

@@ -56,7 +56,16 @@ export class EntityValidator {
   constructor(options: EntityValidationOptions = {}) {
     this.options = {
       projectRoot: options.projectRoot || process.cwd(),
-      allowedExtensions: options.allowedExtensions || ['.md', '.yaml', '.yml', '.json', '.ts', '.tsx', '.js', '.jsx'],
+      allowedExtensions: options.allowedExtensions || [
+        '.md',
+        '.yaml',
+        '.yml',
+        '.json',
+        '.ts',
+        '.tsx',
+        '.js',
+        '.jsx',
+      ],
       allowFuzzyCorrection: options.allowFuzzyCorrection ?? true,
     };
   }
@@ -156,7 +165,9 @@ export class EntityValidator {
       // Store normalized agent name (from database)
       result.normalized = agent.name;
     } catch (error) {
-      result.errors.push(`Failed to validate agent: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      result.errors.push(
+        `Failed to validate agent: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -192,7 +203,9 @@ export class EntityValidator {
     const storyIdPattern = /^[A-Z]+-\d{3}$/;
 
     if (!storyIdPattern.test(storyId)) {
-      result.errors.push(`Invalid story ID format: "${storyId}". Expected format: [PREFIX-NUMBER] (e.g., DB-001, NLU-002)`);
+      result.errors.push(
+        `Invalid story ID format: "${storyId}". Expected format: [PREFIX-NUMBER] (e.g., DB-001, NLU-002)`
+      );
       return;
     }
 
@@ -203,12 +216,7 @@ export class EntityValidator {
       await stateMachine.load();
 
       const status = stateMachine.getStatus();
-      const allStories = [
-        ...status.backlog,
-        ...status.todo,
-        ...status.inProgress,
-        ...status.done,
-      ];
+      const allStories = [...status.backlog, ...status.todo, ...status.inProgress, ...status.done];
 
       const story = allStories.find((s) => s.id === storyId);
 
@@ -221,7 +229,9 @@ export class EntityValidator {
       // Store normalized story ID
       result.normalized = story.id;
     } catch (error) {
-      result.warnings.push(`Could not verify story existence: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      result.warnings.push(
+        `Could not verify story existence: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 

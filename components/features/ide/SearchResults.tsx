@@ -74,7 +74,7 @@ export default function SearchResults({
 
     return (
       <span
-        className={`text-xs font-bold px-1.5 py-0.5 rounded ${badge.color}`}
+        className={`rounded px-1.5 py-0.5 text-xs font-bold ${badge.color}`}
         title={`Git status: ${status}`}
       >
         {badge.label}
@@ -91,7 +91,7 @@ export default function SearchResults({
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-12 h-12 mb-3 text-gray-600"
+          className="mb-3 h-12 w-12 text-gray-600"
         >
           <path
             strokeLinecap="round"
@@ -100,7 +100,7 @@ export default function SearchResults({
           />
         </svg>
         <p className="text-sm">No files found</p>
-        <p className="text-xs text-gray-500 mt-1">Try a different search term</p>
+        <p className="mt-1 text-xs text-gray-500">Try a different search term</p>
       </div>
     );
   }
@@ -112,14 +112,11 @@ export default function SearchResults({
           key={file.id}
           ref={index === selectedIndex ? selectedRef : null}
           onClick={() => onSelect(file)}
-          className={`
-            flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors
-            ${
-              index === selectedIndex
-                ? 'bg-blue-900 bg-opacity-40 border-l-2 border-blue-500'
-                : 'hover:bg-gray-700'
-            }
-          `}
+          className={`flex cursor-pointer items-center gap-3 px-4 py-2.5 transition-colors ${
+            index === selectedIndex
+              ? 'bg-opacity-40 border-l-2 border-blue-500 bg-blue-900'
+              : 'hover:bg-gray-700'
+          } `}
         >
           {/* File icon */}
           <svg
@@ -128,7 +125,7 @@ export default function SearchResults({
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className={`w-5 h-5 flex-shrink-0 ${getFileIconColor(file.extension)}`}
+            className={`h-5 w-5 flex-shrink-0 ${getFileIconColor(file.extension)}`}
           >
             <path
               strokeLinecap="round"
@@ -138,9 +135,9 @@ export default function SearchResults({
           </svg>
 
           {/* File info */}
-          <div className="flex-1 min-w-0">
-            <div className="text-sm text-white font-medium truncate">{file.name}</div>
-            <div className="text-xs text-gray-400 truncate">{file.path}</div>
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-sm font-medium text-white">{file.name}</div>
+            <div className="truncate text-xs text-gray-400">{file.path}</div>
           </div>
 
           {/* Git status badge */}
@@ -152,7 +149,7 @@ export default function SearchResults({
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              className="w-4 h-4 text-blue-400 flex-shrink-0"
+              className="h-4 w-4 flex-shrink-0 text-blue-400"
             >
               <path
                 fillRule="evenodd"

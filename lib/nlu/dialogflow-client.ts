@@ -123,7 +123,9 @@ export class DialogflowCXProvider implements INLUProvider {
       };
     } catch (error) {
       console.error('[DialogflowCX] Parse error:', error);
-      throw new Error(`Failed to parse intent: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to parse intent: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 

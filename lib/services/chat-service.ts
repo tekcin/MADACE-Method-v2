@@ -5,7 +5,7 @@
  */
 
 import { prisma } from '@/lib/database/client';
-import type { ChatSession, ChatMessage, Prisma } from '@prisma/client';
+import type { ChatSession, ChatMessage } from '@prisma/client';
 import { z } from 'zod';
 
 // ==============================================================================
@@ -589,7 +589,8 @@ export async function exportSessionAsMarkdown(sessionId: string): Promise<string
 
     // Message header
     const roleEmoji = message.role === 'user' ? '👤' : message.role === 'agent' ? '🤖' : '⚙️';
-    const roleName = message.role === 'user' ? 'User' : message.role === 'agent' ? 'Agent' : 'System';
+    const roleName =
+      message.role === 'user' ? 'User' : message.role === 'agent' ? 'Agent' : 'System';
     lines.push(`### ${roleEmoji} ${roleName} - ${timestamp}`);
     lines.push('');
 

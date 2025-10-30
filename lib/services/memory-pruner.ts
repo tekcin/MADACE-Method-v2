@@ -60,10 +60,7 @@ export async function pruneMemories(): Promise<PruningResult> {
         lte: thirtyDaysAgo,
       },
       // Only if not explicitly set to never expire
-      OR: [
-        { expiresAt: null },
-        { expiresAt: { gt: now } },
-      ],
+      OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
     },
   });
   result.details.lowImportance30Days = lowImportanceResult.count;
@@ -78,10 +75,7 @@ export async function pruneMemories(): Promise<PruningResult> {
       createdAt: {
         lte: ninetyDaysAgo,
       },
-      OR: [
-        { expiresAt: null },
-        { expiresAt: { gt: now } },
-      ],
+      OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
     },
   });
   result.details.mediumImportance90Days = mediumImportanceResult.count;
@@ -126,10 +120,7 @@ export async function adjustMemoryImportance(): Promise<number> {
     // Calculate new importance (capped at 10)
     const newImportance = Math.min(
       10,
-      Math.max(
-        1,
-        Math.round(memory.importance * (0.5 + accessFrequency))
-      )
+      Math.max(1, Math.round(memory.importance * (0.5 + accessFrequency)))
     );
 
     // Only update if importance changed

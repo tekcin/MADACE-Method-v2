@@ -84,9 +84,7 @@ export async function runCLISuccess(args: string[]): Promise<string> {
 export async function runCLIFailure(args: string[]): Promise<string> {
   const result = await runCLI(args);
   if (result.exitCode === 0) {
-    throw new Error(
-      `CLI command unexpectedly succeeded\nStdout: ${result.stdout}`
-    );
+    throw new Error(`CLI command unexpectedly succeeded\nStdout: ${result.stdout}`);
   }
   return result.stderr;
 }

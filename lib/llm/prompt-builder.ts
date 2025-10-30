@@ -5,7 +5,11 @@
  */
 
 import type { Agent } from '@prisma/client';
-import { getMemories, formatMemoriesForPrompt, trackMemoryAccesses } from '@/lib/services/memory-service';
+import {
+  getMemories,
+  formatMemoriesForPrompt,
+  trackMemoryAccesses,
+} from '@/lib/services/memory-service';
 
 /**
  * Message for LLM
@@ -96,10 +100,7 @@ export async function buildPromptMessages(
  * Limit prompt context to avoid exceeding LLM token limits
  * Keeps most recent messages within token budget
  */
-export function limitPromptContext(
-  messages: LLMMessage[],
-  maxTokens = 4000
-): LLMMessage[] {
+export function limitPromptContext(messages: LLMMessage[], maxTokens = 4000): LLMMessage[] {
   // Rough estimate: 1 token ≈ 4 characters
   const estimateTokens = (text: string) => Math.ceil(text.length / 4);
 

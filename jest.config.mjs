@@ -15,15 +15,8 @@ const config = {
     'node_modules/(?!(inquirer|@inquirer|chalk|ansi-styles|strip-ansi|ansi-regex)/)',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  testMatch: [
-    '**/__tests__/**/*.test.ts',
-    '**/__tests__/**/*.spec.ts',
-    '**/app/api/**/*.spec.ts',
-  ],
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/__tests__/helpers/',
-  ],
+  testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.spec.ts', '**/app/api/**/*.spec.ts'],
+  testPathIgnorePatterns: ['/node_modules/', '/__tests__/helpers/'],
 };
 
 export default createJestConfig(config);

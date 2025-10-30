@@ -6,10 +6,7 @@ import { exportSessionAsMarkdown } from '@/lib/services/chat-service';
  *
  * Export chat session as Markdown
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { sessionId: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { sessionId: string } }) {
   try {
     const { sessionId } = params;
 
@@ -34,10 +31,7 @@ export async function GET(
     console.error('[API] Export session error:', error);
 
     if (error instanceof Error && error.message.includes('not found')) {
-      return NextResponse.json(
-        { success: false, error: 'Session not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'Session not found' }, { status: 404 });
     }
 
     return NextResponse.json(

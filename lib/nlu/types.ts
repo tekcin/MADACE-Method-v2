@@ -224,10 +224,7 @@ export interface INLUProvider {
  *
  * Function signature for handling a specific intent
  */
-export type IntentActionHandler = (
-  intent: NLUIntent,
-  entities: NLUEntity[]
-) => Promise<any>;
+export type IntentActionHandler = (intent: NLUIntent, entities: NLUEntity[]) => Promise<any>;
 
 /**
  * Intent Action Registry

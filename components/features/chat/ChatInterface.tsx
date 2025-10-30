@@ -24,7 +24,7 @@ export default function ChatInterface({
   sessionId,
   agentId,
   agentName,
-  userId,
+  userId: _userId,
   userName,
   onClose,
 }: ChatInterfaceProps) {
@@ -210,12 +210,10 @@ export default function ChatInterface({
                 // Update streaming message
                 setMessages((prev) =>
                   prev.map((m) =>
-                    m.id === placeholderMessage.id
-                      ? { ...m, content: agentContent }
-                      : m
+                    m.id === placeholderMessage.id ? { ...m, content: agentContent } : m
                   )
                 );
-              } catch (e) {
+              } catch (_e) {
                 // Ignore JSON parse errors
               }
             }
@@ -245,11 +243,11 @@ export default function ChatInterface({
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-full flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <div className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-medium">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 font-medium text-white">
             {agentName.substring(0, 2).toUpperCase()}
           </div>
           <div>
@@ -263,11 +261,21 @@ export default function ChatInterface({
         {onClose && (
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
             title="Close chat"
           >
-            <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="h-5 w-5 text-gray-500 dark:text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         )}
@@ -276,17 +284,27 @@ export default function ChatInterface({
       {/* Messages */}
       <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-6">
         {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+          <div className="flex h-full items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600" />
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          <div className="flex h-full flex-col items-center justify-center text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
+              <svg
+                className="h-8 w-8 text-green-600 dark:text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
               Start a conversation with {agentName}
             </h3>
             <p className="text-gray-500 dark:text-gray-400">
@@ -298,14 +316,16 @@ export default function ChatInterface({
             {/* Load more indicator */}
             {isLoadingMore && (
               <div className="flex items-center justify-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
+                <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600" />
                 <span className="ml-2 text-sm text-gray-500">Loading more messages...</span>
               </div>
             )}
 
             {!hasMore && messages.length > 50 && (
-              <div className="text-center py-4">
-                <span className="text-sm text-gray-500">You've reached the beginning of this conversation</span>
+              <div className="py-4 text-center">
+                <span className="text-sm text-gray-500">
+                  You&apos;ve reached the beginning of this conversation
+                </span>
               </div>
             )}
 
@@ -326,10 +346,20 @@ export default function ChatInterface({
 
       {/* Reply indicator */}
       {replyingTo && (
-        <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border-t border-blue-200 dark:border-blue-800 flex items-center justify-between">
+        <div className="flex items-center justify-between border-t border-blue-200 bg-blue-50 px-4 py-2 dark:border-blue-800 dark:bg-blue-900/20">
           <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+            <svg
+              className="h-4 w-4 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+              />
             </svg>
             <span className="text-sm text-gray-700 dark:text-gray-300">
               Replying to: {replyingTo.content.substring(0, 50)}...
@@ -337,10 +367,20 @@ export default function ChatInterface({
           </div>
           <button
             onClick={() => setReplyingTo(null)}
-            className="p-1 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+            className="rounded p-1 transition-colors hover:bg-blue-100 dark:hover:bg-blue-800"
           >
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="h-4 w-4 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>

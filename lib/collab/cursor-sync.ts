@@ -101,7 +101,12 @@ export class CursorSyncManager {
   /**
    * Handle local selection change
    */
-  private handleLocalSelectionChange(selection: { startLineNumber: number; startColumn: number; endLineNumber: number; endColumn: number }): void {
+  private handleLocalSelectionChange(selection: {
+    startLineNumber: number;
+    startColumn: number;
+    endLineNumber: number;
+    endColumn: number;
+  }): void {
     // Only update if there's an actual selection (not just cursor)
     if (
       selection.startLineNumber === selection.endLineNumber &&

@@ -196,16 +196,16 @@ export function createProjectCommand(): Command {
         const status = {
           'Project Name': configuration.project_name,
           'Output Folder': configuration.output_folder,
-          'User': configuration.user_name,
-          'Language': configuration.communication_language,
+          User: configuration.user_name,
+          Language: configuration.communication_language,
           'Enabled Modules': enabledModules || 'None',
           'LLM Provider': llmStatus,
           'Workflow Status': workflowStatus,
           'Total Stories': totalStories,
-          'Completed': completedStories,
+          Completed: completedStories,
           'In Progress': inProgressStories,
           'To Do': todoStories,
-          'Backlog': totalStories - completedStories - inProgressStories - todoStories,
+          Backlog: totalStories - completedStories - inProgressStories - todoStories,
         };
 
         if (options.json) {
@@ -247,15 +247,13 @@ export function createProjectCommand(): Command {
         const content = readFileSync(statusFile, 'utf-8');
 
         // Extract story data
-        const storyPattern =
-          /^- ([📋🔄✅]) \[([A-Z]+-\d+)\] (.+?) \((\d+) points?\)/gm;
+        const storyPattern = /^- ([📋🔄✅]) \[([A-Z]+-\d+)\] (.+?) \((\d+) points?\)/gm;
         const stories = [];
         let match;
 
         while ((match = storyPattern.exec(content)) !== null) {
           const [, emoji, id, title, points] = match;
-          const status =
-            emoji === '✅' ? 'DONE' : emoji === '🔄' ? 'IN PROGRESS' : 'BACKLOG/TODO';
+          const status = emoji === '✅' ? 'DONE' : emoji === '🔄' ? 'IN PROGRESS' : 'BACKLOG/TODO';
 
           stories.push({
             id,

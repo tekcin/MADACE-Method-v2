@@ -35,10 +35,7 @@ export async function GET(
 
     // Check if file exists
     if (!fileExists(filePath)) {
-      return NextResponse.json(
-        { success: false, error: 'File not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'File not found' }, { status: 404 });
     }
 
     // Read file content
@@ -66,23 +63,14 @@ export async function GET(
 
       // File not found
       if (error.message.includes('File not found')) {
-        return NextResponse.json(
-          { success: false, error: 'File not found' },
-          { status: 404 }
-        );
+        return NextResponse.json({ success: false, error: 'File not found' }, { status: 404 });
       }
 
       // Other errors
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(
-      { success: false, error: 'Unknown error occurred' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Unknown error occurred' }, { status: 500 });
   }
 }
 
@@ -137,16 +125,10 @@ export async function PUT(
       }
 
       // Other errors
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(
-      { success: false, error: 'Unknown error occurred' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Unknown error occurred' }, { status: 500 });
   }
 }
 
@@ -188,22 +170,13 @@ export async function POST(
 
       // Directory not found
       if (error.message.includes('Directory not found')) {
-        return NextResponse.json(
-          { success: false, error: 'Directory not found' },
-          { status: 404 }
-        );
+        return NextResponse.json({ success: false, error: 'Directory not found' }, { status: 404 });
       }
 
       // Other errors
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(
-      { success: false, error: 'Unknown error occurred' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Unknown error occurred' }, { status: 500 });
   }
 }

@@ -63,7 +63,7 @@ export function createStateCommand(): Command {
               'TODO Count': status.todo.length,
               'In Progress Count': status.inProgress.length,
               'Done Count': status.done.length,
-              'Validation': validation.valid ? '✅ Valid' : '❌ Invalid',
+              Validation: validation.valid ? '✅ Valid' : '❌ Invalid',
             },
             'State Machine Status'
           )
@@ -253,7 +253,8 @@ export function createStateCommand(): Command {
         const completionRate =
           totalPoints > 0 ? ((completedPoints / totalPoints) * 100).toFixed(1) : '0.0';
 
-        const velocityByDone = completedStories > 0 ? (completedPoints / completedStories).toFixed(1) : '0.0';
+        const velocityByDone =
+          completedStories > 0 ? (completedPoints / completedStories).toFixed(1) : '0.0';
 
         const stats = {
           'Total Stories': totalStories,

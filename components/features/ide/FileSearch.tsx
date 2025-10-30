@@ -44,9 +44,12 @@ export default function FileSearch({
 
   // Support both controlled and uncontrolled mode
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
-  const setIsOpen = controlledIsOpen !== undefined ? (value: boolean) => {
-    if (!value && onClose) onClose();
-  } : setInternalIsOpen;
+  const setIsOpen =
+    controlledIsOpen !== undefined
+      ? (value: boolean) => {
+          if (!value && onClose) onClose();
+        }
+      : setInternalIsOpen;
 
   // Fuzzy search with Fuse.js
   const fuse = useRef(
@@ -164,19 +167,19 @@ export default function FileSearch({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-50 pt-20"
+      className="bg-opacity-50 fixed inset-0 z-50 flex items-start justify-center bg-black pt-20"
       onClick={handleOverlayClick}
     >
-      <div className="w-full max-w-2xl bg-gray-800 rounded-lg shadow-2xl border border-gray-700 overflow-hidden">
+      <div className="w-full max-w-2xl overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-2xl">
         {/* Search input */}
-        <div className="flex items-center px-4 py-3 border-b border-gray-700">
+        <div className="flex items-center border-b border-gray-700 px-4 py-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5 text-gray-400 mr-3"
+            className="mr-3 h-5 w-5 text-gray-400"
           >
             <path
               strokeLinecap="round"
@@ -190,14 +193,14 @@ export default function FileSearch({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search files... (fuzzy matching enabled)"
-            className="flex-1 bg-transparent text-white text-sm placeholder-gray-400 focus:outline-none"
+            className="flex-1 bg-transparent text-sm text-white placeholder-gray-400 focus:outline-none"
           />
-          <div className="text-xs text-gray-500 ml-3 flex items-center gap-2">
-            <kbd className="px-2 py-1 bg-gray-700 rounded text-gray-300">↑↓</kbd>
+          <div className="ml-3 flex items-center gap-2 text-xs text-gray-500">
+            <kbd className="rounded bg-gray-700 px-2 py-1 text-gray-300">↑↓</kbd>
             <span>Navigate</span>
-            <kbd className="px-2 py-1 bg-gray-700 rounded text-gray-300">↵</kbd>
+            <kbd className="rounded bg-gray-700 px-2 py-1 text-gray-300">↵</kbd>
             <span>Select</span>
-            <kbd className="px-2 py-1 bg-gray-700 rounded text-gray-300">ESC</kbd>
+            <kbd className="rounded bg-gray-700 px-2 py-1 text-gray-300">ESC</kbd>
             <span>Close</span>
           </div>
         </div>

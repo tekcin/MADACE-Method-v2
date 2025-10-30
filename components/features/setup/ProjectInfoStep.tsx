@@ -23,7 +23,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
   };
 
   // Auto-assess when assessment fields change
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   useEffect(() => {
     const {
       projectSize,

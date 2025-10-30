@@ -136,9 +136,9 @@ export class PresenceManager {
       added: number[];
       updated: number[];
       removed: number[];
-    }
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    , origin: any
+    origin: any
   ): void {
     if (!this.awareness) return;
 

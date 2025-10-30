@@ -21,17 +21,11 @@ export async function POST(request: NextRequest) {
 
     // Validate request
     if (!body.text || typeof body.text !== 'string') {
-      return NextResponse.json(
-        { error: 'Missing or invalid "text" field' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing or invalid "text" field' }, { status: 400 });
     }
 
     if (!body.sessionId || typeof body.sessionId !== 'string') {
-      return NextResponse.json(
-        { error: 'Missing or invalid "sessionId" field' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing or invalid "sessionId" field' }, { status: 400 });
     }
 
     // Create parse request
@@ -44,10 +38,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Check if Dialogflow CX is configured
-    if (
-      !process.env.DIALOGFLOW_PROJECT_ID ||
-      !process.env.DIALOGFLOW_AGENT_ID
-    ) {
+    if (!process.env.DIALOGFLOW_PROJECT_ID || !process.env.DIALOGFLOW_AGENT_ID) {
       // NLU not configured, return helpful error
       return NextResponse.json(
         {
@@ -82,10 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle intent with action handler
-    const actionResult = await handleIntent(
-      parseResponse.intent,
-      parseResponse.entities
-    );
+    const actionResult = await handleIntent(parseResponse.intent, parseResponse.entities);
 
     // Return combined response
     return NextResponse.json({
@@ -104,10 +92,7 @@ export async function POST(request: NextRequest) {
     console.error('[NLU Parse API] Error:', error);
 
     // Check if error is due to missing credentials
-    if (
-      error instanceof Error &&
-      error.message.includes('Dialogflow CX environment variables')
-    ) {
+    if (error instanceof Error && error.message.includes('Dialogflow CX environment variables')) {
       return NextResponse.json(
         {
           error: 'NLU service not configured',
@@ -134,7 +119,7 @@ export async function POST(request: NextRequest) {
  *
  * Get NLU service status and configuration
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Check if Dialogflow CX is configured
     const isConfigured = Boolean(
@@ -170,8 +155,7 @@ export async function GET(request: NextRequest) {
         provider: 'dialogflow-cx',
         connected: false,
         error: error instanceof Error ? error.message : 'Connection test failed',
-        message:
-          'NLU service is configured but unable to connect. Check your credentials.',
+        message: 'NLU service is configured but unable to connect. Check your credentials.',
       });
     }
   } catch (error) {
