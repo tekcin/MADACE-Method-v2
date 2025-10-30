@@ -5,8 +5,11 @@
   "description": "MADACE-Method v3.0 - Methodology for AI-Driven Agile Collaboration Engine - Production-ready full-stack implementation with Prisma ORM",
   "scripts": {
     "dev": "next dev",
+    "dev:collab": "tsx server.ts",
     "build": "next build",
+    "build:collab": "next build",
     "start": "next start",
+    "start:collab": "NODE_ENV=production tsx server.ts",
     "type-check": "tsc --noEmit",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -66,6 +69,9 @@
     "socket.io-client": "4.8.1",
     "utf-8-validate": "6.0.5",
     "ws": "8.18.3",
+    "y-monaco": "0.1.6",
+    "y-websocket": "3.0.0",
+    "yjs": "13.6.27",
     "zod": "4.1.12",
     "zustand": "5.0.8"
   },

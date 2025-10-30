@@ -165,9 +165,9 @@
 - ✅ [FILES-001] Build File Tree Explorer with CRUD Operations (10 points) - **DONE**
 - ✅ [FILES-002] Add File Search and Git Status Indicators (8 points) - **DONE**
 
-**Week 18-19: Real-time Collaboration Foundation (21 points)** - 📅 Planned
+**Week 18-19: Real-time Collaboration Foundation (21 points)** - 🔄 **IN PROGRESS**
 
-- 📅 [COLLAB-001] Set up WebSocket Server and Basic Sync (10 points)
+- ✅ [COLLAB-001] Set up WebSocket Server and Basic Sync (10 points) - **DONE**
 - 📅 [COLLAB-002] Add Presence Awareness and Shared Cursors (8 points)
 - 📅 [COLLAB-003] Build In-app Team Chat (3 points)
 

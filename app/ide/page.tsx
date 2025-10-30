@@ -6,6 +6,7 @@ import EditorToolbar from '@/components/features/ide/EditorToolbar';
 import TabBar, { FileTab } from '@/components/features/ide/TabBar';
 import FileExplorer from '@/components/features/ide/FileExplorer';
 import FileSearch, { GitStatus } from '@/components/features/ide/FileSearch';
+import ConnectionStatus from '@/components/features/ide/ConnectionStatus';
 import { FileTreeItem } from '@/components/features/ide/FileTreeNode';
 
 /**
@@ -389,31 +390,37 @@ export default function IDEPage() {
           </span>
         </div>
 
-        {/* File selector for opening files */}
-        <div className="flex items-center space-x-3">
-          <label htmlFor="file-select" className="text-gray-400 text-sm">
-            Open File:
-          </label>
-          <select
-            id="file-select"
-            value=""
-            onChange={(e) => {
-              if (e.target.value) {
-                handleOpenFile(e.target.value);
-                e.target.value = ''; // Reset selection
-              }
-            }}
-            className="bg-gray-700 text-gray-200 text-sm rounded px-3 py-1.5 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select a file...</option>
-            {Object.keys(sampleFiles)
-              .filter((fileName) => !tabs.find((t) => t.fileName === fileName))
-              .map((file) => (
-                <option key={file} value={file}>
-                  {file}
-                </option>
-              ))}
-          </select>
+        {/* File selector and connection status */}
+        <div className="flex items-center space-x-4">
+          {/* Connection status indicator */}
+          <ConnectionStatus showUserCount showDetails />
+
+          {/* File selector */}
+          <div className="flex items-center space-x-3">
+            <label htmlFor="file-select" className="text-gray-400 text-sm">
+              Open File:
+            </label>
+            <select
+              id="file-select"
+              value=""
+              onChange={(e) => {
+                if (e.target.value) {
+                  handleOpenFile(e.target.value);
+                  e.target.value = ''; // Reset selection
+                }
+              }}
+              className="bg-gray-700 text-gray-200 text-sm rounded px-3 py-1.5 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select a file...</option>
+              {Object.keys(sampleFiles)
+                .filter((fileName) => !tabs.find((t) => t.fileName === fileName))
+                .map((file) => (
+                  <option key={file} value={file}>
+                    {file}
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
       </div>
 
