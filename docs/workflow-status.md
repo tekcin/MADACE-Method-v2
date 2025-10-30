@@ -1,7 +1,7 @@
 # MADACE v3.0 Workflow Status
 
-**Current Phase:** 📅 Milestone 3.3 READY (55 points) - Conversational AI & NLU - [NLU-001] in TODO
-**Last Updated:** 2025-10-29 (Milestone 3.3 story breakdown complete, ready to start NLU integration)
+**Current Phase:** 🔄 Milestone 3.3 IN PROGRESS (0/55 points, 0%) - Conversational AI & NLU - [NLU-001] Active
+**Last Updated:** 2025-10-29 (NLU-001: Integrating Dialogflow CX for natural language understanding)
 
 ---
 
@@ -133,9 +133,9 @@
 
 ### Milestone 3.3: Conversational AI & NLU (55 points)
 
-**Week 8-9: NLU Integration (23 points)** - 📅 **Planned**
+**Week 8-9: NLU Integration (23 points)** - 🔄 **In Progress** (0/23 points, 0%)
 
-- [ ] [NLU-001] Integrate NLU Service and Intent Classification (13 points) - **IN TODO**
+- 🔄 [NLU-001] Integrate NLU Service and Intent Classification (13 points) - **IN PROGRESS**
 - [ ] [NLU-002] Entity Extraction and Parameter Binding (10 points)
 
 **Week 10-11: Chat Interface (18 points)** - 📅 **Planned**
@@ -161,10 +161,19 @@ Stories TBD - Awaiting breakdown from PM/Architect
 
 ## TODO
 
-- [ ] [NLU-001] Integrate NLU Service and Intent Classification (13 points)
+(Empty - [NLU-001] moved to IN PROGRESS)
+
+**MADACE Rule**: Maximum ONE story in TODO at a time.
+
+---
+
+## IN PROGRESS
+
+- 🔄 [NLU-001] Integrate NLU Service and Intent Classification (13 points)
   - **Priority**: P1
   - **Milestone**: 3.3 (Week 8-9)
-  - **Dependencies**: Milestone 3.1 complete (database), Milestone 3.2 complete (CLI foundation)
+  - **Started**: 2025-10-29
+  - **Dependencies**: Milestone 3.1 complete (database) ✅, Milestone 3.2 complete (CLI foundation) ✅
   - **Deliverables**:
     - Dialogflow CX account setup and configuration
     - NLU client wrapper (`lib/nlu/dialogflow-client.ts`)
@@ -174,15 +183,7 @@ Stories TBD - Awaiting breakdown from PM/Architect
     - Confidence threshold logic (> 70%)
     - Fallback to menu mode (< 70%)
   - **Acceptance Criteria**: See `docs/milestone-3.3-stories.md` (lines 27-133)
-  - **Next**: Set up Google Cloud project → Enable Dialogflow CX API → Install dependencies
-
-**MADACE Rule**: Maximum ONE story in TODO at a time.
-
----
-
-## IN PROGRESS
-
-(Empty - Milestone 3.2 complete!)
+  - **Progress**: Setting up NLU infrastructure and client wrappers
 
 **MADACE Rule**: Maximum ONE story in IN PROGRESS at a time.
 

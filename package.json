@@ -36,6 +36,7 @@
     "madace": "tsx bin/madace.ts"
   },
   "dependencies": {
+    "@google-cloud/dialogflow-cx": "5.4.0",
     "@heroicons/react": "2.2.0",
     "@prisma/client": "6.17.1",
     "blessed": "0.1.81",
