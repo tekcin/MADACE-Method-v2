@@ -141,7 +141,7 @@
 **Week 10-11: Chat Interface (18 points)** - 🔄 **IN PROGRESS** (10/18 points, 56%)
 
 - ✅ [CHAT-001] Build Chat UI for Web and CLI (10 points) - **DONE**
-- [ ] [CHAT-002] Add Message History and Threading (5 points)
+- 🔄 [CHAT-002] Add Message History and Threading (5 points) - **IN TODO**
 - [ ] [CHAT-003] Add Markdown Rendering and Code Highlighting (3 points)
 
 **Week 12-13: Agent Memory (14 points)** - 📅 **Planned**
@@ -161,7 +161,11 @@ Stories TBD - Awaiting breakdown from PM/Architect
 
 ## TODO
 
-(Empty - No stories in TODO)
+- [ ] [CHAT-002] Add Message History and Threading (5 points)
+  - **Status**: TODO
+  - **Started**: 2025-10-29
+  - **Dependencies**: [CHAT-001] complete ✅
+  - **Goal**: Add infinite scroll, message threading, search, and export functionality
 
 **MADACE Rule**: Maximum ONE story in TODO at a time.
 

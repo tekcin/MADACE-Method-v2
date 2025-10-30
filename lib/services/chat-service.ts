@@ -437,3 +437,172 @@ export async function getUserChatStats(userId: string) {
     totalMessages,
   };
 }
+
+// ==============================================================================
+// THREADING & EXPORT
+// ==============================================================================
+
+/**
+ * Get full thread for a message (parent + replies recursively)
+ */
+export async function getMessageThread(messageId: string): Promise<ChatMessageWithReplies[]> {
+  // Get the root message (traverse up to find the root)
+  let currentMessage: ChatMessageWithReplies | null = await prisma.chatMessage.findUnique({
+    where: { id: messageId },
+    include: { replyTo: true, replies: true },
+  });
+
+  if (!currentMessage) {
+    return [];
+  }
+
+  // Find the root message by traversing up
+  while (currentMessage?.replyToId) {
+    const parentMessage: ChatMessageWithReplies | null = await prisma.chatMessage.findUnique({
+      where: { id: currentMessage.replyToId },
+      include: { replyTo: true, replies: true },
+    });
+    if (!parentMessage) break;
+    currentMessage = parentMessage;
+  }
+
+  const rootId = currentMessage?.id;
+  if (!rootId) {
+    return [];
+  }
+
+  // Get all messages in the thread (root + all descendants)
+  const allMessages = await prisma.chatMessage.findMany({
+    where: {
+      OR: [
+        { id: rootId },
+        { replyToId: rootId },
+        // For nested replies, we'll need to fetch recursively
+      ],
+    },
+    include: {
+      replyTo: true,
+      replies: {
+        orderBy: { timestamp: 'asc' },
+      },
+    },
+    orderBy: { timestamp: 'asc' },
+  });
+
+  // Build the full thread tree recursively
+  const messageMap = new Map(allMessages.map((m) => [m.id, m]));
+  const fetchDescendants = async (parentId: string): Promise<void> => {
+    const children = await prisma.chatMessage.findMany({
+      where: { replyToId: parentId },
+      include: {
+        replyTo: true,
+        replies: {
+          orderBy: { timestamp: 'asc' },
+        },
+      },
+      orderBy: { timestamp: 'asc' },
+    });
+
+    for (const child of children) {
+      messageMap.set(child.id, child);
+      await fetchDescendants(child.id);
+    }
+  };
+
+  await fetchDescendants(rootId);
+
+  return Array.from(messageMap.values());
+}
+
+/**
+ * Export session as Markdown
+ */
+export async function exportSessionAsMarkdown(sessionId: string): Promise<string> {
+  const session = await prisma.chatSession.findUnique({
+    where: { id: sessionId },
+    include: {
+      messages: {
+        orderBy: { timestamp: 'asc' },
+        include: {
+          replyTo: {
+            select: {
+              id: true,
+              content: true,
+              timestamp: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      agent: {
+        select: {
+          name: true,
+          title: true,
+        },
+      },
+    },
+  });
+
+  if (!session) {
+    throw new Error(`Session not found: ${sessionId}`);
+  }
+
+  // Build Markdown content
+  const lines: string[] = [];
+
+  // Header
+  lines.push(`# Chat Session: ${session.agent?.title || 'Unknown Agent'}`);
+  lines.push('');
+  lines.push(`**User**: ${session.user?.name || session.user?.email || 'Unknown'}`);
+  lines.push(`**Agent**: ${session.agent?.name || 'Unknown'} - ${session.agent?.title || ''}`);
+  lines.push(`**Started**: ${session.startedAt.toISOString()}`);
+  if (session.endedAt) {
+    lines.push(`**Ended**: ${session.endedAt.toISOString()}`);
+  }
+  lines.push('');
+  lines.push('---');
+  lines.push('');
+
+  // Messages
+  for (const message of session.messages) {
+    const timestamp = message.timestamp.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    // Show reply context if this is a reply
+    if (message.replyTo && message.replyTo.content) {
+      const replyTime = message.replyTo.timestamp.toLocaleTimeString();
+      const replyPreview = message.replyTo.content.split('\n')[0].substring(0, 80);
+      lines.push(`> **In reply to** (${replyTime}):`);
+      lines.push(`> ${replyPreview}...`);
+      lines.push('');
+    }
+
+    // Message header
+    const roleEmoji = message.role === 'user' ? '👤' : message.role === 'agent' ? '🤖' : '⚙️';
+    const roleName = message.role === 'user' ? 'User' : message.role === 'agent' ? 'Agent' : 'System';
+    lines.push(`### ${roleEmoji} ${roleName} - ${timestamp}`);
+    lines.push('');
+
+    // Message content
+    lines.push(message.content);
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+  }
+
+  // Footer
+  lines.push('');
+  lines.push(`*Exported from MADACE v3.0 - ${new Date().toISOString()}*`);
+
+  return lines.join('\n');
+}
