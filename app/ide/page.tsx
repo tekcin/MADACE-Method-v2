@@ -7,6 +7,8 @@ import TabBar, { FileTab } from '@/components/features/ide/TabBar';
 import FileExplorer from '@/components/features/ide/FileExplorer';
 import FileSearch, { GitStatus } from '@/components/features/ide/FileSearch';
 import ConnectionStatus from '@/components/features/ide/ConnectionStatus';
+import PresenceList from '@/components/features/ide/PresenceList';
+import ToastContainer from '@/components/features/ide/Toast';
 import { FileTreeItem } from '@/components/features/ide/FileTreeNode';
 
 /**
@@ -22,6 +24,8 @@ export default function IDEPage() {
 
   // Sidebar state
   const [showSidebar, setShowSidebar] = useState(true);
+  const [showPresenceList, setShowPresenceList] = useState(true);
+  const [onlineUserCount, setOnlineUserCount] = useState(0);
 
   // Editor options state
   const [theme, setTheme] = useState<'vs-dark' | 'vs-light' | 'hc-black' | 'hc-light'>(
@@ -510,7 +514,18 @@ export default function IDEPage() {
             </span>
           </div>
         </div>
+
+        {/* Presence List Sidebar (right side) */}
+        {showPresenceList && (
+          <PresenceList
+            visible={showPresenceList}
+            onUserCountChange={setOnlineUserCount}
+          />
+        )}
       </div>
+
+      {/* Toast notifications */}
+      <ToastContainer />
 
       {/* File Search (Ctrl+P / Cmd+P) */}
       <FileSearch

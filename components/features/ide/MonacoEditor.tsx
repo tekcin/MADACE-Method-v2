@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import type * as Monaco from 'monaco-editor';
+import { getCursorSyncManager } from '@/lib/collab/cursor-sync';
 
 export interface MonacoEditorProps {
   /** File content to display */
@@ -60,6 +61,10 @@ export default function MonacoEditor({
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     setIsEditorReady(true);
+
+    // Initialize cursor sync for collaborative editing
+    const cursorSync = getCursorSyncManager();
+    cursorSync.initialize(editor);
 
     // Configure TypeScript/JavaScript language services
     if (language === 'typescript' || language === 'javascript') {
@@ -229,6 +234,16 @@ export default function MonacoEditor({
       onChange(value);
     }
   };
+
+  /**
+   * Cleanup cursor sync on unmount
+   */
+  useEffect(() => {
+    return () => {
+      const cursorSync = getCursorSyncManager();
+      cursorSync.destroy();
+    };
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col">

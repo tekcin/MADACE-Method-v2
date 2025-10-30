@@ -168,7 +168,7 @@
 **Week 18-19: Real-time Collaboration Foundation (21 points)** - 🔄 **IN PROGRESS**
 
 - ✅ [COLLAB-001] Set up WebSocket Server and Basic Sync (10 points) - **DONE**
-- 📅 [COLLAB-002] Add Presence Awareness and Shared Cursors (8 points)
+- ✅ [COLLAB-002] Add Presence Awareness and Shared Cursors (8 points) - **DONE**
 - 📅 [COLLAB-003] Build In-app Team Chat (3 points)
 
 **Week 20-21: Integrated Terminal & Testing (13 points)** - 📅 Planned
