@@ -8,6 +8,7 @@
 
 import { useMemo } from 'react';
 import type { ChatMessage } from '@prisma/client';
+import MarkdownMessage from './MarkdownMessage';
 
 export interface MessageProps {
   message: ChatMessage;
@@ -40,8 +41,14 @@ function formatRelativeTime(timestamp: Date): string {
 function getInitials(name: string): string {
   const parts = name.split(' ').filter(p => p.length > 0);
   if (parts.length === 0) return 'AG';
-  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-  return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  if (parts.length === 1) {
+    const first = parts[0];
+    return first ? first.substring(0, 2).toUpperCase() : 'AG';
+  }
+  const first = parts[0];
+  const second = parts[1];
+  if (!first || !second) return 'AG';
+  return `${first[0]}${second[0]}`.toUpperCase();
 }
 
 export default function Message({ message, agentName, userName, isStreaming, onReply }: MessageProps) {
@@ -87,7 +94,7 @@ export default function Message({ message, agentName, userName, isStreaming, onR
 
         {/* Content */}
         <div className={`rounded-lg border ${bubbleBg} ${bubbleBorder} p-3 shadow-sm group relative`}>
-          <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-words">{message.content}</p>
+          <MarkdownMessage content={message.content} />
 
           {/* Streaming Indicator */}
           {isStreaming && (

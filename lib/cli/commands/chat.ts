@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import type { Agent } from '@prisma/client';
 import { listAgents } from '@/lib/services/agent-service';
+import { renderMarkdown } from '@/lib/cli/markdown-renderer';
 import {
   createSession,
   createMessage,
@@ -65,7 +66,8 @@ function displayHistory(messages: Array<{ role: string; content: string; timesta
       console.log(chalk.white(msg.content) + '\n');
     } else if (msg.role === 'agent') {
       console.log(chalk.green.bold('Agent:') + ' ' + timestamp);
-      console.log(chalk.white(msg.content) + '\n');
+      // Render markdown for agent responses
+      console.log(renderMarkdown(msg.content) + '\n');
     } else {
       console.log(chalk.gray.bold('System:') + ' ' + timestamp);
       console.log(chalk.gray(msg.content) + '\n');
@@ -291,7 +293,7 @@ async function chatLoop(state: ChatState) {
       }
 
       console.log(chalk.green.bold('Agent:'));
-      console.log(chalk.white(response) + '\n');
+      console.log(renderMarkdown(response) + '\n');
       continue;
     }
 
@@ -326,7 +328,7 @@ async function chatLoop(state: ChatState) {
       }
 
       console.log(chalk.green.bold('Agent:'));
-      console.log(chalk.white(response) + '\n');
+      console.log(renderMarkdown(response) + '\n');
       continue;
     }
 

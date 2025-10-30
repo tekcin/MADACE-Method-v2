@@ -92,7 +92,9 @@ export default function ChatInterface({
     // Check if scrolled to top (with 100px threshold)
     if (container.scrollTop < 100 && messages.length > 0) {
       const oldestMessage = messages[0];
-      loadMessages(new Date(oldestMessage.timestamp));
+      if (oldestMessage) {
+        loadMessages(new Date(oldestMessage.timestamp));
+      }
     }
   };
 
