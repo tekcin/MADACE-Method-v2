@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+
+// Storage key for localStorage
+const STORAGE_KEY = 'madace-github-import-state';
 
 interface ProjectAnalysis {
   name: string;
@@ -31,6 +34,31 @@ export default function ImportPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [analysis, setAnalysis] = useState<ProjectAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Load state from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedState = localStorage.getItem(STORAGE_KEY);
+      if (savedState) {
+        const parsedState = JSON.parse(savedState);
+        if (parsedState.repoUrl) setRepoUrl(parsedState.repoUrl);
+        if (parsedState.analysis) setAnalysis(parsedState.analysis);
+      }
+    } catch (error) {
+      console.error('Failed to load saved import state:', error);
+    }
+  }, []);
+
+  // Save state to localStorage when repoUrl or analysis changes
+  useEffect(() => {
+    if (repoUrl || analysis) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ repoUrl, analysis }));
+      } catch (error) {
+        console.error('Failed to save import state:', error);
+      }
+    }
+  }, [repoUrl, analysis]);
 
   const handleImport = async () => {
     if (!repoUrl) {
@@ -92,6 +120,56 @@ export default function ImportPage() {
     }
   };
 
+  const handleReset = () => {
+    if (confirm('Are you sure you want to clear all import data? This cannot be undone.')) {
+      setRepoUrl('');
+      setAnalysis(null);
+      setError(null);
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  };
+
+  const handleCreatePRD = () => {
+    if (!analysis) return;
+
+    // Navigate to a PRD creation page or generate PRD
+    // For now, we'll create a simple alert with PRD template
+    const prdTemplate = `# Product Requirements Document (PRD)
+## Project: ${analysis.name}
+
+### Overview
+${analysis.description || 'No description provided'}
+
+### Repository Information
+- **GitHub URL**: ${analysis.repositoryUrl}
+- **Stars**: ${analysis.stars.toLocaleString()}
+- **Forks**: ${analysis.forks.toLocaleString()}
+- **Open Issues**: ${analysis.openIssues.toLocaleString()}
+- **Last Updated**: ${new Date(analysis.lastUpdated).toLocaleDateString()}
+
+### Technical Stack
+- **Primary Language**: ${analysis.language}
+- **Total Files**: ${analysis.totalFiles.toLocaleString()}
+- **Lines of Code**: ${analysis.totalLines.toLocaleString()}
+${analysis.hasPackageJson ? '- Node.js Project\n' : ''}${analysis.hasPrisma ? '- Uses Prisma ORM\n' : ''}${analysis.hasDocker ? '- Docker Support\n' : ''}
+### Dependencies
+${analysis.dependencies.length > 0 ? `**Production**: ${analysis.dependencies.slice(0, 10).join(', ')}${analysis.dependencies.length > 10 ? `, and ${analysis.dependencies.length - 10} more...` : ''}\n` : ''}${analysis.devDependencies.length > 0 ? `**Development**: ${analysis.devDependencies.slice(0, 10).join(', ')}${analysis.devDependencies.length > 10 ? `, and ${analysis.devDependencies.length - 10} more...` : ''}` : ''}
+
+### Next Steps
+1. Review codebase structure
+2. Identify key features and functionality
+3. Plan development roadmap
+4. Set up development environment
+`;
+
+    // Copy to clipboard
+    navigator.clipboard.writeText(prdTemplate).then(() => {
+      alert(
+        '✅ PRD Template copied to clipboard!\n\nYou can now paste it into your preferred document editor.'
+      );
+    });
+  };
+
   const getLanguagePercentages = () => {
     if (!analysis?.languages) return [];
 
@@ -119,6 +197,29 @@ export default function ImportPage() {
 
         {/* Import Form */}
         <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-800">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Import Repository
+            </h2>
+            {(repoUrl || analysis) && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 dark:border-red-700 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900"
+                title="Clear all import data"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                Reset
+              </button>
+            )}
+          </div>
           <div className="space-y-4">
             <div>
               <label
@@ -398,6 +499,22 @@ export default function ImportPage() {
                     />
                   </svg>
                   Create MADACE Project
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCreatePRD}
+                  className="flex items-center gap-2 rounded-lg border border-green-600 bg-white px-6 py-3 text-sm font-semibold text-green-700 hover:bg-green-50 dark:border-green-500 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  Create PRD
                 </button>
 
                 <button
