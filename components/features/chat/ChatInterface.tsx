@@ -10,6 +10,7 @@ import { useState, useRef, useEffect } from 'react';
 import type { ChatMessage } from '@prisma/client';
 import Message from './Message';
 import ChatInput from './ChatInput';
+import LLMSelector from './LLMSelector';
 
 export interface ChatInterfaceProps {
   sessionId: string;
@@ -35,6 +36,7 @@ export default function ChatInterface({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<string>('local');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -182,6 +184,7 @@ export default function ChatInterface({
           sessionId,
           agentId,
           replyToId,
+          provider: selectedProvider, // Include selected provider
         }),
       });
 
@@ -259,27 +262,36 @@ export default function ChatInterface({
           </div>
         </div>
 
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
-            title="Close chat"
-          >
-            <svg
-              className="h-5 w-5 text-gray-500 dark:text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        <div className="flex items-center gap-3">
+          {/* LLM Selector */}
+          <LLMSelector
+            selectedProvider={selectedProvider}
+            onProviderChange={setSelectedProvider}
+            disabled={isSending || isStreaming}
+          />
+
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+              title="Close chat"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        )}
+              <svg
+                className="h-5 w-5 text-gray-500 dark:text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Messages */}

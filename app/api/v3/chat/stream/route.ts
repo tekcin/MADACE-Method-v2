@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { sessionId, agentId, replyToId } = body;
+    const { sessionId, agentId, replyToId, provider } = body;
 
     if (!sessionId || !agentId) {
       return new Response('sessionId and agentId are required', { status: 400 });
@@ -64,8 +64,34 @@ export async function POST(request: NextRequest) {
       // Don't block on memory extraction errors
     });
 
-    // Create LLM client
-    const llmConfig = getLLMConfigFromEnv();
+    // Create LLM client (use provider from request if specified)
+    let llmConfig = getLLMConfigFromEnv();
+    if (provider) {
+      // Override provider if specified in request
+      const providerConfigs: Record<string, Partial<typeof llmConfig>> = {
+        gemini: {
+          apiKey: process.env.GEMINI_API_KEY,
+          model: process.env.GEMINI_MODEL || 'gemini-2.0-flash-exp',
+        },
+        claude: {
+          apiKey: process.env.CLAUDE_API_KEY,
+          model: process.env.CLAUDE_MODEL || 'claude-3-5-sonnet-20241022',
+        },
+        openai: {
+          apiKey: process.env.OPENAI_API_KEY,
+          model: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
+        },
+        local: {
+          baseURL: process.env.LOCAL_MODEL_URL || 'http://localhost:11434',
+          model: process.env.LOCAL_MODEL_NAME || 'gemma3:latest',
+        },
+      };
+
+      llmConfig = {
+        provider: provider as 'local' | 'gemini' | 'claude' | 'openai',
+        ...providerConfigs[provider],
+      } as typeof llmConfig;
+    }
     const llmClient = createLLMClient(llmConfig);
 
     // Build memory-aware prompt with agent persona and user's memory context
