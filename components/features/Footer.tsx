@@ -10,7 +10,7 @@ export function Footer() {
           </div>
           <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400">
             <a
-              href="https://github.com/yourusername/madace"
+              href="https://github.com/tekcin/MADACE-Method-v2.0"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-gray-700 dark:hover:text-gray-300"
