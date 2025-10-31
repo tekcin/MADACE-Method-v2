@@ -37,6 +37,9 @@
     "db:validate": "node scripts/validate-database.js",
     "import-madace": "tsx scripts/import-madace-agents.ts",
     "import-madace-v3": "tsx scripts/import-madace-v3-agents.ts",
+    "import-local": "tsx scripts/import-local-agents.ts",
+    "seed:zodiac": "tsx scripts/seed-zodiac-project.ts",
+    "view:zodiac": "tsx scripts/view-zodiac-data.ts",
     "madace": "tsx bin/madace.ts"
   },
   "dependencies": {
