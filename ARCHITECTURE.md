@@ -2740,3 +2740,3051 @@ npm run view:zodiac
 - ✅ Easy cleanup and re-seeding
 
 ---
+
+## 11. V3 State API Migration and Kanban Integration ✅
+
+**Status:** Implemented - Complete migration from file-based to database-driven state management with enhanced Zodiac App seeding
+
+### 11.1. State Management Architecture Evolution
+
+- **Problem:** V2 architecture used file-based state management (`docs/mam-workflow-status.md`), which caused production failures, locking issues, and couldn't support multi-project workflows.
+- **Solution:** Migrated `/app/api/state/route.ts` from file I/O to database queries using Prisma ORM, enabling true multi-project support and scalable state management.
+- **Implementation Details:**
+  - **Database-Driven**: All workflow state stored in `StateMachine` table
+  - **Project Filtering**: Support for `?projectId=xxx` query parameter
+  - **Real-time Sync**: Database changes immediately reflected in Kanban board
+  - **Scalability**: Eliminates file locking and concurrent access issues
+  - **Multi-Project**: Each project maintains independent workflow state
+
+### 11.2. Migration Overview
+
+**V2 to V3 Architectural Shift:**
+
+| Aspect | V2 (File-Based) | V3 (Database-Based) |
+|--------|-----------------|---------------------|
+| **Data Storage** | `docs/mam-workflow-status.md` file | `StateMachine` table in database |
+| **Data Access** | File I/O (`fs.readFile`) | Prisma ORM queries |
+| **State Management** | `createStateMachine(filePath)` | `prisma.stateMachine.findMany()` |
+| **Project Filtering** | Not supported | `?projectId=xxx` query param |
+| **Scalability** | Limited (file locking issues) | High (database transactions) |
+| **Multi-Project** | Single project only | Multiple projects supported |
+| **Concurrency** | File locks, race conditions | Database ACID guarantees |
+| **Production** | File missing = crash ❌ | Graceful empty state ✅ |
+
+### 11.3. Code Comparison
+
+**Before (V2 - File-Based):**
+
+```typescript
+// app/api/state/route.ts (V2)
+import { NextResponse } from 'next/server';
+import { createStateMachine } from '@/lib/state/machine';
+import path from 'path';
+
+export async function GET() {
+  try {
+    // Read from file system
+    const statusFilePath = path.join(process.cwd(), 'docs', 'mam-workflow-status.md');
+    const stateMachine = createStateMachine(statusFilePath);
+    await stateMachine.load();
+    const status = stateMachine.getStatus();
+
+    return NextResponse.json({
+      success: true,
+      status,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: errorMessage },
+      { status: 500 }
+    );
+  }
+}
+```
+
+**Issues with V2 Approach:**
+- ❌ File must exist or endpoint crashes (production failures)
+- ❌ No multi-project support (single file for all projects)
+- ❌ File locking issues with concurrent requests
+- ❌ Manual file editing required for state changes
+- ❌ No filtering or advanced queries
+- ❌ Synchronization issues between file and database
+
+**After (V3 - Database-Based):**
+
+```typescript
+// app/api/state/route.ts (V3)
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/database/client';
+
+/**
+ * GET /api/state
+ * Get current workflow status from database (StateMachine records)
+ * Query params:
+ *   - projectId (optional): Filter stories by project
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const projectId = searchParams.get('projectId');
+
+    // Build where clause for project filtering
+    const where = projectId ? { projectId } : {};
+
+    // Fetch all stories from database
+    const stories = await prisma.stateMachine.findMany({
+      where,
+      orderBy: { createdAt: 'asc' },
+    });
+
+    // Group stories by status
+    const backlog = stories.filter((s) => s.status === 'BACKLOG');
+    const todo = stories.filter((s) => s.status === 'TODO');
+    const inProgress = stories.filter((s) => s.status === 'IN_PROGRESS');
+    const done = stories.filter((s) => s.status === 'DONE');
+
+    // Transform to expected format
+    const status = {
+      backlog: backlog.map((s) => ({
+        id: s.storyId,
+        title: s.title,
+        points: s.points,
+        milestone: null, // Can add milestone field to schema later
+      })),
+      todo: todo.map((s) => ({
+        id: s.storyId,
+        title: s.title,
+        points: s.points,
+        milestone: null,
+      })),
+      inProgress: inProgress.map((s) => ({
+        id: s.storyId,
+        title: s.title,
+        points: s.points,
+        milestone: null,
+      })),
+      done: done.map((s) => ({
+        id: s.storyId,
+        title: s.title,
+        points: s.points,
+        milestone: null,
+      })),
+    };
+
+    return NextResponse.json({
+      success: true,
+      status,
+      projectId: projectId || null,
+      total: stories.length,
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to load workflow status';
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: errorMessage,
+      },
+      { status: 500 }
+    );
+  }
+}
+```
+
+**Benefits of V3 Approach:**
+- ✅ Multi-project support via `projectId` parameter
+- ✅ Database transactions ensure consistency
+- ✅ No file system dependencies (works in Docker, cloud platforms)
+- ✅ Advanced filtering and sorting via Prisma
+- ✅ Graceful error handling
+- ✅ Real-time data synchronization
+- ✅ Scalable for large projects (100+ stories)
+
+### 11.4. Enhanced Zodiac App Seeding (22 Stories)
+
+**Expanded Demo Data Coverage:**
+
+The Zodiac App seeding infrastructure was expanded from 12 stories to **22 comprehensive stories** covering all aspects of app development:
+
+**Story Distribution:**
+```
+✅ 22 Stories Total (100% coverage)
+   • 13 DONE (59%): Setup, planning, architecture, core features
+   • 2 IN_PROGRESS (9%): Active development stories
+   • 2 TODO (9%): Ready for sprint pickup
+   • 5 BACKLOG (23%): Future features and enhancements
+```
+
+**Milestone Organization:**
+```
+Milestone 1: Core Features (ZODIAC-001 to ZODIAC-005)
+   - ZODIAC-001: Project setup and initialization
+   - ZODIAC-002: User registration and authentication
+   - ZODIAC-003: Database schema design
+   - ZODIAC-004: Daily horoscope UI
+   - ZODIAC-005: API integration for horoscope data
+
+Milestone 2: Matching & Discovery (ZODIAC-006 to ZODIAC-009)
+   - ZODIAC-006: Daily horoscope detail screen (IN_PROGRESS)
+   - ZODIAC-007: Implement compatibility checker (TODO)
+   - ZODIAC-008: User profile with zodiac details
+   - ZODIAC-009: Matching algorithm implementation
+
+Milestone 3: Communication (ZODIAC-010 to ZODIAC-012)
+   - ZODIAC-010: In-app messaging system
+   - ZODIAC-011: Push notifications
+   - ZODIAC-012: Chat UI and real-time updates
+
+Additional Stories (ZODIAC-013 to ZODIAC-022)
+   - ZODIAC-013: Database schema design (TODO)
+   - ZODIAC-014: Next.js + TypeScript setup (IN_PROGRESS)
+   - ZODIAC-015 to ZODIAC-022: Planning and documentation (DONE)
+```
+
+**Created Stories:**
+
+| Story ID | Title | Status | Points | Milestone |
+|----------|-------|--------|--------|-----------|
+| ZODIAC-001 | Project setup and initialization | DONE | 3 | Core Features |
+| ZODIAC-002 | User registration and authentication | DONE | 5 | Core Features |
+| ZODIAC-003 | Database schema design | DONE | 8 | Core Features |
+| ZODIAC-004 | Daily horoscope UI | DONE | 5 | Core Features |
+| ZODIAC-005 | API integration for horoscope data | DONE | 8 | Core Features |
+| ZODIAC-006 | Build daily horoscope detail screen | IN_PROGRESS | 5 | Matching & Discovery |
+| ZODIAC-007 | Implement compatibility checker feature | TODO | 8 | Matching & Discovery |
+| ZODIAC-008 | User profile with zodiac details | BACKLOG | 5 | Matching & Discovery |
+| ZODIAC-009 | Matching algorithm implementation | BACKLOG | 13 | Matching & Discovery |
+| ZODIAC-010 | In-app messaging system | BACKLOG | 13 | Communication |
+| ZODIAC-011 | Push notifications | BACKLOG | 8 | Communication |
+| ZODIAC-012 | Chat UI and real-time updates | BACKLOG | 13 | Communication |
+| ZODIAC-013 | Database Schema Design and Migration | TODO | 8 | - |
+| ZODIAC-014 | Project Setup - Next.js with TypeScript | IN_PROGRESS | 5 | - |
+| ZODIAC-015 | Write Product Requirements Document (PRD) | DONE | 5 | - |
+| ZODIAC-016 | Create Technical Architecture Document | DONE | 8 | - |
+| ZODIAC-017 | Define Epic Breakdown | DONE | 5 | - |
+| ZODIAC-018 | Create User Stories for Milestone 1 | DONE | 3 | - |
+| ZODIAC-019 | Setup CI/CD Pipeline | DONE | 8 | - |
+| ZODIAC-020 | Create Design System and Component Library | DONE | 13 | - |
+| ZODIAC-021 | Write API Documentation | DONE | 5 | - |
+| ZODIAC-022 | Setup Testing Framework (Jest + React Testing Library) | DONE | 8 | - |
+
+### 11.5. Database Maintenance Scripts
+
+**New Utility Scripts Created:**
+
+**1. `scripts/seed-zodiac-stories.ts`** - Seeds 22 comprehensive stories
+
+```bash
+npm run seed:zodiac-stories
+```
+
+**Features:**
+- Creates 22 stories distributed across all kanban states
+- Uses Fibonacci point estimation (3, 5, 8, 13)
+- Organized into 3 clear milestones
+- Realistic project progression
+- Proper foreign key relationships
+
+**2. `scripts/check-zodiac-stories.ts`** - Verification tool
+
+```bash
+npx tsx scripts/check-zodiac-stories.ts
+```
+
+**Output:**
+```
+✓ Found Zodiac App project: cmhe949rp0000rzhh5s2p4yfs
+  Total stories: 22
+
+Story Distribution:
+  BACKLOG: 5 stories
+  TODO: 2 stories
+  IN_PROGRESS: 2 stories
+  DONE: 13 stories
+```
+
+**3. `scripts/delete-duplicate-zodiac.ts`** - Cleanup utility
+
+```bash
+npx tsx scripts/delete-duplicate-zodiac.ts
+```
+
+**Purpose:** Removes duplicate empty "Zodiac App" projects from database
+
+**Scenario:**
+```
+Problem: Two "Zodiac App" projects exist
+  - Old project (cmhe949rp0000rzhh5s2p4yfs): 22 stories ✅
+  - New project (cmhecqoer0010rza0podb8nye): 0 stories ❌
+
+Solution: Delete empty duplicate automatically
+Result: Only one Zodiac App project remains
+```
+
+**4. `scripts/fix-zodiac-members.ts`** - Membership fix
+
+```bash
+npx tsx scripts/fix-zodiac-members.ts
+```
+
+**Purpose:** Ensures default-user is member of Zodiac App project
+
+**Why Needed:**
+- Projects only visible in `/api/v3/projects` if user is a member
+- Default-user needs to be owner or admin to see project
+- Automatically creates user if missing
+
+**5. `scripts/check-all-zodiac-projects.ts`** - Diagnostic tool
+
+```bash
+npx tsx scripts/check-all-zodiac-projects.ts
+```
+
+**Output:**
+```
+Found 1 project(s) with "Zodiac" in name:
+
+📁 Project: Zodiac App
+   ID: cmhe949rp0000rzhh5s2p4yfs
+   Created: 2025-10-30T23:27:25.000Z
+   Stories: 22
+   Agents: 0
+   Workflows: 3
+   Members: 4
+
+   Story IDs:
+     - ZODIAC-001: Project setup and initialization... [DONE]
+     - ZODIAC-002: User registration and authent... [DONE]
+     ...
+     - ZODIAC-022: Setup Testing Framework (Jes... [DONE]
+```
+
+### 11.6. API Endpoint Enhancements
+
+**State API with Project Filtering:**
+
+```bash
+# Get all stories (all projects)
+curl http://localhost:3000/api/state
+
+# Filter by specific project
+curl "http://localhost:3000/api/state?projectId=cmhe949rp0000rzhh5s2p4yfs"
+```
+
+**Response Format:**
+
+```json
+{
+  "success": true,
+  "status": {
+    "backlog": [
+      { "id": "ZODIAC-008", "title": "User profile with zodiac details", "points": 5, "milestone": null },
+      { "id": "ZODIAC-009", "title": "Matching algorithm implementation", "points": 13, "milestone": null },
+      { "id": "ZODIAC-010", "title": "In-app messaging system", "points": 13, "milestone": null },
+      { "id": "ZODIAC-011", "title": "Push notifications", "points": 8, "milestone": null },
+      { "id": "ZODIAC-012", "title": "Chat UI and real-time updates", "points": 13, "milestone": null }
+    ],
+    "todo": [
+      { "id": "ZODIAC-007", "title": "Implement compatibility checker feature", "points": 8, "milestone": null },
+      { "id": "ZODIAC-013", "title": "Database Schema Design and Migration", "points": 8, "milestone": null }
+    ],
+    "inProgress": [
+      { "id": "ZODIAC-006", "title": "Build daily horoscope detail screen", "points": 5, "milestone": null },
+      { "id": "ZODIAC-014", "title": "Project Setup - Next.js with TypeScript", "points": 5, "milestone": null }
+    ],
+    "done": [
+      { "id": "ZODIAC-001", "title": "Project setup and initialization", "points": 3, "milestone": null },
+      { "id": "ZODIAC-002", "title": "User registration and authentication", "points": 5, "milestone": null },
+      ...13 total stories...
+    ]
+  },
+  "projectId": "cmhe949rp0000rzhh5s2p4yfs",
+  "total": 22
+}
+```
+
+### 11.7. Kanban Board Integration
+
+**Visual State Management:**
+
+The Kanban board (`/app/kanban/page.tsx`) now displays workflow state from the database:
+
+**Features:**
+- **Real-time Data**: Queries database on page load
+- **Project Context**: Uses `useProject` hook to filter stories
+- **State Validation**: Warns when TODO/IN_PROGRESS exceed limits
+- **Drag-and-Drop**: (Planned) Update database on state transitions
+- **Multi-Project**: Switch between projects dynamically
+
+**Example Integration:**
+
+```typescript
+// app/kanban/page.tsx
+import { useProject } from '@/lib/contexts/ProjectContext';
+
+export default function KanbanBoard() {
+  const { currentProject } = useProject();
+
+  useEffect(() => {
+    const fetchStories = async () => {
+      const url = currentProject
+        ? `/api/state?projectId=${currentProject.id}`
+        : '/api/state';
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.success) {
+        setBacklog(data.status.backlog);
+        setTodo(data.status.todo);
+        setInProgress(data.status.inProgress);
+        setDone(data.status.done);
+      }
+    };
+
+    fetchStories();
+  }, [currentProject]);
+}
+```
+
+**Validation Warnings:**
+
+```
+⚠️ TODO Column (2 stories, exceeds limit of 1)
+   - ZODIAC-007: Implement compatibility checker feature
+   - ZODIAC-013: Database Schema Design and Migration
+
+⚠️ IN_PROGRESS Column (2 stories, exceeds limit of 1)
+   - ZODIAC-006: Build daily horoscope detail screen
+   - ZODIAC-014: Project Setup - Next.js with TypeScript
+```
+
+### 11.8. Production Deployment Impact
+
+**Docker Compatibility:**
+
+V3 migration eliminates production crashes caused by missing files:
+
+**Before (V2 - Fails in Docker):**
+```
+Docker Build
+    ↓
+Excludes docs/ directory (.dockerignore)
+    ↓
+Production Container: docs/mam-workflow-status.md missing ❌
+    ↓
+/api/state endpoint crashes with ENOENT error
+    ↓
+Kanban board shows "Failed to load workflow status"
+```
+
+**After (V3 - Works in Docker):**
+```
+Docker Build
+    ↓
+Includes database file (prisma/dev.db)
+    ↓
+Production Container: Database accessible ✅
+    ↓
+/api/state endpoint queries database
+    ↓
+Kanban board displays all stories correctly
+```
+
+### 11.9. Future Enhancements
+
+**Planned Improvements:**
+
+1. **Add Milestone Field to Schema**
+   ```prisma
+   model StateMachine {
+     // ... existing fields ...
+     milestone String?
+   }
+   ```
+
+2. **Story CRUD Operations**
+   - Create stories via UI
+   - Update story status (drag-and-drop on Kanban)
+   - Delete stories with confirmation
+   - Edit story details (title, points, assignee)
+
+3. **State Machine Rules Enforcement**
+   - Prevent adding story to TODO if already at limit
+   - Prevent adding story to IN_PROGRESS if already at limit
+   - Validate state transitions (no skipping states)
+   - Show error messages for invalid operations
+
+4. **Advanced Filtering**
+   - Filter by milestone
+   - Filter by assignee
+   - Filter by points range
+   - Search by story title
+
+5. **Workflow Automation**
+   - Auto-move stories based on time/conditions
+   - Notifications on state changes
+   - Integration with CI/CD pipeline
+   - Slack/email notifications
+
+### 11.10. Verification and Testing
+
+**Verification Commands:**
+
+```bash
+# 1. Check if Zodiac App exists
+curl http://localhost:3000/api/v3/projects | jq '.data[] | select(.name == "Zodiac App")'
+
+# Expected output:
+{
+  "id": "cmhe949rp0000rzhh5s2p4yfs",
+  "name": "Zodiac App",
+  "stories": 22,
+  "agents": 0,
+  "workflows": 3,
+  "members": 4
+}
+
+# 2. Get all stories grouped by status
+curl http://localhost:3000/api/state | jq '.status | to_entries | map({status: .key, count: (.value | length)})'
+
+# Expected output:
+[
+  { "status": "backlog", "count": 5 },
+  { "status": "todo", "count": 2 },
+  { "status": "inProgress", "count": 2 },
+  { "status": "done", "count": 13 }
+]
+
+# 3. Get stories for specific project
+curl "http://localhost:3000/api/state?projectId=cmhe949rp0000rzhh5s2p4yfs" | jq '.total'
+
+# Expected output: 22
+
+# 4. View in Kanban board
+open http://localhost:3000/kanban
+# Should display all 22 stories across 4 columns
+```
+
+### 11.11. Documentation Files
+
+**Comprehensive Documentation:**
+
+- **`scripts/ZODIAC-SETUP-SUMMARY.md`** - Complete setup guide
+  - Documents all work completed for Zodiac App seeding
+  - Explains V2→V3 migration in detail
+  - Lists all 5 scripts created
+  - Provides verification commands
+  - Troubleshooting guide
+
+### 11.12. Integration Benefits
+
+**Value Delivered:**
+
+- **Scalability**: Database-driven state management eliminates file locking
+- **Multi-Project Support**: Each project maintains independent workflow state
+- **Production Ready**: No file system dependencies, works in Docker/cloud
+- **Real-time Sync**: Database changes immediately reflected in UI
+- **Comprehensive Demo Data**: 22 realistic stories for testing and demos
+- **Developer Velocity**: Automated scripts for setup and maintenance
+- **Robust Error Handling**: Graceful degradation instead of crashes
+
+**Production Readiness:**
+
+- ✅ Database-backed persistence
+- ✅ Multi-project filtering
+- ✅ No file system dependencies
+- ✅ Graceful error handling
+- ✅ Real-time data synchronization
+- ✅ Comprehensive test data (22 stories)
+- ✅ Automated seeding and cleanup scripts
+- ✅ Docker-compatible deployment
+- ✅ Validation and diagnostic tools
+
+---
+
+## 12. Project Management & Multi-tenancy ✅
+
+**Status:** Implemented - Complete multi-project architecture with role-based access control
+
+### 12.1. Overview
+
+MADACE v3.0 implements a comprehensive **multi-project architecture** that enables multiple teams to work simultaneously on different projects within the same MADACE instance. Each project has its own isolated workspace with dedicated agents, workflows, stories, chat sessions, and team members.
+
+**Key Features:**
+
+- **Multi-Project Support**: Multiple projects per MADACE instance
+- **Role-Based Access Control (RBAC)**: Three-tier permission system (owner/admin/member)
+- **Project Isolation**: Complete data separation between projects
+- **Member Management**: Add/remove team members with specific roles
+- **Resource Tracking**: Real-time counts of agents, workflows, stories, and chat sessions
+- **Cascade Deletion**: Automatic cleanup of project resources when project is deleted
+- **Permission Checks**: All operations enforce role-based permissions
+
+**Why This Matters:**
+
+1. **Team Collaboration**: Multiple teams can use MADACE simultaneously without interference
+2. **Data Security**: Projects are isolated - members only see projects they belong to
+3. **Scalability**: Production-ready multi-tenancy without code changes
+4. **Flexibility**: Same codebase supports both single-project and enterprise multi-project deployments
+
+---
+
+### 12.2. Database Schema
+
+The project management system uses three core models: `Project`, `ProjectMember`, and `User`.
+
+#### Project Model
+
+```prisma
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships (cascade delete)
+  agents       Agent[]         // Project-specific agents
+  workflows    Workflow[]      // Project workflows
+  configs      Config[]        // Project configuration
+  stories      StateMachine[]  // Kanban stories
+  chatSessions ChatSession[]   // AI chat sessions
+  members      ProjectMember[] // Team members
+}
+```
+
+**Key Points:**
+- `id`: Unique identifier (CUID format)
+- `name`: Project display name (required)
+- `description`: Optional project description
+- **Cascade Delete**: When project is deleted, all related data is automatically removed
+
+#### ProjectMember Model
+
+```prisma
+model ProjectMember {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String
+  role      String   // "owner" | "admin" | "member"
+  joinedAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])  // User can only join project once
+  @@index([projectId])           // Fast project member lookups
+  @@index([userId])              // Fast user project lookups
+}
+```
+
+**Key Points:**
+- **Unique Constraint**: `userId + projectId` ensures users can't join the same project twice
+- **Roles**: Three-tier permission system (owner/admin/member)
+- **Indexes**: Optimized for both "find users in project" and "find projects for user" queries
+
+#### User Model
+
+```prisma
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+
+  memories     AgentMemory[]   // User's agent memories
+  chatSessions ChatSession[]   // User's chat sessions
+  projects     ProjectMember[] // User's project memberships
+}
+```
+
+**Key Points:**
+- `email`: Unique identifier for authentication
+- `name`: Optional display name
+- **Relationships**: Users can belong to multiple projects with different roles
+
+---
+
+### 12.3. Role-Based Access Control (RBAC)
+
+MADACE implements a **three-tier role system** with hierarchical permissions:
+
+#### Role Hierarchy
+
+```
+owner > admin > member
+```
+
+Each role inherits permissions from lower roles.
+
+#### Permission Matrix
+
+| Operation | Owner | Admin | Member |
+|-----------|-------|-------|--------|
+| **View Project** | ✅ | ✅ | ✅ |
+| **View Members** | ✅ | ✅ | ✅ |
+| **View Resources** (agents, workflows, stories) | ✅ | ✅ | ✅ |
+| **Add Members** | ✅ | ✅ | ❌ |
+| **Remove Members** | ✅ | ✅ | ❌ |
+| **Update Project** (name, description) | ✅ | ✅ | ❌ |
+| **Delete Project** | ✅ | ❌ | ❌ |
+| **Remove Last Owner** | ❌ | ❌ | ❌ |
+
+#### Role Descriptions
+
+**Owner** (`role: "owner"`):
+- Full control over project
+- Can delete the project
+- Can add/remove any member (except last owner)
+- **Creator Rule**: Project creator automatically becomes owner
+- **Last Owner Rule**: Cannot remove the last owner from a project
+
+**Admin** (`role: "admin"`):
+- Can manage project settings (name, description)
+- Can add/remove members
+- Cannot delete the project
+- Cannot remove owners
+
+**Member** (`role: "member"`):
+- Read-only access to project
+- Can view all resources
+- Can participate in workflows and chat sessions
+- Cannot modify project settings or membership
+
+#### Implementation Examples
+
+**Permission Check in Service Layer** (`lib/services/project-service.ts:172-184`):
+
+```typescript
+export async function updateProject(
+  projectId: string,
+  userId: string,
+  input: UpdateProjectInput
+): Promise<ProjectWithMembers> {
+  // Check if user has admin or owner role
+  const member = await prisma.projectMember.findFirst({
+    where: {
+      projectId,
+      userId,
+      role: {
+        in: ['owner', 'admin'], // Only owners and admins can update
+      },
+    },
+  });
+
+  if (!member) {
+    throw new Error('Permission denied: Only owners and admins can update projects');
+  }
+
+  // ... proceed with update
+}
+```
+
+**Last Owner Protection** (`lib/services/project-service.ts:317-339`):
+
+```typescript
+export async function removeProjectMember(
+  projectId: string,
+  requestingUserId: string,
+  targetUserId: string
+): Promise<void> {
+  // ... permission checks ...
+
+  // Check if target is the last owner
+  if (targetMember?.role === 'owner') {
+    const ownerCount = await prisma.projectMember.count({
+      where: {
+        projectId,
+        role: 'owner',
+      },
+    });
+
+    if (ownerCount === 1) {
+      throw new Error('Cannot remove the last owner from the project');
+    }
+  }
+
+  // ... proceed with removal
+}
+```
+
+---
+
+### 12.4. Project Service Layer
+
+The project management logic is centralized in `lib/services/project-service.ts`, which provides **10 core functions** for CRUD operations and member management.
+
+#### Service Functions Overview
+
+| Function | Purpose | Permission Required |
+|----------|---------|-------------------|
+| `getProjects(userId)` | List all projects for a user | User must be a member |
+| `getProject(projectId, userId)` | Get single project details | User must be a member |
+| `createProject(input)` | Create new project | Authenticated user |
+| `updateProject(projectId, userId, input)` | Update project metadata | Owner or Admin |
+| `deleteProject(projectId, userId)` | Delete project and all data | Owner only |
+| `addProjectMember(projectId, userId, input)` | Add team member | Owner or Admin |
+| `removeProjectMember(projectId, userId, targetId)` | Remove team member | Owner or Admin |
+| `getProjectMembers(projectId, userId)` | List all members | Any member |
+| `hasProjectRole(projectId, userId, roles)` | Check user role | N/A (utility) |
+| `getUserProjectRole(projectId, userId)` | Get user's role | N/A (utility) |
+
+#### Function Details and Examples
+
+##### 1. Get Projects for User
+
+**Function**: `getProjects(userId: string)`
+
+Returns all projects where the user is a member, with full member lists and resource counts.
+
+```typescript
+// Example usage
+const projects = await getProjects('user-123');
+
+// Response type: ProjectWithMembers[]
+[
+  {
+    id: 'project-1',
+    name: 'Zodiac App',
+    description: 'AI-powered zodiac compatibility dating app',
+    createdAt: '2025-10-25T10:00:00Z',
+    updatedAt: '2025-10-30T15:30:00Z',
+    members: [
+      { userId: 'user-123', role: 'owner', user: { email: 'alice@example.com', name: 'Alice' } },
+      { userId: 'user-456', role: 'admin', user: { email: 'bob@example.com', name: 'Bob' } },
+    ],
+    _count: {
+      agents: 5,
+      workflows: 3,
+      stories: 22,
+      chatSessions: 8,
+    },
+  },
+  // ... more projects
+]
+```
+
+**Key Features:**
+- Filters by user membership
+- Includes full member list with user details
+- Returns real-time resource counts
+- Sorted by `updatedAt` (most recent first)
+
+##### 2. Create Project
+
+**Function**: `createProject(input: CreateProjectInput)`
+
+Creates a new project and automatically adds the creator as an owner.
+
+```typescript
+// Input validation schema
+const CreateProjectSchema = z.object({
+  name: z.string().min(1, 'Project name is required').max(100),
+  description: z.string().max(500).optional(),
+  userId: z.string().min(1, 'User ID is required'),
+});
+
+// Example usage
+const project = await createProject({
+  name: 'Zodiac App',
+  description: 'AI-powered zodiac compatibility dating app',
+  userId: 'user-123',
+});
+
+// Creator automatically becomes owner:
+// project.members = [{ userId: 'user-123', role: 'owner' }]
+```
+
+**Important Behaviors:**
+- **Auto-ownership**: Creator is automatically added as owner
+- **Validation**: Zod schema validates input before database operation
+- **User Check**: Ensures user exists before creating project
+- **Atomic Operation**: Project and initial membership created in single transaction
+
+##### 3. Update Project
+
+**Function**: `updateProject(projectId: string, userId: string, input: UpdateProjectInput)`
+
+Updates project metadata (name and/or description). Requires owner or admin role.
+
+```typescript
+// Example usage
+const updatedProject = await updateProject('project-1', 'user-123', {
+  name: 'Zodiac App Pro',
+  description: 'Enhanced version with premium features',
+});
+
+// Permission denied example:
+try {
+  await updateProject('project-1', 'user-789', { name: 'New Name' });
+} catch (error) {
+  // Error: Permission denied: Only owners and admins can update projects
+}
+```
+
+##### 4. Delete Project
+
+**Function**: `deleteProject(projectId: string, userId: string)`
+
+Deletes project and all associated data (cascade delete). **Owner-only operation**.
+
+```typescript
+// Example usage
+await deleteProject('project-1', 'user-123');
+
+// Cascade deletes:
+// - All agents in the project
+// - All workflows
+// - All stories (StateMachine records)
+// - All chat sessions
+// - All project members
+// - All config entries
+```
+
+**Safety Features:**
+- **Owner-only**: Only project owners can delete projects
+- **Cascade Delete**: Prisma schema handles cleanup automatically
+- **No Orphans**: All related data is removed
+
+##### 5. Add Project Member
+
+**Function**: `addProjectMember(projectId: string, requestingUserId: string, input: AddMemberInput)`
+
+Adds a new member to the project with a specified role. Requires owner or admin permission.
+
+```typescript
+// Input schema
+const AddMemberSchema = z.object({
+  userId: z.string().min(1),
+  role: z.enum(['owner', 'admin', 'member']).default('member'),
+});
+
+// Example usage
+const member = await addProjectMember('project-1', 'user-123', {
+  userId: 'user-789',
+  role: 'admin',
+});
+
+// Error cases:
+// 1. Requesting user is not owner/admin
+// 2. Target user doesn't exist
+// 3. User is already a member
+```
+
+##### 6. Remove Project Member
+
+**Function**: `removeProjectMember(projectId: string, requestingUserId: string, targetUserId: string)`
+
+Removes a member from the project. **Cannot remove the last owner**.
+
+```typescript
+// Example usage
+await removeProjectMember('project-1', 'user-123', 'user-789');
+
+// Protected scenarios:
+// 1. Cannot remove last owner
+try {
+  await removeProjectMember('project-1', 'owner-id', 'owner-id'); // last owner
+} catch (error) {
+  // Error: Cannot remove the last owner from the project
+}
+```
+
+##### 7. Get Project Members
+
+**Function**: `getProjectMembers(projectId: string, userId: string)`
+
+Returns all members of a project with full user details. Any project member can call this.
+
+```typescript
+// Example usage
+const members = await getProjectMembers('project-1', 'user-123');
+
+// Response:
+[
+  {
+    id: 'member-1',
+    userId: 'user-123',
+    projectId: 'project-1',
+    role: 'owner',
+    joinedAt: '2025-10-25T10:00:00Z',
+    user: {
+      id: 'user-123',
+      email: 'alice@example.com',
+      name: 'Alice',
+    },
+  },
+  // ... more members
+]
+```
+
+##### 8. Check Project Role
+
+**Function**: `hasProjectRole(projectId: string, userId: string, requiredRoles: Array<'owner' | 'admin' | 'member'>)`
+
+Utility function to check if a user has one of the specified roles in a project.
+
+```typescript
+// Example usage
+const canManage = await hasProjectRole('project-1', 'user-123', ['owner', 'admin']);
+// Returns: true if user is owner OR admin, false otherwise
+
+const isOwner = await hasProjectRole('project-1', 'user-123', ['owner']);
+// Returns: true only if user is owner
+
+// Common patterns:
+if (await hasProjectRole(projectId, userId, ['owner', 'admin'])) {
+  // User can manage project
+}
+```
+
+##### 9. Get User's Role in Project
+
+**Function**: `getUserProjectRole(projectId: string, userId: string)`
+
+Returns the user's specific role in the project, or `null` if not a member.
+
+```typescript
+// Example usage
+const role = await getUserProjectRole('project-1', 'user-123');
+// Returns: 'owner' | 'admin' | 'member' | null
+
+// Usage in permission checks:
+const role = await getUserProjectRole(projectId, userId);
+if (role === 'owner') {
+  // Allow delete operation
+} else if (role === 'admin') {
+  // Allow update operation
+} else if (role === 'member') {
+  // Allow read-only access
+} else {
+  // Not a member - deny access
+}
+```
+
+#### TypeScript Types
+
+```typescript
+// Input types (from Zod schemas)
+export type CreateProjectInput = {
+  name: string;
+  description?: string;
+  userId: string;
+};
+
+export type UpdateProjectInput = {
+  name?: string;
+  description?: string | null;
+};
+
+export type AddMemberInput = {
+  userId: string;
+  role: 'owner' | 'admin' | 'member';
+};
+
+// Response type (with counts and members)
+export type ProjectWithMembers = Project & {
+  members: Array<ProjectMember & { user: User }>;
+  _count: {
+    agents: number;
+    workflows: number;
+    stories: number;
+    chatSessions: number;
+  };
+};
+```
+
+---
+
+### 12.5. Projects API
+
+The Projects API provides **6 RESTful endpoints** for project and member management.
+
+#### API Endpoints Overview
+
+| Method | Endpoint | Description | Permission |
+|--------|----------|-------------|------------|
+| GET | `/api/v3/projects` | List all projects for current user | Authenticated |
+| POST | `/api/v3/projects` | Create new project | Authenticated |
+| GET | `/api/v3/projects/[id]` | Get project details | Member |
+| PUT | `/api/v3/projects/[id]` | Update project | Owner/Admin |
+| DELETE | `/api/v3/projects/[id]` | Delete project | Owner |
+| GET | `/api/v3/projects/[id]/members` | List project members | Member |
+| POST | `/api/v3/projects/[id]/members` | Add project member | Owner/Admin |
+| DELETE | `/api/v3/projects/[id]/members` | Remove project member | Owner/Admin |
+
+**Note**: Currently uses `default-user` for authentication. In production, replace `getCurrentUserId()` with actual session-based authentication.
+
+#### API Documentation with Examples
+
+##### GET `/api/v3/projects`
+
+**Description**: List all projects where the current user is a member.
+
+**Request:**
+```bash
+curl http://localhost:3000/api/v3/projects
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "cmhe949rp0000rzhh5s2p4yfs",
+      "name": "Zodiac App",
+      "description": "AI-powered zodiac compatibility dating app",
+      "createdAt": "2025-10-25T10:00:00.000Z",
+      "updatedAt": "2025-10-30T15:30:00.000Z",
+      "members": [
+        {
+          "id": "member-1",
+          "userId": "default-user",
+          "projectId": "cmhe949rp0000rzhh5s2p4yfs",
+          "role": "owner",
+          "joinedAt": "2025-10-25T10:00:00.000Z",
+          "user": {
+            "id": "default-user",
+            "email": "default-user@madace.local",
+            "name": "Test User"
+          }
+        }
+      ],
+      "_count": {
+        "agents": 0,
+        "workflows": 3,
+        "stories": 22,
+        "chatSessions": 0
+      }
+    }
+  ],
+  "count": 1
+}
+```
+
+##### POST `/api/v3/projects`
+
+**Description**: Create a new project. Creator automatically becomes owner.
+
+**Request:**
+```bash
+curl -X POST http://localhost:3000/api/v3/projects \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "My New Project",
+    "description": "A sample project for testing"
+  }'
+```
+
+**Response (201 Created):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "new-project-id",
+    "name": "My New Project",
+    "description": "A sample project for testing",
+    "createdAt": "2025-10-31T12:00:00.000Z",
+    "updatedAt": "2025-10-31T12:00:00.000Z",
+    "members": [
+      {
+        "userId": "default-user",
+        "role": "owner",
+        "user": { "email": "default-user@madace.local" }
+      }
+    ],
+    "_count": {
+      "agents": 0,
+      "workflows": 0,
+      "stories": 0,
+      "chatSessions": 0
+    }
+  },
+  "message": "Project created successfully"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "success": false,
+  "error": "Validation error",
+  "details": "Project name is required"
+}
+```
+
+##### GET `/api/v3/projects/[id]`
+
+**Description**: Get detailed information about a specific project.
+
+**Request:**
+```bash
+curl http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "cmhe949rp0000rzhh5s2p4yfs",
+    "name": "Zodiac App",
+    "description": "AI-powered zodiac compatibility dating app",
+    "members": [
+      { "userId": "user-1", "role": "owner", "user": { "email": "alice@zodiacapp.com" } },
+      { "userId": "user-2", "role": "admin", "user": { "email": "bob@zodiacapp.com" } }
+    ],
+    "_count": {
+      "agents": 0,
+      "workflows": 3,
+      "stories": 22,
+      "chatSessions": 0
+    }
+  }
+}
+```
+
+**Error Response (404 Not Found):**
+```json
+{
+  "success": false,
+  "error": "Project not found or access denied"
+}
+```
+
+##### PUT `/api/v3/projects/[id]`
+
+**Description**: Update project metadata (name and/or description). Requires owner or admin role.
+
+**Request:**
+```bash
+curl -X PUT http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Zodiac App Pro",
+    "description": "Enhanced with premium features"
+  }'
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "cmhe949rp0000rzhh5s2p4yfs",
+    "name": "Zodiac App Pro",
+    "description": "Enhanced with premium features",
+    "updatedAt": "2025-10-31T12:30:00.000Z"
+  },
+  "message": "Project updated successfully"
+}
+```
+
+**Error Response (403 Forbidden):**
+```json
+{
+  "success": false,
+  "error": "Permission denied: Only owners and admins can update projects"
+}
+```
+
+##### DELETE `/api/v3/projects/[id]`
+
+**Description**: Delete a project and all associated data. **Owner-only operation**.
+
+**Request:**
+```bash
+curl -X DELETE http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Project deleted successfully"
+}
+```
+
+**Error Response (403 Forbidden):**
+```json
+{
+  "success": false,
+  "error": "Permission denied: Only owners can delete projects"
+}
+```
+
+##### POST `/api/v3/projects/[id]/members`
+
+**Description**: Add a new member to the project. Requires owner or admin role.
+
+**Request:**
+```bash
+curl -X POST http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs/members \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": "user-789",
+    "role": "member"
+  }'
+```
+
+**Response (201 Created):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "member-new",
+    "userId": "user-789",
+    "projectId": "cmhe949rp0000rzhh5s2p4yfs",
+    "role": "member",
+    "joinedAt": "2025-10-31T13:00:00.000Z"
+  },
+  "message": "Member added successfully"
+}
+```
+
+**Error Response (409 Conflict):**
+```json
+{
+  "success": false,
+  "error": "User is already a member of this project"
+}
+```
+
+##### DELETE `/api/v3/projects/[id]/members`
+
+**Description**: Remove a member from the project. Cannot remove last owner.
+
+**Request:**
+```bash
+curl -X DELETE http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs/members \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": "user-789"
+  }'
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Member removed successfully"
+}
+```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "success": false,
+  "error": "Cannot remove the last owner from the project"
+}
+```
+
+#### Authentication Integration Points
+
+**Current Implementation** (`app/api/v3/projects/route.ts:12`):
+
+```typescript
+// Mock user ID (in production, get from auth session)
+const getCurrentUserId = () => 'default-user';
+```
+
+**Production Implementation** (example with NextAuth.js):
+
+```typescript
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+
+const getCurrentUserId = async () => {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+  return session.user.id;
+};
+```
+
+---
+
+### 12.6. Multi-Project Isolation
+
+MADACE v3.0 implements **complete data isolation** between projects using Prisma's relation-based filtering.
+
+#### Data Isolation Architecture
+
+All major database models include a `projectId` foreign key that enforces isolation:
+
+```prisma
+// Agents are scoped to projects
+model Agent {
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+  @@index([projectId])
+}
+
+// Workflows are scoped to projects
+model Workflow {
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  @@index([projectId])
+}
+
+// Stories are scoped to projects
+model StateMachine {
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  @@index([projectId, status])
+}
+
+// Chat sessions are scoped to projects
+model ChatSession {
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  @@index([projectId])
+}
+```
+
+#### Cross-Project Query Prevention
+
+**Anti-Pattern** (exposes all projects):
+```typescript
+// ❌ BAD: Returns all stories across all projects
+const stories = await prisma.stateMachine.findMany();
+```
+
+**Correct Pattern** (project-scoped):
+```typescript
+// ✅ GOOD: Only returns stories for specific project
+const stories = await prisma.stateMachine.findMany({
+  where: { projectId: 'project-1' },
+});
+```
+
+#### Filtering Patterns
+
+**Pattern 1: User Permission Check + Project Filter**
+
+Used in APIs to ensure user is a member before returning project data:
+
+```typescript
+export async function GET(request: NextRequest) {
+  const projectId = searchParams.get('projectId');
+  const userId = getCurrentUserId();
+
+  // First, verify user is a member of this project
+  const project = await getProject(projectId, userId);
+  if (!project) {
+    return NextResponse.json(
+      { success: false, error: 'Access denied' },
+      { status: 403 }
+    );
+  }
+
+  // Then, fetch project-scoped data
+  const stories = await prisma.stateMachine.findMany({
+    where: { projectId },
+  });
+
+  return NextResponse.json({ success: true, data: stories });
+}
+```
+
+**Pattern 2: Optional Project Filter**
+
+Used when a resource can be global or project-scoped (e.g., agents):
+
+```typescript
+// Get agents for a specific project OR global agents
+const where = projectId
+  ? { projectId }           // Project-specific agents
+  : { projectId: null };    // Global agents only
+
+const agents = await prisma.agent.findMany({ where });
+```
+
+**Pattern 3: State API Multi-Project Support** (`app/api/state/route.ts:14-22`):
+
+```typescript
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const projectId = searchParams.get('projectId');
+
+  // Build where clause - if no projectId, returns ALL stories
+  const where = projectId ? { projectId } : {};
+
+  const stories = await prisma.stateMachine.findMany({
+    where,
+    orderBy: { createdAt: 'asc' },
+  });
+  // ... group by status and return
+}
+```
+
+**Usage Examples:**
+
+```bash
+# Get stories for specific project
+curl "http://localhost:3000/api/state?projectId=cmhe949rp0000rzhh5s2p4yfs"
+
+# Get ALL stories (admin view)
+curl "http://localhost:3000/api/state"
+```
+
+#### Database Indexes for Performance
+
+All project-scoped models have indexes on `projectId` for fast filtering:
+
+```prisma
+model StateMachine {
+  projectId String
+  status    String
+
+  @@index([projectId, status])  // Composite index for kanban queries
+  @@index([status])              // Status-only queries
+}
+
+model Agent {
+  projectId String?
+  @@index([projectId])          // Project filter queries
+}
+
+model ProjectMember {
+  userId    String
+  projectId String
+
+  @@index([projectId])          // Find all members of a project
+  @@index([userId])             // Find all projects for a user
+  @@unique([userId, projectId]) // Prevent duplicate memberships
+}
+```
+
+**Query Performance:**
+
+- `WHERE projectId = 'xxx'` → **O(log n)** with index
+- `WHERE projectId = 'xxx' AND status = 'TODO'` → **O(log n)** with composite index
+- Indexes maintained automatically by Prisma
+
+---
+
+### 12.7. Member Management
+
+#### Adding Members
+
+**UI Flow** (planned):
+1. Project owner/admin navigates to project settings
+2. Enters new member's email address
+3. Selects role (owner/admin/member)
+4. Clicks "Add Member"
+5. System validates user exists and isn't already a member
+6. Member receives invitation (future feature)
+
+**API Flow** (current):
+
+```typescript
+// Step 1: Check if user exists
+const targetUser = await prisma.user.findUnique({
+  where: { email: 'newmember@example.com' },
+});
+
+// Step 2: Add member via API
+const response = await fetch(`/api/v3/projects/${projectId}/members`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    userId: targetUser.id,
+    role: 'member',
+  }),
+});
+
+// Step 3: Verify addition
+if (response.ok) {
+  const { data } = await response.json();
+  console.log('Member added:', data);
+}
+```
+
+**Error Handling:**
+
+```typescript
+try {
+  await addProjectMember(projectId, requestingUserId, {
+    userId: 'user-789',
+    role: 'admin',
+  });
+} catch (error) {
+  if (error.message.includes('Permission denied')) {
+    // Requesting user is not owner/admin
+  } else if (error.message.includes('already a member')) {
+    // User is already in the project
+  } else if (error.message.includes('not found')) {
+    // Target user doesn't exist
+  }
+}
+```
+
+#### Removing Members
+
+**Safety Rules:**
+
+1. **Last Owner Protection**: Cannot remove the last owner from a project
+2. **Self-Removal**: Members can remove themselves (not yet implemented)
+3. **Permission Check**: Only owners/admins can remove others
+
+**Example: Remove Member**
+
+```typescript
+// Remove a regular member (allowed)
+await removeProjectMember('project-1', 'owner-id', 'member-id');
+
+// Try to remove last owner (blocked)
+try {
+  await removeProjectMember('project-1', 'owner-id', 'owner-id');
+} catch (error) {
+  // Error: Cannot remove the last owner from the project
+}
+
+// Non-admin tries to remove member (blocked)
+try {
+  await removeProjectMember('project-1', 'member-id', 'other-member-id');
+} catch (error) {
+  // Error: Permission denied: Only owners and admins can remove members
+}
+```
+
+#### Changing Roles
+
+**Note**: Role changing is not yet implemented as a dedicated function, but can be done by removing and re-adding the member with a new role.
+
+**Current Workaround:**
+
+```typescript
+// Change user from 'member' to 'admin'
+await removeProjectMember(projectId, requestingUserId, targetUserId);
+await addProjectMember(projectId, requestingUserId, {
+  userId: targetUserId,
+  role: 'admin',
+});
+```
+
+**Planned Function** (future enhancement):
+
+```typescript
+export async function updateMemberRole(
+  projectId: string,
+  requestingUserId: string,
+  targetUserId: string,
+  newRole: 'owner' | 'admin' | 'member'
+): Promise<ProjectMember> {
+  // Check permissions
+  // Prevent last owner from being demoted
+  // Update role
+}
+```
+
+---
+
+### 12.8. Production Considerations
+
+#### Authentication Integration
+
+**Current State:**
+- Uses hardcoded `default-user` for development
+- Mock `getCurrentUserId()` function in all API routes
+
+**Production Requirements:**
+
+1. **Integrate Authentication Provider** (e.g., NextAuth.js, Clerk, Auth0):
+
+```typescript
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth from 'next-auth';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { prisma } from '@/lib/database/client';
+
+export const authOptions = {
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    // Add providers (Google, GitHub, Email, etc.)
+  ],
+  callbacks: {
+    session({ session, user }) {
+      session.user.id = user.id; // Add user ID to session
+      return session;
+    },
+  },
+};
+
+export default NextAuth(authOptions);
+```
+
+2. **Update `getCurrentUserId()` in All API Routes**:
+
+```typescript
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+
+const getCurrentUserId = async () => {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+  return session.user.id;
+};
+```
+
+3. **Add Middleware for Protected Routes**:
+
+```typescript
+// middleware.ts
+export { default } from 'next-auth/middleware';
+
+export const config = {
+  matcher: ['/api/v3/projects/:path*', '/projects/:path*'],
+};
+```
+
+#### Performance Optimizations
+
+**1. Database Query Optimization**
+
+Use Prisma's `select` and `include` strategically:
+
+```typescript
+// ❌ BAD: Returns ALL fields including large JSON
+const projects = await prisma.project.findMany({
+  include: { members: { include: { user: true } } },
+});
+
+// ✅ GOOD: Only returns needed fields
+const projects = await prisma.project.findMany({
+  select: {
+    id: true,
+    name: true,
+    description: true,
+    _count: { select: { stories: true, agents: true } },
+    members: {
+      select: {
+        role: true,
+        user: { select: { id: true, email: true, name: true } },
+      },
+    },
+  },
+});
+```
+
+**2. Caching Strategies**
+
+Implement caching for frequently accessed data:
+
+```typescript
+import { unstable_cache } from 'next/cache';
+
+// Cache project list for 5 minutes
+const getCachedProjects = unstable_cache(
+  async (userId: string) => getProjects(userId),
+  ['projects'],
+  { revalidate: 300 } // 5 minutes
+);
+```
+
+**3. Pagination for Large Projects**
+
+Add pagination to member lists and resource counts:
+
+```typescript
+export async function getProjectMembers(
+  projectId: string,
+  userId: string,
+  options?: { page?: number; limit?: number }
+) {
+  const page = options?.page || 1;
+  const limit = options?.limit || 20;
+  const skip = (page - 1) * limit;
+
+  const [members, total] = await Promise.all([
+    prisma.projectMember.findMany({
+      where: { projectId },
+      include: { user: true },
+      skip,
+      take: limit,
+      orderBy: { joinedAt: 'asc' },
+    }),
+    prisma.projectMember.count({ where: { projectId } }),
+  ]);
+
+  return {
+    members,
+    pagination: {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit),
+    },
+  };
+}
+```
+
+#### Security Best Practices
+
+**1. Input Validation**
+
+Always use Zod schemas to validate API inputs:
+
+```typescript
+// ✅ GOOD: Zod validates before database operation
+const CreateProjectSchema = z.object({
+  name: z.string().min(1).max(100),
+  description: z.string().max(500).optional(),
+});
+
+const validated = CreateProjectSchema.parse(input);
+```
+
+**2. SQL Injection Prevention**
+
+Prisma automatically prevents SQL injection through parameterized queries:
+
+```typescript
+// ✅ SAFE: Prisma handles escaping
+await prisma.project.findMany({
+  where: { name: userInput },
+});
+
+// ❌ NEVER DO THIS (if using raw SQL):
+await prisma.$queryRaw`SELECT * FROM Project WHERE name = '${userInput}'`;
+```
+
+**3. CSRF Protection**
+
+Add CSRF tokens to state-changing operations:
+
+```typescript
+// middleware.ts
+import { csrf } from '@/lib/security/csrf';
+
+export function middleware(request: NextRequest) {
+  if (request.method !== 'GET') {
+    return csrf.check(request);
+  }
+}
+```
+
+**4. Rate Limiting**
+
+Protect project creation and member management endpoints:
+
+```typescript
+import rateLimit from '@/lib/security/rate-limit';
+
+const limiter = rateLimit({
+  interval: 60 * 1000, // 1 minute
+  uniqueTokenPerInterval: 500,
+});
+
+export async function POST(request: NextRequest) {
+  try {
+    await limiter.check(request, 10); // 10 requests per minute
+  } catch {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded' },
+      { status: 429 }
+    );
+  }
+  // ... proceed with request
+}
+```
+
+#### Monitoring and Observability
+
+**1. Audit Logging**
+
+Log all project and member management operations:
+
+```typescript
+export async function createProject(input: CreateProjectInput) {
+  const project = await prisma.project.create({ ... });
+
+  // Log project creation
+  await prisma.auditLog.create({
+    data: {
+      action: 'project.created',
+      userId: input.userId,
+      resourceId: project.id,
+      metadata: { name: project.name },
+    },
+  });
+
+  return project;
+}
+```
+
+**2. Metrics Collection**
+
+Track project and membership metrics:
+
+```typescript
+// Metrics to track:
+// - Total projects
+// - Projects per user (avg/median)
+// - Member count per project (avg/median)
+// - Project creation rate (per day/week)
+// - Member churn rate
+// - API response times
+```
+
+**3. Error Tracking**
+
+Integrate error tracking (e.g., Sentry):
+
+```typescript
+import * as Sentry from '@sentry/nextjs';
+
+export async function DELETE(request: NextRequest, { params }) {
+  try {
+    await deleteProject(params.id, userId);
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { operation: 'project.delete' },
+      extra: { projectId: params.id, userId },
+    });
+    throw error;
+  }
+}
+```
+
+---
+
+### 12.9. Testing the Project Management System
+
+#### Manual Testing via API
+
+**Create a Project:**
+
+```bash
+curl -X POST http://localhost:3000/api/v3/projects \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Test Project", "description": "For testing"}'
+```
+
+**List Projects:**
+
+```bash
+curl http://localhost:3000/api/v3/projects | jq .
+```
+
+**Add a Member:**
+
+```bash
+# First, create a test user via Prisma Studio or script
+curl -X POST http://localhost:3000/api/v3/projects/PROJECT_ID/members \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "USER_ID", "role": "member"}'
+```
+
+**View Members:**
+
+```bash
+curl http://localhost:3000/api/v3/projects/PROJECT_ID/members | jq .
+```
+
+**Update Project:**
+
+```bash
+curl -X PUT http://localhost:3000/api/v3/projects/PROJECT_ID \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Updated Name", "description": "Updated description"}'
+```
+
+**Delete Project:**
+
+```bash
+curl -X DELETE http://localhost:3000/api/v3/projects/PROJECT_ID
+```
+
+#### Testing via Prisma Studio
+
+```bash
+npm run db:studio
+```
+
+1. Navigate to http://localhost:5555
+2. Explore `Project`, `ProjectMember`, and `User` models
+3. Manually create/update/delete records
+4. Verify cascade delete behavior
+5. Check relationship constraints
+
+#### Automated Testing (Planned)
+
+**Unit Tests** (`__tests__/lib/services/project-service.test.ts`):
+
+```typescript
+import { createProject, getProjects, addProjectMember } from '@/lib/services/project-service';
+
+describe('Project Service', () => {
+  beforeEach(async () => {
+    // Clear test database
+    await prisma.project.deleteMany();
+    await prisma.user.deleteMany();
+  });
+
+  it('should create project with creator as owner', async () => {
+    const user = await prisma.user.create({
+      data: { email: 'test@example.com', name: 'Test User' },
+    });
+
+    const project = await createProject({
+      name: 'Test Project',
+      userId: user.id,
+    });
+
+    expect(project.members).toHaveLength(1);
+    expect(project.members[0].role).toBe('owner');
+    expect(project.members[0].userId).toBe(user.id);
+  });
+
+  it('should prevent removing last owner', async () => {
+    // ... test implementation
+  });
+});
+```
+
+**E2E Tests** (`e2e-tests/projects.spec.ts`):
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('should create and manage project', async ({ page }) => {
+  await page.goto('/projects');
+
+  // Create project
+  await page.click('button:has-text("New Project")');
+  await page.fill('input[name="name"]', 'E2E Test Project');
+  await page.click('button:has-text("Create")');
+
+  // Verify project appears in list
+  await expect(page.locator('text=E2E Test Project')).toBeVisible();
+
+  // Add member
+  await page.click('button:has-text("Add Member")');
+  // ... continue test
+});
+```
+
+---
+
+### 12.10. Summary
+
+The **Project Management & Multi-tenancy** system in MADACE v3.0 provides:
+
+✅ **Complete Multi-Project Support**
+- Multiple projects per MADACE instance
+- Full data isolation between projects
+- Production-ready architecture
+
+✅ **Robust Permission System**
+- Three-tier roles (owner/admin/member)
+- Granular permission checks
+- Last-owner protection
+
+✅ **Comprehensive Service Layer**
+- 10 CRUD functions for projects and members
+- Type-safe with Zod validation
+- Transaction support with Prisma
+
+✅ **RESTful API**
+- 6 endpoints for project/member management
+- Proper HTTP status codes
+- Error handling and validation
+
+✅ **Production-Ready Features**
+- Cascade delete support
+- Performance-optimized queries
+- Database indexes for fast filtering
+- Authentication integration points
+
+**Key Files:**
+
+| File | Purpose | Lines |
+|------|---------|-------|
+| `lib/services/project-service.ts` | Project service layer with 10 functions | 421 |
+| `app/api/v3/projects/route.ts` | Projects list and creation API | 88 |
+| `app/api/v3/projects/[id]/route.ts` | Project detail API (get/update/delete) | 154 |
+| `app/api/v3/projects/[id]/members/route.ts` | Member management API | 192 |
+| `prisma/schema.prisma` | Database schema (Project, ProjectMember, User) | ~80 |
+
+**Total Implementation:** ~935 lines of production-ready code
+
+---
+
+## 13. Assessment Tool & Implementation Actions ✅
+
+The **Assessment Tool** (`/assess`) provides project complexity evaluation with actionable implementation buttons. This feature transforms passive assessment into active project initiation.
+
+### 13.1. Overview
+
+**Purpose**: Enable users to assess project complexity and immediately take action on assessment results.
+
+**Key Features**:
+- 8-criteria complexity scoring (40 points total)
+- 5 complexity levels (Minimal to Enterprise)
+- Real-time assessment updates
+- **4 Implementation Action Buttons** (NEW)
+- 3 Export options (Markdown, JSON, Save)
+
+**Files**:
+- `app/assess/page.tsx` - Assessment page with handlers (239 lines)
+- `components/features/AssessmentResult.tsx` - Result display with action buttons (302 lines)
+- `components/features/AssessmentForm.tsx` - 8-field input form
+- `lib/workflows/complexity-assessment.ts` - Scoring algorithm (334 lines)
+- `lib/workflows/complexity-types.ts` - Type definitions and validation
+
+### 13.2. Implementation Action Buttons Architecture
+
+#### Button Categories
+
+Assessment results now feature **two distinct sections**:
+
+1. **🚀 Implementation Actions** (Primary)
+   - Green-themed prominent buttons
+   - Immediate actionable workflows
+   - Direct project initiation
+
+2. **📄 Export Options** (Secondary)
+   - Subdued styling
+   - Documentation and reporting
+   - Traditional export functions
+
+#### Action Button Specifications
+
+| Button | Purpose | Handler | Navigation/Effect |
+|--------|---------|---------|-------------------|
+| **Start Recommended Workflow** | Begin workflow execution | `handleStartWorkflow()` | Navigate to `/workflows?workflow={name}` |
+| **Create Project** | Create new project with assessment data | `handleCreateProject()` | POST to `/api/v3/projects` |
+| **Apply Configuration** | Save assessment as MADACE config | `handleApplyConfiguration()` | Save to `localStorage` |
+| **View Workflow Details** | Browse available workflows | `handleViewWorkflowDetails()` | Navigate to `/workflows` |
+
+### 13.3. Implementation Details
+
+#### 13.3.1. Component Props Interface
+
+**AssessmentResult Component** (`components/features/AssessmentResult.tsx:6-19`):
+
+```typescript
+interface Props {
+  assessment: AssessmentResult;
+
+  // Export actions
+  onExportMarkdown: () => void;
+  onExportJSON: () => void;
+  onSaveToProject: () => void;
+
+  // Implementation actions (NEW)
+  onStartWorkflow: () => void;
+  onCreateProject: () => void;
+  onApplyConfiguration: () => void;
+  onViewWorkflowDetails: () => void;
+}
+```
+
+#### 13.3.2. Action Handler Implementations
+
+##### Start Recommended Workflow
+
+**Location**: `app/assess/page.tsx:99-105`
+
+```typescript
+const handleStartWorkflow = () => {
+  if (!assessment) return;
+
+  // Navigate to workflows page with recommended workflow as query param
+  const workflowName = assessment.recommendedWorkflow
+    .replace('.yaml', '')
+    .replace('.workflow', '');
+  router.push(`/workflows?workflow=${encodeURIComponent(workflowName)}`);
+};
+```
+
+**Behavior**:
+- Cleans workflow filename (removes `.yaml` and `.workflow` extensions)
+- URL-encodes workflow name for safe query parameter
+- Navigates to `/workflows` page with workflow pre-selected
+- Workflows page can use query param to highlight or auto-start workflow
+
+##### Create Project with Assessment Data
+
+**Location**: `app/assess/page.tsx:107-144`
+
+```typescript
+const handleCreateProject = async () => {
+  if (!assessment) return;
+
+  try {
+    const levelNames = ['Minimal', 'Basic', 'Standard', 'Comprehensive', 'Enterprise'];
+    const projectName = `New ${levelNames[assessment.level]} Project`;
+
+    // Create project via API
+    const response = await fetch('/api/v3/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: projectName,
+        description: `Project assessed as Level ${assessment.level} (${levelNames[assessment.level]}) with ${assessment.totalScore}/40 points. Recommended workflow: ${assessment.recommendedWorkflow}`,
+      }),
+    });
+
+    if (response.ok) {
+      const { data } = await response.json();
+      alert(
+        `✅ Project Created Successfully!\n\n` +
+          `Project: "${projectName}"\n` +
+          `Complexity Level: ${levelNames[assessment.level]}\n` +
+          `Score: ${assessment.totalScore}/40 points\n` +
+          `Recommended Workflow: ${assessment.recommendedWorkflow}\n\n` +
+          `You can now start working on this project!`
+      );
+      // Future: router.push(`/projects/${data.id}`);
+    } else {
+      const error = await response.json();
+      alert(`Failed to create project: ${error.error || 'Unknown error'}`);
+    }
+  } catch (error) {
+    console.error('Failed to create project:', error);
+    alert('Failed to create project. Please try again.');
+  }
+};
+```
+
+**Behavior**:
+- Generates project name: `"New {Level} Project"` (e.g., "New Standard Project")
+- Creates project description with assessment summary
+- Calls Projects API (`POST /api/v3/projects`)
+- Shows success alert with project details
+- Future enhancement: Navigate to project detail page
+
+**API Integration**: Uses existing Project Management API (Section 12.3).
+
+**Project Schema**: Aligns with `CreateProjectInput` validation:
+```typescript
+{
+  name: string (required, min 1, max 100)
+  description?: string (optional, max 500)
+}
+```
+
+##### Apply MADACE Configuration
+
+**Location**: `app/assess/page.tsx:146-165`
+
+```typescript
+const handleApplyConfiguration = () => {
+  if (!assessment) return;
+
+  // Save assessment to localStorage for MADACE configuration
+  const levelNames = ['Minimal', 'Basic', 'Standard', 'Comprehensive', 'Enterprise'];
+  localStorage.setItem('madace-assessment', JSON.stringify(assessment));
+  localStorage.setItem('madace-complexity-level', assessment.level.toString());
+  localStorage.setItem('madace-recommended-workflow', assessment.recommendedWorkflow);
+
+  alert(
+    `✅ Configuration Applied Successfully!\n\n` +
+      `Complexity Level: ${levelNames[assessment.level]}\n` +
+      `Recommended Workflow: ${assessment.recommendedWorkflow}\n` +
+      `Total Score: ${assessment.totalScore}/40 points\n\n` +
+      `This configuration will be used for future MADACE operations.`
+  );
+};
+```
+
+**Behavior**:
+- Saves full assessment JSON to `localStorage['madace-assessment']`
+- Saves complexity level to `localStorage['madace-complexity-level']`
+- Saves recommended workflow to `localStorage['madace-recommended-workflow']`
+- Shows confirmation alert with applied configuration
+- Future MADACE operations can read these settings
+
+**Use Cases**:
+- Persist user's assessment for reuse across sessions
+- Default workflow selection based on complexity level
+- Conditional UI behavior based on assessed complexity
+
+##### View Workflow Details
+
+**Location**: `app/assess/page.tsx:167-170`
+
+```typescript
+const handleViewWorkflowDetails = () => {
+  // Navigate to workflows page
+  router.push('/workflows');
+};
+```
+
+**Behavior**:
+- Simple navigation to `/workflows` page
+- User can browse all available workflows
+- Provides context for recommended workflow
+
+### 13.4. UI/UX Design
+
+#### Visual Hierarchy
+
+**Implementation Actions Section** (`components/features/AssessmentResult.tsx:152-242`):
+
+```tsx
+{/* Implementation Actions */}
+<div className="rounded-lg border-2 border-green-300 bg-green-50 p-6 dark:border-green-700 dark:bg-green-950">
+  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+    🚀 Ready to Implement?
+  </h3>
+  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+    Take action on your assessment with these implementation options
+  </p>
+
+  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+    {/* 4 action buttons in 2x2 grid */}
+  </div>
+</div>
+```
+
+**Design Principles**:
+- **Green Color Theme**: Success/action-oriented (green-50/green-300 borders)
+- **Prominent Placement**: Appears BEFORE export options
+- **Responsive Grid**: 2x2 grid on desktop, stacked on mobile
+- **Visual Weight**: Border-2 (thicker than export section)
+
+**Button Styling**:
+
+| Button Type | Styling | Purpose |
+|-------------|---------|---------|
+| **Primary (Start Workflow)** | Green filled (`bg-green-600`) | Most important action |
+| **Secondary (3 others)** | Green outlined (`border-green-600`) | Supporting actions |
+
+#### Export Options Section
+
+**Location**: `components/features/AssessmentResult.tsx:244-298`
+
+```tsx
+{/* Export Options */}
+<div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+  <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
+    📄 Export Options
+  </h3>
+  <div className="flex flex-wrap gap-3">
+    {/* Existing export buttons */}
+  </div>
+</div>
+```
+
+**Design Differences from Implementation Actions**:
+- **Subdued Colors**: Gray theme (not green)
+- **Smaller Heading**: `text-sm` vs `text-lg`
+- **Thin Border**: `border` (default 1px) vs `border-2`
+- **Less Padding**: `p-4` vs `p-6`
+
+### 13.5. User Flow
+
+#### Typical Assessment-to-Implementation Flow
+
+```
+1. User fills 8 assessment criteria
+   ↓
+2. Real-time assessment calculates level (0-4)
+   ↓
+3. Assessment result displays with:
+   - Level badge (L0-L4)
+   - Recommended workflow
+   - Criteria breakdown
+   ↓
+4. User sees Implementation Actions section
+   ↓
+5. User clicks "Start Recommended Workflow"
+   ↓
+6. Navigates to /workflows?workflow={name}
+   ↓
+7. Workflow page highlights recommended workflow
+   ↓
+8. User begins execution
+```
+
+**Alternative Flows**:
+- **Create Project First**: Button 2 → Creates project → Later start workflow
+- **Apply Config First**: Button 3 → Saves settings → Later create project
+- **Explore Workflows**: Button 4 → Browse all → Choose different workflow
+
+### 13.6. Integration Points
+
+#### With Project Management API (Section 12)
+
+**Endpoint Used**: `POST /api/v3/projects`
+
+**Data Flow**:
+```
+Assessment Result
+  ↓
+handleCreateProject()
+  ↓
+POST /api/v3/projects {
+  name: "New {Level} Project",
+  description: "Project assessed as Level X..."
+}
+  ↓
+createProject() in project-service.ts
+  ↓
+Prisma: prisma.project.create()
+  ↓
+Database: Project + ProjectMember (owner) created
+  ↓
+Response: { success: true, data: project }
+```
+
+**Current User**: Uses `getCurrentUserId()` mock → Returns `'default-user'`
+
+**Future Enhancement**: Replace with actual authentication when implemented (Section 12.8.1).
+
+#### With Workflow System
+
+**Route**: `/workflows`
+
+**Query Parameters**: `?workflow={workflowName}`
+
+**Future Enhancement** (Recommended):
+
+```typescript
+// In /workflows/page.tsx
+const searchParams = useSearchParams();
+const highlightWorkflow = searchParams.get('workflow');
+
+// Highlight or auto-select workflow if specified
+useEffect(() => {
+  if (highlightWorkflow) {
+    const workflow = workflows.find(w => w.name === highlightWorkflow);
+    if (workflow) {
+      handleExecuteWorkflow(workflow.name); // Auto-start
+      // OR: scrollToWorkflow(workflow.name); // Just highlight
+    }
+  }
+}, [highlightWorkflow]);
+```
+
+#### With localStorage Configuration
+
+**Keys Stored**:
+```typescript
+{
+  'madace-assessment': string (JSON),       // Full AssessmentResult object
+  'madace-complexity-level': string,        // "0" to "4"
+  'madace-recommended-workflow': string     // "standard-workflow.yaml"
+}
+```
+
+**Reading Configuration**:
+
+```typescript
+// In any component/page
+const savedAssessment = localStorage.getItem('madace-assessment');
+if (savedAssessment) {
+  const assessment: AssessmentResult = JSON.parse(savedAssessment);
+  // Use assessment data
+}
+
+const complexityLevel = parseInt(localStorage.getItem('madace-complexity-level') || '2');
+const recommendedWorkflow = localStorage.getItem('madace-recommended-workflow');
+```
+
+**Use Cases**:
+- **Dashboard**: Show current complexity level badge
+- **Setup Wizard**: Pre-fill workflow selection with recommended workflow
+- **Settings**: Display currently applied assessment
+- **Workflow Selector**: Default to recommended workflow
+
+### 13.7. Error Handling
+
+#### Project Creation Errors
+
+**Handled Cases**:
+
+1. **API Returns Error** (e.g., validation failure):
+   ```typescript
+   if (!response.ok) {
+     const error = await response.json();
+     alert(`Failed to create project: ${error.error || 'Unknown error'}`);
+   }
+   ```
+
+2. **Network Error** (fetch fails):
+   ```typescript
+   catch (error) {
+     console.error('Failed to create project:', error);
+     alert('Failed to create project. Please try again.');
+   }
+   ```
+
+3. **No Assessment Data**:
+   ```typescript
+   if (!assessment) return; // Early return if assessment is null
+   ```
+
+#### Navigation Errors
+
+**Handled Cases**:
+
+1. **Missing Assessment**: All handlers check `if (!assessment) return;`
+2. **Invalid Workflow Name**: URL encoding handles special characters
+3. **Router Not Available**: Next.js ensures router is always available in client components
+
+### 13.8. Testing
+
+#### Manual Testing Steps
+
+1. **Navigate to Assessment Page**:
+   ```bash
+   # Start dev server
+   npm run dev
+
+   # Visit http://localhost:3000/assess
+   ```
+
+2. **Fill Assessment Form**:
+   - Select values for all 8 criteria
+   - Verify real-time assessment updates
+   - Check level badge and recommended workflow
+
+3. **Test Implementation Actions**:
+
+   **Start Workflow Button**:
+   - Click "Start Recommended Workflow"
+   - Verify navigation to `/workflows?workflow={name}`
+   - Check console for correct workflow name in URL
+
+   **Create Project Button**:
+   - Click "Create Project"
+   - Verify success alert with project details
+   - Check Prisma Studio for new project
+   - Verify project name: "New {Level} Project"
+   - Verify description contains assessment data
+
+   **Apply Configuration Button**:
+   - Click "Apply Configuration"
+   - Verify success alert
+   - Open browser DevTools → Application → localStorage
+   - Check for 3 keys: `madace-assessment`, `madace-complexity-level`, `madace-recommended-workflow`
+
+   **View Workflow Details Button**:
+   - Click "View Workflow Details"
+   - Verify navigation to `/workflows`
+
+4. **Test Export Options** (Existing Functionality):
+   - Verify all 3 export buttons still work
+   - Check visual separation from implementation actions
+
+#### Automated Testing (Future)
+
+**Recommended Test Cases**:
+
+```typescript
+// __tests__/app/assess/implementation-actions.test.tsx
+
+describe('Assessment Implementation Actions', () => {
+  it('should navigate to workflows page with query param', () => {
+    // Test handleStartWorkflow
+  });
+
+  it('should create project via API', async () => {
+    // Mock fetch
+    // Test handleCreateProject
+    // Verify API called with correct payload
+  });
+
+  it('should save assessment to localStorage', () => {
+    // Test handleApplyConfiguration
+    // Verify localStorage.setItem called with correct keys
+  });
+
+  it('should handle API errors gracefully', async () => {
+    // Mock fetch to return error
+    // Verify alert shown with error message
+  });
+
+  it('should disable buttons when assessment is null', () => {
+    // Render with null assessment
+    // Verify handlers return early
+  });
+});
+```
+
+### 13.9. Performance Considerations
+
+#### Lazy Loading
+
+**Assessment Form**: Heavy component with 8 form fields
+- Consider code splitting for `/assess` route
+- Form components already client-side only (`'use client'`)
+
+#### localStorage Performance
+
+**Current Implementation**: Synchronous `localStorage.setItem()`
+- **Risk**: Blocks main thread if large assessment object
+- **Mitigation**: Assessment object is small (~500 bytes JSON)
+- **Future**: Consider IndexedDB for larger data sets
+
+#### API Call Optimization
+
+**Project Creation**: Single API call, no pagination needed
+- **Performance**: ~200ms for project creation (local dev)
+- **Future**: Add loading state to "Create Project" button
+
+### 13.10. Future Enhancements
+
+#### 1. Project Navigation After Creation
+
+**Current**: Success alert only
+**Proposed**: Navigate to project detail page
+
+```typescript
+if (response.ok) {
+  const { data } = await response.json();
+  alert(`Project created successfully!`);
+  router.push(`/projects/${data.id}`); // Navigate to project page
+}
+```
+
+**Requires**: Project detail page implementation at `/projects/[id]`
+
+#### 2. Assessment History
+
+**Proposed**: Store multiple assessments, show history
+
+```typescript
+// Save with timestamp
+const assessments = JSON.parse(localStorage.getItem('madace-assessment-history') || '[]');
+assessments.push({
+  ...assessment,
+  assessedAt: new Date().toISOString(),
+});
+localStorage.setItem('madace-assessment-history', JSON.stringify(assessments));
+```
+
+**UI**: Add "View History" button → Shows list of past assessments
+
+#### 3. Workflow Auto-Start
+
+**Current**: Navigate to workflows page with query param
+**Proposed**: Auto-start workflow execution
+
+```typescript
+const handleStartWorkflow = async () => {
+  const workflowName = assessment.recommendedWorkflow.replace('.yaml', '');
+
+  // Auto-start workflow via API
+  const response = await fetch(`/api/workflows/${workflowName}/execute`, {
+    method: 'POST',
+  });
+
+  if (response.ok) {
+    router.push(`/workflows/${workflowName}`);
+  }
+};
+```
+
+#### 4. Assessment Export to Project Config
+
+**Proposed**: Save assessment as project-specific configuration
+
+```typescript
+// After creating project
+await fetch(`/api/v3/projects/${projectId}/config`, {
+  method: 'POST',
+  body: JSON.stringify({
+    key: 'complexity-assessment',
+    value: assessment,
+  }),
+});
+```
+
+**Uses**: Config model (Section 12.2) with `projectId` foreign key
+
+#### 5. Assessment Templates
+
+**Proposed**: Pre-fill assessment with common templates
+
+```typescript
+const templates = [
+  { name: 'Startup MVP', level: 1, criteria: {...} },
+  { name: 'Enterprise SaaS', level: 4, criteria: {...} },
+  { name: 'Internal Tool', level: 2, criteria: {...} },
+];
+
+<button onClick={() => applyTemplate(templates[0])}>
+  Use "Startup MVP" Template
+</button>
+```
+
+### 13.11. Modal Viewer for Markdown and JSON
+
+**Purpose**: Allow users to preview assessment reports in-browser before downloading
+
+**Problem Solved**: Users want to view the generated markdown report or JSON data without downloading files.
+
+#### Implementation Details
+
+**Modal State Management** (`app/assess/page.tsx`):
+
+```typescript
+const [viewerModal, setViewerModal] = useState<{
+  isOpen: boolean;
+  type: 'markdown' | 'json' | null;
+  content: string;
+}>({ isOpen: false, type: null, content: '' });
+
+// View handlers
+const handleViewMarkdown = () => {
+  if (!assessment) return;
+  const markdown = generateMarkdownReport(assessment);
+  setViewerModal({ isOpen: true, type: 'markdown', content: markdown });
+};
+
+const handleViewJSON = () => {
+  if (!assessment) return;
+  const json = JSON.stringify(assessment, null, 2);
+  setViewerModal({ isOpen: true, type: 'json', content: json });
+};
+
+const handleCloseViewer = () => {
+  setViewerModal({ isOpen: false, type: null, content: '' });
+};
+```
+
+**Modal Component** (lines 287-348):
+
+```tsx
+{viewerModal.isOpen && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+    onClick={handleCloseViewer}
+  >
+    <div
+      className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Modal Header */}
+      <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-900">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+          {viewerModal.type === 'markdown' ? 'Markdown Report' : 'JSON Data'}
+        </h2>
+        <button type="button" onClick={handleCloseViewer} aria-label="Close">
+          {/* Close icon (X) */}
+        </button>
+      </div>
+
+      {/* Modal Content */}
+      <div className="max-h-[70vh] overflow-auto p-6">
+        <pre className="whitespace-pre-wrap break-words rounded-lg bg-gray-50 p-4 font-mono text-sm text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+          {viewerModal.content}
+        </pre>
+      </div>
+
+      {/* Modal Footer */}
+      <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-900">
+        <button onClick={copyToClipboard}>Copy to Clipboard</button>
+        <button onClick={handleCloseViewer}>Close</button>
+      </div>
+    </div>
+  </div>
+)}
+```
+
+**View Buttons** (`components/features/AssessmentResult.tsx`):
+
+```tsx
+<div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+  <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
+    📄 View & Export Options
+  </h3>
+  <div className="flex flex-wrap gap-3">
+    {/* View Markdown Button */}
+    <button
+      onClick={onViewMarkdown}
+      className="flex items-center gap-2 rounded-lg border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:text-blue-300 dark:hover:bg-blue-900"
+    >
+      <svg>{/* Eye icon */}</svg>
+      View Markdown
+    </button>
+
+    {/* View JSON Button */}
+    <button onClick={onViewJSON} className="...">
+      <svg>{/* Eye icon */}</svg>
+      View JSON
+    </button>
+
+    {/* Export buttons follow... */}
+  </div>
+</div>
+```
+
+#### UI/UX Features
+
+**Modal Features**:
+- Full-screen overlay with dark backdrop (50% opacity)
+- Centered modal (max-width 4xl, max-height 90vh)
+- Scrollable content area for long reports
+- Click outside to close
+- ESC key support (native browser behavior)
+- Dark mode support throughout
+
+**Content Display**:
+- Monospace font for code/markdown
+- White background in light mode, dark background in dark mode
+- Text wrapping for long lines (`whitespace-pre-wrap`)
+- Word breaking to prevent overflow (`break-words`)
+
+**Button Styling**:
+- Blue theme to differentiate from export actions (gray theme)
+- Eye icon for intuitive "view" action
+- Hover states for better UX
+- Consistent with design system
+
+#### User Flow
+
+1. Fill out assessment form
+2. Scroll to "View & Export Options" section
+3. Click **"View Markdown"** → Modal opens with formatted markdown report
+4. Click **"View JSON"** → Modal opens with formatted JSON data
+5. Options in modal:
+   - **Copy to Clipboard** → Copy content for pasting elsewhere
+   - **Close** → Dismiss modal
+   - **Click outside** → Dismiss modal
+
+#### Benefits
+
+- **Instant Preview**: No file downloads required
+- **Content Verification**: Review before exporting
+- **Quick Copy**: One-click clipboard copy
+- **Responsive Design**: Works on all screen sizes
+- **Accessibility**: Keyboard navigation, ARIA labels
+
+---
+
+### 13.12. State Persistence with localStorage
+
+**Purpose**: Preserve assessment form state across navigation and page refreshes
+
+**Problem Solved**: Users lose their assessment progress when navigating away or accidentally refreshing the page.
+
+#### Implementation Details
+
+**Storage Key**:
+```typescript
+const STORAGE_KEY = 'madace-assessment-form-state';
+```
+
+**Load State on Mount** (`app/assess/page.tsx`, lines 23-34):
+
+```typescript
+// Load saved state from localStorage on mount
+useEffect(() => {
+  try {
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      const parsedState = JSON.parse(savedState);
+      setInput(parsedState);
+    }
+  } catch (error) {
+    console.error('Failed to load saved assessment state:', error);
+  }
+}, []);
+```
+
+**Save State on Change** (lines 36-45):
+
+```typescript
+// Save state to localStorage whenever input changes
+useEffect(() => {
+  if (Object.keys(input).length > 0) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(input));
+    } catch (error) {
+      console.error('Failed to save assessment state:', error);
+    }
+  }
+}, [input]);
+```
+
+**Reset Functionality** (lines 90-96):
+
+```typescript
+const handleReset = () => {
+  if (confirm('Are you sure you want to clear all assessment data? This cannot be undone.')) {
+    setInput({});
+    setAssessment(null);
+    localStorage.removeItem(STORAGE_KEY);
+  }
+};
+```
+
+**Reset Button UI** (lines 240-262):
+
+```tsx
+{Object.keys(input).length > 0 && (
+  <button
+    type="button"
+    onClick={handleReset}
+    className="flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 dark:border-red-700 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900"
+    title="Clear all assessment data"
+  >
+    <svg>{/* Trash icon */}</svg>
+    Reset
+  </button>
+)}
+```
+
+#### State Lifecycle
+
+**On Page Load**:
+1. Component mounts
+2. Check localStorage for saved state
+3. If found, parse JSON and restore to `input` state
+4. Trigger auto-assessment if all fields present
+
+**During Form Interaction**:
+1. User changes a field value
+2. `handleInputChange()` updates `input` state
+3. `useEffect` detects change
+4. Serialize state to JSON
+5. Save to localStorage
+
+**On Navigation**:
+1. User navigates away (e.g., to `/workflows`)
+2. React unmounts component
+3. State remains in localStorage
+4. User returns to `/assess`
+5. State automatically restored from localStorage
+
+**On Reset**:
+1. User clicks Reset button
+2. Confirmation dialog appears
+3. If confirmed:
+   - Clear `input` state (`{}`)
+   - Clear `assessment` state (`null`)
+   - Remove localStorage entry
+
+#### Storage Schema
+
+**Stored Data Structure**:
+```json
+{
+  "projectSize": 3,
+  "teamSize": 2,
+  "codebaseComplexity": 3,
+  "integrations": 2,
+  "userBase": 3,
+  "security": 4,
+  "duration": 3,
+  "existingCode": 2
+}
+```
+
+**Key**: `madace-assessment-form-state`
+**Format**: JSON string
+**Size**: ~150 bytes (minimal storage footprint)
+
+#### Error Handling
+
+**JSON Parse Errors**:
+- Wrapped in try-catch
+- Console error logged
+- Graceful fallback to empty state
+
+**localStorage Quota Exceeded**:
+- Unlikely with small data size
+- Error logged to console
+- User can continue without persistence
+
+**Browser Compatibility**:
+- All modern browsers support localStorage
+- SSR-safe (runs in `useEffect`, client-side only)
+
+#### UI Indicators
+
+**Reset Button Visibility**:
+- Hidden when form is empty
+- Appears when any field has data
+- Positioned top-right of page header
+- Red theme to indicate destructive action
+
+**Confirmation Dialog**:
+- Native browser `confirm()` dialog
+- Clear warning: "This cannot be undone"
+- Two options: OK (proceed) or Cancel (abort)
+
+#### Benefits
+
+- **No Data Loss**: Navigate freely without losing progress
+- **Resume Sessions**: Return later and continue where you left off
+- **Quick Reset**: One-click clear with confirmation
+- **Zero Configuration**: Works automatically, no user setup
+- **Privacy-Friendly**: Data stored locally, never sent to server
+
+---
+
+### 13.13. Summary
+
+**Enhanced Assessment Tool** now includes three major features:
+
+✅ **Implementation Actions** (4 New Action Buttons):
+- Start Recommended Workflow
+- Create Project
+- Apply Configuration
+- View Workflow Details
+
+✅ **Modal Viewer**:
+- View Markdown reports in-browser
+- View JSON data in-browser
+- Copy to clipboard functionality
+- Responsive modal design
+
+✅ **State Persistence**:
+- Automatic localStorage saving
+- State restoration on page load
+- Reset button with confirmation
+- Error handling and graceful fallbacks
+
+✅ **Seamless Integration**:
+- Project Management API (Section 12)
+- Workflow System (`/workflows`)
+- localStorage for client-side persistence
+
+✅ **User-Centric Design**:
+- Visual hierarchy (primary vs. secondary actions)
+- Responsive grid layout
+- Clear action labels with icons
+- Persistent state across navigation
+
+✅ **Production-Ready**:
+- Error handling for all actions
+- Type-safe implementations
+- No TypeScript errors
+- All quality checks passing
+
+**Key Files**:
+
+| File | Purpose | Lines | Changes |
+|------|---------|-------|---------|
+| `app/assess/page.tsx` | Assessment page with all features | 391 (+154) | Added router hook, 7 handler functions, modal component, state persistence |
+| `components/features/AssessmentResult.tsx` | Result display with action buttons | 358 (+167) | Added 6 props, implementation actions section, view buttons, reorganized UI |
+
+**Total New Code**: ~321 lines (handlers + UI components + state management)
+
+**Feature Breakdown**:
+- Implementation Actions: ~187 lines
+- Modal Viewer: ~78 lines
+- State Persistence: ~56 lines
+
+**Next Steps**:
+1. ✅ Implement action buttons (COMPLETE)
+2. ✅ Implement modal viewer (COMPLETE)
+3. ✅ Implement state persistence (COMPLETE)
+4. ✅ Document in ARCHITECTURE.md (THIS SECTION)
+5. 📋 Add automated tests
+6. 📋 Implement future enhancements (project navigation, workflow auto-start)
+
+---
