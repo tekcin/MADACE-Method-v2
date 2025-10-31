@@ -1,8 +1,9 @@
-# MADACE-Method v3.0 - Proposed Architecture
+# MADACE-Method v3.0 - Architecture Documentation
 
 **Project:** MADACE-Method v3.0
-**Version:** 3.0.0-alpha
-**Document Status:** Proposal
+**Version:** 3.0.0-beta
+**Document Status:** Production Release
+**Release Date:** 2025-10-31
 
 > This document outlines the proposed architecture for the next major version of the MADACE-Method, focusing on enhancing the capabilities of agents, the CLI, and the web interface.
 
