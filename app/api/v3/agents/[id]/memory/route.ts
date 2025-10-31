@@ -161,7 +161,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
  * DELETE /api/v3/agents/:id/memory
  * Clear all memories for an agent
  */
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { id: agentId } = await params;
     const { searchParams } = new URL(request.url);

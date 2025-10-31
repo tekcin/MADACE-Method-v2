@@ -14,17 +14,17 @@ const moduleAgents = [
       identity: 'Specialist in creating custom agents and workflows',
       communication_style: 'technical and instructional',
       principles: ['modularity', 'reusability', 'best practices', 'documentation'],
-      focus: 'Building and customizing AI agents'
+      focus: 'Building and customizing AI agents',
     },
     menu: [
       { label: 'Create Agent', value: 'create', description: 'Create a new custom agent' },
       { label: 'Edit Agent', value: 'edit', description: 'Modify existing agent' },
-      { label: 'Templates', value: 'templates', description: 'View agent templates' }
+      { label: 'Templates', value: 'templates', description: 'View agent templates' },
     ],
     prompts: {
       system: 'You are the Agent Builder, specialized in creating and customizing AI agents.',
-      greeting: 'Hello! I can help you create and customize AI agents for your project.'
-    }
+      greeting: 'Hello! I can help you create and customize AI agents for your project.',
+    },
   },
   {
     name: 'cis-creative',
@@ -37,17 +37,18 @@ const moduleAgents = [
       identity: 'AI-powered creativity and innovation facilitator',
       communication_style: 'inspirational and innovative',
       principles: ['creativity', 'innovation', 'user-centered design', 'experimentation'],
-      focus: 'Creative problem solving and design thinking'
+      focus: 'Creative problem solving and design thinking',
     },
     menu: [
       { label: 'Brainstorm', value: 'brainstorm', description: 'Generate creative ideas' },
       { label: 'Design Review', value: 'design', description: 'Review design concepts' },
-      { label: 'Innovation', value: 'innovate', description: 'Explore innovative solutions' }
+      { label: 'Innovation', value: 'innovate', description: 'Explore innovative solutions' },
     ],
     prompts: {
-      system: 'You are the Creative Intelligence specialist, fostering innovation and creative thinking.',
-      greeting: 'Hello! Let\'s explore creative solutions and innovative ideas together.'
-    }
+      system:
+        'You are the Creative Intelligence specialist, fostering innovation and creative thinking.',
+      greeting: "Hello! Let's explore creative solutions and innovative ideas together.",
+    },
   },
   {
     name: 'bmm-strategist',
@@ -60,17 +61,18 @@ const moduleAgents = [
       identity: 'Business strategy and model innovation expert',
       communication_style: 'strategic and analytical',
       principles: ['value creation', 'market fit', 'scalability', 'sustainability'],
-      focus: 'Business model design and validation'
+      focus: 'Business model design and validation',
     },
     menu: [
       { label: 'Business Model', value: 'model', description: 'Design business model canvas' },
       { label: 'Value Proposition', value: 'value', description: 'Define value propositions' },
-      { label: 'Market Analysis', value: 'market', description: 'Analyze market opportunities' }
+      { label: 'Market Analysis', value: 'market', description: 'Analyze market opportunities' },
     ],
     prompts: {
-      system: 'You are a Business Model Strategist, helping teams design sustainable business models.',
-      greeting: 'Hello! I can help you design and validate your business model.'
-    }
+      system:
+        'You are a Business Model Strategist, helping teams design sustainable business models.',
+      greeting: 'Hello! I can help you design and validate your business model.',
+    },
   },
   {
     name: 'bmb-facilitator',
@@ -83,18 +85,19 @@ const moduleAgents = [
       identity: 'Visual business model planning and collaboration expert',
       communication_style: 'collaborative and visual',
       principles: ['visualization', 'collaboration', 'iteration', 'alignment'],
-      focus: 'Business model canvas facilitation'
+      focus: 'Business model canvas facilitation',
     },
     menu: [
       { label: 'Canvas', value: 'canvas', description: 'Work with business model canvas' },
       { label: 'Workshop', value: 'workshop', description: 'Facilitate strategy workshop' },
-      { label: 'Alignment', value: 'align', description: 'Align team on strategy' }
+      { label: 'Alignment', value: 'align', description: 'Align team on strategy' },
     ],
     prompts: {
-      system: 'You are a Business Model Board Facilitator, guiding teams through visual business planning.',
-      greeting: 'Hello! Let\'s visualize and align on your business model together.'
-    }
-  }
+      system:
+        'You are a Business Model Board Facilitator, guiding teams through visual business planning.',
+      greeting: "Hello! Let's visualize and align on your business model together.",
+    },
+  },
 ];
 
 async function main() {
@@ -103,19 +106,19 @@ async function main() {
   for (const agentData of moduleAgents) {
     try {
       const existing = await prisma.agent.findUnique({
-        where: { name: agentData.name }
+        where: { name: agentData.name },
       });
 
       if (existing) {
         console.log(`🔄 Updating: ${agentData.icon} ${agentData.name}`);
         await prisma.agent.update({
           where: { name: agentData.name },
-          data: agentData
+          data: agentData,
         });
       } else {
         console.log(`✨ Creating: ${agentData.icon} ${agentData.name}`);
         await prisma.agent.create({
-          data: agentData
+          data: agentData,
         });
       }
       console.log(`   ✅ ${agentData.title}`);
@@ -125,11 +128,11 @@ async function main() {
   }
 
   console.log('\n📊 All module agents created!');
-  
+
   // Show total count
   const total = await prisma.agent.count();
   console.log(`\n✅ Total agents in database: ${total}`);
-  
+
   await prisma.$disconnect();
 }
 

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AgentSelector, type AgentCardData } from '@/components/features/AgentSelector';
+import { ProjectBadge } from '@/components/features/ProjectBadge';
 
 /**
  * Agents Page
@@ -30,11 +31,14 @@ export default function AgentsPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">MADACE Agents</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Select and interact with AI agents for your project workflow.
-        </p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">MADACE Agents</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
+            Select and interact with AI agents for your project workflow.
+          </p>
+        </div>
+        <ProjectBadge />
       </div>
 
       {/* View mode toggle and module filter */}

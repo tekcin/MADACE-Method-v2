@@ -7,11 +7,13 @@
 ## ✅ IMMEDIATE ACTIONS (Do These First)
 
 ### 1. Navigate to Project Directory
+
 ```bash
 cd /Users/nimda/MADACE-Method-v2.0
 ```
 
 ### 2. Start Development Services
+
 ```bash
 # Terminal 1: Start Next.js dev server
 npm run dev
@@ -21,6 +23,7 @@ npm run db:studio
 ```
 
 ### 3. Verify Services Are Running
+
 ```bash
 # Check Next.js (should return HTML)
 curl -I http://localhost:3000
@@ -30,11 +33,13 @@ curl -I http://localhost:5555
 ```
 
 ### 4. Verify Database State (Zodiac App Data)
+
 ```bash
 npm run view:zodiac
 ```
 
 **Expected Output**:
+
 - ✅ 3 team members (Alice, Bob, Carol)
 - ✅ 12 stories (5 DONE, 1 IN_PROGRESS, 1 TODO, 5 BACKLOG)
 - ✅ 3 workflows (2 completed, 1 in-progress)
@@ -53,6 +58,7 @@ After restarting Claude Code, you'll have access to 26 browser automation tools.
 ## 🧪 TEST SYSTEM (Do These After Services Start)
 
 ### Browser Interface Tests
+
 ```
 ✅ http://localhost:3000           # Home Dashboard
 ✅ http://localhost:3000/status    # Kanban Board (should show 12 Zodiac stories)
@@ -62,6 +68,7 @@ After restarting Claude Code, you'll have access to 26 browser automation tools.
 ```
 
 ### CLI Tests
+
 ```bash
 ✅ npm run madace repl             # Interactive REPL
 ✅ npm run madace dashboard        # Terminal dashboard
@@ -85,17 +92,20 @@ After restarting Claude Code, you'll have access to 26 browser automation tools.
 ## 📊 EXPECTED STATE
 
 ### Database
+
 - **Type**: SQLite (development)
 - **Location**: `prisma/dev.db`
 - **Status**: Seeded with Zodiac App dummy project
 - **Project ID**: `cmhe949rp0000rzhh5s2p4yfs`
 
 ### Git
+
 - **Branch**: `main`
 - **Last Commit**: `cbbc4b5` - docs: Update PRD and PLAN
 - **Status**: Clean (no uncommitted changes)
 
 ### Services
+
 - **Next.js**: Port 3000
 - **Prisma Studio**: Port 5555
 - **Ollama**: Not running (optional)
@@ -105,6 +115,7 @@ After restarting Claude Code, you'll have access to 26 browser automation tools.
 ## 🆘 IF SOMETHING BREAKS
 
 ### Services Won't Start
+
 ```bash
 # Kill stuck processes
 lsof -ti:3000 | xargs kill -9
@@ -116,6 +127,7 @@ npm run db:studio
 ```
 
 ### Database Issues
+
 ```bash
 # Regenerate Prisma Client
 npm run db:generate
@@ -125,6 +137,7 @@ npm run seed:zodiac
 ```
 
 ### Build Issues
+
 ```bash
 # Clean and rebuild
 rm -rf .next node_modules/.cache
@@ -136,6 +149,7 @@ npm run build
 ## 📁 SESSION STATE REFERENCE
 
 Full session details saved in:
+
 - `.context/SESSION-STATE-CURRENT.md` (comprehensive state)
 - `.context/POST-REBOOT-CHECKLIST.md` (this file)
 - `.context/RESUME.md` (project resume)

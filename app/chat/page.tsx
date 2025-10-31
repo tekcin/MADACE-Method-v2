@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ChatInterface from '@/components/features/chat/ChatInterface';
+import { ProjectBadge } from '@/components/features/ProjectBadge';
 
 interface Agent {
   id: string;
@@ -45,17 +46,8 @@ export default function ChatPage() {
       const result = await response.json();
       const allAgentsList = result.data || result.agents || [];
 
-      // Filter to show only chat-friendly agents or show first 6
-      const chatAgents = allAgentsList.filter((a: Agent) =>
-        a.name === 'chat-assistant' ||
-        a.name === 'pm' ||
-        a.name === 'analyst' ||
-        a.name === 'dev' ||
-        a.name === 'ux-expert' ||
-        a.name === 'qa'
-      );
-
-      setAgents(chatAgents.slice(0, 6));
+      // Show all agents (no filter)
+      setAgents(allAgentsList);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load agents');
     } finally {
@@ -131,13 +123,18 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 dark:bg-gray-900">
       <div className="mx-auto max-w-6xl px-4">
-        <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">
-            Chat with AI Agents
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
-            Select an agent to start a conversation
-          </p>
+        <div className="mb-12">
+          <div className="mb-4 flex items-start justify-between gap-4">
+            <div className="flex-1 text-center">
+              <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">
+                Chat with AI Agents
+              </h1>
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                Select an agent to start a conversation
+              </p>
+            </div>
+            <ProjectBadge size="sm" showDescription={false} />
+          </div>
         </div>
 
         {error && (
@@ -182,12 +179,16 @@ export default function ChatPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              data-testid="agent-grid"
+              className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            >
               {agents.map((agent) => (
                 <button
                   key={agent.id}
+                  data-testid="agent-card"
                   onClick={() => startChat(agent)}
-                  className="group rounded-xl border border-gray-200 bg-white p-6 text-left transition-all hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-400"
+                  className="agent-card group rounded-xl border border-gray-200 bg-white p-6 text-left transition-all hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-400"
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-500 text-lg font-medium text-white">
@@ -243,9 +244,7 @@ export default function ChatPage() {
                   <h3 className="mb-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Add Agent
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Browse all agents
-                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Browse all agents</p>
                 </div>
               </button>
             </div>
@@ -291,7 +290,7 @@ export default function ChatPage() {
                         <button
                           key={agent.id}
                           onClick={() => handleAddAgent(agent)}
-                          className="group flex items-start gap-4 rounded-lg border border-gray-200 bg-white p-4 text-left transition-all hover:border-blue-500 hover:shadow-md dark:border-gray-700 dark:bg-gray-750 dark:hover:border-blue-400"
+                          className="group dark:bg-gray-750 flex items-start gap-4 rounded-lg border border-gray-200 bg-white p-4 text-left transition-all hover:border-blue-500 hover:shadow-md dark:border-gray-700 dark:hover:border-blue-400"
                         >
                           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-green-500 text-sm font-medium text-white">
                             {agent.name.substring(0, 2).toUpperCase()}

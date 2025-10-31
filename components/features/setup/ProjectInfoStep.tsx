@@ -23,7 +23,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
   };
 
   // Auto-assess when assessment fields change
-   
+
   useEffect(() => {
     const {
       projectSize,

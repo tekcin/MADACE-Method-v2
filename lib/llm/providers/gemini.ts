@@ -248,6 +248,9 @@ export class GeminiProvider extends BaseLLMProvider {
       },
     };
 
+    // Log request for debugging
+    console.log('[Gemini] Streaming request:', JSON.stringify(geminiRequest, null, 2));
+
     const endpoint = `models/${GEMINI_MODELS[this.config.model as keyof typeof GEMINI_MODELS].apiEndpoint}:streamGenerateContent`;
 
     try {
@@ -271,10 +274,26 @@ export class GeminiProvider extends BaseLLMProvider {
    */
   private formatRequest(request: LLMRequest): GeminiRequest {
     // Convert LLM messages to Gemini format
-    const contents = request.messages.map((msg) => ({
-      parts: [{ text: msg.content }],
-      role: msg.role === 'assistant' ? 'model' : 'user',
-    }));
+    // NOTE: Gemini does NOT support 'system' role - convert system messages to user messages
+    // NOTE: Gemini requires alternating user/model messages - merge consecutive same-role messages
+    const contents: Array<{ parts: Array<{ text: string }>; role: 'user' | 'model' }> = [];
+
+    for (const msg of request.messages) {
+      if (!msg.content.trim()) continue; // Skip empty messages
+
+      const role = msg.role === 'assistant' ? 'model' : 'user';
+      const lastContent = contents[contents.length - 1];
+
+      // Merge consecutive messages with same role (Gemini requirement)
+      if (lastContent && lastContent.role === role) {
+        lastContent.parts[0]!.text += `\n\n${msg.content}`;
+      } else {
+        contents.push({
+          parts: [{ text: msg.content }],
+          role,
+        });
+      }
+    }
 
     return {
       contents,
@@ -388,6 +407,10 @@ export class GeminiProvider extends BaseLLMProvider {
           const errorData = await response
             .json()
             .catch(() => ({ error: { message: response.statusText } }));
+
+          // Log detailed error for debugging
+          console.error('[Gemini] API Error Details:', JSON.stringify(errorData, null, 2));
+
           throw new GeminiAPIError(
             errorData.error?.message || `HTTP ${response.status}`,
             this.mapHttpError(response.status),
@@ -436,6 +459,10 @@ export class GeminiProvider extends BaseLLMProvider {
         const errorData = await response
           .json()
           .catch(() => ({ error: { message: response.statusText } }));
+
+        // Log detailed error for debugging
+        console.error('[Gemini] API Error Details:', JSON.stringify(errorData, null, 2));
+
         throw new GeminiAPIError(
           errorData.error?.message || `HTTP ${response.status}`,
           this.mapHttpError(response.status),

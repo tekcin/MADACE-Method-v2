@@ -112,9 +112,7 @@ const components: Components = {
   ),
 
   // Horizontal rules
-  hr: ({ ...props }) => (
-    <hr className="my-4 border-gray-300 dark:border-gray-600" {...props} />
-  ),
+  hr: ({ ...props }) => <hr className="my-4 border-gray-300 dark:border-gray-600" {...props} />,
 
   // Tables
   table: ({ children, ...props }) => (

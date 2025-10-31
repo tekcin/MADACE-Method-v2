@@ -5,12 +5,7 @@
  * Executes business logic based on classified user intent
  */
 
-import type {
-  NLUIntent,
-  NLUEntity,
-  IntentActionHandler,
-  IntentActionRegistry,
-} from './types';
+import type { NLUIntent, NLUEntity, IntentActionHandler, IntentActionRegistry } from './types';
 import * as agentService from '@/lib/services/agent-service';
 import { getConfigManager } from '@/lib/config/manager';
 import { createStateMachine } from '@/lib/state/machine';

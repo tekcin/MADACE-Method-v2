@@ -40,9 +40,12 @@ export class MonacoEditorPage {
    */
   async waitForLoad(): Promise<void> {
     await this.editorContainer.waitFor({ state: 'visible', timeout: 10000 });
-    await this.page.waitForFunction(() => {
-      return window.monaco !== undefined;
-    }, { timeout: 10000 });
+    await this.page.waitForFunction(
+      () => {
+        return window.monaco !== undefined;
+      },
+      { timeout: 10000 }
+    );
   }
 
   /**

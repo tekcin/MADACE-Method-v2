@@ -867,6 +867,7 @@ Server-Sent Events (SSE) stream with `Content-Type: text/event-stream`
 **Event Types:**
 
 1. **Content Chunk** - Streamed text from LLM
+
    ```
    data: {"type":"chunk","content":"Hello"}
 
@@ -874,11 +875,13 @@ Server-Sent Events (SSE) stream with `Content-Type: text/event-stream`
    ```
 
 2. **Memory Update** - Agent memory extracted during response
+
    ```
    data: {"type":"memory","category":"user_preferences","key":"language","value":"English"}
    ```
 
 3. **Completion** - Stream finished
+
    ```
    data: [DONE]
    ```
@@ -923,8 +926,8 @@ const response = await fetch('http://localhost:3000/api/v3/chat/stream', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     sessionId: 'cmhe21vm00007rzdx62sik85m',
-    agentId: 'chat-assistant-001'
-  })
+    agentId: 'chat-assistant-001',
+  }),
 });
 
 const reader = response.body.getReader();
@@ -1165,18 +1168,18 @@ curl -X DELETE "http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62si
 
 In addition to common error codes, the Chat API includes specific error responses:
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| `SESSION_NOT_FOUND` | 404 | Chat session does not exist |
-| `MESSAGE_TOO_LONG` | 413 | Message exceeds 10,000 characters |
-| `INVALID_ROLE` | 400 | Role must be "user" or "agent" |
-| `USER_NOT_FOUND` | 404 | User ID does not exist |
-| `AGENT_NOT_FOUND` | 404 | Agent ID does not exist |
-| `STREAM_ERROR` | 500 | Error during SSE streaming |
-| `LLM_UNAVAILABLE` | 503 | LLM service is not available |
-| `MODEL_NOT_READY` | 503 | Local model is loading (retry in 10s) |
-| `CONTEXT_WINDOW_EXCEEDED` | 413 | Conversation exceeds model context limit |
-| `MEMORY_QUOTA_EXCEEDED` | 413 | Agent memory limit reached |
+| Code                      | HTTP Status | Description                              |
+| ------------------------- | ----------- | ---------------------------------------- |
+| `SESSION_NOT_FOUND`       | 404         | Chat session does not exist              |
+| `MESSAGE_TOO_LONG`        | 413         | Message exceeds 10,000 characters        |
+| `INVALID_ROLE`            | 400         | Role must be "user" or "agent"           |
+| `USER_NOT_FOUND`          | 404         | User ID does not exist                   |
+| `AGENT_NOT_FOUND`         | 404         | Agent ID does not exist                  |
+| `STREAM_ERROR`            | 500         | Error during SSE streaming               |
+| `LLM_UNAVAILABLE`         | 503         | LLM service is not available             |
+| `MODEL_NOT_READY`         | 503         | Local model is loading (retry in 10s)    |
+| `CONTEXT_WINDOW_EXCEEDED` | 413         | Conversation exceeds model context limit |
+| `MEMORY_QUOTA_EXCEEDED`   | 413         | Agent memory limit reached               |
 
 ---
 

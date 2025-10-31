@@ -28,6 +28,18 @@ export async function POST(request: NextRequest) {
       projectId: body.projectId,
     };
 
+    // Ensure user exists (upsert for seamless experience)
+    const { prisma } = await import('@/lib/database/client');
+    await prisma.user.upsert({
+      where: { id: input.userId },
+      update: {},
+      create: {
+        id: input.userId,
+        email: `${input.userId}@madace.local`,
+        name: input.userId === 'default-user' ? 'Test User' : input.userId,
+      },
+    });
+
     const session = await createSession(input);
 
     return NextResponse.json(

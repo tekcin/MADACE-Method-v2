@@ -100,8 +100,8 @@ async function main() {
   try {
     const files = await fs.readdir(agentsDir);
     const agentFiles = files
-      .filter(f => f.endsWith('.agent.yaml'))
-      .map(f => path.join(agentsDir, f));
+      .filter((f) => f.endsWith('.agent.yaml'))
+      .map((f) => path.join(agentsDir, f));
 
     console.log(`📂 Found ${agentFiles.length} agents in ${agentsDir}`);
 
@@ -173,7 +173,6 @@ async function main() {
     for (const agent of allAgents) {
       console.log(`  ${agent.icon} ${agent.name} - ${agent.title}`);
     }
-
   } catch (error) {
     console.error('❌ Error:', error);
     process.exit(1);

@@ -80,7 +80,11 @@ export default function Message({
       : 'border-gray-200 dark:border-gray-700';
 
   return (
-    <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'} mb-4`}>
+    <div
+      data-testid="message"
+      data-role={message.role}
+      className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'} message mb-4`}
+    >
       {/* Avatar */}
       <div
         className={`h-10 w-10 flex-shrink-0 rounded-full ${avatarBg} flex items-center justify-center text-sm font-medium text-white`}

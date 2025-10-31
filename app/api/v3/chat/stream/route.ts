@@ -7,6 +7,11 @@
 import { NextRequest } from 'next/server';
 import { createMessage, getSession } from '@/lib/services/chat-service';
 import { createLLMClient } from '@/lib/llm/client';
+import {
+  createResilientLLMClient,
+  ResilientLLMError,
+  getDiagnostics,
+} from '@/lib/llm/resilient-client';
 import { getLLMConfigFromEnv } from '@/lib/llm/config';
 import { getAgentByName } from '@/lib/services/agent-service';
 import {
@@ -64,35 +69,17 @@ export async function POST(request: NextRequest) {
       // Don't block on memory extraction errors
     });
 
-    // Create LLM client (use provider from request if specified)
-    let llmConfig = getLLMConfigFromEnv();
-    if (provider) {
-      // Override provider if specified in request
-      const providerConfigs: Record<string, Partial<typeof llmConfig>> = {
-        gemini: {
-          apiKey: process.env.GEMINI_API_KEY,
-          model: process.env.GEMINI_MODEL || 'gemini-2.0-flash-exp',
-        },
-        claude: {
-          apiKey: process.env.CLAUDE_API_KEY,
-          model: process.env.CLAUDE_MODEL || 'claude-3-5-sonnet-20241022',
-        },
-        openai: {
-          apiKey: process.env.OPENAI_API_KEY,
-          model: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
-        },
-        local: {
-          baseURL: process.env.LOCAL_MODEL_URL || 'http://localhost:11434',
-          model: process.env.LOCAL_MODEL_NAME || 'gemma3:latest',
-        },
-      };
+    // Create resilient LLM client with automatic fallback and retry
+    const llmConfig = getLLMConfigFromEnv();
+    const requestedProvider = provider || llmConfig.provider;
 
-      llmConfig = {
-        provider: provider as 'local' | 'gemini' | 'claude' | 'openai',
-        ...providerConfigs[provider],
-      } as typeof llmConfig;
-    }
-    const llmClient = createLLMClient(llmConfig);
+    const llmClient = await createResilientLLMClient({
+      preferredProvider: requestedProvider as 'local' | 'gemini' | 'claude' | 'openai',
+      maxRetries: 2,
+      initialBackoffMs: 1000,
+      maxBackoffMs: 5000,
+      enableFallback: true, // Auto-fallback to other providers
+    });
 
     // Build memory-aware prompt with agent persona and user's memory context
     const messages = await buildPromptMessages(
@@ -106,13 +93,13 @@ export async function POST(request: NextRequest) {
     // Limit context to avoid exceeding token limits
     const limitedMessages = limitPromptContext(messages, 4000);
 
-    // Create streaming response
+    // Create streaming response (resilient client handles fallback automatically)
     const stream = new ReadableStream({
       async start(controller) {
-        try {
-          let fullResponse = '';
+        let fullResponse = '';
 
-          // Stream from LLM with memory-aware context
+        try {
+          // Stream with automatic retry and fallback
           for await (const chunk of llmClient.chatStream({ messages: limitedMessages })) {
             fullResponse += chunk.content;
 
@@ -120,7 +107,22 @@ export async function POST(request: NextRequest) {
             const data = `data: ${JSON.stringify({ content: chunk.content })}\n\n`;
             controller.enqueue(encoder.encode(data));
           }
+        } catch (error) {
+          // Handle resilient client errors
+          const errorMessage =
+            error instanceof ResilientLLMError
+              ? `\n\n❌ **Error**: Unable to connect to AI service after trying multiple providers.\n\n${getDiagnostics(error)}\n\n_Please check your API keys and provider status._`
+              : `\n\n❌ **Error**: ${(error as Error).message}`;
 
+          console.error(`[Chat Stream] Streaming failed:`, error);
+
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ content: errorMessage, error: true })}\n\n`)
+          );
+          fullResponse = errorMessage;
+        }
+
+        try {
           // Save complete response to database
           await createMessage({
             sessionId,
@@ -133,7 +135,7 @@ export async function POST(request: NextRequest) {
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         } catch (error) {
-          console.error('[Chat Stream] Error:', error);
+          console.error('[Chat Stream] Error saving message:', error);
           controller.error(error);
         }
       },

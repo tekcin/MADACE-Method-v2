@@ -288,7 +288,8 @@ export class TerminalPage {
     let previousCommand = '';
 
     // Navigate up through history until we reach the top
-    for (let i = 0; i < 10; i++) { // Limit to 10 commands
+    for (let i = 0; i < 10; i++) {
+      // Limit to 10 commands
       await this.navigateHistoryUp();
       const command = await this.getInputValue();
 

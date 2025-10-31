@@ -63,7 +63,7 @@ export default async function DocsPage() {
       if (!acc[file.category]) {
         acc[file.category] = [];
       }
-       
+
       acc[file.category]!.push(file);
       return acc;
     },
@@ -97,7 +97,7 @@ export default async function DocsPage() {
               </h2>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                { }
+                {}
                 {grouped[category]!.sort((a, b) => a.name.localeCompare(b.name)).map((file) => (
                   <Link
                     key={file.path}

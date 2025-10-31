@@ -6,7 +6,10 @@ import { exportSessionAsMarkdown } from '@/lib/services/chat-service';
  *
  * Export chat session as Markdown
  */
-export async function GET(request: NextRequest, { params }: { params: Promise<{ sessionId: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ sessionId: string }> }
+) {
   try {
     const { sessionId } = await params;
 

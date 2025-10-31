@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import type { WorkflowStatus, Story } from '@/lib/state/types';
+import { useProject } from '@/lib/context/ProjectContext';
 
 export default function KanbanPage() {
+  const { currentProject, isLoading: projectLoading } = useProject();
   const [status, setStatus] = useState<WorkflowStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -36,12 +38,14 @@ export default function KanbanPage() {
     }
   };
 
-  if (loading) {
+  if (loading || projectLoading) {
     return (
       <div className="container mx-auto flex min-h-screen items-center justify-center p-6">
         <div className="text-center">
           <div className="border-primary mb-4 h-12 w-12 animate-spin rounded-full border-4 border-t-transparent"></div>
-          <p className="text-muted-foreground">Loading workflow status...</p>
+          <p className="text-muted-foreground">
+            {projectLoading ? 'Loading project...' : 'Loading workflow status...'}
+          </p>
         </div>
       </div>
     );
@@ -59,6 +63,22 @@ export default function KanbanPage() {
           >
             Retry
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no project selected
+  if (!currentProject) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="rounded-lg border border-yellow-500 bg-yellow-50 p-6 dark:border-yellow-700 dark:bg-yellow-900/20">
+          <h2 className="mb-2 text-xl font-semibold text-yellow-800 dark:text-yellow-300">
+            No Project Selected
+          </h2>
+          <p className="text-yellow-700 dark:text-yellow-400">
+            Please select or create a project from the navigation bar to view workflow status.
+          </p>
         </div>
       </div>
     );
@@ -92,8 +112,27 @@ export default function KanbanPage() {
     <div className="container mx-auto p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold">MADACE Workflow Status</h1>
-        <p className="text-muted-foreground">Visual Kanban board for project progress tracking</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="mb-2 text-3xl font-bold">MADACE Workflow Status</h1>
+            <p className="text-muted-foreground">
+              Visual Kanban board for project progress tracking
+            </p>
+          </div>
+          {currentProject && (
+            <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 dark:border-blue-700 dark:bg-blue-900/20">
+              <div className="text-xs text-blue-600 dark:text-blue-400">Current Project</div>
+              <div className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+                {currentProject.name}
+              </div>
+              {currentProject.description && (
+                <div className="text-xs text-blue-700 dark:text-blue-300">
+                  {currentProject.description}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Statistics Panel */}

@@ -628,6 +628,7 @@ MADACE v3.0 includes production-ready enterprise features beyond the core MADACE
 - **Resource Tracking**: Real-time counts of agents, workflows, stories, and chat sessions
 
 **10 Project Service Functions**:
+
 - `getProjects()` - List all user projects
 - `createProject()` - Create new project
 - `updateProject()` - Update project metadata
@@ -639,12 +640,14 @@ MADACE v3.0 includes production-ready enterprise features beyond the core MADACE
 - `getUserProjectRole()` - Get user's role
 
 **6 RESTful API Endpoints**:
+
 - `GET /api/v3/projects` - List projects for user
 - `POST /api/v3/projects` - Create new project
 - `GET/PUT/DELETE /api/v3/projects/[id]` - Project operations
 - `GET/POST/DELETE /api/v3/projects/[id]/members` - Member management
 
 **Production Features**:
+
 - ✅ Authentication integration points (NextAuth.js ready)
 - ✅ Performance optimizations (caching, pagination)
 - ✅ Security best practices (CSRF, rate limiting, SQL injection prevention)
@@ -665,6 +668,7 @@ MADACE v3.0 includes production-ready enterprise features beyond the core MADACE
 - **Client Tracking**: Monitor Web UI, Claude CLI, and Gemini CLI connections
 
 **Collaboration Server**:
+
 - WebSocket server (port 3001)
 - Client connection tracking
 - File watching with debouncing
@@ -696,11 +700,13 @@ MADACE v3.0 includes production-ready enterprise features beyond the core MADACE
   - **Access Tracking**: Monitor memory usage for optimization
 
 **Memory API** (10 endpoints):
+
 - `GET /api/v3/chat/sessions/[id]/memory` - Retrieve agent memories
 - `POST /api/v3/chat/sessions/[id]/memory` - Save new memory
 - `DELETE /api/v3/chat/sessions/[id]/memory` - Prune expired memories
 
 **Database Schema**:
+
 ```prisma
 model AgentMemory {
   id             String    @id
@@ -728,6 +734,7 @@ model AgentMemory {
 - **Memory Integration**: Agent memories inform responses
 
 **Chat Features**:
+
 - 10 Chat API endpoints
 - Database-backed sessions and messages
 - Real-time streaming with SSE
@@ -774,6 +781,7 @@ model AgentMemory {
   - State validation
 
 **5 Database Maintenance Scripts**:
+
 - `seed-zodiac-stories.ts` - Seed demo data
 - `check-zodiac-stories.ts` - Verify database state
 - `delete-duplicate-zodiac.ts` - Remove duplicates
@@ -820,6 +828,7 @@ model AgentMemory {
 **Documentation**: [ARCHITECTURE.md Section 13](./ARCHITECTURE.md#13-assessment-tool--implementation-actions-) (644 lines)
 
 **Key Files**:
+
 - `app/assess/page.tsx` (239 lines, 4 action handlers)
 - `components/features/AssessmentResult.tsx` (302 lines, action button UI)
 - `lib/workflows/complexity-assessment.ts` (334 lines, scoring algorithm)

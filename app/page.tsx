@@ -1,14 +1,20 @@
+'use client';
+
 import Link from 'next/link';
+import { ProjectBadge } from '@/components/features/ProjectBadge';
 
 export default function Home() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">MADACE Web UI</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Methodology for AI-Driven Agile Collaboration Engine - v3.0
-        </p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">MADACE Web UI</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
+            Methodology for AI-Driven Agile Collaboration Engine - v3.0
+          </p>
+        </div>
+        <ProjectBadge />
       </div>
 
       {/* Status overview */}

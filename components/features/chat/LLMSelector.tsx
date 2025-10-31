@@ -57,9 +57,10 @@ export default function LLMSelector({
   return (
     <div className="relative">
       <button
+        data-testid="llm-selector"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+        className="llm-selector flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
         title="Select LLM provider"
       >
         {/* Icon */}
@@ -110,7 +111,7 @@ export default function LLMSelector({
           <div className="absolute right-0 z-20 mt-2 w-80 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
             <div className="p-2">
               <div className="mb-2 px-2 py-1">
-                <h3 className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">
                   Available Providers
                 </h3>
               </div>
@@ -168,7 +169,7 @@ export default function LLMSelector({
                 <>
                   <div className="my-2 border-t border-gray-200 dark:border-gray-700" />
                   <div className="mb-2 px-2 py-1">
-                    <h3 className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase dark:text-gray-400">
                       Requires API Key
                     </h3>
                   </div>

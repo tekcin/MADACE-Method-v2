@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Agent API Test</title>
+  </head>
+  <body>
+    <h1>Testing /api/v3/agents</h1>
+    <button onclick="testAgents()">Load Agents</button>
+    <div id="results"></div>
+
+    <script>
+      async function testAgents() {
+        console.log('Fetching agents from /api/v3/agents...');
+        const response = await fetch('/api/v3/agents');
+        const data = await response.json();
+
+        console.log('API Response:', data);
+        console.log('Total agents:', data.data.length);
+        console.log(
+          'Agent names:',
+          data.data.map((a) => a.name)
+        );
+
+        const results = document.getElementById('results');
+        results.innerHTML = `
+                <h2>Results:</h2>
+                <p>Total agents: ${data.data.length}</p>
+                <h3>Agent Names:</h3>
+                <ul>
+                    ${data.data.map((a) => `<li><strong>${a.name}</strong>: ${a.title}</li>`).join('')}
+                </ul>
+            `;
+      }
+    </script>
+  </body>
+</html>

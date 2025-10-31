@@ -63,9 +63,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error('[LLM Providers API] Error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to get providers' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Failed to get providers' }, { status: 500 });
   }
 }

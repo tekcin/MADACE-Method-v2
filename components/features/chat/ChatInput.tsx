@@ -68,11 +68,13 @@ export default function ChatInput({
         <div className="relative flex-1">
           <textarea
             ref={textareaRef}
+            data-testid="chat-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={disabled}
             placeholder={placeholder}
+            aria-label="Chat message input"
             className={`w-full rounded-lg border ${
               isOverLimit
                 ? 'border-red-500 dark:border-red-400'
@@ -96,10 +98,12 @@ export default function ChatInput({
 
         {/* Send Button */}
         <button
+          data-testid="send-button"
           onClick={handleSend}
           disabled={disabled || !input.trim() || isOverLimit}
           className="flex-shrink-0 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 active:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
           title="Send (Enter)"
+          aria-label="Send message"
         >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path

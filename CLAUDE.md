@@ -39,16 +39,23 @@ npm run import-madace-v3   # Import MADACE agents to database
 npm run madace repl        # Interactive REPL mode with autocomplete
 npm run madace dashboard   # Terminal dashboard (TUI)
 npm run madace chat        # Chat with AI agents
+npm run madace memory      # Manage agent memory (list, show, delete, clear, stats)
+
+# Agent Management
+npm run seed:zodiac        # Seed demo project (Zodiac App) with realistic data
+npm run view:zodiac        # View seeded Zodiac project data
 ```
 
 **Key File Locations:**
 
 - **Business Logic**: `lib/` (TypeScript modules)
-- **API Routes**: `app/api/` (Next.js App Router)
-- **Database Schema**: `prisma/schema.prisma`
+- **API Routes**: `app/api/v3/` (Next.js App Router - V3 API)
+- **Database Schema**: `prisma/schema.prisma` (8 models)
 - **Agent Definitions**: `madace/mam/agents/*.agent.yaml`
 - **Workflow Status**: `docs/workflow-status.md` (single source of truth)
 - **Types**: `lib/types/` (TypeScript interfaces)
+- **UI Components**: `components/features/` (chat, ide, agents, memory, etc.)
+- **CLI Commands**: `lib/cli/commands/` (24 commands across 5 categories)
 
 **Environment:**
 
@@ -418,12 +425,14 @@ steps:
 - `/settings` - System configuration
 - `/assess` - Complexity assessment tool
 
-**Development**:
+**Development & Tools**:
 
 - `/docs` - Documentation viewer
 - `/docs/[...slug]` - Dynamic doc pages
 - `/sync-status` - Real-time sync dashboard
 - `/llm-test` - LLM connection tester
+- `/ide` - **Web-based IDE** with Monaco Editor, terminal, and collaboration
+- `/agents/[id]/memory` - Agent memory management
 
 ## Docker Deployment
 
@@ -456,6 +465,69 @@ docker-compose -f docker-compose.dev.yml up -d
 See [docs/HTTPS-DEPLOYMENT.md](./docs/HTTPS-DEPLOYMENT.md) for production setup.
 
 ## Critical Development Rules
+
+### Production Error Prevention
+
+**⚠️ CRITICAL: File Access Rules**
+
+- **NEVER assume files exist in production**
+- **ALWAYS check `existsSync()` before reading files**
+- **ALWAYS return graceful fallbacks for missing files**
+- **Development files (like `docs/workflow-status.md`) may NOT exist in production Docker builds**
+
+```typescript
+// ✅ CORRECT: Check file existence first
+import { existsSync } from 'fs';
+
+if (!existsSync(filePath)) {
+  return { success: true, data: emptyState, message: 'File not found - returning empty state' };
+}
+
+// ❌ WRONG: Direct file access
+const data = await fs.readFile(filePath); // This will crash if file doesn't exist!
+```
+
+**⚠️ CRITICAL: Database Schema Rules**
+
+- **NEVER flatten JSON fields in UI components**
+- Prisma schema uses `Json` type for `persona`, `menu`, and `prompts`
+- ✅ **DO**: Access JSON fields as `agent.persona` (JsonValue type)
+- ❌ **DON'T**: Create flattened fields like `agent.personaName`, `agent.personaRole`
+
+```typescript
+// ✅ CORRECT: Use Prisma-generated types
+import type { Agent } from '@prisma/client';
+
+// Access JSON fields correctly
+const persona = agent.persona as Record<string, unknown>;
+const role = persona.role;
+
+// ❌ WRONG: Creating custom types that don't match Prisma
+interface CustomAgent {
+  personaName: string; // Does not exist in database!
+  menuOptions: string[]; // Does not exist in database!
+}
+```
+
+**⚠️ CRITICAL: API Route Error Handling**
+
+- **ALL API routes MUST use try-catch blocks**
+- **NEVER throw unhandled errors** (crashes Next.js server!)
+
+```typescript
+// ✅ CORRECT: Structured error responses
+export async function GET(request: NextRequest) {
+  try {
+    const data = await prisma.model.findMany();
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: 'Error message' }, { status: 500 });
+  }
+}
+
+// ❌ WRONG: Throwing unhandled errors
+throw new Error(errorMessage); // Crashes Next.js server!
+```
 
 ### Database Operations
 
@@ -667,44 +739,73 @@ npm run test:e2e:debug       # Step through tests
 
 ## Project Status
 
-**Current Phase**: V3 Alpha - Milestone 3.3 In Progress (Conversational AI & NLU)
+**Current Phase**: V3 Alpha - Milestone 3.4 COMPLETE (Web IDE & Real-time Collaboration) - PRODUCTION READY! 🎉
 
 **Milestone Progress**:
 
 - ✅ **Milestone 3.1: Database Migration** - COMPLETE (48/48 points)
 - ✅ **Milestone 3.2: CLI Enhancements** - COMPLETE (35/35 points)
-- ⏳ **Milestone 3.3: Conversational AI & NLU** - IN PROGRESS (33/55 points, 60%)
-- 📋 **Milestone 3.4: Web IDE & Collaboration** - PLANNED
+- ✅ **Milestone 3.3: Conversational AI & NLU** - COMPLETE (55/55 points)
+- ✅ **Milestone 3.4: Web IDE & Collaboration** - COMPLETE (71/71 points)
 
-**Recently Completed**:
+**Recently Completed (v3.0 Alpha)**:
+
+**Foundation (Milestone 3.1)**:
 
 - ✅ Prisma ORM integration with PostgreSQL/SQLite
 - ✅ Database schema design (8 models)
 - ✅ Agent CRUD API (V3) with search and duplication
 - ✅ Agent management UI with responsive design
-- ✅ LLM multi-provider client (Gemini/Claude/OpenAI/Local)
+
+**CLI Tools (Milestone 3.2)**:
+
+- ✅ LLM multi-provider client (Gemini/Claude/OpenAI/Local with Ollama)
 - ✅ Interactive REPL mode with autocomplete and history
 - ✅ Terminal dashboard (TUI) with 4-pane layout
 - ✅ Full CLI feature parity (24 commands across 5 categories)
+
+**Conversational AI (Milestone 3.3)**:
+
 - ✅ NLU integration with Dialogflow CX
 - ✅ Entity extraction and fuzzy matching
 - ✅ Chat UI for Web and CLI with streaming responses
 - ✅ **Conversational Chat System with Local LLM (Ollama/Gemma3)**
-  - ✅ Database-backed chat sessions and messages (User, ChatSession, ChatMessage, AgentMemory models)
+  - ✅ Database-backed chat sessions and messages
   - ✅ Real-time streaming with Server-Sent Events (SSE)
   - ✅ Multi-provider LLM support (local/Gemini/Claude/OpenAI)
-  - ✅ Message threading and pagination
+  - ✅ Message threading, pagination, and search
+  - ✅ Markdown rendering with code highlighting
   - ✅ Persistent agent memory with context awareness
-  - ✅ Complete Chat API (10 endpoints) with comprehensive docs
+  - ✅ Complete Chat API (10 endpoints)
+- ✅ **Agent Memory System**:
+  - ✅ Three-tier pruning strategy (30/90/∞ days)
+  - ✅ Importance decay and access tracking
+  - ✅ Memory management UI and CLI commands
+
+**Web IDE (Milestone 3.4)**:
+
+- ✅ **Monaco Editor Integration**:
+  - ✅ VS Code editor engine with 20+ languages
+  - ✅ Multi-file tab support with keyboard shortcuts
+  - ✅ IntelliSense and auto-completion
+  - ✅ File service with security validation
+- ✅ **Real-time Collaboration**:
+  - ✅ WebSocket server with Yjs CRDT
+  - ✅ Shared cursors and presence awareness
+  - ✅ In-app team chat
+- ✅ **Integrated Terminal**:
+  - ✅ XTerm.js terminal emulator
+  - ✅ Command execution with whitelist security
+  - ✅ Resizable panel with drag handle
+
+**Infrastructure**:
+
 - ✅ E2E testing framework with Playwright
 - ✅ Docker deployment (HTTP/HTTPS) with Ollama container
 - ✅ Console.log cleanup (312 ESLint warnings resolved)
 - ✅ Context7 MCP server integration for up-to-date library docs
-
-**In Progress**:
-
-- ⏳ Advanced markdown rendering and code highlighting ([CHAT-003])
-- ⏳ Agent orchestration and multi-agent workflows
+- ✅ Dynamic LLM provider selector with runtime switching
+- ✅ Agent import tooling and Zodiac App demo data
 
 **MCP Servers Available**:
 
@@ -712,12 +813,12 @@ npm run test:e2e:debug       # Step through tests
   - Usage: "use context7 to help with [library@version]"
   - Optional: Add API key at https://context7.com/dashboard for higher rate limits
 
-**Planned**:
+**Next Steps (Post v3.0 Alpha)**:
 
-- 📋 Agent memory system (persistent and contextual)
-- 📋 Real-time collaboration features (Web IDE)
-- 📋 Advanced agent orchestration
-- 📋 Plugin system
+- 📋 **v3.0 Beta**: Integration testing and performance optimization
+- 📋 **v3.0 Stable**: Production release with comprehensive documentation
+- 📋 **v3.1 Features**: Advanced agent orchestration, plugin system, agent marketplace
+- 📋 **v4.0 Features**: Enterprise self-hosted version, SSO/SAML, audit logging
 
 See [docs/workflow-status.md](./docs/workflow-status.md) for detailed story tracking.
 

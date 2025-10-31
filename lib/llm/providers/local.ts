@@ -115,6 +115,15 @@ export const LOCAL_MODELS: Record<string, LocalModelConfig> = {
     supportsStreaming: true,
     description: 'Google Gemma 3 4B (Ollama)',
   },
+  'gemma2:2b': {
+    name: 'gemma2:2b',
+    endpoint: 'http://localhost:11434',
+    type: 'ollama',
+    healthCheckUrl: 'http://localhost:11434',
+    maxTokens: 8192,
+    supportsStreaming: true,
+    description: 'Google Gemma 2 2B (Ollama)',
+  },
   // Docker-based models (examples - user can add more)
   'custom-docker-7b': {
     name: 'custom-docker-7b',
@@ -448,7 +457,8 @@ export class LocalProvider extends BaseLLMProvider {
               // Handle both Ollama JSON format and potential custom formats
               if (line.startsWith('{')) {
                 const data = JSON.parse(line);
-                yield { content: data.content || '', done: data.done };
+                // Ollama uses 'response' or 'message.content' fields
+                yield { content: data.response || data.message?.content || '', done: data.done };
               } else {
                 yield { content: line, done: false };
               }

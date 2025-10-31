@@ -23,7 +23,8 @@ async function main() {
   const project = await prisma.project.create({
     data: {
       name: 'Zodiac App',
-      description: 'A mobile horoscope app with daily predictions, compatibility checks, and personalized readings based on astrological signs.',
+      description:
+        'A mobile horoscope app with daily predictions, compatibility checks, and personalized readings based on astrological signs.',
     },
   });
   console.log(`   ✅ Created project: ${project.name} (${project.id})`);
@@ -51,7 +52,7 @@ async function main() {
     }),
   ]);
   console.log(`   ✅ Created ${users.length} users`);
-  users.forEach(u => console.log(`      • ${u.name} (${u.email})`));
+  users.forEach((u) => console.log(`      • ${u.name} (${u.email})`));
 
   // 3. Add users to project
   console.log('\n🔗 Adding users to project...');
@@ -341,19 +342,22 @@ async function main() {
           create: [
             {
               role: 'user',
-              content: 'I want to build a horoscope app with daily predictions and compatibility checks.',
+              content:
+                'I want to build a horoscope app with daily predictions and compatibility checks.',
             },
             {
               role: 'agent',
-              content: 'Great idea! A horoscope app has strong user engagement potential. Let me help you plan this project. Based on your description, this sounds like a **Level 2 complexity** project (medium). Here\'s what we should focus on:\n\n**Core Features:**\n1. Daily horoscope readings for all 12 zodiac signs\n2. Compatibility checker between signs\n3. Clean, intuitive UI with zodiac visuals\n4. Push notifications for daily updates\n\n**Tech Stack Recommendation:**\n- React Native (cross-platform iOS/Android)\n- TypeScript for type safety\n- REST API integration for horoscope data\n\n**Timeline Estimate:**\n- Sprint 1 (2 weeks): Setup + Basic UI\n- Sprint 2 (2 weeks): API integration + Core features\n- Sprint 3 (2 weeks): Polish + Testing\n\nShall we proceed with creating a detailed PRD?',
+              content:
+                "Great idea! A horoscope app has strong user engagement potential. Let me help you plan this project. Based on your description, this sounds like a **Level 2 complexity** project (medium). Here's what we should focus on:\n\n**Core Features:**\n1. Daily horoscope readings for all 12 zodiac signs\n2. Compatibility checker between signs\n3. Clean, intuitive UI with zodiac visuals\n4. Push notifications for daily updates\n\n**Tech Stack Recommendation:**\n- React Native (cross-platform iOS/Android)\n- TypeScript for type safety\n- REST API integration for horoscope data\n\n**Timeline Estimate:**\n- Sprint 1 (2 weeks): Setup + Basic UI\n- Sprint 2 (2 weeks): API integration + Core features\n- Sprint 3 (2 weeks): Polish + Testing\n\nShall we proceed with creating a detailed PRD?",
             },
             {
               role: 'user',
-              content: 'Yes, let\'s create the PRD and break it down into stories.',
+              content: "Yes, let's create the PRD and break it down into stories.",
             },
             {
               role: 'agent',
-              content: 'Perfect! I\'ve created the project structure and broken it down into 12 stories:\n\n**Setup (DONE):** ✅ Project initialization, navigation\n**Sprint 1 (DONE):** ✅ Home screen, data models, API integration\n**Sprint 2 (IN PROGRESS):** 🔄 Daily horoscope detail screen\n**Sprint 3 (TODO):** 📋 Compatibility checker\n**Backlog:** Birth chart, notifications, settings, tests, deployment\n\nWe\'re currently 40% through the project with solid momentum. The team is doing great!',
+              content:
+                "Perfect! I've created the project structure and broken it down into 12 stories:\n\n**Setup (DONE):** ✅ Project initialization, navigation\n**Sprint 1 (DONE):** ✅ Home screen, data models, API integration\n**Sprint 2 (IN PROGRESS):** 🔄 Daily horoscope detail screen\n**Sprint 3 (TODO):** 📋 Compatibility checker\n**Backlog:** Birth chart, notifications, settings, tests, deployment\n\nWe're currently 40% through the project with solid momentum. The team is doing great!",
             },
           ],
         },
@@ -371,11 +375,12 @@ async function main() {
           create: [
             {
               role: 'user',
-              content: 'What\'s the best way to structure the zodiac data in our app?',
+              content: "What's the best way to structure the zodiac data in our app?",
             },
             {
               role: 'agent',
-              content: 'Great question! For the Zodiac App, I recommend a **normalized data structure** with TypeScript interfaces:\n\n```typescript\ninterface ZodiacSign {\n  id: string;\n  name: string; // "Aries", "Taurus", etc.\n  symbol: string; // "♈", "♉", etc.\n  element: "fire" | "earth" | "air" | "water";\n  dates: { start: string; end: string };\n  traits: string[];\n  icon: string; // emoji or image URL\n}\n\ninterface DailyHoroscope {\n  signId: string;\n  date: string;\n  prediction: string;\n  luckyNumber: number;\n  luckyColor: string;\n  mood: "excellent" | "good" | "neutral" | "challenging";\n}\n```\n\n**Storage Strategy:**\n- Static sign data: Store in JSON/constants file\n- Daily horoscopes: Fetch from API + cache in AsyncStorage\n- User preferences: AsyncStorage with Redux Toolkit\n\nThis keeps it simple, performant, and type-safe!',
+              content:
+                'Great question! For the Zodiac App, I recommend a **normalized data structure** with TypeScript interfaces:\n\n```typescript\ninterface ZodiacSign {\n  id: string;\n  name: string; // "Aries", "Taurus", etc.\n  symbol: string; // "♈", "♉", etc.\n  element: "fire" | "earth" | "air" | "water";\n  dates: { start: string; end: string };\n  traits: string[];\n  icon: string; // emoji or image URL\n}\n\ninterface DailyHoroscope {\n  signId: string;\n  date: string;\n  prediction: string;\n  luckyNumber: number;\n  luckyColor: string;\n  mood: "excellent" | "good" | "neutral" | "challenging";\n}\n```\n\n**Storage Strategy:**\n- Static sign data: Store in JSON/constants file\n- Daily horoscopes: Fetch from API + cache in AsyncStorage\n- User preferences: AsyncStorage with Redux Toolkit\n\nThis keeps it simple, performant, and type-safe!',
             },
             {
               role: 'user',
@@ -383,7 +388,8 @@ async function main() {
             },
             {
               role: 'agent',
-              content: 'Yes, **Redux Toolkit (RTK) is ideal** for this project! Here\'s why:\n\n**Pros:**\n- Built-in async handling with createAsyncThunk\n- RTK Query for API caching (perfect for horoscope data)\n- DevTools for debugging\n- Scales well if you add more features\n\n**Structure:**\n```\nsrc/\n  store/\n    slices/\n      horoscopeSlice.ts    # Daily horoscope state\n      userSlice.ts         # User preferences, saved signs\n      compatibilitySlice.ts # Compatibility results\n    api/\n      horoscopeApi.ts      # RTK Query API\n```\n\n**Alternative:** If you want something lighter, Zustand or React Context would also work. But for a production app with API caching needs, RTK is the sweet spot.\n\nShall I draft the initial Redux setup?',
+              content:
+                "Yes, **Redux Toolkit (RTK) is ideal** for this project! Here's why:\n\n**Pros:**\n- Built-in async handling with createAsyncThunk\n- RTK Query for API caching (perfect for horoscope data)\n- DevTools for debugging\n- Scales well if you add more features\n\n**Structure:**\n```\nsrc/\n  store/\n    slices/\n      horoscopeSlice.ts    # Daily horoscope state\n      userSlice.ts         # User preferences, saved signs\n      compatibilitySlice.ts # Compatibility results\n    api/\n      horoscopeApi.ts      # RTK Query API\n```\n\n**Alternative:** If you want something lighter, Zustand or React Context would also work. But for a production app with API caching needs, RTK is the sweet spot.\n\nShall I draft the initial Redux setup?",
             },
           ],
         },
@@ -404,7 +410,8 @@ async function main() {
             },
             {
               role: 'agent',
-              content: 'You can check the project status in several ways:\n\n1. **Status Board**: Visit `/status` to see the Kanban board with all stories\n2. **Project Dashboard**: Visit `/` for an overview of all projects\n3. **Workflows**: Visit `/workflows` to see active workflows\n4. **CLI**: Run `npm run madace status` for terminal view\n\nFor the Zodiac App specifically, you have:\n- 5 stories DONE ✅\n- 1 story IN_PROGRESS 🔄\n- 1 story TODO 📋\n- 5 stories in BACKLOG 📦\n\nThat\'s 40% complete! Great progress!',
+              content:
+                "You can check the project status in several ways:\n\n1. **Status Board**: Visit `/status` to see the Kanban board with all stories\n2. **Project Dashboard**: Visit `/` for an overview of all projects\n3. **Workflows**: Visit `/workflows` to see active workflows\n4. **CLI**: Run `npm run madace status` for terminal view\n\nFor the Zodiac App specifically, you have:\n- 5 stories DONE ✅\n- 1 story IN_PROGRESS 🔄\n- 1 story TODO 📋\n- 5 stories in BACKLOG 📦\n\nThat's 40% complete! Great progress!",
             },
           ],
         },
