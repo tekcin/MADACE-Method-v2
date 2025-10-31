@@ -208,10 +208,103 @@ export class WorkflowExecutor {
   }
 
   private async handleReflect(step: WorkflowStep): Promise<void> {
-    if (step.prompt) {
-      console.warn(`   🤔 Reflection: ${step.prompt}`);
+    if (!step.prompt) {
+      throw new Error('Reflect step requires prompt');
     }
-    // LLM reflection would happen here
+
+    const prompt = this.resolveVariables(step.prompt);
+    console.warn(`   🤔 Reflection prompt: ${prompt}`);
+
+    try {
+      // Get LLM configuration
+      const llmConfig = await this.getLLMConfig();
+      const { createLLMClient } = await import('@/lib/llm/client');
+
+      const client = createLLMClient({
+        provider: llmConfig.provider,
+        apiKey: llmConfig.apiKey,
+        model: step.model || llmConfig.model,
+      });
+
+      // Prepare messages
+      const messages = [
+        {
+          role: 'system' as const,
+          content: 'You are a helpful AI assistant helping with workflow execution. Provide concise, actionable responses.',
+        },
+        {
+          role: 'user' as const,
+          content: prompt,
+        },
+      ];
+
+      const startTime = Date.now();
+
+      // Get LLM response
+      const response = await client.chat({
+        messages,
+        max_tokens: step.max_tokens || 500,
+        temperature: step.temperature || 0.7,
+      });
+
+      const duration = Date.now() - startTime;
+
+      // Store reflection result
+      const result: import('./types').ReflectionResult = {
+        prompt,
+        response: response.content,
+        model: response.model || step.model || llmConfig.model,
+        tokensUsed: response.usage?.total_tokens || 0,
+        durationMs: duration,
+        timestamp: new Date().toISOString(),
+      };
+
+      // Store in workflow variables
+      const varName = step.store_as || 'last_reflection';
+      this.state!.variables[varName] = result;
+
+      console.warn(`   ✅ Reflection complete (${duration}ms, ${result.tokensUsed} tokens)`);
+      console.warn(`   📊 Model: ${result.model}`);
+      console.warn(`   💬 Response: ${response.content.substring(0, 150)}${response.content.length > 150 ? '...' : ''}`);
+    } catch (error) {
+      console.warn(`   ❌ Reflection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`LLM reflection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Get LLM configuration from database or environment
+   */
+  private async getLLMConfig(): Promise<{
+    provider: string;
+    apiKey: string;
+    model: string;
+  }> {
+    try {
+      const { prisma } = await import('@/lib/database/client');
+
+      const config = await prisma.config.findUnique({
+        where: { key: 'llm' },
+      });
+
+      if (config && config.value) {
+        const llmConfig = config.value as Record<string, unknown>;
+        return {
+          provider: (llmConfig.provider as string) || 'local',
+          apiKey: (llmConfig.apiKey as string) || '',
+          model: (llmConfig.model as string) || 'gemma3:latest',
+        };
+      }
+    } catch (error) {
+      console.warn(`   ⚠️  Failed to load LLM config from database: ${error}`);
+    }
+
+    // Fallback to environment variables
+    return {
+      provider: process.env.DEFAULT_LLM_PROVIDER || 'local',
+      apiKey: process.env.GEMINI_API_KEY || '',
+      model: process.env.DEFAULT_LLM_MODEL || 'gemma3:latest',
+    };
   }
 
   private async handleTemplate(step: WorkflowStep): Promise<void> {
@@ -219,25 +312,53 @@ export class WorkflowExecutor {
       throw new Error('Template step requires template and output_file');
     }
 
-    // Render template using template engine
-    // const templateEngine = new TemplateEngine(); // TODO: Use when template engine is fully implemented
-    const templatePath = step.template;
+    const { getTemplateEngine } = await import('@/lib/templates/engine');
+    const templateEngine = getTemplateEngine();
+
+    const templatePath = this.resolveVariables(step.template);
     const outputPath = this.resolveVariables(step.output_file);
-    const variables = {
+
+    const context = {
       ...this.state!.variables,
       ...(step.variables || {}),
     };
 
     try {
-      // For now, just log what would happen
-      console.warn(`   📄 Template rendered: ${templatePath} -> ${outputPath}`);
-      console.warn(`   📊 Variables used:`, Object.keys(variables));
+      let rendered: string;
 
-      // In full implementation:
-      // const rendered = await templateEngine.renderTemplate(templatePath, variables);
-      // await fs.writeFile(outputPath, rendered, 'utf8');
+      // Check if template is a file path or inline template
+      try {
+        const stats = await fs.stat(path.resolve(templatePath));
+        if (stats.isFile()) {
+          // Template is a file
+          rendered = await templateEngine.renderFile(path.resolve(templatePath), context);
+          console.warn(`   📄 Template file rendered: ${templatePath}`);
+        } else {
+          // Treat as inline template
+          rendered = templateEngine.render(templatePath, context);
+          console.warn(`   📝 Inline template rendered`);
+        }
+      } catch {
+        // File doesn't exist, treat as inline template
+        rendered = templateEngine.render(templatePath, context);
+        console.warn(`   📝 Inline template rendered`);
+      }
+
+      // Ensure output directory exists
+      const outputDir = path.dirname(path.resolve(outputPath));
+      await fs.mkdir(outputDir, { recursive: true });
+
+      // Write rendered output
+      await fs.writeFile(path.resolve(outputPath), rendered, 'utf-8');
+
+      console.warn(`   ✅ Output written to: ${outputPath}`);
+      console.warn(`   📊 Variables used: ${Object.keys(context).length} variables`);
+
+      // Store output path in workflow variables for reference
+      this.state!.variables['last_template_output'] = outputPath;
+      this.state!.variables['last_template_size'] = rendered.length;
     } catch (error) {
-      throw new Error(`Template rendering failed: ${error}`);
+      throw new Error(`Template rendering failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

@@ -67,6 +67,12 @@ export interface WorkflowStep {
   // Routing support (v3.0 - Scale-Adaptive Workflow Router)
   routing?: WorkflowRouting; // Routing configuration for route action
   output_var?: string; // Variable to store result/output
+
+  // LLM support (for reflect action)
+  model?: string; // LLM model to use (default: from config)
+  max_tokens?: number; // Max tokens for response (default: 500)
+  temperature?: number; // Temperature for LLM (default: 0.7)
+  store_as?: string; // Variable name to store reflection result (default: 'last_reflection')
 }
 
 export interface Workflow {
@@ -170,3 +176,15 @@ export interface ComplexityResult {
  * Kept for API clarity - input vs internal assessment representation
  */
 export type ProjectInput = ComplexityAssessment;
+
+/**
+ * Reflection result from LLM for reflect steps
+ */
+export interface ReflectionResult {
+  prompt: string; // Original prompt sent to LLM
+  response: string; // LLM response
+  model: string; // Model used
+  tokensUsed: number; // Total tokens used
+  durationMs: number; // Duration in milliseconds
+  timestamp: string; // ISO 8601 timestamp
+}
