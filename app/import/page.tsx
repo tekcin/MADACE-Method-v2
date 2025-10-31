@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { TechStackReport } from '@/components/features/TechStackReport';
+import { detectTechnologies } from '@/lib/utils/tech-detector';
 
 // Storage key for localStorage
 const STORAGE_KEY = 'madace-github-import-state';
@@ -436,43 +438,16 @@ ${analysis.dependencies.length > 0 ? `**Production**: ${analysis.dependencies.sl
               </div>
             </div>
 
-            {/* Technology Stack */}
+            {/* Technology Stack Report */}
             <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-800">
-              <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-                Technology Stack
+              <h3 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">
+                📊 Technology Stack Report
               </h3>
-              <div className="flex flex-wrap gap-2">
-                {analysis.hasPackageJson && (
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800 dark:bg-green-900 dark:text-green-200">
-                    Node.js
-                  </span>
-                )}
-                {analysis.hasPrisma && (
-                  <span className="rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-                    Prisma
-                  </span>
-                )}
-                {analysis.hasDocker && (
-                  <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                    Docker
-                  </span>
-                )}
-                {analysis.dependencies.some((dep) => dep.includes('react')) && (
-                  <span className="rounded-full bg-cyan-100 px-3 py-1 text-sm font-medium text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200">
-                    React
-                  </span>
-                )}
-                {analysis.dependencies.some((dep) => dep.includes('next')) && (
-                  <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-200">
-                    Next.js
-                  </span>
-                )}
-                {analysis.dependencies.some((dep) => dep.includes('express')) && (
-                  <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                    Express
-                  </span>
-                )}
-              </div>
+              <TechStackReport
+                technologies={detectTechnologies(analysis)}
+                totalFiles={analysis.totalFiles}
+                showDetails={false}
+              />
             </div>
 
             {/* Actions */}
