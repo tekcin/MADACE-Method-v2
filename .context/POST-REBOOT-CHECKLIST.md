@@ -1,166 +1,146 @@
-# ✅ Post-Reboot Checklist
+# POST-REBOOT CHECKLIST
 
-**Date**: October 30, 2025
-**Purpose**: Quick verification after system reboot
+**Quick reference for what to do after system reboot**
 
 ---
 
-## Step 1: System Check (2 minutes)
+## ✅ IMMEDIATE ACTIONS (Do These First)
 
+### 1. Navigate to Project Directory
 ```bash
-# Navigate to project
 cd /Users/nimda/MADACE-Method-v2.0
+```
 
-# Verify Node.js
-node --version
-# Expected: v24.10.0
-
-# Start dev server
+### 2. Start Development Services
+```bash
+# Terminal 1: Start Next.js dev server
 npm run dev
-# Expected: Server starts on http://localhost:3000
+
+# Terminal 2: Start Prisma Studio (database GUI)
+npm run db:studio
 ```
 
-**Status**: [ ] Dev server running
-
----
-
-## Step 2: Claude Code Restart (1 minute)
-
-1. **Completely quit Claude Code**: `Cmd+Q`
-2. **Reopen Claude Code**
-3. **Open project**: /Users/nimda/MADACE-Method-v2.0
-
-**Status**: [ ] Claude Code restarted
-
----
-
-## Step 3: Verify Context7 MCP (2 minutes)
-
-**Check MCP is loaded**:
-- Look for MCP servers in Claude Code status
-- Should see: "context7" listed
-
-**Test Context7**:
-```
-use context7 to help me understand Next.js 15.5.6 App Router
-```
-
-**Expected**: Response includes up-to-date Next.js 15.5.6 documentation
-
-**Status**: [ ] Context7 working
-
----
-
-## Step 4: Verify Console.log Cleanup (1 minute)
-
+### 3. Verify Services Are Running
 ```bash
-# Run ESLint
-npm run lint
-# Expected: No console.log warnings
+# Check Next.js (should return HTML)
+curl -I http://localhost:3000
 
-# Check specific counts
-npm run lint 2>&1 | grep -c "console"
-# Expected: 0 (or only console.error/warn mentions)
+# Check Prisma Studio (should return 200 OK)
+curl -I http://localhost:5555
 ```
 
-**Status**: [ ] ESLint passing (0 console.log warnings)
-
----
-
-## Step 5: Quality Checks (3 minutes)
-
+### 4. Verify Database State (Zodiac App Data)
 ```bash
-# Run all checks
-npm run check-all
-
-# Individual checks
-npm run type-check    # May show pre-existing test errors (OK)
-npm run lint          # Should pass
-npm run format:check  # Should pass
-npm run build         # Should compile in ~6s
+npm run view:zodiac
 ```
 
-**Status**: [ ] Build passing [ ] Lint passing
+**Expected Output**:
+- ✅ 3 team members (Alice, Bob, Carol)
+- ✅ 12 stories (5 DONE, 1 IN_PROGRESS, 1 TODO, 5 BACKLOG)
+- ✅ 3 workflows (2 completed, 1 in-progress)
 
 ---
 
-## Step 6: Optional - Get Context7 API Key
+## 🔄 RESTART CLAUDE CODE
 
-If you want higher rate limits:
+**Required to activate Chrome DevTools MCP server**
 
-1. Visit: https://context7.com/dashboard
-2. Create free account
-3. Copy API key
-4. Update `.mcp.json`:
-   ```json
-   {
-     "mcpServers": {
-       "context7": {
-         "command": "npx",
-         "args": ["-y", "@upstash/context7-mcp@latest"],
-         "env": {
-           "CONTEXT7_API_KEY": "your-key-here"
-         }
-       }
-     }
-   }
-   ```
-5. Restart Claude Code again
-
-**Status**: [ ] API key added (optional)
+The `.mcp.json` file has been updated with Chrome DevTools MCP configuration.
+After restarting Claude Code, you'll have access to 26 browser automation tools.
 
 ---
 
-## 🎯 Success Criteria
+## 🧪 TEST SYSTEM (Do These After Services Start)
 
-All must be ✅ to consider session resumed successfully:
+### Browser Interface Tests
+```
+✅ http://localhost:3000           # Home Dashboard
+✅ http://localhost:3000/status    # Kanban Board (should show 12 Zodiac stories)
+✅ http://localhost:3000/workflows # Workflow execution
+✅ http://localhost:3000/chat      # Chat interface
+✅ http://localhost:5555           # Prisma Studio (database tables)
+```
 
-- [x] Dev server running on http://localhost:3000
-- [x] Claude Code restarted and project opened
-- [x] Context7 MCP loaded and working
-- [x] ESLint passing with 0 console.log warnings
-- [x] Production build compiles successfully
-
----
-
-## 📞 If Something Doesn't Work
-
-**Dev server won't start**:
+### CLI Tests
 ```bash
-# Kill existing process
+✅ npm run madace repl             # Interactive REPL
+✅ npm run madace dashboard        # Terminal dashboard
+✅ npm run madace chat             # CLI chat
+```
+
+---
+
+## 🎯 CHROME DEVTOOLS MCP TESTING
+
+**After Claude Code Restart**, ask Claude to:
+
+1. Open http://localhost:3000 in Chrome
+2. Take screenshot of dashboard
+3. Navigate to http://localhost:3000/status
+4. Take screenshot of Zodiac App Kanban board
+5. Analyze network requests and performance
+
+---
+
+## 📊 EXPECTED STATE
+
+### Database
+- **Type**: SQLite (development)
+- **Location**: `prisma/dev.db`
+- **Status**: Seeded with Zodiac App dummy project
+- **Project ID**: `cmhe949rp0000rzhh5s2p4yfs`
+
+### Git
+- **Branch**: `main`
+- **Last Commit**: `cbbc4b5` - docs: Update PRD and PLAN
+- **Status**: Clean (no uncommitted changes)
+
+### Services
+- **Next.js**: Port 3000
+- **Prisma Studio**: Port 5555
+- **Ollama**: Not running (optional)
+
+---
+
+## 🆘 IF SOMETHING BREAKS
+
+### Services Won't Start
+```bash
+# Kill stuck processes
 lsof -ti:3000 | xargs kill -9
+lsof -ti:5555 | xargs kill -9
+
+# Restart
 npm run dev
+npm run db:studio
 ```
 
-**Context7 not loaded**:
+### Database Issues
 ```bash
-# Verify config exists
-cat .mcp.json
+# Regenerate Prisma Client
+npm run db:generate
 
-# Check format is valid
-cat .mcp.json | jq .
-
-# Restart Claude Code completely
+# Re-seed Zodiac App
+npm run seed:zodiac
 ```
 
-**ESLint issues**:
+### Build Issues
 ```bash
-# Re-run to see details
-npm run lint
-
-# Check specific file
-npx eslint path/to/file.ts
+# Clean and rebuild
+rm -rf .next node_modules/.cache
+npm run build
 ```
 
 ---
 
-## 📁 Reference Files
+## 📁 SESSION STATE REFERENCE
 
-- **Full Details**: `.context/SESSION-STATE.md`
-- **Quick Status**: `.context/QUICK-STATUS.txt`
-- **This Checklist**: `.context/POST-REBOOT-CHECKLIST.md`
+Full session details saved in:
+- `.context/SESSION-STATE-CURRENT.md` (comprehensive state)
+- `.context/POST-REBOOT-CHECKLIST.md` (this file)
+- `.context/RESUME.md` (project resume)
 
 ---
 
-**Estimated Time**: 10 minutes total
-**Priority**: Complete Steps 1-5, Step 6 is optional
+**Last Updated**: 2025-10-31 02:50:00 UTC
+**Status**: 🟢 READY FOR REBOOT
