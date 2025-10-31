@@ -295,14 +295,38 @@ async function main() {
     console.log(`   ✅ ${config.key}`);
   }
 
-  // 7. Get some agents for chat sessions
-  console.log('\n🤖 Finding agents for chat sessions...');
-  const pmAgent = await prisma.agent.findFirst({ where: { name: 'pm' } });
-  const devAgent = await prisma.agent.findFirst({ where: { name: 'dev' } });
-  const chatAgent = await prisma.agent.findFirst({ where: { name: 'chat-assistant' } });
+  // 7. Ensure agents exist for chat sessions
+  console.log('\n🤖 Checking for agents...');
+  let pmAgent = await prisma.agent.findFirst({ where: { name: 'pm' } });
+  let devAgent = await prisma.agent.findFirst({ where: { name: 'dev' } });
+  let chatAgent = await prisma.agent.findFirst({ where: { name: 'chat-assistant' } });
+
+  const agentCount = await prisma.agent.count();
+
+  if (!pmAgent || !devAgent || !chatAgent || agentCount < 6) {
+    console.log('   ⚠️  Missing agents detected, importing now...');
+    console.log('   📥 Running: npm run import-local');
+
+    // Import agents using Node's child_process
+    const { execSync } = require('child_process');
+    try {
+      execSync('npm run import-local', { stdio: 'inherit' });
+      console.log('   ✅ Agents imported successfully');
+
+      // Re-fetch agents after import
+      pmAgent = await prisma.agent.findFirst({ where: { name: 'pm' } });
+      devAgent = await prisma.agent.findFirst({ where: { name: 'dev' } });
+      chatAgent = await prisma.agent.findFirst({ where: { name: 'chat-assistant' } });
+    } catch (error) {
+      console.error('   ❌ Failed to import agents:', error);
+      console.log('   ⚠️  Continuing without chat sessions');
+    }
+  } else {
+    console.log(`   ✅ Found ${agentCount} agents in database`);
+  }
 
   if (!pmAgent || !devAgent || !chatAgent) {
-    console.log('   ⚠️  Some agents not found, skipping chat sessions');
+    console.log('   ⚠️  Some agents still not found, skipping chat sessions');
   } else {
     // 8. Create Chat Sessions with messages
     console.log('\n💬 Creating chat sessions...');

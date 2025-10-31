@@ -2341,6 +2341,121 @@ OPENAI_MODEL=gpt-4-turbo-preview
 
 **Status:** Implemented - Comprehensive tooling for importing agents and seeding realistic demo data
 
+### ⚠️ CRITICAL: Agent Seeding Dependencies
+
+**PROBLEM SOLVED:** Database resets were breaking the Chat feature because agents weren't automatically re-imported.
+
+**ROOT CAUSE:**
+```
+Database Reset (prisma migrate reset)
+    ↓
+Zodiac App Seeder Runs
+    ↓
+Creates: Projects, Users, Stories, Workflows ✅
+Missing: MADACE Agents (PM, Dev, Chat Assistant, etc.) ❌
+    ↓
+Result: Chat feature broken (no agents to select)
+```
+
+**SOLUTION IMPLEMENTED:**
+1. **Auto-Import Agents**: `seed-zodiac-project.ts` now automatically runs `npm run import-local` if agents are missing
+2. **Module Agents**: `import-local-agents.ts` now creates agents for all 5 modules (MAM, MAB, CIS, BMM, BMB)
+3. **Intelligent Detection**: Checks agent count before seeding, only imports if needed
+
+**UPDATED SCRIPTS:**
+
+```typescript
+// scripts/seed-zodiac-project.ts (lines 298-330)
+// 7. Ensure agents exist for chat sessions
+console.log('\n🤖 Checking for agents...');
+const agentCount = await prisma.agent.count();
+
+if (agentCount < 6) {
+  console.log('   ⚠️  Missing agents detected, importing now...');
+  console.log('   📥 Running: npm run import-local');
+
+  const { execSync } = require('child_process');
+  try {
+    execSync('npm run import-local', { stdio: 'inherit' });
+    console.log('   ✅ Agents imported successfully');
+  } catch (error) {
+    console.error('   ❌ Failed to import agents:', error);
+  }
+} else {
+  console.log(`   ✅ Found ${agentCount} agents in database`);
+}
+```
+
+```typescript
+// scripts/import-local-agents.ts (lines 153-161)
+// Also create module agents to ensure all modules are represented
+console.log('\n📄 Creating module agents for all 5 modules...');
+const { execSync } = require('child_process');
+try {
+  execSync('npx tsx scripts/create-module-agents.ts', { stdio: 'pipe' });
+  console.log('  ✅ Module agents created');
+} catch (error) {
+  console.log('  ⚠️  Module agents script not found or failed');
+}
+```
+
+**RESULT:**
+- ✅ Seeding now creates **10 agents** automatically (6 MAM + 4 module agents)
+- ✅ Chat feature always works after `npm run seed:zodiac`
+- ✅ All 5 modules represented (core, mam, mab, cis, bmm, bmb)
+- ✅ No manual intervention needed
+
+**DEVELOPER WORKFLOW:**
+```bash
+# Old (broken): Required manual steps
+npm run seed:zodiac        # Creates project data
+# Chat feature broken - no agents! ❌
+npm run import-local       # MANUAL: Had to remember this!
+npm run madace -- agents list  # Finally agents work ✅
+
+# New (automatic): Works immediately
+npm run seed:zodiac        # Creates project data + agents
+# Chat feature works immediately! ✅
+```
+
+**NPM SCRIPTS DEPENDENCY CHAIN:**
+```
+npm run seed:zodiac
+    ↓
+Detects missing agents → npm run import-local
+    ↓
+Imports MADACE agents → npx tsx scripts/create-module-agents.ts
+    ↓
+Creates all 10 agents (MAM + modules)
+    ↓
+Result: Chat feature ready ✅
+```
+
+**WHY THIS MATTERS:**
+- **Chat Feature Dependency**: Chat UI requires agents to be in database
+- **Agent Selection**: Users select agents from dropdown populated by database query
+- **Module Representation**: Each module needs at least one agent for testing
+- **Demo Data Integrity**: Zodiac App seeder creates chat sessions that reference agents
+
+**TESTING THE FIX:**
+```bash
+# 1. Reset database completely
+npx prisma migrate reset --force
+
+# 2. Seed Zodiac App (now includes automatic agent import)
+npm run seed:zodiac
+
+# 3. Verify agents exist
+npm run madace -- agents list
+# Expected: 10 agents (analyst, architect, dev, pm, sm, chat-assistant, mab-builder, cis-creative, bmm-strategist, bmb-facilitator)
+
+# 4. Test chat feature
+open http://localhost:3000/chat
+# Expected: Can select from 10 agents, all working
+```
+
+---
+
 ### 10.1. Agent Import System
 
 - **Problem:** Agents defined in YAML files needed to be imported to database for dynamic management.

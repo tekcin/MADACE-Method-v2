@@ -150,6 +150,16 @@ async function main() {
 
     console.log('  ✅ 🤖 AI Chat Assistant');
 
+    // Also create module agents to ensure all modules are represented
+    console.log('\n📄 Creating module agents for all 5 modules...');
+    const { execSync } = require('child_process');
+    try {
+      execSync('npx tsx scripts/create-module-agents.ts', { stdio: 'pipe' });
+      console.log('  ✅ Module agents created');
+    } catch (error) {
+      console.log('  ⚠️  Module agents script not found or failed');
+    }
+
     // Show summary
     const allAgents = await prisma.agent.findMany({
       orderBy: { name: 'asc' },
