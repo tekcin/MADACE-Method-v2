@@ -1435,15 +1435,9 @@ export async function getRelevantMemories(
     where: {
       agentId,
       userId,
-      OR: [
-        { expiresAt: null },
-        { expiresAt: { gt: new Date() } },
-      ],
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
     },
-    orderBy: [
-      { importance: 'desc' },
-      { lastAccessedAt: 'desc' },
-    ],
+    orderBy: [{ importance: 'desc' }, { lastAccessedAt: 'desc' }],
     take: limit,
   });
 }
@@ -1468,6 +1462,7 @@ export async function getRelevantMemories(
 **Zero-Configuration Local AI by Default:**
 
 MADACE v3 ships with **local LLM (Ollama + Gemma3) as the default configuration**, providing:
+
 - **No API keys required** - Works out-of-the-box
 - **Complete privacy** - All chat data stays on your machine
 - **Zero cost** - No recurring API expenses
@@ -1564,7 +1559,7 @@ echo "✅ Chat test complete!"
 ```typescript
 // lib/llm/config.ts
 export function getLLMConfigFromEnv(): LLMConfig {
-  const provider = process.env.PLANNING_LLM || 'local';  // Default: 'local'
+  const provider = process.env.PLANNING_LLM || 'local'; // Default: 'local'
 
   const configs = {
     local: {
@@ -1681,17 +1676,14 @@ LOCAL_MODEL_NAME=gemma3:latest
 
 ```typescript
 // lib/llm/prompt-builder.ts
-export function limitPromptContext(
-  messages: Message[],
-  maxTokens: number = 4000
-): Message[] {
+export function limitPromptContext(messages: Message[], maxTokens: number = 4000): Message[] {
   // Keep system prompt + last N messages that fit within token budget
   const systemMessages = messages.filter((m) => m.role === 'system');
   const conversationMessages = messages.filter((m) => m.role !== 'system');
 
   // Estimate tokens (rough: 1 token ≈ 4 characters)
   let tokenCount = estimateTokens(systemMessages);
-  const limitedMessages = [... systemMessages];
+  const limitedMessages = [...systemMessages];
 
   // Add messages from newest to oldest until limit
   for (let i = conversationMessages.length - 1; i >= 0; i--) {
@@ -1727,10 +1719,7 @@ export function limitPromptContext(
 
 ```typescript
 // Middleware (future implementation)
-export async function validateChatAccess(
-  userId: string,
-  sessionId: string
-): Promise<boolean> {
+export async function validateChatAccess(userId: string, sessionId: string): Promise<boolean> {
   const session = await prisma.chatSession.findUnique({
     where: { id: sessionId },
   });
@@ -1769,7 +1758,7 @@ services:
     environment:
       # Default: Uses local Ollama (no API keys needed)
       - PLANNING_LLM=local
-      - LOCAL_MODEL_URL=http://ollama:11434  # Container-to-container
+      - LOCAL_MODEL_URL=http://ollama:11434 # Container-to-container
       - LOCAL_MODEL_NAME=gemma3:latest
       - DATABASE_URL=file:./dev.db
     depends_on:
@@ -1782,9 +1771,9 @@ services:
   ollama:
     image: ollama/ollama:latest
     ports:
-      - '11434:11434'  # Exposed for browser access
+      - '11434:11434' # Exposed for browser access
     volumes:
-      - ollama-data:/root/.ollama  # Persistent model storage (3.3GB)
+      - ollama-data:/root/.ollama # Persistent model storage (3.3GB)
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:11434/api/tags']
       interval: 30s
@@ -1793,8 +1782,8 @@ services:
       start_period: 60s
 
 volumes:
-  madace-data:    # Application data
-  ollama-data:    # Gemma3 model storage (3.3GB)
+  madace-data: # Application data
+  ollama-data: # Gemma3 model storage (3.3GB)
 ```
 
 **First-Time Setup:**
@@ -1859,6 +1848,7 @@ LOCAL_MODEL_URL=https://ollama.yourdomain.com  # Use domain
 3. **"Model not available" error**
    - **Cause**: Ollama not running or model not pulled
    - **Diagnosis**:
+
      ```bash
      # Check Ollama status
      docker ps | grep ollama
@@ -1866,7 +1856,9 @@ LOCAL_MODEL_URL=https://ollama.yourdomain.com  # Use domain
      # Check model availability
      curl http://localhost:11434/api/tags
      ```
+
    - **Fix**:
+
      ```bash
      # Start Ollama if stopped
      docker-compose up -d ollama
@@ -1894,6 +1886,7 @@ LOCAL_MODEL_URL=https://ollama.yourdomain.com  # Use domain
 5. **"Connection refused" to Ollama**
    - **Cause**: Ollama container not started or port conflict
    - **Fix**:
+
      ```bash
      # Check if port 11434 is in use
      lsof -i :11434
@@ -1908,6 +1901,7 @@ LOCAL_MODEL_URL=https://ollama.yourdomain.com  # Use domain
 6. **Chat UI shows "Loading..." forever**
    - **Cause**: Server not responding or CORS issue
    - **Diagnosis**:
+
      ```bash
      # Check server health
      curl http://localhost:3000/api/health
@@ -1915,11 +1909,13 @@ LOCAL_MODEL_URL=https://ollama.yourdomain.com  # Use domain
      # Check browser console for errors
      # (Open DevTools → Console)
      ```
+
    - **Fix**: Restart dev server: `npm run dev`
 
 7. **Model too slow on your machine**
    - **Cause**: Large model on limited hardware
    - **Solution**: Switch to smaller model:
+
      ```bash
      # Pull smaller model (1.5GB instead of 3.3GB)
      docker exec ollama ollama pull gemma:2b
@@ -1930,12 +1926,12 @@ LOCAL_MODEL_URL=https://ollama.yourdomain.com  # Use domain
 
 **Performance Expectations:**
 
-| Phase | Time | Reason |
-|-------|------|--------|
-| **First Message** | 10-30 seconds | Model loading into RAM (3.3GB) |
-| **Subsequent Messages** | 1-5 seconds | Model already in memory |
-| **Response Quality** | High | Gemma3 4B trained by Google |
-| **Token Speed** | 10-20 tokens/sec | CPU inference (no GPU) |
+| Phase                   | Time             | Reason                         |
+| ----------------------- | ---------------- | ------------------------------ |
+| **First Message**       | 10-30 seconds    | Model loading into RAM (3.3GB) |
+| **Subsequent Messages** | 1-5 seconds      | Model already in memory        |
+| **Response Quality**    | High             | Gemma3 4B trained by Google    |
+| **Token Speed**         | 10-20 tokens/sec | CPU inference (no GPU)         |
 
 **Switching to Cloud Provider (Optional):**
 
@@ -2248,24 +2244,28 @@ export async function POST(request: NextRequest) {
 ### 9.3. Key Features
 
 **Real-time Availability Detection:**
+
 - Checks `process.env` for API keys
 - Shows green checkmark for available providers
 - Grays out unavailable providers
 - No server restart required for changes
 
 **Visual Indicators:**
+
 - ⭐ Star icon for default provider
 - ✅ Green checkmark for available providers
 - ❌ Gray for providers needing API keys
 - Descriptive text for each provider
 
 **Seamless Switching:**
+
 - Click dropdown to see all providers
 - Select provider, immediately active for next message
 - No page refresh or configuration changes
 - Works with streaming responses
 
 **Provider Information:**
+
 - Local (Ollama/Gemma3): Free, Private, No API key needed
 - Google Gemini: Fast, Cost-effective
 - Anthropic Claude: Advanced reasoning
@@ -2274,6 +2274,7 @@ export async function POST(request: NextRequest) {
 ### 9.4. Use Cases
 
 **1. Testing Different Models:**
+
 ```
 User types: "Tell me a joke about programming"
 - Try with Local (Ollama/Gemma3) - Free, 10-30s response
@@ -2282,6 +2283,7 @@ User types: "Tell me a joke about programming"
 ```
 
 **2. Cost Optimization:**
+
 ```
 Development: Use Local (free, private)
 Testing: Use Gemini (fast, cheap)
@@ -2289,6 +2291,7 @@ Production: Use Claude (high quality)
 ```
 
 **3. Privacy vs Speed:**
+
 ```
 Sensitive data: Local (stays on machine)
 General queries: Cloud provider (faster responses)
@@ -2320,6 +2323,7 @@ OPENAI_MODEL=gpt-4-turbo-preview
 ### 9.6. Integration Benefits
 
 **Value Delivered:**
+
 - **Flexibility**: Switch providers without code changes or restarts
 - **Cost Control**: Choose provider based on use case and budget
 - **Privacy Options**: Use local models for sensitive data
@@ -2328,6 +2332,7 @@ OPENAI_MODEL=gpt-4-turbo-preview
 - **Graceful Degradation**: Shows unavailable providers with guidance
 
 **Production Readiness:**
+
 - ✅ Dynamic availability detection
 - ✅ Runtime provider override
 - ✅ No server restarts required
@@ -2346,6 +2351,7 @@ OPENAI_MODEL=gpt-4-turbo-preview
 **PROBLEM SOLVED:** Database resets were breaking the Chat feature because agents weren't automatically re-imported.
 
 **ROOT CAUSE:**
+
 ```
 Database Reset (prisma migrate reset)
     ↓
@@ -2358,6 +2364,7 @@ Result: Chat feature broken (no agents to select)
 ```
 
 **SOLUTION IMPLEMENTED:**
+
 1. **Auto-Import Agents**: `seed-zodiac-project.ts` now automatically runs `npm run import-local` if agents are missing
 2. **Module Agents**: `import-local-agents.ts` now creates agents for all 5 modules (MAM, MAB, CIS, BMM, BMB)
 3. **Intelligent Detection**: Checks agent count before seeding, only imports if needed
@@ -2400,12 +2407,14 @@ try {
 ```
 
 **RESULT:**
+
 - ✅ Seeding now creates **10 agents** automatically (6 MAM + 4 module agents)
 - ✅ Chat feature always works after `npm run seed:zodiac`
 - ✅ All 5 modules represented (core, mam, mab, cis, bmm, bmb)
 - ✅ No manual intervention needed
 
 **DEVELOPER WORKFLOW:**
+
 ```bash
 # Old (broken): Required manual steps
 npm run seed:zodiac        # Creates project data
@@ -2419,6 +2428,7 @@ npm run seed:zodiac        # Creates project data + agents
 ```
 
 **NPM SCRIPTS DEPENDENCY CHAIN:**
+
 ```
 npm run seed:zodiac
     ↓
@@ -2432,12 +2442,14 @@ Result: Chat feature ready ✅
 ```
 
 **WHY THIS MATTERS:**
+
 - **Chat Feature Dependency**: Chat UI requires agents to be in database
 - **Agent Selection**: Users select agents from dropdown populated by database query
 - **Module Representation**: Each module needs at least one agent for testing
 - **Demo Data Integrity**: Zodiac App seeder creates chat sessions that reference agents
 
 **TESTING THE FIX:**
+
 ```bash
 # 1. Reset database completely
 npx prisma migrate reset --force
@@ -2644,10 +2656,10 @@ async function viewZodiacData() {
   console.log('📁 PROJECT:', project.name);
   console.log('👥 TEAM MEMBERS:', members.length);
   console.log('📊 STORIES BY STATUS:');
-  console.log('   ✅ DONE:', stories.filter(s => s.status === 'DONE').length);
-  console.log('   🔄 IN_PROGRESS:', stories.filter(s => s.status === 'IN_PROGRESS').length);
-  console.log('   📋 TODO:', stories.filter(s => s.status === 'TODO').length);
-  console.log('   📦 BACKLOG:', stories.filter(s => s.status === 'BACKLOG').length);
+  console.log('   ✅ DONE:', stories.filter((s) => s.status === 'DONE').length);
+  console.log('   🔄 IN_PROGRESS:', stories.filter((s) => s.status === 'IN_PROGRESS').length);
+  console.log('   📋 TODO:', stories.filter((s) => s.status === 'TODO').length);
+  console.log('   📦 BACKLOG:', stories.filter((s) => s.status === 'BACKLOG').length);
   // ... detailed output ...
 }
 ```
@@ -2655,25 +2667,30 @@ async function viewZodiacData() {
 ### 10.4. Realistic Data Patterns
 
 **Story Point Estimation:**
+
 - Fibonacci sequence: 3, 5, 8, 13
 - Matches real-world agile practices
 
 **Sprint Organization:**
+
 - Sprint 1: Setup and foundation (completed)
 - Sprint 2: Core features (in progress)
 - Sprint 3: Advanced features (backlog)
 
 **Chat Conversations:**
+
 - Technical discussions (architecture, tech stack)
 - Planning conversations (PRD, epics, stories)
 - User help (navigation, status checking)
 
 **Team Collaboration:**
+
 - Owner role (project management)
 - Admin role (development)
 - Member role (design)
 
 **Workflow States:**
+
 - Completed workflows (planning, sprint-1)
 - In-progress workflows (sprint-2)
 - Clear execution tracking
@@ -2681,6 +2698,7 @@ async function viewZodiacData() {
 ### 10.5. Use Cases
 
 **1. Development Testing:**
+
 ```bash
 # Seed realistic data
 npm run seed:zodiac
@@ -2693,6 +2711,7 @@ npm run seed:zodiac
 ```
 
 **2. Demo and Presentations:**
+
 ```bash
 # Show complete project lifecycle
 npm run view:zodiac
@@ -2704,6 +2723,7 @@ npm run view:zodiac
 ```
 
 **3. E2E Testing:**
+
 ```bash
 # Use realistic test data
 - Multi-user scenarios
@@ -2713,6 +2733,7 @@ npm run view:zodiac
 ```
 
 **4. User Training:**
+
 ```bash
 # Provide hands-on environment
 - Explore complete project
@@ -2724,6 +2745,7 @@ npm run view:zodiac
 ### 10.6. Integration Benefits
 
 **Value Delivered:**
+
 - **Realistic Testing**: Full database relationships and patterns
 - **Quick Setup**: One command creates complete project
 - **Training Environment**: Safe sandbox for learning
@@ -2732,6 +2754,7 @@ npm run view:zodiac
 - **Development Velocity**: No manual data entry needed
 
 **Production Readiness:**
+
 - ✅ Comprehensive data coverage
 - ✅ All database models populated
 - ✅ Realistic relationships (foreign keys, cascades)
@@ -2760,16 +2783,16 @@ npm run view:zodiac
 
 **V2 to V3 Architectural Shift:**
 
-| Aspect | V2 (File-Based) | V3 (Database-Based) |
-|--------|-----------------|---------------------|
-| **Data Storage** | `docs/mam-workflow-status.md` file | `StateMachine` table in database |
-| **Data Access** | File I/O (`fs.readFile`) | Prisma ORM queries |
-| **State Management** | `createStateMachine(filePath)` | `prisma.stateMachine.findMany()` |
-| **Project Filtering** | Not supported | `?projectId=xxx` query param |
-| **Scalability** | Limited (file locking issues) | High (database transactions) |
-| **Multi-Project** | Single project only | Multiple projects supported |
-| **Concurrency** | File locks, race conditions | Database ACID guarantees |
-| **Production** | File missing = crash ❌ | Graceful empty state ✅ |
+| Aspect                | V2 (File-Based)                    | V3 (Database-Based)              |
+| --------------------- | ---------------------------------- | -------------------------------- |
+| **Data Storage**      | `docs/mam-workflow-status.md` file | `StateMachine` table in database |
+| **Data Access**       | File I/O (`fs.readFile`)           | Prisma ORM queries               |
+| **State Management**  | `createStateMachine(filePath)`     | `prisma.stateMachine.findMany()` |
+| **Project Filtering** | Not supported                      | `?projectId=xxx` query param     |
+| **Scalability**       | Limited (file locking issues)      | High (database transactions)     |
+| **Multi-Project**     | Single project only                | Multiple projects supported      |
+| **Concurrency**       | File locks, race conditions        | Database ACID guarantees         |
+| **Production**        | File missing = crash ❌            | Graceful empty state ✅          |
 
 ### 11.3. Code Comparison
 
@@ -2794,15 +2817,13 @@ export async function GET() {
       status,
     });
   } catch (error) {
-    return NextResponse.json(
-      { success: false, error: errorMessage },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
   }
 }
 ```
 
 **Issues with V2 Approach:**
+
 - ❌ File must exist or endpoint crashes (production failures)
 - ❌ No multi-project support (single file for all projects)
 - ❌ File locking issues with concurrent requests
@@ -2892,6 +2913,7 @@ export async function GET(request: NextRequest) {
 ```
 
 **Benefits of V3 Approach:**
+
 - ✅ Multi-project support via `projectId` parameter
 - ✅ Database transactions ensure consistency
 - ✅ No file system dependencies (works in Docker, cloud platforms)
@@ -2907,6 +2929,7 @@ export async function GET(request: NextRequest) {
 The Zodiac App seeding infrastructure was expanded from 12 stories to **22 comprehensive stories** covering all aspects of app development:
 
 **Story Distribution:**
+
 ```
 ✅ 22 Stories Total (100% coverage)
    • 13 DONE (59%): Setup, planning, architecture, core features
@@ -2916,6 +2939,7 @@ The Zodiac App seeding infrastructure was expanded from 12 stories to **22 compr
 ```
 
 **Milestone Organization:**
+
 ```
 Milestone 1: Core Features (ZODIAC-001 to ZODIAC-005)
    - ZODIAC-001: Project setup and initialization
@@ -2943,30 +2967,30 @@ Additional Stories (ZODIAC-013 to ZODIAC-022)
 
 **Created Stories:**
 
-| Story ID | Title | Status | Points | Milestone |
-|----------|-------|--------|--------|-----------|
-| ZODIAC-001 | Project setup and initialization | DONE | 3 | Core Features |
-| ZODIAC-002 | User registration and authentication | DONE | 5 | Core Features |
-| ZODIAC-003 | Database schema design | DONE | 8 | Core Features |
-| ZODIAC-004 | Daily horoscope UI | DONE | 5 | Core Features |
-| ZODIAC-005 | API integration for horoscope data | DONE | 8 | Core Features |
-| ZODIAC-006 | Build daily horoscope detail screen | IN_PROGRESS | 5 | Matching & Discovery |
-| ZODIAC-007 | Implement compatibility checker feature | TODO | 8 | Matching & Discovery |
-| ZODIAC-008 | User profile with zodiac details | BACKLOG | 5 | Matching & Discovery |
-| ZODIAC-009 | Matching algorithm implementation | BACKLOG | 13 | Matching & Discovery |
-| ZODIAC-010 | In-app messaging system | BACKLOG | 13 | Communication |
-| ZODIAC-011 | Push notifications | BACKLOG | 8 | Communication |
-| ZODIAC-012 | Chat UI and real-time updates | BACKLOG | 13 | Communication |
-| ZODIAC-013 | Database Schema Design and Migration | TODO | 8 | - |
-| ZODIAC-014 | Project Setup - Next.js with TypeScript | IN_PROGRESS | 5 | - |
-| ZODIAC-015 | Write Product Requirements Document (PRD) | DONE | 5 | - |
-| ZODIAC-016 | Create Technical Architecture Document | DONE | 8 | - |
-| ZODIAC-017 | Define Epic Breakdown | DONE | 5 | - |
-| ZODIAC-018 | Create User Stories for Milestone 1 | DONE | 3 | - |
-| ZODIAC-019 | Setup CI/CD Pipeline | DONE | 8 | - |
-| ZODIAC-020 | Create Design System and Component Library | DONE | 13 | - |
-| ZODIAC-021 | Write API Documentation | DONE | 5 | - |
-| ZODIAC-022 | Setup Testing Framework (Jest + React Testing Library) | DONE | 8 | - |
+| Story ID   | Title                                                  | Status      | Points | Milestone            |
+| ---------- | ------------------------------------------------------ | ----------- | ------ | -------------------- |
+| ZODIAC-001 | Project setup and initialization                       | DONE        | 3      | Core Features        |
+| ZODIAC-002 | User registration and authentication                   | DONE        | 5      | Core Features        |
+| ZODIAC-003 | Database schema design                                 | DONE        | 8      | Core Features        |
+| ZODIAC-004 | Daily horoscope UI                                     | DONE        | 5      | Core Features        |
+| ZODIAC-005 | API integration for horoscope data                     | DONE        | 8      | Core Features        |
+| ZODIAC-006 | Build daily horoscope detail screen                    | IN_PROGRESS | 5      | Matching & Discovery |
+| ZODIAC-007 | Implement compatibility checker feature                | TODO        | 8      | Matching & Discovery |
+| ZODIAC-008 | User profile with zodiac details                       | BACKLOG     | 5      | Matching & Discovery |
+| ZODIAC-009 | Matching algorithm implementation                      | BACKLOG     | 13     | Matching & Discovery |
+| ZODIAC-010 | In-app messaging system                                | BACKLOG     | 13     | Communication        |
+| ZODIAC-011 | Push notifications                                     | BACKLOG     | 8      | Communication        |
+| ZODIAC-012 | Chat UI and real-time updates                          | BACKLOG     | 13     | Communication        |
+| ZODIAC-013 | Database Schema Design and Migration                   | TODO        | 8      | -                    |
+| ZODIAC-014 | Project Setup - Next.js with TypeScript                | IN_PROGRESS | 5      | -                    |
+| ZODIAC-015 | Write Product Requirements Document (PRD)              | DONE        | 5      | -                    |
+| ZODIAC-016 | Create Technical Architecture Document                 | DONE        | 8      | -                    |
+| ZODIAC-017 | Define Epic Breakdown                                  | DONE        | 5      | -                    |
+| ZODIAC-018 | Create User Stories for Milestone 1                    | DONE        | 3      | -                    |
+| ZODIAC-019 | Setup CI/CD Pipeline                                   | DONE        | 8      | -                    |
+| ZODIAC-020 | Create Design System and Component Library             | DONE        | 13     | -                    |
+| ZODIAC-021 | Write API Documentation                                | DONE        | 5      | -                    |
+| ZODIAC-022 | Setup Testing Framework (Jest + React Testing Library) | DONE        | 8      | -                    |
 
 ### 11.5. Database Maintenance Scripts
 
@@ -2979,6 +3003,7 @@ npm run seed:zodiac-stories
 ```
 
 **Features:**
+
 - Creates 22 stories distributed across all kanban states
 - Uses Fibonacci point estimation (3, 5, 8, 13)
 - Organized into 3 clear milestones
@@ -2992,6 +3017,7 @@ npx tsx scripts/check-zodiac-stories.ts
 ```
 
 **Output:**
+
 ```
 ✓ Found Zodiac App project: cmhe949rp0000rzhh5s2p4yfs
   Total stories: 22
@@ -3012,6 +3038,7 @@ npx tsx scripts/delete-duplicate-zodiac.ts
 **Purpose:** Removes duplicate empty "Zodiac App" projects from database
 
 **Scenario:**
+
 ```
 Problem: Two "Zodiac App" projects exist
   - Old project (cmhe949rp0000rzhh5s2p4yfs): 22 stories ✅
@@ -3030,6 +3057,7 @@ npx tsx scripts/fix-zodiac-members.ts
 **Purpose:** Ensures default-user is member of Zodiac App project
 
 **Why Needed:**
+
 - Projects only visible in `/api/v3/projects` if user is a member
 - Default-user needs to be owner or admin to see project
 - Automatically creates user if missing
@@ -3041,6 +3069,7 @@ npx tsx scripts/check-all-zodiac-projects.ts
 ```
 
 **Output:**
+
 ```
 Found 1 project(s) with "Zodiac" in name:
 
@@ -3110,6 +3139,7 @@ curl "http://localhost:3000/api/state?projectId=cmhe949rp0000rzhh5s2p4yfs"
 The Kanban board (`/app/kanban/page.tsx`) now displays workflow state from the database:
 
 **Features:**
+
 - **Real-time Data**: Queries database on page load
 - **Project Context**: Uses `useProject` hook to filter stories
 - **State Validation**: Warns when TODO/IN_PROGRESS exceed limits
@@ -3127,9 +3157,7 @@ export default function KanbanBoard() {
 
   useEffect(() => {
     const fetchStories = async () => {
-      const url = currentProject
-        ? `/api/state?projectId=${currentProject.id}`
-        : '/api/state';
+      const url = currentProject ? `/api/state?projectId=${currentProject.id}` : '/api/state';
 
       const response = await fetch(url);
       const data = await response.json();
@@ -3166,6 +3194,7 @@ export default function KanbanBoard() {
 V3 migration eliminates production crashes caused by missing files:
 
 **Before (V2 - Fails in Docker):**
+
 ```
 Docker Build
     ↓
@@ -3179,6 +3208,7 @@ Kanban board shows "Failed to load workflow status"
 ```
 
 **After (V3 - Works in Docker):**
+
 ```
 Docker Build
     ↓
@@ -3196,6 +3226,7 @@ Kanban board displays all stories correctly
 **Planned Improvements:**
 
 1. **Add Milestone Field to Schema**
+
    ```prisma
    model StateMachine {
      // ... existing fields ...
@@ -3355,6 +3386,7 @@ model Project {
 ```
 
 **Key Points:**
+
 - `id`: Unique identifier (CUID format)
 - `name`: Project display name (required)
 - `description`: Optional project description
@@ -3380,6 +3412,7 @@ model ProjectMember {
 ```
 
 **Key Points:**
+
 - **Unique Constraint**: `userId + projectId` ensures users can't join the same project twice
 - **Roles**: Three-tier permission system (owner/admin/member)
 - **Indexes**: Optimized for both "find users in project" and "find projects for user" queries
@@ -3400,6 +3433,7 @@ model User {
 ```
 
 **Key Points:**
+
 - `email`: Unique identifier for authentication
 - `name`: Optional display name
 - **Relationships**: Users can belong to multiple projects with different roles
@@ -3420,20 +3454,21 @@ Each role inherits permissions from lower roles.
 
 #### Permission Matrix
 
-| Operation | Owner | Admin | Member |
-|-----------|-------|-------|--------|
-| **View Project** | ✅ | ✅ | ✅ |
-| **View Members** | ✅ | ✅ | ✅ |
-| **View Resources** (agents, workflows, stories) | ✅ | ✅ | ✅ |
-| **Add Members** | ✅ | ✅ | ❌ |
-| **Remove Members** | ✅ | ✅ | ❌ |
-| **Update Project** (name, description) | ✅ | ✅ | ❌ |
-| **Delete Project** | ✅ | ❌ | ❌ |
-| **Remove Last Owner** | ❌ | ❌ | ❌ |
+| Operation                                       | Owner | Admin | Member |
+| ----------------------------------------------- | ----- | ----- | ------ |
+| **View Project**                                | ✅    | ✅    | ✅     |
+| **View Members**                                | ✅    | ✅    | ✅     |
+| **View Resources** (agents, workflows, stories) | ✅    | ✅    | ✅     |
+| **Add Members**                                 | ✅    | ✅    | ❌     |
+| **Remove Members**                              | ✅    | ✅    | ❌     |
+| **Update Project** (name, description)          | ✅    | ✅    | ❌     |
+| **Delete Project**                              | ✅    | ❌    | ❌     |
+| **Remove Last Owner**                           | ❌    | ❌    | ❌     |
 
 #### Role Descriptions
 
 **Owner** (`role: "owner"`):
+
 - Full control over project
 - Can delete the project
 - Can add/remove any member (except last owner)
@@ -3441,12 +3476,14 @@ Each role inherits permissions from lower roles.
 - **Last Owner Rule**: Cannot remove the last owner from a project
 
 **Admin** (`role: "admin"`):
+
 - Can manage project settings (name, description)
 - Can add/remove members
 - Cannot delete the project
 - Cannot remove owners
 
 **Member** (`role: "member"`):
+
 - Read-only access to project
 - Can view all resources
 - Can participate in workflows and chat sessions
@@ -3517,18 +3554,18 @@ The project management logic is centralized in `lib/services/project-service.ts`
 
 #### Service Functions Overview
 
-| Function | Purpose | Permission Required |
-|----------|---------|-------------------|
-| `getProjects(userId)` | List all projects for a user | User must be a member |
-| `getProject(projectId, userId)` | Get single project details | User must be a member |
-| `createProject(input)` | Create new project | Authenticated user |
-| `updateProject(projectId, userId, input)` | Update project metadata | Owner or Admin |
-| `deleteProject(projectId, userId)` | Delete project and all data | Owner only |
-| `addProjectMember(projectId, userId, input)` | Add team member | Owner or Admin |
-| `removeProjectMember(projectId, userId, targetId)` | Remove team member | Owner or Admin |
-| `getProjectMembers(projectId, userId)` | List all members | Any member |
-| `hasProjectRole(projectId, userId, roles)` | Check user role | N/A (utility) |
-| `getUserProjectRole(projectId, userId)` | Get user's role | N/A (utility) |
+| Function                                           | Purpose                      | Permission Required   |
+| -------------------------------------------------- | ---------------------------- | --------------------- |
+| `getProjects(userId)`                              | List all projects for a user | User must be a member |
+| `getProject(projectId, userId)`                    | Get single project details   | User must be a member |
+| `createProject(input)`                             | Create new project           | Authenticated user    |
+| `updateProject(projectId, userId, input)`          | Update project metadata      | Owner or Admin        |
+| `deleteProject(projectId, userId)`                 | Delete project and all data  | Owner only            |
+| `addProjectMember(projectId, userId, input)`       | Add team member              | Owner or Admin        |
+| `removeProjectMember(projectId, userId, targetId)` | Remove team member           | Owner or Admin        |
+| `getProjectMembers(projectId, userId)`             | List all members             | Any member            |
+| `hasProjectRole(projectId, userId, roles)`         | Check user role              | N/A (utility)         |
+| `getUserProjectRole(projectId, userId)`            | Get user's role              | N/A (utility)         |
 
 #### Function Details and Examples
 
@@ -3562,10 +3599,11 @@ const projects = await getProjects('user-123');
     },
   },
   // ... more projects
-]
+];
 ```
 
 **Key Features:**
+
 - Filters by user membership
 - Includes full member list with user details
 - Returns real-time resource counts
@@ -3597,6 +3635,7 @@ const project = await createProject({
 ```
 
 **Important Behaviors:**
+
 - **Auto-ownership**: Creator is automatically added as owner
 - **Validation**: Zod schema validates input before database operation
 - **User Check**: Ensures user exists before creating project
@@ -3643,6 +3682,7 @@ await deleteProject('project-1', 'user-123');
 ```
 
 **Safety Features:**
+
 - **Owner-only**: Only project owners can delete projects
 - **Cascade Delete**: Prisma schema handles cleanup automatically
 - **No Orphans**: All related data is removed
@@ -3716,7 +3756,7 @@ const members = await getProjectMembers('project-1', 'user-123');
     },
   },
   // ... more members
-]
+];
 ```
 
 ##### 8. Check Project Role
@@ -3803,16 +3843,16 @@ The Projects API provides **6 RESTful endpoints** for project and member managem
 
 #### API Endpoints Overview
 
-| Method | Endpoint | Description | Permission |
-|--------|----------|-------------|------------|
-| GET | `/api/v3/projects` | List all projects for current user | Authenticated |
-| POST | `/api/v3/projects` | Create new project | Authenticated |
-| GET | `/api/v3/projects/[id]` | Get project details | Member |
-| PUT | `/api/v3/projects/[id]` | Update project | Owner/Admin |
-| DELETE | `/api/v3/projects/[id]` | Delete project | Owner |
-| GET | `/api/v3/projects/[id]/members` | List project members | Member |
-| POST | `/api/v3/projects/[id]/members` | Add project member | Owner/Admin |
-| DELETE | `/api/v3/projects/[id]/members` | Remove project member | Owner/Admin |
+| Method | Endpoint                        | Description                        | Permission    |
+| ------ | ------------------------------- | ---------------------------------- | ------------- |
+| GET    | `/api/v3/projects`              | List all projects for current user | Authenticated |
+| POST   | `/api/v3/projects`              | Create new project                 | Authenticated |
+| GET    | `/api/v3/projects/[id]`         | Get project details                | Member        |
+| PUT    | `/api/v3/projects/[id]`         | Update project                     | Owner/Admin   |
+| DELETE | `/api/v3/projects/[id]`         | Delete project                     | Owner         |
+| GET    | `/api/v3/projects/[id]/members` | List project members               | Member        |
+| POST   | `/api/v3/projects/[id]/members` | Add project member                 | Owner/Admin   |
+| DELETE | `/api/v3/projects/[id]/members` | Remove project member              | Owner/Admin   |
 
 **Note**: Currently uses `default-user` for authentication. In production, replace `getCurrentUserId()` with actual session-based authentication.
 
@@ -3823,11 +3863,13 @@ The Projects API provides **6 RESTful endpoints** for project and member managem
 **Description**: List all projects where the current user is a member.
 
 **Request:**
+
 ```bash
 curl http://localhost:3000/api/v3/projects
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -3869,6 +3911,7 @@ curl http://localhost:3000/api/v3/projects
 **Description**: Create a new project. Creator automatically becomes owner.
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/api/v3/projects \
   -H "Content-Type: application/json" \
@@ -3879,6 +3922,7 @@ curl -X POST http://localhost:3000/api/v3/projects \
 ```
 
 **Response (201 Created):**
+
 ```json
 {
   "success": true,
@@ -3907,6 +3951,7 @@ curl -X POST http://localhost:3000/api/v3/projects \
 ```
 
 **Error Response (400 Bad Request):**
+
 ```json
 {
   "success": false,
@@ -3920,11 +3965,13 @@ curl -X POST http://localhost:3000/api/v3/projects \
 **Description**: Get detailed information about a specific project.
 
 **Request:**
+
 ```bash
 curl http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -3947,6 +3994,7 @@ curl http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs
 ```
 
 **Error Response (404 Not Found):**
+
 ```json
 {
   "success": false,
@@ -3959,6 +4007,7 @@ curl http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs
 **Description**: Update project metadata (name and/or description). Requires owner or admin role.
 
 **Request:**
+
 ```bash
 curl -X PUT http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs \
   -H "Content-Type: application/json" \
@@ -3969,6 +4018,7 @@ curl -X PUT http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs \
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -3983,6 +4033,7 @@ curl -X PUT http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs \
 ```
 
 **Error Response (403 Forbidden):**
+
 ```json
 {
   "success": false,
@@ -3995,11 +4046,13 @@ curl -X PUT http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs \
 **Description**: Delete a project and all associated data. **Owner-only operation**.
 
 **Request:**
+
 ```bash
 curl -X DELETE http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -4008,6 +4061,7 @@ curl -X DELETE http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs
 ```
 
 **Error Response (403 Forbidden):**
+
 ```json
 {
   "success": false,
@@ -4020,6 +4074,7 @@ curl -X DELETE http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs
 **Description**: Add a new member to the project. Requires owner or admin role.
 
 **Request:**
+
 ```bash
 curl -X POST http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs/members \
   -H "Content-Type: application/json" \
@@ -4030,6 +4085,7 @@ curl -X POST http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs/mem
 ```
 
 **Response (201 Created):**
+
 ```json
 {
   "success": true,
@@ -4045,6 +4101,7 @@ curl -X POST http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs/mem
 ```
 
 **Error Response (409 Conflict):**
+
 ```json
 {
   "success": false,
@@ -4057,6 +4114,7 @@ curl -X POST http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs/mem
 **Description**: Remove a member from the project. Cannot remove last owner.
 
 **Request:**
+
 ```bash
 curl -X DELETE http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs/members \
   -H "Content-Type: application/json" \
@@ -4066,6 +4124,7 @@ curl -X DELETE http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs/m
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "success": true,
@@ -4074,6 +4133,7 @@ curl -X DELETE http://localhost:3000/api/v3/projects/cmhe949rp0000rzhh5s2p4yfs/m
 ```
 
 **Error Response (400 Bad Request):**
+
 ```json
 {
   "success": false,
@@ -4148,12 +4208,14 @@ model ChatSession {
 #### Cross-Project Query Prevention
 
 **Anti-Pattern** (exposes all projects):
+
 ```typescript
 // ❌ BAD: Returns all stories across all projects
 const stories = await prisma.stateMachine.findMany();
 ```
 
 **Correct Pattern** (project-scoped):
+
 ```typescript
 // ✅ GOOD: Only returns stories for specific project
 const stories = await prisma.stateMachine.findMany({
@@ -4175,10 +4237,7 @@ export async function GET(request: NextRequest) {
   // First, verify user is a member of this project
   const project = await getProject(projectId, userId);
   if (!project) {
-    return NextResponse.json(
-      { success: false, error: 'Access denied' },
-      { status: 403 }
-    );
+    return NextResponse.json({ success: false, error: 'Access denied' }, { status: 403 });
   }
 
   // Then, fetch project-scoped data
@@ -4197,8 +4256,8 @@ Used when a resource can be global or project-scoped (e.g., agents):
 ```typescript
 // Get agents for a specific project OR global agents
 const where = projectId
-  ? { projectId }           // Project-specific agents
-  : { projectId: null };    // Global agents only
+  ? { projectId } // Project-specific agents
+  : { projectId: null }; // Global agents only
 
 const agents = await prisma.agent.findMany({ where });
 ```
@@ -4272,6 +4331,7 @@ model ProjectMember {
 #### Adding Members
 
 **UI Flow** (planned):
+
 1. Project owner/admin navigates to project settings
 2. Enters new member's email address
 3. Selects role (owner/admin/member)
@@ -4389,6 +4449,7 @@ export async function updateMemberRole(
 #### Authentication Integration
 
 **Current State:**
+
 - Uses hardcoded `default-user` for development
 - Mock `getCurrentUserId()` function in all API routes
 
@@ -4586,10 +4647,7 @@ export async function POST(request: NextRequest) {
   try {
     await limiter.check(request, 10); // 10 requests per minute
   } catch {
-    return NextResponse.json(
-      { error: 'Rate limit exceeded' },
-      { status: 429 }
-    );
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
   }
   // ... proceed with request
 }
@@ -4778,26 +4836,31 @@ test('should create and manage project', async ({ page }) => {
 The **Project Management & Multi-tenancy** system in MADACE v3.0 provides:
 
 ✅ **Complete Multi-Project Support**
+
 - Multiple projects per MADACE instance
 - Full data isolation between projects
 - Production-ready architecture
 
 ✅ **Robust Permission System**
+
 - Three-tier roles (owner/admin/member)
 - Granular permission checks
 - Last-owner protection
 
 ✅ **Comprehensive Service Layer**
+
 - 10 CRUD functions for projects and members
 - Type-safe with Zod validation
 - Transaction support with Prisma
 
 ✅ **RESTful API**
+
 - 6 endpoints for project/member management
 - Proper HTTP status codes
 - Error handling and validation
 
 ✅ **Production-Ready Features**
+
 - Cascade delete support
 - Performance-optimized queries
 - Database indexes for fast filtering
@@ -4805,13 +4868,13 @@ The **Project Management & Multi-tenancy** system in MADACE v3.0 provides:
 
 **Key Files:**
 
-| File | Purpose | Lines |
-|------|---------|-------|
-| `lib/services/project-service.ts` | Project service layer with 10 functions | 421 |
-| `app/api/v3/projects/route.ts` | Projects list and creation API | 88 |
-| `app/api/v3/projects/[id]/route.ts` | Project detail API (get/update/delete) | 154 |
-| `app/api/v3/projects/[id]/members/route.ts` | Member management API | 192 |
-| `prisma/schema.prisma` | Database schema (Project, ProjectMember, User) | ~80 |
+| File                                        | Purpose                                        | Lines |
+| ------------------------------------------- | ---------------------------------------------- | ----- |
+| `lib/services/project-service.ts`           | Project service layer with 10 functions        | 421   |
+| `app/api/v3/projects/route.ts`              | Projects list and creation API                 | 88    |
+| `app/api/v3/projects/[id]/route.ts`         | Project detail API (get/update/delete)         | 154   |
+| `app/api/v3/projects/[id]/members/route.ts` | Member management API                          | 192   |
+| `prisma/schema.prisma`                      | Database schema (Project, ProjectMember, User) | ~80   |
 
 **Total Implementation:** ~935 lines of production-ready code
 
@@ -4826,6 +4889,7 @@ The **Assessment Tool** (`/assess`) provides project complexity evaluation with 
 **Purpose**: Enable users to assess project complexity and immediately take action on assessment results.
 
 **Key Features**:
+
 - 8-criteria complexity scoring (40 points total)
 - 5 complexity levels (Minimal to Enterprise)
 - Real-time assessment updates
@@ -4833,6 +4897,7 @@ The **Assessment Tool** (`/assess`) provides project complexity evaluation with 
 - 3 Export options (Markdown, JSON, Save)
 
 **Files**:
+
 - `app/assess/page.tsx` - Assessment page with handlers (239 lines)
 - `components/features/AssessmentResult.tsx` - Result display with action buttons (302 lines)
 - `components/features/AssessmentForm.tsx` - 8-field input form
@@ -4857,12 +4922,12 @@ Assessment results now feature **two distinct sections**:
 
 #### Action Button Specifications
 
-| Button | Purpose | Handler | Navigation/Effect |
-|--------|---------|---------|-------------------|
-| **Start Recommended Workflow** | Begin workflow execution | `handleStartWorkflow()` | Navigate to `/workflows?workflow={name}` |
-| **Create Project** | Create new project with assessment data | `handleCreateProject()` | POST to `/api/v3/projects` |
-| **Apply Configuration** | Save assessment as MADACE config | `handleApplyConfiguration()` | Save to `localStorage` |
-| **View Workflow Details** | Browse available workflows | `handleViewWorkflowDetails()` | Navigate to `/workflows` |
+| Button                         | Purpose                                 | Handler                       | Navigation/Effect                        |
+| ------------------------------ | --------------------------------------- | ----------------------------- | ---------------------------------------- |
+| **Start Recommended Workflow** | Begin workflow execution                | `handleStartWorkflow()`       | Navigate to `/workflows?workflow={name}` |
+| **Create Project**             | Create new project with assessment data | `handleCreateProject()`       | POST to `/api/v3/projects`               |
+| **Apply Configuration**        | Save assessment as MADACE config        | `handleApplyConfiguration()`  | Save to `localStorage`                   |
+| **View Workflow Details**      | Browse available workflows              | `handleViewWorkflowDetails()` | Navigate to `/workflows`                 |
 
 ### 13.3. Implementation Details
 
@@ -4898,14 +4963,13 @@ const handleStartWorkflow = () => {
   if (!assessment) return;
 
   // Navigate to workflows page with recommended workflow as query param
-  const workflowName = assessment.recommendedWorkflow
-    .replace('.yaml', '')
-    .replace('.workflow', '');
+  const workflowName = assessment.recommendedWorkflow.replace('.yaml', '').replace('.workflow', '');
   router.push(`/workflows?workflow=${encodeURIComponent(workflowName)}`);
 };
 ```
 
 **Behavior**:
+
 - Cleans workflow filename (removes `.yaml` and `.workflow` extensions)
 - URL-encodes workflow name for safe query parameter
 - Navigates to `/workflows` page with workflow pre-selected
@@ -4956,6 +5020,7 @@ const handleCreateProject = async () => {
 ```
 
 **Behavior**:
+
 - Generates project name: `"New {Level} Project"` (e.g., "New Standard Project")
 - Creates project description with assessment summary
 - Calls Projects API (`POST /api/v3/projects`)
@@ -4965,6 +5030,7 @@ const handleCreateProject = async () => {
 **API Integration**: Uses existing Project Management API (Section 12.3).
 
 **Project Schema**: Aligns with `CreateProjectInput` validation:
+
 ```typescript
 {
   name: string (required, min 1, max 100)
@@ -4997,6 +5063,7 @@ const handleApplyConfiguration = () => {
 ```
 
 **Behavior**:
+
 - Saves full assessment JSON to `localStorage['madace-assessment']`
 - Saves complexity level to `localStorage['madace-complexity-level']`
 - Saves recommended workflow to `localStorage['madace-recommended-workflow']`
@@ -5004,6 +5071,7 @@ const handleApplyConfiguration = () => {
 - Future MADACE operations can read these settings
 
 **Use Cases**:
+
 - Persist user's assessment for reuse across sessions
 - Default workflow selection based on complexity level
 - Conditional UI behavior based on assessed complexity
@@ -5020,6 +5088,7 @@ const handleViewWorkflowDetails = () => {
 ```
 
 **Behavior**:
+
 - Simple navigation to `/workflows` page
 - User can browse all available workflows
 - Provides context for recommended workflow
@@ -5031,22 +5100,21 @@ const handleViewWorkflowDetails = () => {
 **Implementation Actions Section** (`components/features/AssessmentResult.tsx:152-242`):
 
 ```tsx
-{/* Implementation Actions */}
+{
+  /* Implementation Actions */
+}
 <div className="rounded-lg border-2 border-green-300 bg-green-50 p-6 dark:border-green-700 dark:bg-green-950">
-  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-    🚀 Ready to Implement?
-  </h3>
+  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">🚀 Ready to Implement?</h3>
   <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
     Take action on your assessment with these implementation options
   </p>
 
-  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-    {/* 4 action buttons in 2x2 grid */}
-  </div>
-</div>
+  <div className="mt-4 grid gap-3 sm:grid-cols-2">{/* 4 action buttons in 2x2 grid */}</div>
+</div>;
 ```
 
 **Design Principles**:
+
 - **Green Color Theme**: Success/action-oriented (green-50/green-300 borders)
 - **Prominent Placement**: Appears BEFORE export options
 - **Responsive Grid**: 2x2 grid on desktop, stacked on mobile
@@ -5054,28 +5122,27 @@ const handleViewWorkflowDetails = () => {
 
 **Button Styling**:
 
-| Button Type | Styling | Purpose |
-|-------------|---------|---------|
-| **Primary (Start Workflow)** | Green filled (`bg-green-600`) | Most important action |
-| **Secondary (3 others)** | Green outlined (`border-green-600`) | Supporting actions |
+| Button Type                  | Styling                             | Purpose               |
+| ---------------------------- | ----------------------------------- | --------------------- |
+| **Primary (Start Workflow)** | Green filled (`bg-green-600`)       | Most important action |
+| **Secondary (3 others)**     | Green outlined (`border-green-600`) | Supporting actions    |
 
 #### Export Options Section
 
 **Location**: `components/features/AssessmentResult.tsx:244-298`
 
 ```tsx
-{/* Export Options */}
+{
+  /* Export Options */
+}
 <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-  <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
-    📄 Export Options
-  </h3>
-  <div className="flex flex-wrap gap-3">
-    {/* Existing export buttons */}
-  </div>
-</div>
+  <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">📄 Export Options</h3>
+  <div className="flex flex-wrap gap-3">{/* Existing export buttons */}</div>
+</div>;
 ```
 
 **Design Differences from Implementation Actions**:
+
 - **Subdued Colors**: Gray theme (not green)
 - **Smaller Heading**: `text-sm` vs `text-lg`
 - **Thin Border**: `border` (default 1px) vs `border-2`
@@ -5107,6 +5174,7 @@ const handleViewWorkflowDetails = () => {
 ```
 
 **Alternative Flows**:
+
 - **Create Project First**: Button 2 → Creates project → Later start workflow
 - **Apply Config First**: Button 3 → Saves settings → Later create project
 - **Explore Workflows**: Button 4 → Browse all → Choose different workflow
@@ -5118,6 +5186,7 @@ const handleViewWorkflowDetails = () => {
 **Endpoint Used**: `POST /api/v3/projects`
 
 **Data Flow**:
+
 ```
 Assessment Result
   ↓
@@ -5157,7 +5226,7 @@ const highlightWorkflow = searchParams.get('workflow');
 // Highlight or auto-select workflow if specified
 useEffect(() => {
   if (highlightWorkflow) {
-    const workflow = workflows.find(w => w.name === highlightWorkflow);
+    const workflow = workflows.find((w) => w.name === highlightWorkflow);
     if (workflow) {
       handleExecuteWorkflow(workflow.name); // Auto-start
       // OR: scrollToWorkflow(workflow.name); // Just highlight
@@ -5169,6 +5238,7 @@ useEffect(() => {
 #### With localStorage Configuration
 
 **Keys Stored**:
+
 ```typescript
 {
   'madace-assessment': string (JSON),       // Full AssessmentResult object
@@ -5192,6 +5262,7 @@ const recommendedWorkflow = localStorage.getItem('madace-recommended-workflow');
 ```
 
 **Use Cases**:
+
 - **Dashboard**: Show current complexity level badge
 - **Setup Wizard**: Pre-fill workflow selection with recommended workflow
 - **Settings**: Display currently applied assessment
@@ -5204,6 +5275,7 @@ const recommendedWorkflow = localStorage.getItem('madace-recommended-workflow');
 **Handled Cases**:
 
 1. **API Returns Error** (e.g., validation failure):
+
    ```typescript
    if (!response.ok) {
      const error = await response.json();
@@ -5212,6 +5284,7 @@ const recommendedWorkflow = localStorage.getItem('madace-recommended-workflow');
    ```
 
 2. **Network Error** (fetch fails):
+
    ```typescript
    catch (error) {
      console.error('Failed to create project:', error);
@@ -5237,6 +5310,7 @@ const recommendedWorkflow = localStorage.getItem('madace-recommended-workflow');
 #### Manual Testing Steps
 
 1. **Navigate to Assessment Page**:
+
    ```bash
    # Start dev server
    npm run dev
@@ -5317,12 +5391,14 @@ describe('Assessment Implementation Actions', () => {
 #### Lazy Loading
 
 **Assessment Form**: Heavy component with 8 form fields
+
 - Consider code splitting for `/assess` route
 - Form components already client-side only (`'use client'`)
 
 #### localStorage Performance
 
 **Current Implementation**: Synchronous `localStorage.setItem()`
+
 - **Risk**: Blocks main thread if large assessment object
 - **Mitigation**: Assessment object is small (~500 bytes JSON)
 - **Future**: Consider IndexedDB for larger data sets
@@ -5330,6 +5406,7 @@ describe('Assessment Implementation Actions', () => {
 #### API Call Optimization
 
 **Project Creation**: Single API call, no pagination needed
+
 - **Performance**: ~200ms for project creation (local dev)
 - **Future**: Add loading state to "Create Project" button
 
@@ -5457,40 +5534,42 @@ const handleCloseViewer = () => {
 **Modal Component** (lines 287-348):
 
 ```tsx
-{viewerModal.isOpen && (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
-    onClick={handleCloseViewer}
-  >
+{
+  viewerModal.isOpen && (
     <div
-      className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800"
-      onClick={(e) => e.stopPropagation()}
+      className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+      onClick={handleCloseViewer}
     >
-      {/* Modal Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-900">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          {viewerModal.type === 'markdown' ? 'Markdown Report' : 'JSON Data'}
-        </h2>
-        <button type="button" onClick={handleCloseViewer} aria-label="Close">
-          {/* Close icon (X) */}
-        </button>
-      </div>
+      <div
+        className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Header */}
+        <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-900">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {viewerModal.type === 'markdown' ? 'Markdown Report' : 'JSON Data'}
+          </h2>
+          <button type="button" onClick={handleCloseViewer} aria-label="Close">
+            {/* Close icon (X) */}
+          </button>
+        </div>
 
-      {/* Modal Content */}
-      <div className="max-h-[70vh] overflow-auto p-6">
-        <pre className="whitespace-pre-wrap break-words rounded-lg bg-gray-50 p-4 font-mono text-sm text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-          {viewerModal.content}
-        </pre>
-      </div>
+        {/* Modal Content */}
+        <div className="max-h-[70vh] overflow-auto p-6">
+          <pre className="rounded-lg bg-gray-50 p-4 font-mono text-sm break-words whitespace-pre-wrap text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+            {viewerModal.content}
+          </pre>
+        </div>
 
-      {/* Modal Footer */}
-      <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-900">
-        <button onClick={copyToClipboard}>Copy to Clipboard</button>
-        <button onClick={handleCloseViewer}>Close</button>
+        {/* Modal Footer */}
+        <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-gray-900">
+          <button onClick={copyToClipboard}>Copy to Clipboard</button>
+          <button onClick={handleCloseViewer}>Close</button>
+        </div>
       </div>
     </div>
-  </div>
-)}
+  );
+}
 ```
 
 **View Buttons** (`components/features/AssessmentResult.tsx`):
@@ -5524,6 +5603,7 @@ const handleCloseViewer = () => {
 #### UI/UX Features
 
 **Modal Features**:
+
 - Full-screen overlay with dark backdrop (50% opacity)
 - Centered modal (max-width 4xl, max-height 90vh)
 - Scrollable content area for long reports
@@ -5532,12 +5612,14 @@ const handleCloseViewer = () => {
 - Dark mode support throughout
 
 **Content Display**:
+
 - Monospace font for code/markdown
 - White background in light mode, dark background in dark mode
 - Text wrapping for long lines (`whitespace-pre-wrap`)
 - Word breaking to prevent overflow (`break-words`)
 
 **Button Styling**:
+
 - Blue theme to differentiate from export actions (gray theme)
 - Eye icon for intuitive "view" action
 - Hover states for better UX
@@ -5573,6 +5655,7 @@ const handleCloseViewer = () => {
 #### Implementation Details
 
 **Storage Key**:
+
 ```typescript
 const STORAGE_KEY = 'madace-assessment-form-state';
 ```
@@ -5624,28 +5707,32 @@ const handleReset = () => {
 **Reset Button UI** (lines 240-262):
 
 ```tsx
-{Object.keys(input).length > 0 && (
-  <button
-    type="button"
-    onClick={handleReset}
-    className="flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 dark:border-red-700 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900"
-    title="Clear all assessment data"
-  >
-    <svg>{/* Trash icon */}</svg>
-    Reset
-  </button>
-)}
+{
+  Object.keys(input).length > 0 && (
+    <button
+      type="button"
+      onClick={handleReset}
+      className="flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 dark:border-red-700 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900"
+      title="Clear all assessment data"
+    >
+      <svg>{/* Trash icon */}</svg>
+      Reset
+    </button>
+  );
+}
 ```
 
 #### State Lifecycle
 
 **On Page Load**:
+
 1. Component mounts
 2. Check localStorage for saved state
 3. If found, parse JSON and restore to `input` state
 4. Trigger auto-assessment if all fields present
 
 **During Form Interaction**:
+
 1. User changes a field value
 2. `handleInputChange()` updates `input` state
 3. `useEffect` detects change
@@ -5653,6 +5740,7 @@ const handleReset = () => {
 5. Save to localStorage
 
 **On Navigation**:
+
 1. User navigates away (e.g., to `/workflows`)
 2. React unmounts component
 3. State remains in localStorage
@@ -5660,6 +5748,7 @@ const handleReset = () => {
 5. State automatically restored from localStorage
 
 **On Reset**:
+
 1. User clicks Reset button
 2. Confirmation dialog appears
 3. If confirmed:
@@ -5670,6 +5759,7 @@ const handleReset = () => {
 #### Storage Schema
 
 **Stored Data Structure**:
+
 ```json
 {
   "projectSize": 3,
@@ -5690,28 +5780,33 @@ const handleReset = () => {
 #### Error Handling
 
 **JSON Parse Errors**:
+
 - Wrapped in try-catch
 - Console error logged
 - Graceful fallback to empty state
 
 **localStorage Quota Exceeded**:
+
 - Unlikely with small data size
 - Error logged to console
 - User can continue without persistence
 
 **Browser Compatibility**:
+
 - All modern browsers support localStorage
 - SSR-safe (runs in `useEffect`, client-side only)
 
 #### UI Indicators
 
 **Reset Button Visibility**:
+
 - Hidden when form is empty
 - Appears when any field has data
 - Positioned top-right of page header
 - Red theme to indicate destructive action
 
 **Confirmation Dialog**:
+
 - Native browser `confirm()` dialog
 - Clear warning: "This cannot be undone"
 - Two options: OK (proceed) or Cancel (abort)
@@ -5731,35 +5826,41 @@ const handleReset = () => {
 **Enhanced Assessment Tool** now includes three major features:
 
 ✅ **Implementation Actions** (4 New Action Buttons):
+
 - Start Recommended Workflow
 - Create Project
 - Apply Configuration
 - View Workflow Details
 
 ✅ **Modal Viewer**:
+
 - View Markdown reports in-browser
 - View JSON data in-browser
 - Copy to clipboard functionality
 - Responsive modal design
 
 ✅ **State Persistence**:
+
 - Automatic localStorage saving
 - State restoration on page load
 - Reset button with confirmation
 - Error handling and graceful fallbacks
 
 ✅ **Seamless Integration**:
+
 - Project Management API (Section 12)
 - Workflow System (`/workflows`)
 - localStorage for client-side persistence
 
 ✅ **User-Centric Design**:
+
 - Visual hierarchy (primary vs. secondary actions)
 - Responsive grid layout
 - Clear action labels with icons
 - Persistent state across navigation
 
 ✅ **Production-Ready**:
+
 - Error handling for all actions
 - Type-safe implementations
 - No TypeScript errors
@@ -5767,24 +5868,664 @@ const handleReset = () => {
 
 **Key Files**:
 
-| File | Purpose | Lines | Changes |
-|------|---------|-------|---------|
-| `app/assess/page.tsx` | Assessment page with all features | 391 (+154) | Added router hook, 7 handler functions, modal component, state persistence |
+| File                                       | Purpose                            | Lines      | Changes                                                                     |
+| ------------------------------------------ | ---------------------------------- | ---------- | --------------------------------------------------------------------------- |
+| `app/assess/page.tsx`                      | Assessment page with all features  | 391 (+154) | Added router hook, 7 handler functions, modal component, state persistence  |
 | `components/features/AssessmentResult.tsx` | Result display with action buttons | 358 (+167) | Added 6 props, implementation actions section, view buttons, reorganized UI |
 
 **Total New Code**: ~321 lines (handlers + UI components + state management)
 
 **Feature Breakdown**:
+
 - Implementation Actions: ~187 lines
 - Modal Viewer: ~78 lines
 - State Persistence: ~56 lines
 
 **Next Steps**:
+
 1. ✅ Implement action buttons (COMPLETE)
 2. ✅ Implement modal viewer (COMPLETE)
 3. ✅ Implement state persistence (COMPLETE)
 4. ✅ Document in ARCHITECTURE.md (THIS SECTION)
 5. 📋 Add automated tests
 6. 📋 Implement future enhancements (project navigation, workflow auto-start)
+
+---
+
+## 14. GitHub Repository Import Feature ✅
+
+### 14.1 Overview
+
+The GitHub Repository Import feature enables users to **clone, analyze, and import** any public GitHub repository directly into MADACE. This feature provides comprehensive project analysis including:
+
+- Repository metadata (stars, forks, issues, last update)
+- Language breakdown with byte counts
+- File and line of code statistics
+- Directory structure analysis
+- Technology stack detection (Node.js, Prisma, Docker, React, Next.js, Express)
+- Dependency extraction (from package.json)
+
+**Access**: http://localhost:3000/import
+
+### 14.2 Architecture Components
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     GitHub Import Feature                       │
+└─────────────────────────────────────────────────────────────────┘
+                               │
+                 ┌─────────────┴──────────────┐
+                 │                            │
+         ┌───────▼───────┐           ┌───────▼────────┐
+         │   UI Layer    │           │   API Layer    │
+         │ (/import)     │◄──────────┤ (v3/github)    │
+         └───────────────┘           └────────────────┘
+                                             │
+                                   ┌─────────▼──────────┐
+                                   │  Service Layer     │
+                                   │ (github-service)   │
+                                   └────────────────────┘
+                                             │
+                        ┌────────────────────┴─────────────────┐
+                        │                                      │
+              ┌─────────▼─────────┐               ┌──────────▼─────────┐
+              │  Simple Git       │               │  Octokit REST API  │
+              │  (Repository      │               │  (GitHub Metadata) │
+              │   Cloning)        │               └────────────────────┘
+              └───────────────────┘
+                        │
+              ┌─────────▼─────────┐
+              │  File System      │
+              │  Analysis         │
+              └───────────────────┘
+```
+
+### 14.3 Service Layer: `lib/services/github-service.ts`
+
+**Purpose**: Core business logic for GitHub operations
+
+**Key Methods**:
+
+```typescript
+export class GitHubService {
+  /**
+   * Parse GitHub URL to extract owner and repo name
+   * Supports: https://github.com/owner/repo
+   *           https://github.com/owner/repo.git
+   *           https://github.com/owner/repo/tree/branch
+   */
+  parseGitHubUrl(url: string): GitHubRepoInfo | null;
+
+  /**
+   * Fetch repository metadata from GitHub API
+   * Returns: name, description, stars, forks, languages, etc.
+   */
+  async getRepositoryMetadata(owner: string, repo: string);
+
+  /**
+   * Clone repository to local filesystem
+   * Uses shallow clone (--depth 1) for performance
+   * Target: ./madace-data/cloned-repos/{owner}-{repo}
+   */
+  async cloneRepository(repoInfo: GitHubRepoInfo): Promise<string>;
+
+  /**
+   * Analyze project structure and extract statistics
+   * Scans: files, directories, languages, dependencies
+   * Detects: Node.js, Prisma, Docker, React, Next.js, Express
+   */
+  async analyzeProject(projectPath: string, repoInfo: GitHubRepoInfo): Promise<ProjectAnalysis>;
+
+  /**
+   * Main entry point: clone + analyze
+   */
+  async importRepository(url: string): Promise<ProjectAnalysis>;
+
+  /**
+   * Clean up cloned repository from filesystem
+   */
+  async cleanupRepository(owner: string, repo: string): Promise<void>;
+}
+```
+
+**ProjectAnalysis Interface**:
+
+```typescript
+export interface ProjectAnalysis {
+  // Repository Info
+  name: string;
+  description: string;
+  repositoryUrl: string;
+  stars: number;
+  forks: number;
+  openIssues: number;
+  lastUpdated: string;
+  defaultBranch: string;
+
+  // Language Analysis
+  language: string; // Primary language
+  languages: Record<string, number>; // All languages with byte counts
+
+  // File Statistics
+  totalFiles: number;
+  totalLines: number;
+  directories: string[];
+  fileTypes: Record<string, number>;
+
+  // Technology Detection
+  hasPackageJson: boolean;
+  hasPrisma: boolean;
+  hasDocker: boolean;
+
+  // Dependencies
+  dependencies: string[];
+  devDependencies: string[];
+}
+```
+
+**Implementation Details**:
+
+1. **URL Parsing** (lines 61-86):
+   - Regex patterns for multiple GitHub URL formats
+   - Extracts owner, repo, and optional branch
+
+2. **GitHub API Integration** (lines 91-122):
+   - Uses Octokit REST API client
+   - Fetches repository details and language breakdown
+   - Optional GITHUB_TOKEN for higher rate limits
+
+3. **Repository Cloning** (lines 127-156):
+   - Creates clone directory if not exists
+   - Removes existing clones before re-cloning
+   - Shallow clone with `--depth 1` for speed
+   - Branch-specific cloning support
+
+4. **Project Analysis** (lines 161-255):
+   - Recursive directory scanning (skips .git and node_modules)
+   - File type counting by extension
+   - Line counting for text files (skips binaries)
+   - Technology detection via file presence
+   - package.json parsing for dependencies
+
+5. **Cleanup** (lines 276-285):
+   - Removes cloned repository directory
+   - Error handling with console logging
+
+### 14.4 API Layer: `app/api/v3/github/import/route.ts`
+
+**Endpoint**: `POST /api/v3/github/import`
+
+**Request Schema** (Zod validation):
+
+```typescript
+{
+  url: string (valid URL, required)
+  createProject: boolean (optional, default: false)
+  projectName: string (optional)
+}
+```
+
+**Response Format**:
+
+```typescript
+// Success (200)
+{
+  success: true,
+  data: {
+    analysis: ProjectAnalysis,
+    projectId: string | null
+  }
+}
+
+// Validation Error (400)
+{
+  success: false,
+  error: "Invalid request data",
+  details: ZodError[]
+}
+
+// Server Error (500)
+{
+  success: false,
+  error: string
+}
+```
+
+**Implementation**:
+
+```typescript
+export async function POST(request: NextRequest) {
+  try {
+    // 1. Validate request body
+    const { url, createProject, projectName: _projectName } = importSchema.parse(body);
+
+    // 2. Import repository (clone + analyze)
+    const analysis = await githubService.importRepository(url);
+
+    // 3. Optionally create MADACE project (TODO)
+    const projectId: string | null = null;
+    if (createProject) {
+      // Future: integrate with project service
+    }
+
+    // 4. Return analysis
+    return NextResponse.json({ success: true, data: { analysis, projectId } });
+  } catch (error) {
+    // Handle Zod validation errors
+    // Handle service errors
+    return NextResponse.json({ success: false, error }, { status: 400 / 500 });
+  }
+}
+```
+
+**Error Handling**:
+
+- Zod validation errors → 400 with details
+- Service errors (clone/analyze failures) → 500 with message
+- All errors logged to console
+
+### 14.5 UI Layer: `app/import/page.tsx`
+
+**Purpose**: User interface for importing and analyzing GitHub repositories
+
+**State Management**:
+
+```typescript
+const [repoUrl, setRepoUrl] = useState(''); // Input URL
+const [isLoading, setIsLoading] = useState(false); // Loading state
+const [analysis, setAnalysis] = useState<ProjectAnalysis | null>(null);
+const [error, setError] = useState<string | null>(null);
+```
+
+**Key Features**:
+
+1. **Import Form**:
+   - URL input field with validation
+   - Import & Analyze button with loading spinner
+   - Supported format hints
+   - Error display
+
+2. **Analysis Results Display**:
+   - **Project Overview**: Name, description, GitHub link, metrics (stars, forks, issues)
+   - **Statistics Cards**: Total files, LOC, primary language, last updated
+   - **Language Breakdown**: Progress bars showing percentage distribution
+   - **Technology Stack**: Badge display for detected technologies
+   - **Action Buttons**: Create MADACE Project, Assess Complexity
+
+3. **User Flow**:
+   ```
+   Enter URL → Click Import → Loading Spinner → Analysis Results
+                                     ↓
+                          ┌──────────┴──────────┐
+                          │                     │
+                   Create Project        Assess Complexity
+                          │                     │
+                    /api/v3/projects          /assess
+   ```
+
+**Implementation Highlights**:
+
+```typescript
+// Import handler (lines 35-64)
+const handleImport = async () => {
+  // Validation
+  if (!repoUrl) {
+    setError('Please enter a GitHub repository URL');
+    return;
+  }
+
+  setIsLoading(true);
+  setError(null);
+  setAnalysis(null);
+
+  try {
+    // Call API
+    const response = await fetch('/api/v3/github/import', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: repoUrl, createProject: false }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to import repository');
+    }
+
+    setAnalysis(result.data.analysis);
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Failed to import repository');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+// Language percentage calculation (lines 95-106)
+const getLanguagePercentages = () => {
+  if (!analysis?.languages) return [];
+
+  const total = Object.values(analysis.languages).reduce((sum, val) => sum + val, 0);
+  return Object.entries(analysis.languages)
+    .map(([lang, bytes]) => ({
+      language: lang,
+      percentage: ((bytes / total) * 100).toFixed(1),
+      bytes,
+    }))
+    .sort((a, b) => b.bytes - a.bytes);
+};
+```
+
+**UI Components**:
+
+1. **Import Form** (lines 121-214):
+   - URL input with placeholder
+   - Button with loading state (spinner animation)
+   - Format hints
+   - Error alert with icon
+
+2. **Project Overview** (lines 220-272):
+   - Repository name and description
+   - GitHub link with icon
+   - Stats: stars, forks, open issues
+
+3. **Statistics Cards** (lines 275-311):
+   - Grid layout (responsive: 1-4 columns)
+   - Total files, LOC, language, last updated
+
+4. **Language Breakdown** (lines 314-336):
+   - Language name with percentage
+   - Progress bar visualization
+   - Sorted by usage (descending)
+
+5. **Technology Stack** (lines 339-375):
+   - Badge display with color coding
+   - Detects: Node.js, Prisma, Docker, React, Next.js, Express
+
+6. **Action Buttons** (lines 378-419):
+   - "Create MADACE Project" (green, primary)
+   - "Assess Complexity" (green outline, secondary)
+
+### 14.6 Navigation Integration
+
+**File**: `components/features/Navigation.tsx`
+
+**Addition** (line 28):
+
+```typescript
+{ name: 'Import', href: '/import', icon: CloudArrowDownIcon }
+```
+
+**Navigation Order**:
+
+1. Dashboard
+2. Chat
+3. Kanban
+4. Assess
+5. **Import** ← NEW
+6. Agents
+7. Workflows
+8. Sync Status
+9. LLM Test
+10. Settings
+
+**Rationale**: Positioned after "Assess" since users can import → analyze → assess complexity.
+
+### 14.7 Dependencies
+
+**New Packages Installed**:
+
+```json
+{
+  "simple-git": "^3.27.0", // Git operations (clone, etc.)
+  "@octokit/rest": "^22.0.1" // GitHub REST API client
+}
+```
+
+**Installation**:
+
+```bash
+npm install simple-git @octokit/rest
+```
+
+### 14.8 Data Flow
+
+```
+User enters URL → handleImport() → POST /api/v3/github/import
+                                          │
+                                          ▼
+                                   githubService.importRepository()
+                                          │
+                        ┌─────────────────┴─────────────────┐
+                        │                                   │
+                        ▼                                   ▼
+            parseGitHubUrl()                    getRepositoryMetadata()
+                        │                                   │
+                        ▼                                   ▼
+            cloneRepository()                      (GitHub API)
+                        │
+                        ▼
+            analyzeProject() → Scan files, count LOC, detect tech
+                        │
+                        ▼
+                  ProjectAnalysis
+                        │
+                        ▼
+              JSON Response → UI State Update → Display Results
+```
+
+### 14.9 File System Structure
+
+**Cloned Repositories Location**:
+
+```
+./madace-data/cloned-repos/
+  ├── {owner}-{repo}/
+  │   ├── .git/
+  │   ├── package.json
+  │   ├── src/
+  │   └── ...
+  └── ...
+```
+
+**Example**:
+
+- URL: `https://github.com/facebook/create-react-app`
+- Clone Path: `./madace-data/cloned-repos/facebook-create-react-app`
+
+**Cleanup**: Call `githubService.cleanupRepository(owner, repo)` to remove
+
+### 14.10 Technology Detection Logic
+
+**Detection Criteria**:
+
+| Technology  | Detection Method                        |
+| ----------- | --------------------------------------- |
+| **Node.js** | Presence of `package.json`              |
+| **Prisma**  | Presence of `prisma/` directory         |
+| **Docker**  | Presence of `Dockerfile`                |
+| **React**   | Dependency in `package.json`: `react`   |
+| **Next.js** | Dependency in `package.json`: `next`    |
+| **Express** | Dependency in `package.json`: `express` |
+
+**Implementation** (github-service.ts lines 207-228):
+
+```typescript
+// Check for specific files
+const hasPackageJson = existsSync(path.join(projectPath, 'package.json'));
+const hasPrisma = existsSync(path.join(projectPath, 'prisma'));
+const hasDocker = existsSync(path.join(projectPath, 'Dockerfile'));
+
+// Read package.json if exists
+if (hasPackageJson) {
+  const packageJson = JSON.parse(await fs.readFile(...));
+  dependencies = Object.keys(packageJson.dependencies || {});
+  devDependencies = Object.keys(packageJson.devDependencies || {});
+}
+
+// Display in UI (import/page.tsx lines 344-373)
+{analysis.hasPackageJson && <Badge>Node.js</Badge>}
+{analysis.hasPrisma && <Badge>Prisma</Badge>}
+{analysis.hasDocker && <Badge>Docker</Badge>}
+{analysis.dependencies.some((dep) => dep.includes('react')) && <Badge>React</Badge>}
+```
+
+### 14.11 Error Handling
+
+**API Layer Errors**:
+
+1. **Invalid URL** → Zod validation error (400)
+2. **GitHub API Failure** → Service error (500)
+3. **Clone Failure** → Service error (500)
+4. **Analysis Failure** → Service error (500)
+
+**UI Layer Errors**:
+
+1. **Empty URL** → Inline validation error
+2. **Network Error** → Error alert display
+3. **Invalid Repository** → Error alert with message
+
+**Error Messages**:
+
+- "Please enter a GitHub repository URL"
+- "Invalid GitHub URL"
+- "Failed to clone repository"
+- "Failed to analyze project"
+- "Failed to import repository"
+
+### 14.12 Performance Optimizations
+
+1. **Shallow Clone**: `--depth 1` reduces clone time and disk usage
+2. **Parallel API Calls**: Metadata and clone happen sequentially (optimized order)
+3. **Binary File Skipping**: Line counting skips binary files to prevent errors
+4. **Directory Skipping**: `.git` and `node_modules` excluded from analysis
+5. **Streaming**: Future enhancement for large repositories
+
+**Example Performance** (create-react-app):
+
+- Clone time: ~2 seconds
+- Analysis time: ~0.4 seconds
+- Total: ~2.4 seconds
+- Files analyzed: 522 files, 170K LOC
+
+### 14.13 Security Considerations
+
+1. **No Code Execution**: Only static analysis (file counting, metadata)
+2. **Path Traversal Protection**: All paths validated and sanitized
+3. **Rate Limiting**: GitHub API respects rate limits (60 req/hour without token)
+4. **Disk Space**: Cloned repos can be cleaned up via `cleanupRepository()`
+5. **GITHUB_TOKEN**: Optional environment variable for higher API limits (5000 req/hour)
+
+**Best Practices**:
+
+- Use GITHUB_TOKEN for production deployments
+- Implement cleanup cron job for old clones
+- Add disk space monitoring
+- Validate URLs before cloning
+
+### 14.14 Testing
+
+**Manual Testing Results**:
+
+✅ **API Endpoint**:
+
+- Repository: `facebook/create-react-app`
+- Status: 200 OK
+- Analysis: 103K stars, 522 files, 170K LOC
+- Response time: ~2.4 seconds
+
+✅ **UI Page**:
+
+- Compilation: No errors (313ms, 1768 modules)
+- Rendering: All sections display correctly
+- Responsive: Works on mobile and desktop
+- Dark mode: Full support
+
+✅ **Navigation**:
+
+- Link added to main navigation
+- Icon: CloudArrowDownIcon
+- Active state: Highlights correctly
+
+**Test Cases**:
+
+1. Valid GitHub URL → Success
+2. Invalid URL → Validation error
+3. Private repo (no token) → API error
+4. Non-existent repo → GitHub API error
+5. Empty URL → Inline error
+
+### 14.15 Future Enhancements
+
+📋 **Planned Features**:
+
+1. **File Browser**: View cloned repository files in UI
+2. **Diff Viewer**: Show changes between branches
+3. **Commit History**: Display commit timeline
+4. **Assessment Integration**: Auto-populate assessment form with repo data
+5. **Project Creation**: Auto-create MADACE project from analysis
+6. **Private Repository Support**: OAuth integration for private repos
+7. **Batch Import**: Import multiple repositories at once
+8. **Scheduled Updates**: Re-analyze repositories on schedule
+9. **Export Analysis**: Download analysis as PDF or JSON
+10. **Repository Comparison**: Compare multiple repositories side-by-side
+
+### 14.16 Summary
+
+✅ **GitHub Import Feature COMPLETE**:
+
+**Core Functionality**:
+
+- ✅ Repository cloning with simple-git
+- ✅ GitHub API integration with Octokit
+- ✅ Comprehensive project analysis (files, LOC, languages, tech stack)
+- ✅ RESTful API endpoint with Zod validation
+- ✅ Full-featured UI with loading states and error handling
+- ✅ Navigation integration with icon
+
+**Analysis Capabilities**:
+
+- ✅ Repository metadata (stars, forks, issues)
+- ✅ Language breakdown with percentages
+- ✅ File and LOC statistics
+- ✅ Directory structure mapping
+- ✅ Technology detection (6 technologies)
+- ✅ Dependency extraction
+
+**User Experience**:
+
+- ✅ Intuitive form with validation
+- ✅ Loading states with spinner
+- ✅ Comprehensive results display
+- ✅ Action buttons for next steps
+- ✅ Error handling with user-friendly messages
+- ✅ Responsive design
+- ✅ Dark mode support
+
+**Technical Quality**:
+
+- ✅ Type-safe with TypeScript
+- ✅ Zero compilation errors
+- ✅ Zero ESLint errors (with --quiet)
+- ✅ Prettier formatted
+- ✅ Shallow clone optimization
+- ✅ Security best practices
+
+**Key Files**:
+
+| File                                 | Purpose                   | Lines    | Key Features                            |
+| ------------------------------------ | ------------------------- | -------- | --------------------------------------- |
+| `lib/services/github-service.ts`     | GitHub operations service | 290      | URL parsing, cloning, analysis, cleanup |
+| `app/api/v3/github/import/route.ts`  | Import API endpoint       | 70       | Zod validation, error handling          |
+| `app/import/page.tsx`                | Import UI page            | 425      | Form, results display, actions          |
+| `components/features/Navigation.tsx` | Navigation component      | 138 (+2) | Import link with icon                   |
+
+**Total New Code**: ~785 lines
+
+**Integration Points**:
+
+- `/api/v3/projects` (future: auto-create projects)
+- `/assess` (future: pre-fill assessment form)
+- File system (`./madace-data/cloned-repos/`)
+- GitHub API (via Octokit)
 
 ---

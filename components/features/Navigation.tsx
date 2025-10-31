@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   HomeIcon,
   UserGroupIcon,
@@ -15,13 +15,17 @@ import {
   ArrowPathIcon,
   ChartBarIcon,
   ChatBubbleLeftIcon,
+  CloudArrowDownIcon,
 } from '@heroicons/react/24/outline';
+import { ProjectSelector } from './ProjectSelector';
+import { ProjectModal } from './ProjectModal';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
   { name: 'Chat', href: '/chat', icon: ChatBubbleLeftIcon },
   { name: 'Kanban', href: '/kanban', icon: ViewColumnsIcon },
   { name: 'Assess', href: '/assess', icon: ChartBarIcon },
+  { name: 'Import', href: '/import', icon: CloudArrowDownIcon },
   { name: 'Agents', href: '/agents', icon: UserGroupIcon },
   { name: 'Workflows', href: '/workflows', icon: RectangleStackIcon },
   { name: 'Sync Status', href: '/sync-status', icon: ArrowPathIcon },
@@ -32,6 +36,14 @@ const navigation = [
 export function Navigation() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Listen for custom event to open project modal
+  useEffect(() => {
+    const handleOpenModal = () => setIsModalOpen(true);
+    window.addEventListener('open-create-project-modal', handleOpenModal);
+    return () => window.removeEventListener('open-create-project-modal', handleOpenModal);
+  }, []);
 
   return (
     <nav className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
@@ -45,6 +57,12 @@ export function Navigation() {
               </Link>
               <span className="ml-2 text-sm text-gray-500">v3.0</span>
             </div>
+
+            {/* Project Selector */}
+            <div className="ml-6 flex items-center">
+              <ProjectSelector />
+            </div>
+
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
@@ -113,6 +131,9 @@ export function Navigation() {
           </div>
         </div>
       )}
+
+      {/* Project Creation Modal */}
+      <ProjectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} mode="create" />
     </nav>
   );
 }
