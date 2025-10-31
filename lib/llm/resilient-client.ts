@@ -10,7 +10,7 @@
  */
 
 import { createLLMClient } from './client';
-import type { LLMClient, LLMProvider, ChatRequest, ChatResponse } from './types';
+import type { LLMClient, LLMProvider, LLMConfig, ChatRequest, ChatResponse } from './types';
 
 export interface ResilientClientOptions {
   preferredProvider?: LLMProvider;
@@ -96,6 +96,36 @@ function calculateBackoff(attempt: number, initialMs: number, maxMs: number): nu
 }
 
 /**
+ * Get provider-specific configuration
+ */
+function getProviderConfig(provider: LLMProvider): LLMConfig {
+  const configs: Record<LLMProvider, LLMConfig> = {
+    gemini: {
+      provider: 'gemini',
+      apiKey: process.env.GEMINI_API_KEY,
+      model: process.env.GEMINI_MODEL || 'gemini-2.0-flash-exp',
+    },
+    claude: {
+      provider: 'claude',
+      apiKey: process.env.CLAUDE_API_KEY,
+      model: process.env.CLAUDE_MODEL || 'claude-3-5-sonnet-20241022',
+    },
+    openai: {
+      provider: 'openai',
+      apiKey: process.env.OPENAI_API_KEY,
+      model: process.env.OPENAI_MODEL || 'gpt-4o-latest',
+    },
+    local: {
+      provider: 'local',
+      baseURL: process.env.LOCAL_MODEL_URL || 'http://localhost:11434',
+      model: process.env.LOCAL_MODEL_NAME || 'gemma2:2b',
+    },
+  };
+
+  return configs[provider];
+}
+
+/**
  * Create a resilient LLM client with automatic fallback and retry logic
  */
 export async function createResilientLLMClient(
@@ -119,10 +149,8 @@ export async function createResilientLLMClient(
     provider: LLMProvider,
     request: ChatRequest
   ): Promise<ChatResponse> {
-    const client = createLLMClient({
-      provider,
-      apiKey: process.env[`${provider.toUpperCase()}_API_KEY`],
-    });
+    const config = getProviderConfig(provider);
+    const client = createLLMClient(config);
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       const attemptRecord: ProviderAttempt = {
@@ -217,10 +245,8 @@ export async function createResilientLLMClient(
   async function* chatStream(request: ChatRequest): AsyncGenerator<ChatResponse> {
     // Similar logic to chat, but for streaming
     try {
-      const client = createLLMClient({
-        provider: preferredProvider,
-        apiKey: process.env[`${preferredProvider.toUpperCase()}_API_KEY`],
-      });
+      const config = getProviderConfig(preferredProvider);
+      const client = createLLMClient(config);
 
       yield* client.chatStream(request);
     } catch (error) {
@@ -239,10 +265,8 @@ export async function createResilientLLMClient(
           console.warn(
             `[ResilientLLM] Attempting streaming with fallback provider: ${fallbackProvider}`
           );
-          const fallbackClient = createLLMClient({
-            provider: fallbackProvider,
-            apiKey: process.env[`${fallbackProvider.toUpperCase()}_API_KEY`],
-          });
+          const fallbackConfig = getProviderConfig(fallbackProvider);
+          const fallbackClient = createLLMClient(fallbackConfig);
 
           yield* fallbackClient.chatStream(request);
           return; // Success

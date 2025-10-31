@@ -1,70 +1,116 @@
 /**
- * Agent Detail Page (v3.0)
+ * Agent Detail Page
  *
- * Displays details of a MADACE agent loaded from YAML files.
- * Uses /api/agents/[name] endpoint with file-based architecture.
+ * Displays comprehensive information about a specific agent including:
+ * - Persona, prompts, and menu actions
+ * - Chat interface integration
+ * - Workflow execution capabilities
  */
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import type { Agent } from '@/lib/types/agent';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ProjectBadge } from '@/components/features/ProjectBadge';
+import { WorkflowExecutionModal } from '@/components/features/workflow/WorkflowExecutionModal';
 
-interface AgentDetailPageProps {
-  params: Promise<{ id: string }>;
+interface AgentPersona {
+  role?: string;
+  identity?: string;
+  communication_style?: string;
+  principles?: string[];
 }
 
-export default function AgentDetailPage({ params }: AgentDetailPageProps) {
+interface MenuItem {
+  title: string;
+  description?: string;
+  action?: string;
+  workflow?: string;
+}
+
+interface Prompt {
+  name: string;
+  content: string;
+  category?: string;
+}
+
+interface Agent {
+  id: string;
+  name: string;
+  title: string;
+  icon: string;
+  module: string;
+  version: string;
+  persona: AgentPersona;
+  menu: MenuItem[];
+  prompts: Prompt[];
+  createdAt: string;
+  updatedAt: string;
+  createdBy?: string;
+  projectId?: string;
+}
+
+export default function AgentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const router = useRouter();
   const [agent, setAgent] = useState<Agent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [id, setId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'overview' | 'persona' | 'prompts' | 'menu'>(
+    'overview'
+  );
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
+  const [executingWorkflow, setExecutingWorkflow] = useState<string | null>(null);
 
   useEffect(() => {
-    params.then((resolvedParams) => {
-      setId(resolvedParams.id);
-    });
+    params.then((p) => setResolvedParams(p));
   }, [params]);
 
   useEffect(() => {
-    if (!id) return;
+    if (resolvedParams?.id) {
+      loadAgent();
+    }
+  }, [resolvedParams]);
 
-    const fetchAgent = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const loadAgent = async () => {
+    if (!resolvedParams?.id) return;
 
-        const response = await fetch(`/api/agents/${id}`);
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/v3/agents/${resolvedParams.id}`);
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        if (data.agent) {
-          setAgent(data.agent);
-        } else {
-          setError('Agent not found');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch agent');
-        console.error('Error fetching agent:', err);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error('Failed to load agent');
       }
-    };
 
-    fetchAgent();
-  }, [id]);
+      const data = await response.json();
+      setAgent(data.data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startChat = () => {
+    if (agent) {
+      router.push(`/chat?agent=${agent.id}`);
+    }
+  };
+
+  const executeWorkflow = (workflow: string) => {
+    setExecutingWorkflow(workflow);
+  };
+
+  const closeWorkflowModal = () => {
+    setExecutingWorkflow(null);
+  };
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600 dark:text-gray-400">Loading agent...</span>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading agent...</p>
         </div>
       </div>
     );
@@ -72,236 +118,320 @@ export default function AgentDetailPage({ params }: AgentDetailPageProps) {
 
   if (error || !agent) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="container mx-auto p-6">
         <div className="rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-900/20">
-          <h2 className="mb-2 text-lg font-semibold text-red-900 dark:text-red-100">
-            Error Loading Agent
-          </h2>
-          <p className="mb-4 text-red-800 dark:text-red-200">{error || 'Agent not found'}</p>
-          <Link
-            href="/agents"
-            className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+          <h2 className="mb-2 text-xl font-bold text-red-800 dark:text-red-200">Error</h2>
+          <p className="text-red-700 dark:text-red-300">{error || 'Agent not found'}</p>
+          <button
+            onClick={() => router.push('/agents')}
+            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
           >
-            ← Back to Agents
-          </Link>
+            Back to Agents
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      {/* Page Header */}
-      <div className="mb-8">
-        <div className="mb-4">
-          <Link
-            href="/agents"
-            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-          >
-            <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Back to Agents
-          </Link>
-        </div>
-
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="mb-2 flex items-center gap-3">
-              <span className="text-4xl">{agent.metadata.icon}</span>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {agent.metadata.title}
-                </h1>
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                  {agent.metadata.name} v{agent.metadata.version}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <span className="rounded-full bg-blue-100 px-4 py-1.5 text-sm font-medium text-blue-800 uppercase dark:bg-blue-900/30 dark:text-blue-300">
-            {agent.metadata.module}
-          </span>
-        </div>
-      </div>
-
-      {/* Persona Section */}
-      <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-        <h2 className="mb-4 flex items-center text-xl font-semibold text-gray-900 dark:text-gray-100">
-          <span className="mr-2">👤</span>
-          Persona
-        </h2>
-
-        <div className="space-y-4">
-          <div>
-            <h3 className="mb-2 font-medium text-gray-700 dark:text-gray-300">Role</h3>
-            <p className="text-gray-600 dark:text-gray-400">{agent.persona.role}</p>
-          </div>
-
-          <div>
-            <h3 className="mb-2 font-medium text-gray-700 dark:text-gray-300">Identity</h3>
-            <p className="whitespace-pre-line text-gray-600 dark:text-gray-400">
-              {agent.persona.identity}
-            </p>
-          </div>
-
-          <div>
-            <h3 className="mb-2 font-medium text-gray-700 dark:text-gray-300">
-              Communication Style
-            </h3>
-            <p className="whitespace-pre-line text-gray-600 dark:text-gray-400">
-              {agent.persona.communication_style}
-            </p>
-          </div>
-
-          {agent.persona.principles && agent.persona.principles.length > 0 && (
-            <div>
-              <h3 className="mb-2 font-medium text-gray-700 dark:text-gray-300">Principles</h3>
-              <ul className="list-inside list-disc space-y-1 text-gray-600 dark:text-gray-400">
-                {agent.persona.principles.map((principle, idx) => (
-                  <li key={idx}>{principle}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Menu Actions */}
-      {agent.menu && agent.menu.length > 0 && (
-        <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="mb-4 flex items-center text-xl font-semibold text-gray-900 dark:text-gray-100">
-            <span className="mr-2">⚡</span>
-            Menu Actions
-          </h2>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {agent.menu.map((menuItem, idx) => (
-              <div key={idx} className="rounded-lg border border-gray-200 p-4 dark:border-gray-600">
-                <div className="mb-2 flex items-start justify-between">
-                  <code className="rounded bg-blue-100 px-2 py-1 font-mono text-sm text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                    {menuItem.trigger}
-                  </code>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <div className="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => router.push('/agents')}
+                className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <div className="flex items-center space-x-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-2xl text-white">
+                  {agent.icon}
                 </div>
-                <p className="mb-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {menuItem.description}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Action: {menuItem.action}
-                </p>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {agent.title}
+                  </h1>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {agent.name} • {agent.module} • v{agent.version}
+                  </p>
+                </div>
               </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <ProjectBadge size="sm" showDescription={false} />
+              <button
+                onClick={startChat}
+                className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+                <span>Start Chat</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div className="container mx-auto px-6">
+          <div className="flex space-x-8">
+            {['overview', 'persona', 'prompts', 'menu'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab as typeof activeTab)}
+                className={`border-b-2 px-1 py-4 text-sm font-medium capitalize transition-colors ${
+                  activeTab === tab
+                    ? 'border-blue-500 text-blue-600 dark:border-blue-400 dark:text-blue-400'
+                    : 'border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-900 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-200'
+                }`}
+              >
+                {tab}
+              </button>
             ))}
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Prompts */}
-      {agent.prompts && agent.prompts.length > 0 && (
-        <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="mb-4 flex items-center text-xl font-semibold text-gray-900 dark:text-gray-100">
-            <span className="mr-2">📝</span>
-            Prompts ({agent.prompts.length})
-          </h2>
+      {/* Content */}
+      <div className="container mx-auto p-6">
+        {/* Overview Tab */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {/* Basic Info */}
+              <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Basic Information
+                </h3>
+                <dl className="space-y-3">
+                  <div>
+                    <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">ID</dt>
+                    <dd className="mt-1 font-mono text-sm text-gray-900 dark:text-gray-100">
+                      {agent.id}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">Name</dt>
+                    <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">{agent.name}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">Module</dt>
+                    <dd className="mt-1">
+                      <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                        {agent.module}
+                      </span>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      Version
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                      {agent.version}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      Created
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                      {new Date(agent.createdAt).toLocaleDateString()}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
 
-          <div className="space-y-4">
-            {agent.prompts.map((prompt, idx) => (
-              <details
-                key={idx}
-                className="group rounded-lg border border-gray-200 dark:border-gray-600"
-              >
-                <summary className="cursor-pointer rounded-lg bg-gray-50 p-4 font-medium text-gray-900 transition-colors hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800">
+              {/* Quick Stats */}
+              <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Capabilities
+                </h3>
+                <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span>{prompt.name}</span>
-                    <div className="flex items-center gap-2">
-                      <code className="text-xs text-gray-500 dark:text-gray-400">
-                        {prompt.trigger}
-                      </code>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Menu Actions</span>
+                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {agent.menu?.length || 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Prompts</span>
+                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {agent.prompts?.length || 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Principles</span>
+                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {agent.persona?.principles?.length || 0}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Role Summary */}
+            {agent.persona?.role && (
+              <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Role
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300">{agent.persona.role}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Persona Tab */}
+        {activeTab === 'persona' && (
+          <div className="space-y-6">
+            {agent.persona?.identity && (
+              <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Identity
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300">{agent.persona.identity}</p>
+              </div>
+            )}
+
+            {agent.persona?.communication_style && (
+              <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Communication Style
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300">
+                  {agent.persona.communication_style}
+                </p>
+              </div>
+            )}
+
+            {agent.persona?.principles && agent.persona.principles.length > 0 && (
+              <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Principles
+                </h3>
+                <ul className="space-y-2">
+                  {agent.persona.principles.map((principle, index) => (
+                    <li key={index} className="flex items-start">
                       <svg
-                        className="h-5 w-5 transition-transform group-open:rotate-180"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                        className="mr-2 mt-0.5 h-5 w-5 flex-shrink-0 text-green-500"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
                       >
                         <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
                         />
                       </svg>
-                    </div>
+                      <span className="text-gray-700 dark:text-gray-300">{principle}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Prompts Tab */}
+        {activeTab === 'prompts' && (
+          <div className="space-y-4">
+            {agent.prompts && agent.prompts.length > 0 ? (
+              agent.prompts.map((prompt, index) => (
+                <div
+                  key={index}
+                  className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <div className="mb-3 flex items-start justify-between">
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      {prompt.name}
+                    </h4>
+                    {prompt.category && (
+                      <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                        {prompt.category}
+                      </span>
+                    )}
                   </div>
-                </summary>
-                <div className="border-t border-gray-200 p-4 dark:border-gray-600">
-                  <pre className="overflow-x-auto rounded-lg bg-gray-50 p-4 text-sm whitespace-pre-wrap text-gray-700 dark:bg-gray-900 dark:text-gray-300">
+                  <pre className="whitespace-pre-wrap rounded-lg bg-gray-50 p-4 text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-300">
                     {prompt.content}
                   </pre>
                 </div>
-              </details>
-            ))}
+              ))
+            ) : (
+              <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-600 dark:text-gray-400">No prompts defined</p>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Files to Load */}
-      {agent.load_always && agent.load_always.length > 0 && (
-        <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="mb-4 flex items-center text-xl font-semibold text-gray-900 dark:text-gray-100">
-            <span className="mr-2">📁</span>
-            Files Loaded Automatically
-          </h2>
-
-          <ul className="space-y-2">
-            {agent.load_always.map((file, idx) => (
-              <li
-                key={idx}
-                className="rounded-lg bg-gray-50 px-4 py-2 font-mono text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-300"
-              >
-                {file}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Critical Actions */}
-      {agent.critical_actions && agent.critical_actions.length > 0 && (
-        <div className="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-6 dark:border-yellow-800 dark:bg-yellow-900/20">
-          <h2 className="mb-4 flex items-center text-xl font-semibold text-yellow-900 dark:text-yellow-100">
-            <span className="mr-2">⚠️</span>
-            Critical Actions
-          </h2>
-
-          <ul className="list-inside list-disc space-y-1 text-yellow-800 dark:text-yellow-200">
-            {agent.critical_actions.map((action, idx) => (
-              <li key={idx}>{action}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Footer */}
-      <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-700 dark:bg-blue-900/20">
-        <h4 className="mb-2 font-medium text-blue-900 dark:text-blue-100">Agent Information</h4>
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-          <dt className="font-medium text-blue-700 dark:text-blue-300">ID:</dt>
-          <dd className="text-blue-600 dark:text-blue-400">{agent.metadata.id}</dd>
-
-          <dt className="font-medium text-blue-700 dark:text-blue-300">Module:</dt>
-          <dd className="text-blue-600 dark:text-blue-400">
-            {agent.metadata.module?.toUpperCase() || 'N/A'}
-          </dd>
-
-          <dt className="font-medium text-blue-700 dark:text-blue-300">Version:</dt>
-          <dd className="text-blue-600 dark:text-blue-400">{agent.metadata.version}</dd>
-        </dl>
+        {/* Menu Tab */}
+        {activeTab === 'menu' && (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {agent.menu && agent.menu.length > 0 ? (
+              agent.menu.map((item, index) => (
+                <div
+                  key={index}
+                  className="group rounded-lg border border-gray-200 bg-white p-6 transition-all hover:border-blue-500 hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-400"
+                >
+                  <h4 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    {item.title}
+                  </h4>
+                  {item.description && (
+                    <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                      {item.description}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between">
+                    {item.workflow && (
+                      <span className="text-xs text-gray-500 dark:text-gray-500">
+                        Workflow: {item.workflow}
+                      </span>
+                    )}
+                    <button
+                      onClick={() =>
+                        item.workflow ? executeWorkflow(item.workflow) : alert('No workflow')
+                      }
+                      className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 group-hover:bg-blue-700"
+                    >
+                      Execute
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="col-span-2 rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
+                <p className="text-gray-600 dark:text-gray-400">No menu actions defined</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Workflow Execution Modal */}
+      {executingWorkflow && (
+        <WorkflowExecutionModal
+          workflowName={executingWorkflow}
+          workflowDescription={`Executing workflow: ${executingWorkflow}`}
+          onClose={closeWorkflowModal}
+        />
+      )}
     </div>
   );
 }

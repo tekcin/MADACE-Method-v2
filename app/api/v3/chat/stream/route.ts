@@ -20,6 +20,8 @@ import {
   limitPromptContext,
 } from '@/lib/llm/prompt-builder';
 import { extractAndSaveMemories } from '@/lib/nlu/memory-extractor';
+import { logLLMUsage } from '@/lib/services/llm-usage-service';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * POST /api/v3/chat/stream
@@ -97,8 +99,18 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         let fullResponse = '';
+        const requestId = uuidv4();
+        const startTime = Date.now();
+        let promptTokens = 0;
+        let completionTokens = 0;
+        let usedProvider: string = requestedProvider;
+        let usedModel = '';
 
         try {
+          // Estimate prompt tokens (rough estimate: ~4 chars per token)
+          const promptText = limitedMessages.map((m) => m.content).join(' ');
+          promptTokens = Math.ceil(promptText.length / 4);
+
           // Stream with automatic retry and fallback
           for await (const chunk of llmClient.chatStream({ messages: limitedMessages })) {
             fullResponse += chunk.content;
@@ -107,7 +119,49 @@ export async function POST(request: NextRequest) {
             const data = `data: ${JSON.stringify({ content: chunk.content })}\n\n`;
             controller.enqueue(encoder.encode(data));
           }
+
+          // Estimate completion tokens
+          completionTokens = Math.ceil(fullResponse.length / 4);
+          const responseTime = Date.now() - startTime;
+
+          // Get actual provider used (may be different due to fallback)
+          usedProvider = llmClient.provider;
+          usedModel = llmClient.config.model;
+
+          // Log successful usage
+          await logLLMUsage({
+            provider: usedProvider as 'local' | 'gemini' | 'claude' | 'openai',
+            model: usedModel,
+            requestId,
+            userId: session.userId,
+            sessionId: session.id,
+            agentId: agent.id,
+            promptTokens,
+            completionTokens,
+            totalTokens: promptTokens + completionTokens,
+            responseTime,
+            success: true,
+            finishReason: 'stop',
+          });
         } catch (error) {
+          const responseTime = Date.now() - startTime;
+
+          // Log failed usage
+          await logLLMUsage({
+            provider: usedProvider as 'local' | 'gemini' | 'claude' | 'openai',
+            model: usedModel || 'unknown',
+            requestId,
+            userId: session.userId,
+            sessionId: session.id,
+            agentId: agent.id,
+            promptTokens,
+            completionTokens: 0,
+            totalTokens: promptTokens,
+            responseTime,
+            success: false,
+            errorMessage: (error as Error).message,
+          });
+
           // Handle resilient client errors
           const errorMessage =
             error instanceof ResilientLLMError
@@ -123,12 +177,14 @@ export async function POST(request: NextRequest) {
         }
 
         try {
-          // Save complete response to database
+          // Save complete response to database with provider info
           await createMessage({
             sessionId,
             role: 'agent',
             content: fullResponse,
             replyToId: replyToId || undefined,
+            provider: usedProvider,
+            model: usedModel,
           });
 
           // Send completion signal

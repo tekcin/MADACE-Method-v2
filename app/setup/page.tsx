@@ -86,7 +86,23 @@ export default function SetupPage() {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(result.message || result.error || 'Failed to save configuration');
+        // Format detailed validation errors if available
+        let errorMessage = result.message || result.error || 'Failed to save configuration';
+
+        if (result.details) {
+          const fieldErrors: string[] = [];
+          Object.entries(result.details).forEach(([field, errors]) => {
+            if (Array.isArray(errors) && errors.length > 0) {
+              fieldErrors.push(`${field}: ${errors.join(', ')}`);
+            }
+          });
+
+          if (fieldErrors.length > 0) {
+            errorMessage = `Validation failed:\n\n${fieldErrors.join('\n')}`;
+          }
+        }
+
+        throw new Error(errorMessage);
       }
 
       // Show success message
@@ -146,7 +162,9 @@ export default function SetupPage() {
                 <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
                   Configuration Error
                 </h3>
-                <div className="mt-2 text-sm text-red-700 dark:text-red-300">{error}</div>
+                <div className="mt-2 text-sm text-red-700 dark:text-red-300 whitespace-pre-line">
+                  {error}
+                </div>
               </div>
             </div>
           </div>

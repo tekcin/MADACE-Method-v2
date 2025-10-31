@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ChatInterface from '@/components/features/chat/ChatInterface';
 import { ProjectBadge } from '@/components/features/ProjectBadge';
+import { UsageStats } from '@/components/features/chat/UsageStats';
 
 interface Agent {
   id: string;
@@ -31,16 +32,30 @@ export default function ChatPage() {
   const userId = 'default-user';
   const userName = 'You';
 
-  // Load agents on mount
+  // Load agents on mount and when project switches
   useEffect(() => {
     loadAgents();
     loadAllAgents();
   }, []);
 
+  // Listen for project switch events and reload agents
+  useEffect(() => {
+    const handleProjectSwitch = () => {
+      loadAgents();
+      loadAllAgents();
+    };
+
+    window.addEventListener('project-switched', handleProjectSwitch);
+    return () => window.removeEventListener('project-switched', handleProjectSwitch);
+  }, []);
+
   const loadAgents = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/v3/agents');
+
+      // Build API URL with projectId if available
+      const apiUrl = '/api/v3/agents'; // Note: Chat page shows all agents, no project filter needed
+      const response = await fetch(apiUrl);
       if (!response.ok) throw new Error('Failed to load agents');
 
       const result = await response.json();
@@ -107,14 +122,24 @@ export default function ChatPage() {
   if (sessionId && selectedAgent) {
     return (
       <div className="flex h-screen flex-col">
-        <ChatInterface
-          sessionId={sessionId}
-          agentId={selectedAgent.id}
-          agentName={selectedAgent.title}
-          userId={userId}
-          userName={userName}
-          onClose={endChat}
-        />
+        {/* Usage Stats Banner */}
+        <div className="border-b border-gray-200 bg-gray-50 p-2 dark:border-gray-700 dark:bg-gray-900">
+          <div className="mx-auto max-w-7xl">
+            <UsageStats sessionId={sessionId} />
+          </div>
+        </div>
+
+        {/* Chat Interface */}
+        <div className="flex-1 overflow-hidden">
+          <ChatInterface
+            sessionId={sessionId}
+            agentId={selectedAgent.id}
+            agentName={selectedAgent.title}
+            userId={userId}
+            userName={userName}
+            onClose={endChat}
+          />
+        </div>
       </div>
     );
   }

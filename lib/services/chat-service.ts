@@ -48,6 +48,8 @@ export const CreateMessageSchema = z.object({
   role: z.enum(['user', 'agent', 'system']),
   content: z.string().min(1, 'Content is required'),
   replyToId: z.string().optional(),
+  provider: z.string().optional(), // LLM provider (gemini, claude, openai, local)
+  model: z.string().optional(), // LLM model name
 });
 
 export type CreateMessageInput = z.infer<typeof CreateMessageSchema>;
@@ -254,6 +256,8 @@ export async function createMessage(input: CreateMessageInput): Promise<ChatMess
       role: validated.role,
       content: validated.content,
       replyToId: validated.replyToId,
+      provider: validated.provider,
+      model: validated.model,
     },
   });
 

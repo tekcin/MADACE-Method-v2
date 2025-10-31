@@ -21,11 +21,9 @@ export default function AgentsPage() {
     setSelectedAgents(selectedIds);
   };
 
-  const handleAgentClick = (agentId: string, agent: AgentCardData) => {
-    // Navigate to agent detail page
-    // Extract the agent name from the ID (e.g., "madace/mam/agents/pm.md" -> "pm")
-    const agentName = agent.name.toLowerCase();
-    router.push(`/agents/${agentName}`);
+  const handleAgentClick = (agentId: string) => {
+    // Navigate to agent detail page using the agent ID
+    router.push(`/agents/${agentId}`);
   };
 
   return (
@@ -38,7 +36,22 @@ export default function AgentsPage() {
             Select and interact with AI agents for your project workflow.
           </p>
         </div>
-        <ProjectBadge />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push('/agents/create')}
+            className="inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500"
+          >
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Create Agent
+          </button>
+          <ProjectBadge />
+        </div>
       </div>
 
       {/* View mode toggle and module filter */}
@@ -147,14 +160,13 @@ export default function AgentsPage() {
         </div>
       </div>
 
-      {/* Future features */}
-      <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-700 dark:bg-blue-900/20">
-        <h4 className="mb-2 font-medium text-blue-900 dark:text-blue-100">Coming Soon</h4>
-        <ul className="list-inside list-disc space-y-1 text-sm text-blue-700 dark:text-blue-300">
-          <li>Agent detail pages with persona, prompts, and menu actions</li>
-          <li>Interactive agent chat interface</li>
-          <li>Agent workflow execution</li>
-          <li>Custom agent creation (via MAB module)</li>
+      {/* Recent features */}
+      <div className="mt-8 rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-700 dark:bg-green-900/20">
+        <h4 className="mb-2 font-medium text-green-900 dark:text-green-100">✅ New Features</h4>
+        <ul className="list-inside list-disc space-y-1 text-sm text-green-700 dark:text-green-300">
+          <li>✅ Interactive agent chat interface with advanced markdown rendering</li>
+          <li>✅ Agent workflow execution with real-time progress tracking</li>
+          <li>✅ Custom agent creation (click &quot;Create Agent&quot; button above)</li>
         </ul>
       </div>
     </div>

@@ -15,13 +15,28 @@ export default function KanbanPage() {
     loadWorkflowStatus();
   }, []);
 
+  // Listen for project switch events and reload workflow status
+  useEffect(() => {
+    const handleProjectSwitch = () => {
+      loadWorkflowStatus();
+    };
+
+    window.addEventListener('project-switched', handleProjectSwitch);
+    return () => window.removeEventListener('project-switched', handleProjectSwitch);
+  }, []);
+
   const loadWorkflowStatus = async (isRefresh = false) => {
     try {
       if (isRefresh) {
         setRefreshing(true);
       }
 
-      const response = await fetch('/api/state');
+      // Build API URL with projectId if a project is selected
+      const apiUrl = currentProject
+        ? `/api/state?projectId=${currentProject.id}`
+        : '/api/state';
+
+      const response = await fetch(apiUrl);
       const data = await response.json();
 
       if (data.success) {

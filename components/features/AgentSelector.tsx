@@ -78,6 +78,18 @@ export function AgentSelector({
     }
   }, [providedAgents]);
 
+  // Listen for project switch events and reload agents
+  useEffect(() => {
+    if (!providedAgents) {
+      const handleProjectSwitch = () => {
+        fetchAgents();
+      };
+
+      window.addEventListener('project-switched', handleProjectSwitch);
+      return () => window.removeEventListener('project-switched', handleProjectSwitch);
+    }
+  }, [providedAgents]);
+
   const fetchAgents = async () => {
     try {
       setLoading(true);
