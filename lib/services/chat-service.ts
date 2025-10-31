@@ -581,7 +581,7 @@ export async function exportSessionAsMarkdown(sessionId: string): Promise<string
     // Show reply context if this is a reply
     if (message.replyTo && message.replyTo.content) {
       const replyTime = message.replyTo.timestamp.toLocaleTimeString();
-      const replyPreview = message.replyTo.content.split('\n')[0].substring(0, 80);
+      const replyPreview = (message.replyTo.content.split('\n')[0] || '').substring(0, 80);
       lines.push(`> **In reply to** (${replyTime}):`);
       lines.push(`> ${replyPreview}...`);
       lines.push('');

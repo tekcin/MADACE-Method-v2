@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * REPL Command Handlers
  *

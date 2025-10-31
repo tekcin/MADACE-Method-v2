@@ -93,11 +93,11 @@ export class YjsProviderManager {
 
     provider.on('status', (event: { status: string }) => {
       isConnected = event.status === 'connected';
-      console.log(`[YjsProvider] ${docId} status:`, event.status);
+      console.error(`[YjsProvider] ${docId} status:`, event.status);
     });
 
     provider.on('sync', (isSynced: boolean) => {
-      console.log(`[YjsProvider] ${docId} synced:`, isSynced);
+      console.error(`[YjsProvider] ${docId} synced:`, isSynced);
     });
 
     const yjsDoc: YjsDocument = {
@@ -109,7 +109,7 @@ export class YjsProviderManager {
 
     this.documents.set(docId, yjsDoc);
 
-    console.log(`[YjsProvider] Created document: ${docId}`);
+    console.error(`[YjsProvider] Created document: ${docId}`);
 
     return yjsDoc;
   }
@@ -149,7 +149,7 @@ export class YjsProviderManager {
 
     this.documents.delete(docId);
 
-    console.log(`[YjsProvider] Destroyed document: ${docId}`);
+    console.error(`[YjsProvider] Destroyed document: ${docId}`);
   }
 
   /**
@@ -164,7 +164,7 @@ export class YjsProviderManager {
 
     this.documents.clear();
 
-    console.log('[YjsProvider] Destroyed all documents');
+    console.error('[YjsProvider] Destroyed all documents');
   }
 
   /**
@@ -293,7 +293,7 @@ export class MonacoYjsBinding {
 
     this.yText.observe(this.yjsObserver);
 
-    console.log('[MonacoYjsBinding] Binding established');
+    console.error('[MonacoYjsBinding] Binding established');
   }
 
   /**
@@ -310,7 +310,7 @@ export class MonacoYjsBinding {
       this.yjsObserver = null;
     }
 
-    console.log('[MonacoYjsBinding] Binding destroyed');
+    console.error('[MonacoYjsBinding] Binding destroyed');
   }
 }
 

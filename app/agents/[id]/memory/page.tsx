@@ -4,14 +4,15 @@ import { prisma } from '@/lib/database/client';
 import { MemoryDashboard } from '@/components/features/memory/MemoryDashboard';
 
 interface MemoryPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: MemoryPageProps): Promise<Metadata> {
+  const { id } = await params;
   const agent = await prisma.agent.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: { title: true },
   });
 
@@ -28,8 +29,9 @@ export async function generateMetadata({ params }: MemoryPageProps): Promise<Met
 }
 
 export default async function MemoryPage({ params }: MemoryPageProps) {
+  const { id } = await params;
   const agent = await prisma.agent.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: {
       id: true,
       name: true,

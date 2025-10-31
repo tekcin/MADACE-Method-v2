@@ -17,3 +17,7 @@ if (!global.TextEncoder) {
   global.TextEncoder = TextEncoder;
   global.TextDecoder = TextDecoder;
 }
+
+// Note: Prisma mock is available in __tests__/setup/prisma-mock.ts
+// but not auto-loaded to avoid interfering with database tests.
+// Individual test files can import it if needed.

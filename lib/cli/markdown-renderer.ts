@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * CLI Markdown Renderer
  *
@@ -12,7 +13,7 @@ import TerminalRenderer from 'marked-terminal';
  * Configure marked with terminal renderer
  */
 marked.setOptions({
-  // @ts-ignore - marked-terminal types are incomplete
+  // @ts-expect-error - marked-terminal types are incomplete
   renderer: new TerminalRenderer({
     // Code blocks
     code: chalk.yellow,

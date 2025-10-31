@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * MADACE REPL (Read-Eval-Print Loop)
  *

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * CLI Command: madace status
  * STORY-V3-016: Create `madace status` CLI Command

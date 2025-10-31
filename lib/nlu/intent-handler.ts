@@ -10,7 +10,6 @@ import type {
   NLUEntity,
   IntentActionHandler,
   IntentActionRegistry,
-  MadaceIntent,
 } from './types';
 import * as agentService from '@/lib/services/agent-service';
 import { getConfigManager } from '@/lib/config/manager';
@@ -74,16 +73,16 @@ Would you like me to help you create the agent definition?`,
 const handleListAgents: IntentActionHandler = async (intent, entities) => {
   try {
     // Extract module filter if provided
-    const module = entities.find((e) => e.type === '@module')?.value;
+    const agentModule = entities.find((e) => e.type === '@module')?.value;
 
     const agents = await agentService.listAgents({
-      module: module,
+      module: agentModule,
     });
 
     return {
       success: true,
       data: agents,
-      message: `Found ${agents.length} agent${agents.length !== 1 ? 's' : ''}${module ? ` in module ${module}` : ''}.`,
+      message: `Found ${agents.length} agent${agents.length !== 1 ? 's' : ''}${agentModule ? ` in module ${agentModule}` : ''}.`,
     };
   } catch (error) {
     return {
@@ -136,7 +135,7 @@ const handleShowAgent: IntentActionHandler = async (intent, entities) => {
 /**
  * Check Status Handler
  */
-const handleCheckStatus: IntentActionHandler = async (intent, entities) => {
+const handleCheckStatus: IntentActionHandler = async (_intent, _entities) => {
   try {
     const statusFile = process.env.STATUS_FILE || 'docs/mam-workflow-status.md';
     const stateMachine = createStateMachine(statusFile);
@@ -269,7 +268,7 @@ const handleSetConfig: IntentActionHandler = async (intent, entities) => {
 /**
  * Help Handler
  */
-const handleHelp: IntentActionHandler = async (intent, entities) => {
+const handleHelp: IntentActionHandler = async (_intent, _entities) => {
   return {
     success: true,
     message: `I can help you with:
@@ -297,7 +296,7 @@ What would you like to do?`,
 /**
  * Greeting Handler
  */
-const handleGreeting: IntentActionHandler = async (intent, entities) => {
+const handleGreeting: IntentActionHandler = async (_intent, _entities) => {
   return {
     success: true,
     message: `Hello! I'm MADACE, your AI-driven development assistant.
@@ -311,7 +310,7 @@ What would you like to do today?`,
 /**
  * Goodbye Handler
  */
-const handleGoodbye: IntentActionHandler = async (intent, entities) => {
+const handleGoodbye: IntentActionHandler = async (_intent, _entities) => {
   return {
     success: true,
     message: `Goodbye! Feel free to come back anytime you need assistance with your project.`,
@@ -321,7 +320,7 @@ const handleGoodbye: IntentActionHandler = async (intent, entities) => {
 /**
  * Unknown Intent Handler (fallback)
  */
-const handleUnknown: IntentActionHandler = async (intent, entities) => {
+const handleUnknown: IntentActionHandler = async (_intent, _entities) => {
   return {
     success: false,
     message: `I'm not sure I understand. Could you rephrase that?

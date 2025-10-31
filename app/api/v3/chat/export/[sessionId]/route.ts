@@ -6,9 +6,9 @@ import { exportSessionAsMarkdown } from '@/lib/services/chat-service';
  *
  * Export chat session as Markdown
  */
-export async function GET(request: NextRequest, { params }: { params: { sessionId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ sessionId: string }> }) {
   try {
-    const { sessionId } = params;
+    const { sessionId } = await params;
 
     if (!sessionId) {
       return NextResponse.json(

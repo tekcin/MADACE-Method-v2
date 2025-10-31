@@ -19,16 +19,16 @@ export async function runDailyMemoryMaintenance(): Promise<{
     mediumImportance90Days: number;
   };
 }> {
-  console.log('[Cron] Starting daily memory maintenance...');
+  console.error('[Cron] Starting daily memory maintenance...');
 
   try {
     // 1. Adjust memory importance based on usage patterns
     const adjusted = await adjustMemoryImportance();
-    console.log(`[Cron] Adjusted importance for ${adjusted} memories`);
+    console.error(`[Cron] Adjusted importance for ${adjusted} memories`);
 
     // 2. Prune old and low-importance memories
     const pruneResult = await pruneMemories();
-    console.log(
+    console.error(
       `[Cron] Pruned ${pruneResult.pruned} memories (expired: ${pruneResult.details.expired}, low importance: ${pruneResult.details.lowImportance30Days}, medium importance: ${pruneResult.details.mediumImportance90Days})`
     );
 
@@ -57,7 +57,7 @@ export function scheduleMemoryPruning(): void {
   const runAndScheduleNext = () => {
     runDailyMemoryMaintenance()
       .then((result) => {
-        console.log('[Cron] Memory maintenance completed:', result);
+        console.error('[Cron] Memory maintenance completed:', result);
       })
       .catch((error) => {
         console.error('[Cron] Memory maintenance failed:', error);
@@ -71,14 +71,14 @@ export function scheduleMemoryPruning(): void {
   // Run first time after 1 minute (to allow app to fully start)
   setTimeout(runAndScheduleNext, 60 * 1000);
 
-  console.log('[Cron] Memory pruning scheduler initialized (runs daily)');
+  console.error('[Cron] Memory pruning scheduler initialized (runs daily)');
 }
 
 /**
  * Manual trigger for memory pruning (for testing or admin actions)
  */
 export async function triggerMemoryPruning(): Promise<void> {
-  console.log('[Manual] Triggering memory maintenance...');
+  console.error('[Manual] Triggering memory maintenance...');
   const result = await runDailyMemoryMaintenance();
-  console.log('[Manual] Memory maintenance completed:', result);
+  console.error('[Manual] Memory maintenance completed:', result);
 }

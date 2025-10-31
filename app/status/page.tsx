@@ -197,7 +197,6 @@ export default function StatusPage() {
         ws = new WebSocket('ws://localhost:3001');
 
         ws.onopen = () => {
-          console.log('[WebSocket] Connected to sync server');
           setWsConnected(true);
 
           // Start ping interval to keep connection alive
@@ -211,7 +210,6 @@ export default function StatusPage() {
         ws.onmessage = (event) => {
           try {
             const message = JSON.parse(event.data);
-            console.log('[WebSocket] Received:', message.type);
 
             // Handle different message types
             switch (message.type) {
@@ -245,7 +243,6 @@ export default function StatusPage() {
         };
 
         ws.onclose = () => {
-          console.log('[WebSocket] Disconnected');
           setWsConnected(false);
 
           // Clear ping interval
@@ -256,7 +253,6 @@ export default function StatusPage() {
 
           // Attempt to reconnect after 5 seconds
           reconnectTimeout = setTimeout(() => {
-            console.log('[WebSocket] Attempting to reconnect...');
             connect();
           }, 5000);
         };

@@ -55,7 +55,7 @@ export class CursorSyncManager {
       this.updateRemoteCursors(users);
     });
 
-    console.log('[CursorSync] Initialized with Monaco Editor');
+    console.error('[CursorSync] Initialized with Monaco Editor');
   }
 
   /**
@@ -315,7 +315,7 @@ export class CursorSyncManager {
     this.decorations.clear();
     this.editor = null;
 
-    console.log('[CursorSync] Destroyed');
+    console.error('[CursorSync] Destroyed');
   }
 }
 

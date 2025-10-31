@@ -15,47 +15,47 @@ generator client {
 // ==============================================================================
 
 model Agent {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  title       String
-  icon        String
-  module      String
-  version     String
-  persona     Json     // { role, identity, communication_style, principles }
-  menu        Json     // Array of menu items
-  prompts     Json     // Array of prompts
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   String?
-  projectId   String?
+  id        String   @id @default(cuid())
+  name      String   @unique
+  title     String
+  icon      String
+  module    String
+  version   String
+  persona   Json // { role, identity, communication_style, principles }
+  menu      Json // Array of menu items
+  prompts   Json // Array of prompts
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  projectId String?
 
-  memories    AgentMemory[]
+  memories     AgentMemory[]
   chatSessions ChatSession[]
-  project     Project?  @relation(fields: [projectId], references: [id])
+  project      Project?      @relation(fields: [projectId], references: [id])
 
   @@index([projectId])
   @@index([module])
 }
 
 model AgentMemory {
-  id              String   @id @default(cuid())
-  agentId         String
-  userId          String
-  context         Json     // Full memory context
-  type            String   // "short-term" | "long-term"
-  category        String   // "user_preference" | "project_context" | "conversation_summary" | "user_fact"
-  key             String   // Memory key (e.g., "communication_style", "project_name")
-  value           String   // Memory value (stored as string, can be JSON)
-  importance      Int      @default(5) // 1-10 scale
-  source          String   @default("inferred_from_chat") // "inferred_from_chat" | "user_input" | "system"
-  lastAccessedAt  DateTime @default(now())
-  accessCount     Int      @default(0)
-  createdAt       DateTime @default(now())
-  expiresAt       DateTime?
-  updatedAt       DateTime @updatedAt
+  id             String    @id @default(cuid())
+  agentId        String
+  userId         String
+  context        Json // Full memory context
+  type           String // "short-term" | "long-term"
+  category       String // "user_preference" | "project_context" | "conversation_summary" | "user_fact"
+  key            String // Memory key (e.g., "communication_style", "project_name")
+  value          String // Memory value (stored as string, can be JSON)
+  importance     Int       @default(5) // 1-10 scale
+  source         String    @default("inferred_from_chat") // "inferred_from_chat" | "user_input" | "system"
+  lastAccessedAt DateTime  @default(now())
+  accessCount    Int       @default(0)
+  createdAt      DateTime  @default(now())
+  expiresAt      DateTime?
+  updatedAt      DateTime  @updatedAt
 
-  agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([agentId, userId])
   @@index([expiresAt])
@@ -69,14 +69,14 @@ model AgentMemory {
 // ==============================================================================
 
 model Workflow {
-  id          String   @id @default(cuid())
+  id          String @id @default(cuid())
   name        String
   description String
-  steps       Json     // Array of workflow steps
-  state       Json?    // Current execution state
+  steps       Json // Array of workflow steps
+  state       Json? // Current execution state
   projectId   String
 
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
 }
@@ -86,13 +86,13 @@ model Workflow {
 // ==============================================================================
 
 model Config {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  value       Json
-  encrypted   Boolean  @default(false)
-  projectId   String?
+  id        String  @id @default(cuid())
+  key       String  @unique
+  value     Json
+  encrypted Boolean @default(false)
+  projectId String?
 
-  project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
 
   @@index([projectId])
 }
@@ -102,17 +102,17 @@ model Config {
 // ==============================================================================
 
 model StateMachine {
-  id          String   @id @default(cuid())
-  storyId     String   @unique
-  title       String
-  status      String   // "BACKLOG" | "TODO" | "IN_PROGRESS" | "DONE"
-  points      Int
-  assignee    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  projectId   String
+  id        String   @id @default(cuid())
+  storyId   String   @unique
+  title     String
+  status    String // "BACKLOG" | "TODO" | "IN_PROGRESS" | "DONE"
+  points    Int
+  assignee  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projectId String
 
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId, status])
   @@index([status])
@@ -123,17 +123,17 @@ model StateMachine {
 // ==============================================================================
 
 model ChatSession {
-  id          String   @id @default(cuid())
-  userId      String
-  agentId     String
-  startedAt   DateTime @default(now())
-  endedAt     DateTime?
-  projectId   String?
+  id        String    @id @default(cuid())
+  userId    String
+  agentId   String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  projectId String?
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
-  messages    ChatMessage[]
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agent    Agent         @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  project  Project?      @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  messages ChatMessage[]
 
   @@index([userId])
   @@index([agentId])
@@ -142,16 +142,16 @@ model ChatSession {
 }
 
 model ChatMessage {
-  id          String   @id @default(cuid())
-  sessionId   String
-  role        String   // "user" | "agent" | "system"
-  content     String
-  timestamp   DateTime @default(now())
-  replyToId   String?  // Optional: for threading (CHAT-002)
+  id        String   @id @default(cuid())
+  sessionId String
+  role      String // "user" | "agent" | "system"
+  content   String
+  timestamp DateTime @default(now())
+  replyToId String? // Optional: for threading (CHAT-002)
 
-  session     ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  replyTo     ChatMessage? @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
-  replies     ChatMessage[] @relation("MessageReplies")
+  session ChatSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  replyTo ChatMessage?  @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies ChatMessage[] @relation("MessageReplies")
 
   @@index([sessionId])
   @@index([timestamp])
@@ -169,34 +169,34 @@ model Project {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  agents      Agent[]
-  workflows   Workflow[]
-  configs     Config[]
-  stories     StateMachine[]
+  agents       Agent[]
+  workflows    Workflow[]
+  configs      Config[]
+  stories      StateMachine[]
   chatSessions ChatSession[]
-  members     ProjectMember[]
+  members      ProjectMember[]
 }
 
 model User {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  name        String?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
 
-  memories    AgentMemory[]
+  memories     AgentMemory[]
   chatSessions ChatSession[]
-  projects    ProjectMember[]
+  projects     ProjectMember[]
 }
 
 model ProjectMember {
-  id          String   @id @default(cuid())
-  userId      String
-  projectId   String
-  role        String   // "owner" | "admin" | "member"
-  joinedAt    DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String
+  role      String // "owner" | "admin" | "member"
+  joinedAt  DateTime @default(now())
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([userId, projectId])
   @@index([projectId])

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Chat Command
  *

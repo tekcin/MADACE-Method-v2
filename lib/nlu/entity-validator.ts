@@ -6,7 +6,7 @@
  */
 
 import path from 'path';
-import type { NLUEntity, MadaceEntityType } from './types';
+import type { NLUEntity } from './types';
 import * as agentService from '@/lib/services/agent-service';
 import { createStateMachine } from '@/lib/state/machine';
 import type { StoryState } from '@/lib/state/types';

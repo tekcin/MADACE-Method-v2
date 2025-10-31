@@ -87,7 +87,7 @@ export class WebSocketClient {
     this.setupEventListeners();
     this.updateStatus(ConnectionStatus.CONNECTING);
 
-    console.log('[WebSocketClient] Connecting to:', url);
+    console.error('[WebSocketClient] Connecting to:', url);
   }
 
   /**
@@ -100,7 +100,7 @@ export class WebSocketClient {
 
     // Connection events
     this.socket.on('connect', () => {
-      console.log('[WebSocketClient] Connected:', this.socket?.id);
+      console.error('[WebSocketClient] Connected:', this.socket?.id);
       this.updateStatus(ConnectionStatus.CONNECTED);
 
       // Rejoin room if we were in one before disconnect
@@ -110,7 +110,7 @@ export class WebSocketClient {
     });
 
     this.socket.on('disconnect', (reason: string) => {
-      console.log('[WebSocketClient] Disconnected:', reason);
+      console.error('[WebSocketClient] Disconnected:', reason);
       this.updateStatus(ConnectionStatus.DISCONNECTED);
     });
 
@@ -120,13 +120,13 @@ export class WebSocketClient {
     });
 
     this.socket.on('reconnect_attempt', () => {
-      console.log('[WebSocketClient] Reconnecting...');
+      console.error('[WebSocketClient] Reconnecting...');
       this.updateStatus(ConnectionStatus.RECONNECTING);
     });
 
     // Room events
     this.socket.on('room:users', (users: CollabUser[]) => {
-      console.log('[WebSocketClient] Room users updated:', users.length);
+      console.error('[WebSocketClient] Room users updated:', users.length);
       this.notifyRoomUsers(users);
     });
 
@@ -174,7 +174,7 @@ export class WebSocketClient {
 
     this.socket.emit('room:join', { roomId, user });
 
-    console.log(`[WebSocketClient] Joined room: ${roomId} as ${user.name}`);
+    console.error(`[WebSocketClient] Joined room: ${roomId} as ${user.name}`);
   }
 
   /**
@@ -187,7 +187,7 @@ export class WebSocketClient {
 
     this.socket.emit('room:leave', this.currentRoomId);
 
-    console.log(`[WebSocketClient] Left room: ${this.currentRoomId}`);
+    console.error(`[WebSocketClient] Left room: ${this.currentRoomId}`);
 
     this.currentRoomId = null;
     this.currentUser = null;
@@ -265,7 +265,7 @@ export class WebSocketClient {
 
     this.socket.emit('chat:message', payload);
 
-    console.log(`[WebSocketClient] Sent chat message to room ${roomId}`);
+    console.error(`[WebSocketClient] Sent chat message to room ${roomId}`);
   }
 
   /**
@@ -279,7 +279,7 @@ export class WebSocketClient {
 
     this.socket.emit('chat:history', roomId);
 
-    console.log(`[WebSocketClient] Requested chat history for room ${roomId}`);
+    console.error(`[WebSocketClient] Requested chat history for room ${roomId}`);
   }
 
   /**
@@ -411,7 +411,7 @@ export class WebSocketClient {
       this.socket = null;
       this.updateStatus(ConnectionStatus.DISCONNECTED);
 
-      console.log('[WebSocketClient] Disconnected');
+      console.error('[WebSocketClient] Disconnected');
     }
   }
 

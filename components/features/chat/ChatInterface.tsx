@@ -105,6 +105,7 @@ export default function ChatInterface({
       container.addEventListener('scroll', handleScroll);
       return () => container.removeEventListener('scroll', handleScroll);
     }
+    return undefined;
   }, [messages, isLoadingMore, hasMore]);
 
   const scrollToBottom = () => {
@@ -213,7 +214,7 @@ export default function ChatInterface({
                     m.id === placeholderMessage.id ? { ...m, content: agentContent } : m
                   )
                 );
-              } catch (_e) {
+              } catch {
                 // Ignore JSON parse errors
               }
             }

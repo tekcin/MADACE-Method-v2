@@ -41,7 +41,7 @@ class SyncService {
    */
   async start(config?: SyncServiceConfig): Promise<void> {
     if (this.running) {
-      console.log('[SyncService] Already running');
+      console.error('[SyncService] Already running');
       return;
     }
 
@@ -54,15 +54,15 @@ class SyncService {
 
     try {
       // Start WebSocket server
-      console.log('[SyncService] Starting WebSocket server...');
+      console.error('[SyncService] Starting WebSocket server...');
       await startWebSocketServer(wsPort);
 
       // Start file watchers
-      console.log('[SyncService] Starting file watchers...');
+      console.error('[SyncService] Starting file watchers...');
       startFileWatcher(statePaths, configPath);
 
       this.running = true;
-      console.log('[SyncService] Sync service started successfully');
+      console.error('[SyncService] Sync service started successfully');
     } catch (error) {
       console.error('[SyncService] Failed to start sync service:', error);
       throw error;
@@ -74,21 +74,21 @@ class SyncService {
    */
   async stop(): Promise<void> {
     if (!this.running) {
-      console.log('[SyncService] Not running');
+      console.error('[SyncService] Not running');
       return;
     }
 
     try {
       // Stop file watchers
-      console.log('[SyncService] Stopping file watchers...');
+      console.error('[SyncService] Stopping file watchers...');
       stopFileWatcher();
 
       // Stop WebSocket server
-      console.log('[SyncService] Stopping WebSocket server...');
+      console.error('[SyncService] Stopping WebSocket server...');
       await stopWebSocketServer();
 
       this.running = false;
-      console.log('[SyncService] Sync service stopped successfully');
+      console.error('[SyncService] Sync service stopped successfully');
     } catch (error) {
       console.error('[SyncService] Failed to stop sync service:', error);
       throw error;

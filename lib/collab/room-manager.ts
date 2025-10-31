@@ -70,7 +70,7 @@ export class RoomManager {
 
     this.rooms.set(roomId, room);
 
-    console.log(`[RoomManager] Created room: ${roomId}`);
+    console.error(`[RoomManager] Created room: ${roomId}`);
 
     return room;
   }
@@ -102,7 +102,7 @@ export class RoomManager {
     room.users.set(socketId, user);
     room.lastActivity = new Date();
 
-    console.log(
+    console.error(
       `[RoomManager] Added user ${user.name} (${socketId}) to room ${roomId}. Total: ${room.users.size}`
     );
   }
@@ -124,7 +124,7 @@ export class RoomManager {
     room.users.delete(socketId);
     room.lastActivity = new Date();
 
-    console.log(
+    console.error(
       `[RoomManager] Removed user ${user?.name || socketId} from room ${roomId}. Remaining: ${room.users.size}`
     );
 
@@ -202,7 +202,7 @@ export class RoomManager {
 
     room.lastActivity = new Date();
 
-    console.log(
+    console.error(
       `[RoomManager] Added message from ${message.userName} to room ${roomId}. Total: ${room.messages.length}`
     );
   }
@@ -291,7 +291,7 @@ export class RoomManager {
     }
 
     this.rooms.delete(roomId);
-    console.log(`[RoomManager] Cleaned up empty room: ${roomId}`);
+    console.error(`[RoomManager] Cleaned up empty room: ${roomId}`);
   }
 
   /**
@@ -304,7 +304,7 @@ export class RoomManager {
       this.rooms.delete(room.id);
     });
 
-    console.log(`[RoomManager] Cleaned up ${emptyRooms.length} empty rooms`);
+    console.error(`[RoomManager] Cleaned up ${emptyRooms.length} empty rooms`);
   }
 
   /**
@@ -323,7 +323,7 @@ export class RoomManager {
       this.rooms.delete(room.id);
     });
 
-    console.log(
+    console.error(
       `[RoomManager] Cleaned up ${inactiveRooms.length} inactive rooms (> ${maxInactiveMinutes} min)`
     );
   }
@@ -358,7 +358,7 @@ export class RoomManager {
       this.removeUser(roomId, socketId);
     });
 
-    console.log(`[RoomManager] Removed user ${socketId} from ${userRooms.length} rooms`);
+    console.error(`[RoomManager] Removed user ${socketId} from ${userRooms.length} rooms`);
   }
 
   /**
@@ -373,6 +373,6 @@ export class RoomManager {
    */
   clearAllRooms(): void {
     this.rooms.clear();
-    console.log('[RoomManager] Cleared all rooms');
+    console.error('[RoomManager] Cleared all rooms');
   }
 }

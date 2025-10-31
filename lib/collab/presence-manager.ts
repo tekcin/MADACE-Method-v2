@@ -5,7 +5,6 @@
  * Manages user presence, colors, and status for collaborative sessions.
  */
 
-import type * as Y from 'yjs';
 import type { Awareness } from 'y-protocols/awareness';
 
 /**
@@ -125,7 +124,7 @@ export class PresenceManager {
     // Listen to awareness changes
     awareness.on('change', this.handleAwarenessChange.bind(this));
 
-    console.log(`[PresenceManager] Initialized for user: ${userName} (${userId})`);
+    console.error(`[PresenceManager] Initialized for user: ${userName} (${userId})`);
   }
 
   /**
@@ -138,7 +137,7 @@ export class PresenceManager {
       removed: number[];
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    origin: any
+    _origin: any
   ): void {
     if (!this.awareness) return;
 
@@ -149,7 +148,7 @@ export class PresenceManager {
       const state = states.get(clientId);
       if (state?.user) {
         const user = state.user as UserPresence;
-        console.log(`[PresenceManager] User joined: ${user.name} (${user.id})`);
+        console.error(`[PresenceManager] User joined: ${user.name} (${user.id})`);
 
         // Notify join callbacks
         this.joinCallbacks.forEach((callback) => callback(user));
@@ -160,7 +159,7 @@ export class PresenceManager {
     changes.removed.forEach((clientId) => {
       // We can't get the user info anymore since they're removed
       // The awareness state will have been cleared
-      console.log(`[PresenceManager] User left: clientId ${clientId}`);
+      console.error(`[PresenceManager] User left: clientId ${clientId}`);
 
       // Extract userId from awareness meta if available
       const userId = this.getUserIdByClientId(clientId);
@@ -342,7 +341,7 @@ export class PresenceManager {
     this.leaveCallbacks.clear();
     this.assignedColors.clear();
 
-    console.log('[PresenceManager] Destroyed');
+    console.error('[PresenceManager] Destroyed');
   }
 }
 

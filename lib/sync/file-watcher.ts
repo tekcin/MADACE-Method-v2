@@ -61,7 +61,7 @@ export class FileWatcher {
       this.watchFile(this.config.configPath, 'config');
     }
 
-    console.log('[FileWatcher] Started watching files');
+    console.error('[FileWatcher] Started watching files');
   }
 
   /**
@@ -77,11 +77,11 @@ export class FileWatcher {
     // Close all watchers
     for (const [path, watcher] of this.watchers) {
       watcher.close();
-      console.log(`[FileWatcher] Stopped watching: ${path}`);
+      console.error(`[FileWatcher] Stopped watching: ${path}`);
     }
     this.watchers.clear();
 
-    console.log('[FileWatcher] Stopped watching files');
+    console.error('[FileWatcher] Stopped watching files');
   }
 
   /**
@@ -108,7 +108,7 @@ export class FileWatcher {
       });
 
       this.watchers.set(dirPath, watcher);
-      console.log(`[FileWatcher] Watching directory: ${dirPath}`);
+      console.error(`[FileWatcher] Watching directory: ${dirPath}`);
     } catch (error) {
       console.error(`[FileWatcher] Failed to watch directory ${dirPath}:`, error);
     }
@@ -130,7 +130,7 @@ export class FileWatcher {
       });
 
       this.watchers.set(filePath, watcher);
-      console.log(`[FileWatcher] Watching file: ${filePath}`);
+      console.error(`[FileWatcher] Watching file: ${filePath}`);
     } catch (error) {
       console.error(`[FileWatcher] Failed to watch file ${filePath}:`, error);
     }
@@ -163,7 +163,7 @@ export class FileWatcher {
     type: 'state' | 'config',
     eventType: string
   ): Promise<void> {
-    console.log(`[FileWatcher] File changed: ${filePath} (${eventType})`);
+    console.error(`[FileWatcher] File changed: ${filePath} (${eventType})`);
 
     try {
       if (type === 'state') {
@@ -183,7 +183,7 @@ export class FileWatcher {
     try {
       // Check if file still exists (might have been deleted)
       if (!fs.existsSync(filePath)) {
-        console.log(`[FileWatcher] State file deleted: ${filePath}`);
+        console.error(`[FileWatcher] State file deleted: ${filePath}`);
         return;
       }
 
@@ -213,7 +213,7 @@ export class FileWatcher {
 
       const sent = wsServer.broadcastStateUpdate(workflowName, stateUpdate);
 
-      console.log(
+      console.error(
         `[FileWatcher] Broadcasted state update for '${workflowName}' to ${sent} clients`
       );
     } catch (error) {
@@ -228,7 +228,7 @@ export class FileWatcher {
     try {
       // Check if file still exists
       if (!fs.existsSync(filePath)) {
-        console.log(`[FileWatcher] Config file deleted: ${filePath}`);
+        console.error(`[FileWatcher] Config file deleted: ${filePath}`);
         return;
       }
 
@@ -240,7 +240,7 @@ export class FileWatcher {
       const wsServer = getWebSocketServer();
       const sent = wsServer.broadcastConfigUpdate('project', config);
 
-      console.log(`[FileWatcher] Broadcasted config update to ${sent} clients`);
+      console.error(`[FileWatcher] Broadcasted config update to ${sent} clients`);
     } catch (error) {
       console.error(`[FileWatcher] Failed to process config file ${filePath}:`, error);
     }

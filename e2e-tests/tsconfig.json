@@ -1,0 +1,61 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Strict Type-Checking Options (ENFORCED)
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    // Additional Checks for Test Quality
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    // Module Resolution
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    // Output Options
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": false,
+
+    // Emit Options
+    "noEmit": true,
+    "isolatedModules": true,
+
+    // Path Mapping
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["./*"],
+      "@e2e/*": ["./e2e-tests/*"]
+    },
+
+    // Type Definitions
+    "types": ["@playwright/test", "node"]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.spec.ts",
+    "./utils/**/*.ts",
+    "./fixtures/**/*.ts",
+    "./page-objects/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "playwright-report",
+    "test-results"
+  ]
+}

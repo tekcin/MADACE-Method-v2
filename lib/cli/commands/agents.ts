@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Agent Management CLI Commands
  *

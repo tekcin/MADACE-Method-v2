@@ -37,7 +37,7 @@ export class WebSocketSyncServer {
         this.wss = new WebSocketServer({ port });
 
         this.wss.on('listening', () => {
-          console.log(`[WebSocket] Server listening on port ${port}`);
+          console.error(`[WebSocket] Server listening on port ${port}`);
           this.startPingInterval();
           resolve();
         });
@@ -82,7 +82,7 @@ export class WebSocketSyncServer {
         if (error) {
           reject(error);
         } else {
-          console.log('[WebSocket] Server stopped');
+          console.error('[WebSocket] Server stopped');
           this.wss = null;
           resolve();
         }
@@ -105,7 +105,7 @@ export class WebSocketSyncServer {
     };
 
     this.clients.set(clientId, { ws, info });
-    console.log(`[WebSocket] Client connected: ${clientId} (source: ${info.metadata?.source})`);
+    console.error(`[WebSocket] Client connected: ${clientId} (source: ${info.metadata?.source})`);
 
     // Send welcome message
     this.sendToClient(clientId, {
@@ -120,7 +120,7 @@ export class WebSocketSyncServer {
 
     ws.on('close', () => {
       this.clients.delete(clientId);
-      console.log(`[WebSocket] Client disconnected: ${clientId}`);
+      console.error(`[WebSocket] Client disconnected: ${clientId}`);
     });
 
     ws.on('error', (error) => {
@@ -168,7 +168,7 @@ export class WebSocketSyncServer {
       }
 
       // Broadcast message to other clients
-      console.log(`[WebSocket] Message from ${clientId}:`, message.type);
+      console.error(`[WebSocket] Message from ${clientId}:`, message.type);
       this.broadcast(message, { excludeClient: clientId });
     } catch (error) {
       console.error(`[WebSocket] Failed to parse message from ${clientId}:`, error);
@@ -309,7 +309,7 @@ export class WebSocketSyncServer {
 
           // Check for stale connections (no pong for 60 seconds)
           if (info.lastPing && now - info.lastPing > 60000) {
-            console.log(`[WebSocket] Closing stale connection: ${clientId}`);
+            console.error(`[WebSocket] Closing stale connection: ${clientId}`);
             ws.close();
             this.clients.delete(clientId);
           }

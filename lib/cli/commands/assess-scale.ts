@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * CLI Command: madace assess-scale
  * STORY-V3-007: Add CLI Command for Complexity Assessment

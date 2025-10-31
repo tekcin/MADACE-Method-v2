@@ -21,10 +21,10 @@ import {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string; memoryId: string } }
+  { params }: { params: Promise<{ id: string; memoryId: string }> }
 ) {
   try {
-    const { memoryId } = params;
+    const { memoryId } = await params;
 
     const memory = await getMemory(memoryId);
 
@@ -63,10 +63,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string; memoryId: string } }
+  { params }: { params: Promise<{ id: string; memoryId: string }> }
 ) {
   try {
-    const { memoryId } = params;
+    const { memoryId } = await params;
     const body = await request.json();
 
     // Check if memory exists
@@ -127,10 +127,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; memoryId: string } }
+  { params }: { params: Promise<{ id: string; memoryId: string }> }
 ) {
   try {
-    const { memoryId } = params;
+    const { memoryId } = await params;
 
     // Check if memory exists
     const existing = await getMemory(memoryId);

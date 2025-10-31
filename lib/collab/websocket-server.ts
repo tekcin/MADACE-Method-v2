@@ -127,7 +127,7 @@ export class WebSocketServer {
 
     this.setupEventHandlers();
 
-    console.log('[WebSocketServer] Initialized on /api/v3/collab/ws');
+    console.error('[WebSocketServer] Initialized on /api/v3/collab/ws');
   }
 
   /**
@@ -139,7 +139,7 @@ export class WebSocketServer {
     }
 
     this.io.on(CollabEvent.CONNECT, (socket: Socket) => {
-      console.log(`[WebSocketServer] Client connected: ${socket.id}`);
+      console.error(`[WebSocketServer] Client connected: ${socket.id}`);
 
       // Handle room join
       socket.on(CollabEvent.JOIN_ROOM, (payload: JoinRoomPayload) => {
@@ -202,7 +202,7 @@ export class WebSocketServer {
     const roomUsers = this.roomManager.getRoomUsers(roomId);
     this.io?.to(roomId).emit(CollabEvent.ROOM_USERS, roomUsers);
 
-    console.log(
+    console.error(
       `[WebSocketServer] User ${user.name} (${socket.id}) joined room ${roomId}. Total users: ${roomUsers.length}`
     );
   }
@@ -219,7 +219,7 @@ export class WebSocketServer {
     const roomUsers = this.roomManager.getRoomUsers(roomId);
     this.io?.to(roomId).emit(CollabEvent.ROOM_USERS, roomUsers);
 
-    console.log(`[WebSocketServer] User ${socket.id} left room ${roomId}`);
+    console.error(`[WebSocketServer] User ${socket.id} left room ${roomId}`);
   }
 
   /**
@@ -235,7 +235,7 @@ export class WebSocketServer {
     // Broadcast to all other users in room
     socket.to(roomId).emit(event, payload);
 
-    console.log(
+    console.error(
       `[WebSocketServer] ${event} from ${socket.id} in room ${roomId}: ${payload.filePath}`
     );
   }
@@ -270,7 +270,7 @@ export class WebSocketServer {
     // Broadcast to all users in room (including sender)
     this.io?.to(roomId).emit(CollabEvent.CHAT_MESSAGE, message);
 
-    console.log(
+    console.error(
       `[WebSocketServer] Chat message from ${userName} in room ${roomId}: ${content.substring(0, 50)}${content.length > 50 ? '...' : ''}`
     );
   }
@@ -285,7 +285,7 @@ export class WebSocketServer {
     // Send history to requesting client only
     socket.emit(CollabEvent.CHAT_HISTORY, messages);
 
-    console.log(
+    console.error(
       `[WebSocketServer] Sent ${messages.length} chat messages to ${socket.id} for room ${roomId}`
     );
   }
@@ -309,7 +309,7 @@ export class WebSocketServer {
 
     this.connectedUsers.delete(socket.id);
 
-    console.log(`[WebSocketServer] Client disconnected: ${socket.id}`);
+    console.error(`[WebSocketServer] Client disconnected: ${socket.id}`);
   }
 
   /**
@@ -339,7 +339,7 @@ export class WebSocketServer {
   shutdown(): void {
     if (this.io) {
       this.io.close();
-      console.log('[WebSocketServer] Server shut down');
+      console.error('[WebSocketServer] Server shut down');
     }
   }
 }

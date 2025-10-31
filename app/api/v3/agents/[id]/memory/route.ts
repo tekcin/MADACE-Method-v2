@@ -22,9 +22,9 @@ import {
  * GET /api/v3/agents/:id/memory
  * List memories for an agent
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const agentId = params.id;
+    const { id: agentId } = await params;
     const { searchParams } = new URL(request.url);
 
     const userId = searchParams.get('userId') || 'cli-user'; // Mock user for now
@@ -102,9 +102,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * POST /api/v3/agents/:id/memory
  * Create a new memory
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const agentId = params.id;
+    const { id: agentId } = await params;
     const body = await request.json();
 
     const userId = body.userId || 'cli-user';
@@ -161,9 +161,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
  * DELETE /api/v3/agents/:id/memory
  * Clear all memories for an agent
  */
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const agentId = params.id;
+    const { id: agentId } = await params;
     const { searchParams } = new URL(request.url);
 
     const userId = searchParams.get('userId') || 'cli-user';

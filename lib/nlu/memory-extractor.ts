@@ -47,6 +47,7 @@ function extractUserFacts(message: string): ExtractedMemory[] {
   // Work/Project context: "I work on X", "I'm building X", "working on X"
   const workPatterns = [
     /(?:i work on|i'm (?:building|working on|developing)|i am (?:building|working on|developing)) (.+?)(?:\.|,|$)/i,
+    /(?:currently |presently )?(?:working on|building|developing) (.+?)(?:\.|,|$)/i,
     /my (?:project|work) (?:is|focuses on) (.+?)(?:\.|,|$)/i,
   ];
 
@@ -86,9 +87,10 @@ function extractUserFacts(message: string): ExtractedMemory[] {
 
   // Role/Position: "I'm a X developer", "I am X"
   const rolePatterns = [
-    /i'm a (.+?(?:developer|engineer|designer|manager|architect|analyst))(?:\.|,|$)/i,
-    /i am a (.+?(?:developer|engineer|designer|manager|architect|analyst))(?:\.|,|$)/i,
-    /i work as (?:a |an )?(.+?(?:developer|engineer|designer|manager|architect|analyst))(?:\.|,|$)/i,
+    /i'm (?:a |an )?((?:[a-z]+ )?(?:developer|engineer|designer|manager|architect|analyst))(?:\.|,|$)/i,
+    /i am (?:a |an )?((?:[a-z]+ )?(?:developer|engineer|designer|manager|architect|analyst))(?:\.|,|$)/i,
+    /i work as (?:a |an )?((?:[a-z]+ )?(?:developer|engineer|designer|manager|architect|analyst))(?:\.|,|$)/i,
+    / as (?:a |an )?((?:[a-z]+ )?(?:developer|engineer|designer|manager|architect|analyst))(?:\.|,|$)/i,
   ];
 
   for (const pattern of rolePatterns) {
@@ -126,7 +128,7 @@ function inferPreferences(message: string, conversationHistory: string[]): Extra
       value: 'concise',
       importance: 6,
     });
-  } else if (conversationHistory.length >= 3 && avgMessageLength > 200) {
+  } else if (conversationHistory.length >= 2 && avgMessageLength > 100) {
     preferences.push({
       category: 'user_preference',
       key: 'communication_style',

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Workflow CLI Commands
  *
@@ -6,7 +7,7 @@
 
 import { Command } from 'commander';
 import { loadWorkflow, createWorkflowExecutor, WorkflowLoadError } from '@/lib/workflows';
-import { formatKeyValue, formatTable, formatJSON, formatList } from '@/lib/cli/formatters';
+import { formatKeyValue, formatTable, formatJSON } from '@/lib/cli/formatters';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { resolve, join, basename } from 'path';
 import inquirer from 'inquirer';
@@ -52,7 +53,7 @@ export function createWorkflowsCommand(): Command {
             const filePath = join(dir, file);
             try {
               const workflow = await loadWorkflow(filePath);
-              const module = dir.includes('/mam/')
+              const workflowModule = dir.includes('/mam/')
                 ? 'MAM'
                 : dir.includes('/mab/')
                   ? 'MAB'
@@ -65,7 +66,7 @@ export function createWorkflowsCommand(): Command {
               foundWorkflows.push({
                 name: workflow.name || basename(file, '.yaml'),
                 file: filePath,
-                module,
+                module: workflowModule,
                 description: workflow.description || 'No description',
               });
             } catch (error) {
