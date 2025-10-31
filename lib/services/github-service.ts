@@ -40,6 +40,11 @@ export interface ProjectAnalysis {
   openIssues: number;
   lastUpdated: string;
   defaultBranch: string;
+  readme?: {
+    content: string;
+    summary: string;
+    filename: string;
+  };
 }
 
 export class GitHubService {
@@ -156,6 +161,102 @@ export class GitHubService {
   }
 
   /**
+   * Find and read README file from project directory
+   */
+  private async findAndReadReadme(
+    projectPath: string
+  ): Promise<{ content: string; filename: string } | null> {
+    const readmeVariants = [
+      'README.md',
+      'readme.md',
+      'Readme.md',
+      'README',
+      'readme',
+      'README.txt',
+      'readme.txt',
+    ];
+
+    for (const filename of readmeVariants) {
+      const readmePath = path.join(projectPath, filename);
+      if (existsSync(readmePath)) {
+        try {
+          const content = await fs.readFile(readmePath, 'utf-8');
+          return { content, filename };
+        } catch (error) {
+          console.error(`Error reading ${filename}:`, error);
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Generate a summary of README content
+   */
+  private generateReadmeSummary(content: string, repoDescription: string): string {
+    // If the content is too short, just return it as is
+    if (content.length < 200) {
+      return content.trim();
+    }
+
+    // Extract the first few paragraphs (up to 500 characters)
+    const lines = content.split('\n');
+    const meaningfulLines: string[] = [];
+    let charCount = 0;
+    let inCodeBlock = false;
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+
+      // Skip code blocks
+      if (trimmed.startsWith('```')) {
+        inCodeBlock = !inCodeBlock;
+        continue;
+      }
+      if (inCodeBlock) continue;
+
+      // Skip image links and badges
+      if (trimmed.startsWith('![') || trimmed.startsWith('[![')) continue;
+
+      // Skip HTML comments
+      if (trimmed.startsWith('<!--')) continue;
+
+      // Skip header lines (###, ---, ===)
+      if (/^[#=\-]{3,}$/.test(trimmed)) continue;
+
+      // If it's a title (# Title), keep it but don't count heavily
+      if (trimmed.startsWith('#')) {
+        meaningfulLines.push(trimmed.replace(/^#+\s*/, ''));
+        continue;
+      }
+
+      // Add meaningful lines
+      if (trimmed && !trimmed.startsWith('|') && !trimmed.startsWith('>')) {
+        meaningfulLines.push(trimmed);
+        charCount += trimmed.length;
+
+        // Stop when we have enough content
+        if (charCount > 500) break;
+      }
+    }
+
+    let summary = meaningfulLines.join(' ').substring(0, 600);
+
+    // If summary is too short or empty, use repo description
+    if (summary.length < 50 && repoDescription) {
+      summary = repoDescription;
+    }
+
+    // Add ellipsis if we truncated
+    if (content.length > 600) {
+      summary += '...';
+    }
+
+    return summary.trim();
+  }
+
+  /**
    * Analyze project files and structure
    */
   async analyzeProject(projectPath: string, repoInfo: GitHubRepoInfo): Promise<ProjectAnalysis> {
@@ -227,6 +328,16 @@ export class GitHubService {
         }
       }
 
+      // Read and summarize README
+      const readmeData = await this.findAndReadReadme(projectPath);
+      const readme = readmeData
+        ? {
+            content: readmeData.content,
+            summary: this.generateReadmeSummary(readmeData.content, metadata.description),
+            filename: readmeData.filename,
+          }
+        : undefined;
+
       return {
         name: metadata.name,
         description: metadata.description,
@@ -247,6 +358,7 @@ export class GitHubService {
         openIssues: metadata.openIssues,
         lastUpdated: metadata.lastUpdated,
         defaultBranch: metadata.defaultBranch,
+        readme,
       };
     } catch (error) {
       console.error('Error analyzing project:', error);

@@ -28,6 +28,11 @@ interface ProjectAnalysis {
   openIssues: number;
   lastUpdated: string;
   defaultBranch: string;
+  readme?: {
+    content: string;
+    summary: string;
+    filename: string;
+  };
 }
 
 export default function ImportPage() {
@@ -373,6 +378,60 @@ ${analysis.dependencies.length > 0 ? `**Production**: ${analysis.dependencies.sl
                 </div>
               </div>
             </div>
+
+            {/* README Summary */}
+            {analysis.readme && (
+              <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-800">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    📖 Project Overview ({analysis.readme.filename})
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(analysis.readme!.content);
+                      alert('✅ Full README copied to clipboard!');
+                    }}
+                    className="flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                    title="Copy full README"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Copy Full README
+                  </button>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:text-gray-300">
+                    {analysis.readme.summary}
+                  </p>
+                </div>
+                <div className="mt-3 flex items-start gap-2 text-xs text-gray-500 dark:text-gray-400">
+                  <svg
+                    className="mt-0.5 h-4 w-4 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span>
+                    This is an AI-extracted summary from the repository&apos;s README file. Click
+                    &quot;Copy Full README&quot; above to view the complete documentation.
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* Statistics */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
