@@ -280,15 +280,23 @@ const yamlAgent = await loadAgent('/path/to/agent.yaml');
 - `POST /api/v3/agents/import` - Import agent from JSON
 - `GET /api/v3/agents/search?q=query` - Search agents
 
-**Chat & NLU**:
+**Chat & Conversational AI**:
+
+- `POST /api/v3/chat/sessions` - Create chat session
+- `GET /api/v3/chat/sessions` - List chat sessions (with filters)
+- `GET /api/v3/chat/sessions/[id]` - Get session details
+- `GET /api/v3/chat/sessions/[id]/messages` - Get messages with pagination
+- `POST /api/v3/chat/sessions/[id]/messages` - Send message
+- `DELETE /api/v3/chat/sessions/[id]` - Delete session (cascades to messages and memory)
+- `POST /api/v3/chat/stream` - Stream LLM responses (Server-Sent Events)
+- `GET /api/v3/chat/sessions/[id]/memory` - Get agent memory (context-aware)
+- `POST /api/v3/chat/sessions/[id]/memory` - Save memory entry
+- `DELETE /api/v3/chat/sessions/[id]/memory` - Prune expired/low-importance memory
+
+**NLU (Natural Language Understanding)**:
 
 - `POST /api/v3/nlu/parse` - Parse natural language queries
 - `GET /api/v3/nlu/parse` - Check NLU service status
-- `POST /api/v3/chat/sessions` - Create chat session
-- `GET /api/v3/chat/sessions` - List chat sessions
-- `GET /api/v3/chat/sessions/[id]/messages` - Get chat messages
-- `POST /api/v3/chat/sessions/[id]/messages` - Send message
-- `POST /api/v3/chat/stream` - Stream LLM responses (SSE)
 
 **Workflow Operations**:
 
@@ -681,13 +689,28 @@ npm run test:e2e:debug       # Step through tests
 - ✅ NLU integration with Dialogflow CX
 - ✅ Entity extraction and fuzzy matching
 - ✅ Chat UI for Web and CLI with streaming responses
+- ✅ **Conversational Chat System with Local LLM (Ollama/Gemma3)**
+  - ✅ Database-backed chat sessions and messages (User, ChatSession, ChatMessage, AgentMemory models)
+  - ✅ Real-time streaming with Server-Sent Events (SSE)
+  - ✅ Multi-provider LLM support (local/Gemini/Claude/OpenAI)
+  - ✅ Message threading and pagination
+  - ✅ Persistent agent memory with context awareness
+  - ✅ Complete Chat API (10 endpoints) with comprehensive docs
 - ✅ E2E testing framework with Playwright
-- ✅ Docker deployment (HTTP/HTTPS)
+- ✅ Docker deployment (HTTP/HTTPS) with Ollama container
+- ✅ Console.log cleanup (312 ESLint warnings resolved)
+- ✅ Context7 MCP server integration for up-to-date library docs
 
 **In Progress**:
 
-- ⏳ Message history and threading ([CHAT-002])
-- ⏳ Markdown rendering and code highlighting ([CHAT-003])
+- ⏳ Advanced markdown rendering and code highlighting ([CHAT-003])
+- ⏳ Agent orchestration and multi-agent workflows
+
+**MCP Servers Available**:
+
+- **Context7** - Provides up-to-date documentation for libraries (configured in `.mcp.json`)
+  - Usage: "use context7 to help with [library@version]"
+  - Optional: Add API key at https://context7.com/dashboard for higher rate limits
 
 **Planned**:
 

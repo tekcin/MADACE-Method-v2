@@ -1,8 +1,8 @@
 # MADACE API Documentation
 
-**Version:** 2.0.0-alpha
+**Version:** 3.0.0-alpha
 **Base URL:** `http://localhost:3000/api`
-**Last Updated:** 2025-10-22
+**Last Updated:** 2025-10-30
 
 This document provides comprehensive documentation for all REST API endpoints in the MADACE v2.0 application.
 
@@ -16,6 +16,7 @@ This document provides comprehensive documentation for all REST API endpoints in
 - [State Machine API](#state-machine-api)
 - [Configuration API](#configuration-api)
 - [LLM API](#llm-api)
+- [Chat API (v3)](#chat-api-v3)
 - [Sync Service API](#sync-service-api)
 - [Health Check API](#health-check-api)
 - [Error Handling](#error-handling)
@@ -519,6 +520,735 @@ curl -X POST http://localhost:3000/api/llm/test \
 
 ---
 
+## Chat API (v3)
+
+The Chat API provides conversational interfaces for interacting with AI agents, with support for real-time streaming, message history, threading, and persistent memory.
+
+### Database Schema
+
+The chat system uses the following Prisma models:
+
+- **User** - Chat participants
+- **ChatSession** - Conversation sessions between users and agents
+- **ChatMessage** - Individual messages in conversations
+- **AgentMemory** - Persistent agent memory for context-aware responses
+
+---
+
+### Create Chat Session
+
+Create a new conversation session with an AI agent.
+
+**Endpoint:** `POST /api/v3/chat/sessions`
+
+**Request Body:**
+
+```json
+{
+  "userId": "default-user",
+  "agentId": "chat-assistant-001",
+  "metadata": {
+    "source": "web-ui",
+    "context": "product planning"
+  }
+}
+```
+
+**Parameters:**
+
+- `userId` (string, required) - User ID from User table
+- `agentId` (string, required) - Agent ID from Agent table
+- `metadata` (object, optional) - Additional session context
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "session": {
+    "id": "cmhe21vm00007rzdx62sik85m",
+    "userId": "default-user",
+    "agentId": "chat-assistant-001",
+    "startedAt": "2025-10-30T23:28:09.848Z",
+    "endedAt": null,
+    "metadata": {
+      "source": "web-ui",
+      "context": "product planning"
+    },
+    "createdAt": "2025-10-30T23:28:09.848Z",
+    "updatedAt": "2025-10-30T23:28:09.848Z"
+  }
+}
+```
+
+**Status Codes:**
+
+- `201 Created` - Session created successfully
+- `400 Bad Request` - Invalid user or agent ID
+- `404 Not Found` - User or agent does not exist
+- `500 Internal Server Error` - Database error
+
+**Example:**
+
+```bash
+curl -X POST http://localhost:3000/api/v3/chat/sessions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": "default-user",
+    "agentId": "chat-assistant-001"
+  }'
+```
+
+---
+
+### List Chat Sessions
+
+Retrieve all chat sessions for a user.
+
+**Endpoint:** `GET /api/v3/chat/sessions?userId={userId}`
+
+**Query Parameters:**
+
+- `userId` (string, required) - Filter by user ID
+- `agentId` (string, optional) - Filter by agent ID
+- `active` (boolean, optional) - Filter active sessions (endedAt is null)
+- `limit` (number, optional) - Max sessions to return (default: 50)
+- `offset` (number, optional) - Pagination offset (default: 0)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "sessions": [
+    {
+      "id": "cmhe21vm00007rzdx62sik85m",
+      "userId": "default-user",
+      "agentId": "chat-assistant-001",
+      "startedAt": "2025-10-30T23:28:09.848Z",
+      "endedAt": null,
+      "messageCount": 5,
+      "lastMessageAt": "2025-10-30T23:35:42.123Z"
+    }
+  ],
+  "total": 1,
+  "limit": 50,
+  "offset": 0
+}
+```
+
+**Status Codes:**
+
+- `200 OK` - Success
+- `400 Bad Request` - Invalid query parameters
+- `500 Internal Server Error` - Database error
+
+**Example:**
+
+```bash
+# List all sessions for a user
+curl "http://localhost:3000/api/v3/chat/sessions?userId=default-user"
+
+# List active sessions with an agent
+curl "http://localhost:3000/api/v3/chat/sessions?userId=default-user&agentId=chat-assistant-001&active=true"
+```
+
+---
+
+### Get Session Details
+
+Retrieve details of a specific chat session.
+
+**Endpoint:** `GET /api/v3/chat/sessions/[id]`
+
+**Path Parameters:**
+
+- `id` (string, required) - Session ID
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "session": {
+    "id": "cmhe21vm00007rzdx62sik85m",
+    "userId": "default-user",
+    "agentId": "chat-assistant-001",
+    "startedAt": "2025-10-30T23:28:09.848Z",
+    "endedAt": null,
+    "metadata": {
+      "source": "web-ui"
+    },
+    "agent": {
+      "id": "chat-assistant-001",
+      "name": "chat-assistant",
+      "title": "AI Chat Assistant",
+      "icon": "💬"
+    },
+    "messageCount": 5,
+    "lastMessageAt": "2025-10-30T23:35:42.123Z"
+  }
+}
+```
+
+**Status Codes:**
+
+- `200 OK` - Session found
+- `404 Not Found` - Session does not exist
+- `500 Internal Server Error` - Database error
+
+---
+
+### Send Message
+
+Send a message in a chat session.
+
+**Endpoint:** `POST /api/v3/chat/sessions/[id]/messages`
+
+**Path Parameters:**
+
+- `id` (string, required) - Session ID
+
+**Request Body:**
+
+```json
+{
+  "role": "user",
+  "content": "Tell me a joke about programming",
+  "replyToId": "optional-message-id"
+}
+```
+
+**Parameters:**
+
+- `role` (string, required) - Message role: "user" or "agent"
+- `content` (string, required) - Message content (max 10,000 characters)
+- `replyToId` (string, optional) - ID of message being replied to (for threading)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": {
+    "id": "cmhe2xxx00008rzdxyyyzzz",
+    "sessionId": "cmhe21vm00007rzdx62sik85m",
+    "role": "user",
+    "content": "Tell me a joke about programming",
+    "replyToId": null,
+    "timestamp": "2025-10-30T23:36:15.456Z",
+    "metadata": null
+  }
+}
+```
+
+**Status Codes:**
+
+- `201 Created` - Message sent successfully
+- `400 Bad Request` - Invalid message content or role
+- `404 Not Found` - Session does not exist
+- `413 Payload Too Large` - Message exceeds 10,000 characters
+- `500 Internal Server Error` - Database error
+
+**Example:**
+
+```bash
+curl -X POST http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62sik85m/messages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "role": "user",
+    "content": "Tell me about MADACE methodology"
+  }'
+```
+
+---
+
+### Get Messages
+
+Retrieve messages from a chat session with pagination and threading support.
+
+**Endpoint:** `GET /api/v3/chat/sessions/[id]/messages`
+
+**Path Parameters:**
+
+- `id` (string, required) - Session ID
+
+**Query Parameters:**
+
+- `limit` (number, optional) - Max messages to return (default: 50, max: 200)
+- `offset` (number, optional) - Pagination offset (default: 0)
+- `before` (string, optional) - Get messages before this timestamp (ISO 8601)
+- `after` (string, optional) - Get messages after this timestamp (ISO 8601)
+- `threadId` (string, optional) - Filter by thread (replyToId)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "messages": [
+    {
+      "id": "msg-001",
+      "sessionId": "cmhe21vm00007rzdx62sik85m",
+      "role": "user",
+      "content": "Tell me a joke about programming",
+      "replyToId": null,
+      "timestamp": "2025-10-30T23:36:15.456Z",
+      "metadata": null
+    },
+    {
+      "id": "msg-002",
+      "sessionId": "cmhe21vm00007rzdx62sik85m",
+      "role": "agent",
+      "content": "Why do programmers prefer dark mode?\n\nBecause light attracts bugs! 🐛💡",
+      "replyToId": "msg-001",
+      "timestamp": "2025-10-30T23:36:18.789Z",
+      "metadata": {
+        "model": "gemma3:latest",
+        "tokens": 25
+      }
+    }
+  ],
+  "total": 2,
+  "limit": 50,
+  "offset": 0,
+  "hasMore": false
+}
+```
+
+**Status Codes:**
+
+- `200 OK` - Success
+- `400 Bad Request` - Invalid query parameters
+- `404 Not Found` - Session does not exist
+- `500 Internal Server Error` - Database error
+
+**Example:**
+
+```bash
+# Get all messages
+curl http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62sik85m/messages
+
+# Get recent messages with pagination
+curl "http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62sik85m/messages?limit=20&offset=0"
+
+# Get messages in a thread
+curl "http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62sik85m/messages?threadId=msg-001"
+```
+
+---
+
+### Stream Agent Response
+
+Stream real-time agent responses using Server-Sent Events (SSE).
+
+**Endpoint:** `POST /api/v3/chat/stream`
+
+**Request Body:**
+
+```json
+{
+  "sessionId": "cmhe21vm00007rzdx62sik85m",
+  "agentId": "chat-assistant-001",
+  "replyToId": "optional-message-id"
+}
+```
+
+**Parameters:**
+
+- `sessionId` (string, required) - Chat session ID
+- `agentId` (string, required) - Agent ID
+- `replyToId` (string, optional) - Message ID being replied to
+
+**Response Format:**
+
+Server-Sent Events (SSE) stream with `Content-Type: text/event-stream`
+
+**Event Types:**
+
+1. **Content Chunk** - Streamed text from LLM
+   ```
+   data: {"type":"chunk","content":"Hello"}
+
+   data: {"type":"chunk","content":" there!"}
+   ```
+
+2. **Memory Update** - Agent memory extracted during response
+   ```
+   data: {"type":"memory","category":"user_preferences","key":"language","value":"English"}
+   ```
+
+3. **Completion** - Stream finished
+   ```
+   data: [DONE]
+   ```
+
+4. **Error** - Stream error
+   ```
+   data: {"type":"error","error":"Model timeout","retryable":true}
+   ```
+
+**Status Codes:**
+
+- `200 OK` - Stream started successfully
+- `400 Bad Request` - Invalid session or agent
+- `404 Not Found` - Session or agent does not exist
+- `500 Internal Server Error` - Stream error
+- `503 Service Unavailable` - LLM service unavailable
+
+**Example:**
+
+```bash
+# Stream response using curl
+curl -N -X POST http://localhost:3000/api/v3/chat/stream \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sessionId": "cmhe21vm00007rzdx62sik85m",
+    "agentId": "chat-assistant-001"
+  }'
+
+# Output:
+# data: {"type":"chunk","content":"Why"}
+# data: {"type":"chunk","content":" do"}
+# data: {"type":"chunk","content":" programmers"}
+# data: {"type":"chunk","content":"..."}
+# data: [DONE]
+```
+
+**JavaScript Client Example:**
+
+```javascript
+const response = await fetch('http://localhost:3000/api/v3/chat/stream', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    sessionId: 'cmhe21vm00007rzdx62sik85m',
+    agentId: 'chat-assistant-001'
+  })
+});
+
+const reader = response.body.getReader();
+const decoder = new TextDecoder();
+
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+
+  const chunk = decoder.decode(value);
+  const lines = chunk.split('\n');
+
+  for (const line of lines) {
+    if (line.startsWith('data: ')) {
+      const data = line.slice(6);
+      if (data === '[DONE]') {
+        console.log('Stream complete');
+        break;
+      }
+
+      const event = JSON.parse(data);
+      if (event.type === 'chunk') {
+        process.stdout.write(event.content);
+      }
+    }
+  }
+}
+```
+
+---
+
+### Delete Session
+
+Delete a chat session and all associated messages.
+
+**Endpoint:** `DELETE /api/v3/chat/sessions/[id]`
+
+**Path Parameters:**
+
+- `id` (string, required) - Session ID
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Session deleted successfully",
+  "deletedMessages": 12
+}
+```
+
+**Status Codes:**
+
+- `200 OK` - Session deleted
+- `404 Not Found` - Session does not exist
+- `500 Internal Server Error` - Database error
+
+**Note:** Deletion cascades to all messages and memory entries for this session.
+
+**Example:**
+
+```bash
+curl -X DELETE http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62sik85m
+```
+
+---
+
+### Get Agent Memory
+
+Retrieve agent memory for a session or globally for an agent.
+
+**Endpoint:** `GET /api/v3/chat/sessions/[id]/memory`
+
+**Path Parameters:**
+
+- `id` (string, required) - Session ID
+
+**Query Parameters:**
+
+- `category` (string, optional) - Filter by category (user_preferences, facts, conversation_context, tasks)
+- `limit` (number, optional) - Max entries to return (default: 100)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "memory": [
+    {
+      "id": "mem-001",
+      "agentId": "chat-assistant-001",
+      "sessionId": "cmhe21vm00007rzdx62sik85m",
+      "category": "user_preferences",
+      "key": "programming_language",
+      "value": "TypeScript",
+      "context": "User mentioned working with TypeScript",
+      "importance": 0.8,
+      "lastAccessedAt": "2025-10-30T23:40:15.123Z",
+      "expiresAt": null,
+      "createdAt": "2025-10-30T23:35:42.456Z"
+    }
+  ],
+  "total": 1
+}
+```
+
+**Memory Categories:**
+
+- `user_preferences` - User's stated preferences and settings
+- `facts` - Important facts about the user or context
+- `conversation_context` - Key points from conversation
+- `tasks` - Pending or completed tasks
+
+**Status Codes:**
+
+- `200 OK` - Success
+- `404 Not Found` - Session does not exist
+- `500 Internal Server Error` - Database error
+
+**Example:**
+
+```bash
+# Get all memory for a session
+curl http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62sik85m/memory
+
+# Get user preferences only
+curl "http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62sik85m/memory?category=user_preferences"
+```
+
+---
+
+### Save Agent Memory
+
+Manually save or update agent memory entries.
+
+**Endpoint:** `POST /api/v3/chat/sessions/[id]/memory`
+
+**Path Parameters:**
+
+- `id` (string, required) - Session ID
+
+**Request Body:**
+
+```json
+{
+  "category": "user_preferences",
+  "key": "timezone",
+  "value": "America/Los_Angeles",
+  "context": "User mentioned Pacific time",
+  "importance": 0.7,
+  "expiresAt": "2025-12-31T23:59:59Z"
+}
+```
+
+**Parameters:**
+
+- `category` (string, required) - Memory category
+- `key` (string, required) - Memory key
+- `value` (any, required) - Memory value (string, number, boolean, object)
+- `context` (string, optional) - Context about this memory
+- `importance` (number, optional) - Importance score 0.0-1.0 (default: 0.5)
+- `expiresAt` (string, optional) - ISO 8601 expiration timestamp
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "memory": {
+    "id": "mem-002",
+    "agentId": "chat-assistant-001",
+    "sessionId": "cmhe21vm00007rzdx62sik85m",
+    "category": "user_preferences",
+    "key": "timezone",
+    "value": "America/Los_Angeles",
+    "context": "User mentioned Pacific time",
+    "importance": 0.7,
+    "expiresAt": "2025-12-31T23:59:59.000Z",
+    "createdAt": "2025-10-30T23:45:12.789Z"
+  }
+}
+```
+
+**Status Codes:**
+
+- `201 Created` - Memory saved
+- `400 Bad Request` - Invalid parameters
+- `404 Not Found` - Session does not exist
+- `500 Internal Server Error` - Database error
+
+---
+
+### Prune Agent Memory
+
+Delete expired or low-importance memory entries.
+
+**Endpoint:** `DELETE /api/v3/chat/sessions/[id]/memory`
+
+**Path Parameters:**
+
+- `id` (string, required) - Session ID
+
+**Query Parameters:**
+
+- `olderThan` (string, optional) - Delete entries older than this timestamp (ISO 8601)
+- `importanceLessThan` (number, optional) - Delete entries with importance < this value
+- `category` (string, optional) - Only prune specific category
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Memory pruned successfully",
+  "deletedCount": 15
+}
+```
+
+**Status Codes:**
+
+- `200 OK` - Memory pruned
+- `400 Bad Request` - Invalid parameters
+- `500 Internal Server Error` - Database error
+
+**Example:**
+
+```bash
+# Delete low-importance entries
+curl -X DELETE "http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62sik85m/memory?importanceLessThan=0.3"
+
+# Delete old conversation context
+curl -X DELETE "http://localhost:3000/api/v3/chat/sessions/cmhe21vm00007rzdx62sik85m/memory?category=conversation_context&olderThan=2025-10-25T00:00:00Z"
+```
+
+---
+
+### Chat Error Codes
+
+In addition to common error codes, the Chat API includes specific error responses:
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `SESSION_NOT_FOUND` | 404 | Chat session does not exist |
+| `MESSAGE_TOO_LONG` | 413 | Message exceeds 10,000 characters |
+| `INVALID_ROLE` | 400 | Role must be "user" or "agent" |
+| `USER_NOT_FOUND` | 404 | User ID does not exist |
+| `AGENT_NOT_FOUND` | 404 | Agent ID does not exist |
+| `STREAM_ERROR` | 500 | Error during SSE streaming |
+| `LLM_UNAVAILABLE` | 503 | LLM service is not available |
+| `MODEL_NOT_READY` | 503 | Local model is loading (retry in 10s) |
+| `CONTEXT_WINDOW_EXCEEDED` | 413 | Conversation exceeds model context limit |
+| `MEMORY_QUOTA_EXCEEDED` | 413 | Agent memory limit reached |
+
+---
+
+### Performance Considerations
+
+**Pagination:**
+
+Always use `limit` and `offset` for large conversations:
+
+```bash
+# Efficient: Get recent 20 messages
+curl "http://localhost:3000/api/v3/chat/sessions/{id}/messages?limit=20&offset=0"
+
+# Inefficient: Get all messages in large conversation
+curl "http://localhost:3000/api/v3/chat/sessions/{id}/messages"
+```
+
+**Streaming:**
+
+For real-time responses, use the streaming endpoint (`/api/v3/chat/stream`) instead of polling for messages.
+
+**Memory Management:**
+
+Implement periodic memory pruning to prevent database bloat:
+
+```bash
+# Weekly cron job to prune old low-importance memory
+curl -X DELETE "http://localhost:3000/api/v3/chat/sessions/{id}/memory?importanceLessThan=0.3&olderThan=$(date -d '30 days ago' -Iseconds)"
+```
+
+**Local LLM:**
+
+- **First inference**: 10-30 seconds (model loading)
+- **Subsequent inferences**: 1-5 seconds
+- **Cold start optimization**: Keep Ollama container running
+
+---
+
+### Complete Chat Flow Example
+
+```bash
+# 1. Create chat session
+SESSION=$(curl -s -X POST http://localhost:3000/api/v3/chat/sessions \
+  -H "Content-Type: application/json" \
+  -d '{"userId":"default-user","agentId":"chat-assistant-001"}' \
+  | jq -r '.session.id')
+
+echo "Session ID: $SESSION"
+
+# 2. Send user message
+curl -X POST "http://localhost:3000/api/v3/chat/sessions/$SESSION/messages" \
+  -H "Content-Type: application/json" \
+  -d '{"role":"user","content":"Tell me about MADACE methodology"}' \
+  | jq .
+
+# 3. Stream agent response
+curl -N -X POST http://localhost:3000/api/v3/chat/stream \
+  -H "Content-Type: application/json" \
+  -d "{\"sessionId\":\"$SESSION\",\"agentId\":\"chat-assistant-001\"}"
+
+# 4. Get conversation history
+curl "http://localhost:3000/api/v3/chat/sessions/$SESSION/messages" | jq .
+
+# 5. Check agent memory
+curl "http://localhost:3000/api/v3/chat/sessions/$SESSION/memory" | jq .
+
+# 6. Clean up (optional)
+curl -X DELETE "http://localhost:3000/api/v3/chat/sessions/$SESSION"
+```
+
+---
+
 ## Sync Service API
 
 ### Get Sync Service Status
@@ -829,5 +1559,5 @@ For issues or questions:
 
 ---
 
-**Last Updated:** 2025-10-22
-**Version:** 2.0.0-alpha
+**Last Updated:** 2025-10-30
+**Version:** 3.0.0-alpha
