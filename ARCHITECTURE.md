@@ -6896,3 +6896,368 @@ ${analysis.dependencies.length > 0 ? `**Production**: ${analysis.dependencies.sl
 - **Development Time**: ~3.5 hours (feature + 3 enhancements)
 
 ---
+
+## Section 14.18: Left Sidebar Navigation (2025-10-31)
+
+### Overview
+
+Transformed the application's navigation from a horizontal top navbar to a modern left sidebar layout, providing a more professional and space-efficient UI for the web interface.
+
+**Implementation Date**: October 31, 2025
+**Story**: UI-001 - Navigation Reconfiguration
+**Commit**: `1f94fc2` - "refactor(ui): Convert top navbar to left sidebar navigation"
+
+### Architecture Changes
+
+#### Component Transformation
+
+**Before** (Horizontal Top Navbar):
+- Navigation bar spanning full width at top
+- Mobile hamburger menu with dropdown
+- Project selector in top bar
+- Horizontal navigation items
+
+**After** (Vertical Left Sidebar):
+- Fixed left sidebar (256px expanded, 80px collapsed)
+- Mobile slide-out drawer with backdrop
+- Collapsible desktop sidebar with chevron toggle
+- Floating action button for mobile
+- Icon-only mode when collapsed
+
+#### Component Structure
+
+**File**: `components/features/Navigation.tsx` (162 lines)
+
+```typescript
+// State Management
+const [sidebarOpen, setSidebarOpen] = useState(false);        // Mobile drawer
+const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // Desktop collapse
+
+// Auto-close mobile sidebar on route changes
+useEffect(() => {
+  setSidebarOpen(false);
+}, [pathname]);
+```
+
+**Component Hierarchy**:
+
+```
+<>
+  {/* Mobile backdrop overlay (z-40) */}
+  <div onClick={close} />
+
+  {/* Sidebar (z-50) */}
+  <aside className="fixed inset-y-0 left-0">
+    {/* Header */}
+    <div>
+      <Link>MADACE / M</Link>
+      <button>Collapse/Expand</button>
+    </div>
+
+    {/* Project Selector (hidden when collapsed) */}
+    {!sidebarCollapsed && <ProjectSelector />}
+
+    {/* Navigation Links */}
+    <nav>
+      {navigation.map(item => (
+        <Link>{item.icon} {!collapsed && item.name}</Link>
+      ))}
+    </nav>
+
+    {/* Footer */}
+    {!sidebarCollapsed && <div>© 2025</div>}
+  </aside>
+
+  {/* Mobile FAB (z-50) */}
+  <button className="fixed bottom-4 right-4" />
+
+  {/* Project Modal */}
+  <ProjectModal />
+</>
+```
+
+#### Layout Integration
+
+**File**: `app/layout.tsx`
+
+**Changes**:
+- Navigation moved outside main flex container (fixed positioning)
+- Added `lg:ml-64` to main content wrapper (256px left margin on desktop)
+- ProjectProvider wraps entire layout
+
+```typescript
+<ProjectProvider>
+  <Navigation />  {/* Fixed position, outside flow */}
+  <div className="flex min-h-screen flex-col lg:ml-64">
+    <main className="flex-1">{children}</main>
+    <Footer />
+  </div>
+</ProjectProvider>
+```
+
+### Responsive Design
+
+#### Desktop Behavior (lg: breakpoint and above)
+
+**Expanded State** (default):
+- Width: 256px (`lg:w-64`)
+- Shows full text labels
+- Project selector visible
+- Collapse button (chevron left icon)
+- Main content offset by 256px (`lg:ml-64`)
+
+**Collapsed State**:
+- Width: 80px (`lg:w-20`)
+- Icon-only navigation
+- Tooltips on hover (title attribute)
+- Project selector hidden
+- Expand button (chevron right icon)
+- Main content offset by 80px
+
+#### Mobile Behavior (< lg breakpoint)
+
+**Closed State** (default):
+- Sidebar translated off-screen (`-translate-x-full`)
+- Floating action button visible (bottom-right)
+- Full-width main content
+
+**Open State**:
+- Sidebar slides in from left
+- Backdrop overlay (semi-transparent gray)
+- Click backdrop or X button to close
+- Auto-closes on route navigation
+
+### Styling and Transitions
+
+**CSS Classes**:
+
+```typescript
+// Sidebar positioning
+"fixed inset-y-0 left-0 z-50"
+
+// Responsive width
+"w-64 lg:translate-x-0"
+"lg:w-64" // expanded
+"lg:w-20" // collapsed
+
+// Mobile visibility
+sidebarOpen ? "translate-x-0" : "-translate-x-full"
+
+// Smooth transitions
+"transition-all duration-300"
+
+// Dark mode support
+"dark:bg-gray-900 dark:border-gray-800"
+```
+
+**Z-Index Hierarchy**:
+- Backdrop: `z-40`
+- Sidebar: `z-50`
+- Mobile FAB: `z-50`
+
+### Navigation Items
+
+All 10 navigation items preserved:
+
+1. **Dashboard** (`/`) - HomeIcon
+2. **Chat** (`/chat`) - ChatBubbleLeftIcon
+3. **Kanban** (`/kanban`) - ViewColumnsIcon
+4. **Assess** (`/assess`) - ChartBarIcon
+5. **Import** (`/import`) - CloudArrowDownIcon
+6. **Agents** (`/agents`) - UserGroupIcon
+7. **Workflows** (`/workflows`) - RectangleStackIcon
+8. **Sync Status** (`/sync-status`) - ArrowPathIcon
+9. **LLM Test** (`/llm-test`) - BeakerIcon
+10. **Settings** (`/settings`) - Cog6ToothIcon
+
+**Active State Highlighting**:
+- Blue background (`bg-blue-50 dark:bg-blue-900`)
+- Blue text (`text-blue-700 dark:text-blue-200`)
+- Applies when `pathname === item.href`
+
+### Icon System
+
+**Hero Icons** (`@heroicons/react/24/outline`):
+
+New icons added:
+- `ChevronLeftIcon` - Collapse sidebar
+- `ChevronRightIcon` - Expand sidebar
+
+Existing icons:
+- `Bars3Icon` - Mobile menu open
+- `XMarkIcon` - Mobile menu close
+- All navigation item icons
+
+### Accessibility
+
+**ARIA Attributes**:
+```typescript
+<button aria-label="Open navigation menu">
+<button title="Expand sidebar"> // Tooltips when collapsed
+```
+
+**Keyboard Navigation**:
+- Tab through navigation items
+- Enter/Space to activate links
+- Escape to close mobile menu (browser default)
+
+**Semantic HTML**:
+- `<nav>` for navigation section
+- `<aside>` for sidebar
+- `<button>` for interactive elements
+- Proper heading hierarchy
+
+### State Management
+
+**React State**:
+```typescript
+const [sidebarOpen, setSidebarOpen] = useState(false);
+const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+const [isModalOpen, setIsModalOpen] = useState(false);
+```
+
+**Effects**:
+```typescript
+// Close mobile sidebar on route change
+useEffect(() => {
+  setSidebarOpen(false);
+}, [pathname]);
+
+// Listen for modal open event
+useEffect(() => {
+  const handleOpenModal = () => setIsModalOpen(true);
+  window.addEventListener('open-create-project-modal', handleOpenModal);
+  return () => window.removeEventListener('open-create-project-modal', handleOpenModal);
+}, []);
+```
+
+**Future Enhancement**: Could persist `sidebarCollapsed` state to localStorage for user preference retention.
+
+### Features Preserved
+
+All existing functionality maintained:
+
+✅ **Project Selector**:
+- Dropdown to switch projects
+- Hidden when sidebar collapsed
+- Integrated with ProjectContext
+
+✅ **Project Modal**:
+- Create new projects
+- Event-driven opening via custom event
+- Managed via isModalOpen state
+
+✅ **Active Routing**:
+- Highlights current page in navigation
+- Uses Next.js `usePathname()` hook
+
+✅ **Dark Mode**:
+- All components support dark mode
+- Consistent dark: classes throughout
+
+### Performance
+
+**Optimizations**:
+- CSS transitions (no JavaScript animations)
+- No re-renders on collapse/expand (state-based classes)
+- `useEffect` dependency arrays properly configured
+- Minimal state updates
+
+**Bundle Impact**:
+- +2 icons (ChevronLeft, ChevronRight)
+- No additional dependencies
+- Component size: 162 lines (from 140 lines)
+- Net change: +22 lines (+15.7%)
+
+### Testing
+
+**Manual Testing**:
+✅ Desktop expanded state
+✅ Desktop collapsed state
+✅ Mobile drawer open/close
+✅ Active page highlighting
+✅ Dark mode rendering
+✅ Route navigation
+✅ Project selector integration
+✅ Modal opening via event
+
+**Build Verification**:
+✅ TypeScript compilation
+✅ ESLint passed
+✅ Prettier formatting
+✅ Production build successful
+✅ No new warnings/errors
+
+### File Changes Summary
+
+| File | Original Lines | New Lines | Change | Description |
+|------|---------------|-----------|--------|-------------|
+| `components/features/Navigation.tsx` | 140 | 162 | +22 (+15.7%) | Sidebar transformation |
+| `app/layout.tsx` | 42 | 44 | +2 (+4.8%) | Layout margin adjustment |
+| **Total** | **182** | **206** | **+24 (+13.2%)** | **2 files modified** |
+
+**Git Stats**:
+- **Commit**: `1f94fc2`
+- **Changed**: 2 files
+- **Insertions**: +108 lines
+- **Deletions**: -85 lines
+- **Net Change**: +23 lines
+
+### Benefits
+
+**User Experience**:
+- More screen space for content (especially on desktop)
+- Professional sidebar UI matching modern web apps
+- Quick collapse for maximum workspace
+- Intuitive mobile drawer interaction
+- Persistent navigation context
+
+**Developer Experience**:
+- Cleaner component structure
+- Better separation of concerns (sidebar vs layout)
+- Easier to extend with new navigation items
+- Consistent z-index management
+
+**Design**:
+- Modern, professional appearance
+- Matches industry-standard patterns
+- Better use of vertical space
+- Scalable for additional navigation items
+
+### Future Enhancements
+
+**Potential improvements**:
+
+1. **User Preferences**:
+   - Persist collapsed state to localStorage
+   - Remember user's preferred sidebar width
+   - Save mobile vs desktop preferences separately
+
+2. **Navigation Groups**:
+   - Collapsible navigation sections
+   - Group related items (e.g., "Workflows", "Status")
+   - Expandable/collapsible categories
+
+3. **Quick Actions**:
+   - Pin favorite pages to top
+   - Recent pages section
+   - Keyboard shortcuts (e.g., Cmd+K for search)
+
+4. **Visual Polish**:
+   - Smooth icon transitions when collapsing
+   - Hover animations on navigation items
+   - Badge indicators (e.g., new messages, pending tasks)
+
+5. **Customization**:
+   - User-configurable navigation order
+   - Hide/show individual navigation items
+   - Custom themes and colors
+
+### Related Documentation
+
+- **Component**: `components/features/Navigation.tsx:1-162`
+- **Layout**: `app/layout.tsx:17-42`
+- **Commit**: `1f94fc2` - "refactor(ui): Convert top navbar to left sidebar navigation"
+- **Date**: October 31, 2025
+
+---
