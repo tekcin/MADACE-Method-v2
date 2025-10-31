@@ -767,7 +767,7 @@ See full [MADACE Compliance Audit Report](./docs/MADACE-COMPLIANCE-AUDIT.md)
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/your-org/MADACE-Method-v2.0
+git clone https://github.com/tekcin/MADACE-Method-v2.0
 cd MADACE-Method-v2.0
 
 # 2. Install exact versions

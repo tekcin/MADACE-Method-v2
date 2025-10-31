@@ -706,9 +706,9 @@ If migrating agents from v2.0:
 
 ## Support
 
-- **Documentation**: https://github.com/yourusername/MADACE-Method-v2.0/docs
-- **Issues**: https://github.com/yourusername/MADACE-Method-v2.0/issues
-- **Discussions**: https://github.com/yourusername/MADACE-Method-v2.0/discussions
+- **Documentation**: https://github.com/tekcin/MADACE-Method-v2.0/docs
+- **Issues**: https://github.com/tekcin/MADACE-Method-v2.0/issues
+- **Discussions**: https://github.com/tekcin/MADACE-Method-v2.0/discussions
 
 ---
 

@@ -133,10 +133,14 @@
     "node": ">=20.0.0",
     "npm": ">=9.0.0"
   },
-  "author": "MADACE Team",
+  "author": {
+    "name": "Michael Thornton",
+    "email": "tekcin@yahoo.com",
+    "url": "https://github.com/tekcin"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tekcin/MADACE-Method-v2"
+    "url": "https://github.com/tekcin/MADACE-Method-v2.0"
   }
 }
