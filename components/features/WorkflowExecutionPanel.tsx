@@ -22,12 +22,16 @@ export interface WorkflowExecutionState {
   steps: WorkflowExecutionStep[];
   variables: Record<string, unknown>;
   completed: boolean;
+  paused?: boolean;
   startedAt: Date;
 }
 
 export interface WorkflowExecutionPanelProps {
   state: WorkflowExecutionState;
   onExecuteNext?: () => void;
+  onPause?: () => void;
+  onResume?: () => void;
+  onCancel?: () => void;
   onReset?: () => void;
   loading?: boolean;
 }
@@ -35,6 +39,9 @@ export interface WorkflowExecutionPanelProps {
 export function WorkflowExecutionPanel({
   state,
   onExecuteNext,
+  onPause,
+  onResume,
+  onCancel,
   onReset,
   loading = false,
 }: WorkflowExecutionPanelProps) {
@@ -79,11 +86,23 @@ export function WorkflowExecutionPanel({
       <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{state.workflowName}</h2>
-          {state.completed && (
-            <span className="rounded-full bg-green-100 px-4 py-1 text-sm font-medium text-green-800 dark:bg-green-900 dark:text-green-200">
-              Completed
-            </span>
-          )}
+          <div className="flex gap-2">
+            {state.completed && (
+              <span className="rounded-full bg-green-100 px-4 py-1 text-sm font-medium text-green-800 dark:bg-green-900 dark:text-green-200">
+                Completed
+              </span>
+            )}
+            {state.paused && !state.completed && (
+              <span className="rounded-full bg-yellow-100 px-4 py-1 text-sm font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                Paused
+              </span>
+            )}
+            {!state.paused && !state.completed && loading && (
+              <span className="rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                Running
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Progress bar */}
@@ -103,8 +122,9 @@ export function WorkflowExecutionPanel({
         </div>
 
         {/* Actions */}
-        <div className="flex space-x-3">
-          {!state.completed && (
+        <div className="flex flex-wrap gap-3">
+          {/* Execute/Resume Button */}
+          {!state.completed && !state.paused && (
             <button
               onClick={onExecuteNext}
               disabled={loading}
@@ -135,6 +155,63 @@ export function WorkflowExecutionPanel({
               )}
             </button>
           )}
+
+          {/* Resume Button (when paused) */}
+          {state.paused && !state.completed && onResume && (
+            <button
+              onClick={onResume}
+              className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-offset-gray-800"
+            >
+              <svg className="mr-2 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                />
+              </svg>
+              Resume
+            </button>
+          )}
+
+          {/* Pause Button (when running) */}
+          {!state.completed && !state.paused && onPause && (
+            <button
+              onClick={onPause}
+              disabled={loading}
+              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-900"
+            >
+              <svg className="mr-2 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 9v6m4-6v6"
+                />
+              </svg>
+              Pause
+            </button>
+          )}
+
+          {/* Cancel Button */}
+          {!state.completed && onCancel && (
+            <button
+              onClick={onCancel}
+              className="inline-flex items-center rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none dark:border-red-600 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-red-900/20 dark:focus:ring-offset-gray-900"
+            >
+              <svg className="mr-2 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+              Cancel
+            </button>
+          )}
+
+          {/* Reset Button */}
           <button
             onClick={onReset}
             className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-900"
@@ -147,7 +224,7 @@ export function WorkflowExecutionPanel({
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-            Reset Workflow
+            Reset
           </button>
         </div>
       </div>
