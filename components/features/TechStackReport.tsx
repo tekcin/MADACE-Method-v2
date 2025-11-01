@@ -143,7 +143,7 @@ export function TechStackReport({
       if (!acc[tech.category]) {
         acc[tech.category] = [];
       }
-      acc[tech.category].push(tech);
+      acc[tech.category]!.push(tech);
       return acc;
     },
     {} as Record<string, Technology[]>
@@ -158,7 +158,7 @@ export function TechStackReport({
     'infrastructure',
     'other',
   ];
-  const sortedCategories = categoryOrder.filter((cat) => groupedTech[cat]?.length > 0);
+  const sortedCategories = categoryOrder.filter((cat) => (groupedTech[cat]?.length ?? 0) > 0);
 
   const toggleCategory = (category: string) => {
     setExpandedCategories((prev) => ({
@@ -234,7 +234,7 @@ export function TechStackReport({
       {/* Technology Categories */}
       <div className="space-y-4">
         {sortedCategories.map((category) => {
-          const techs = groupedTech[category];
+          const techs = groupedTech[category]!;
           const isExpanded = expandedCategories[category] ?? showDetails;
           const colors = categoryColors[category];
 
@@ -395,7 +395,7 @@ function generateTextReport(
   report += `**Categories**: ${sortedCategories.length}\n\n`;
 
   sortedCategories.forEach((category) => {
-    const techs = groupedTech[category];
+    const techs = groupedTech[category]!;
     report += `## ${categoryLabels[category]}\n\n`;
 
     techs.forEach((tech) => {

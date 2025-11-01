@@ -201,11 +201,12 @@ export function WorkflowExecutionModal({
 
           {/* Steps */}
           {steps.length > 0 && (
-            <div className="mb-6 space-y-3">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Execution Steps:
-              </h3>
-              {steps.map((step, index) => (
+            <>
+              <div className="mb-6 space-y-3">
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Execution Steps:
+                </h3>
+                {steps.map((step, index) => (
                 <div
                   key={step.id}
                   className={`flex items-start gap-3 rounded-lg border p-3 ${
@@ -251,8 +252,9 @@ export function WorkflowExecutionModal({
                     )}
                   </div>
                 </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
 
           {/* Error Message */}

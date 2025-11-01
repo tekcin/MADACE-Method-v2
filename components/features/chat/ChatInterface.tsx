@@ -126,6 +126,8 @@ export default function ChatInterface({
         content,
         timestamp: new Date(),
         replyToId: replyingTo?.id || null,
+        provider: null,
+        model: null,
       };
       setMessages((prev) => [...prev, userMessage]);
 
@@ -173,6 +175,8 @@ export default function ChatInterface({
         content: '',
         timestamp: new Date(),
         replyToId,
+        provider: selectedProvider,
+        model: null,
       };
       setMessages((prev) => [...prev, placeholderMessage]);
 
