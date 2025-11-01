@@ -81,24 +81,35 @@ export function WorkflowExecutionPanel({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="workflow-execution-panel">
       {/* Header */}
       <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{state.workflowName}</h2>
-          <div className="flex gap-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white" data-testid="workflow-name">
+            {state.workflowName}
+          </h2>
+          <div className="flex gap-2" data-testid="workflow-status-badges">
             {state.completed && (
-              <span className="rounded-full bg-green-100 px-4 py-1 text-sm font-medium text-green-800 dark:bg-green-900 dark:text-green-200">
+              <span
+                className="rounded-full bg-green-100 px-4 py-1 text-sm font-medium text-green-800 dark:bg-green-900 dark:text-green-200"
+                data-testid="status-badge-completed"
+              >
                 Completed
               </span>
             )}
             {state.paused && !state.completed && (
-              <span className="rounded-full bg-yellow-100 px-4 py-1 text-sm font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+              <span
+                className="rounded-full bg-yellow-100 px-4 py-1 text-sm font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                data-testid="status-badge-paused"
+              >
                 Paused
               </span>
             )}
             {!state.paused && !state.completed && loading && (
-              <span className="rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+              <span
+                className="rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                data-testid="status-badge-running"
+              >
                 Running
               </span>
             )}
@@ -106,16 +117,21 @@ export function WorkflowExecutionPanel({
         </div>
 
         {/* Progress bar */}
-        <div className="mb-4">
+        <div className="mb-4" data-testid="workflow-progress">
           <div className="mb-2 flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 dark:text-gray-300">Progress</span>
-            <span className="text-gray-600 dark:text-gray-400">
-              {state.currentStep} / {state.totalSteps} steps
+            <span className="text-gray-600 dark:text-gray-400" data-testid="progress-text">
+              <span data-testid="current-step-number">{state.currentStep}</span> /{' '}
+              <span data-testid="total-steps">{state.totalSteps}</span> steps
             </span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+          <div
+            className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"
+            data-testid="progress-bar-container"
+          >
             <div
               className="h-full rounded-full bg-blue-600 transition-all duration-300 dark:bg-blue-500"
+              data-testid="progress-bar"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -128,6 +144,7 @@ export function WorkflowExecutionPanel({
             <button
               onClick={onExecuteNext}
               disabled={loading}
+              data-testid="execute-next-button"
               className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-800"
             >
               {loading ? (
@@ -160,6 +177,7 @@ export function WorkflowExecutionPanel({
           {state.paused && !state.completed && onResume && (
             <button
               onClick={onResume}
+              data-testid="resume-button"
               className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-offset-gray-800"
             >
               <svg className="mr-2 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,6 +197,7 @@ export function WorkflowExecutionPanel({
             <button
               onClick={onPause}
               disabled={loading}
+              data-testid="pause-button"
               className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-900"
             >
               <svg className="mr-2 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,6 +216,7 @@ export function WorkflowExecutionPanel({
           {!state.completed && onCancel && (
             <button
               onClick={onCancel}
+              data-testid="cancel-button"
               className="inline-flex items-center rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none dark:border-red-600 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-red-900/20 dark:focus:ring-offset-gray-900"
             >
               <svg className="mr-2 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,6 +234,7 @@ export function WorkflowExecutionPanel({
           {/* Reset Button */}
           <button
             onClick={onReset}
+            data-testid="reset-button"
             className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-900"
           >
             <svg className="mr-2 size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,11 +251,12 @@ export function WorkflowExecutionPanel({
       </div>
 
       {/* Steps list */}
-      <div className="space-y-3">
+      <div className="space-y-3" data-testid="workflow-steps">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Execution Steps</h3>
         {state.steps.map((step, index) => (
           <div
             key={index}
+            data-testid={`workflow-step-${index}`}
             className={`rounded-lg border p-4 ${
               step.status === 'in-progress'
                 ? 'border-blue-300 bg-blue-50 dark:border-blue-600 dark:bg-blue-900/20'
@@ -246,13 +268,18 @@ export function WorkflowExecutionPanel({
             }`}
           >
             <div className="flex items-start">
-              <div className="mt-0.5 mr-4 flex-shrink-0">{getStepIcon(step.status)}</div>
+              <div className="mt-0.5 mr-4 flex-shrink-0" data-testid={`step-${index}-icon`}>
+                {getStepIcon(step.status)}
+              </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-gray-900 dark:text-white">
+                  <h4 className="font-medium text-gray-900 dark:text-white" data-testid={`step-${index}-name`}>
                     {index + 1}. {step.name}
                   </h4>
-                  <span className="rounded bg-gray-100 px-2 py-1 font-mono text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                  <span
+                    className="rounded bg-gray-100 px-2 py-1 font-mono text-xs text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                    data-testid={`step-${index}-action`}
+                  >
                     {step.action}
                   </span>
                 </div>
@@ -270,11 +297,14 @@ export function WorkflowExecutionPanel({
 
       {/* Variables */}
       {Object.keys(state.variables).length > 0 && (
-        <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <div
+          className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
+          data-testid="workflow-variables"
+        >
           <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
             Workflow Variables
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-2" data-testid="workflow-variables-list">
             {Object.entries(state.variables).map(([key, value]) => (
               <div
                 key={key}
