@@ -7,6 +7,7 @@
 
 'use client';
 
+import Image from 'next/image';
 import type { ChatMessage as ChatMessageType } from '@/lib/collab/room-manager';
 
 interface ChatMessageProps {
@@ -62,9 +63,11 @@ export default function ChatMessage({ message, isOwnMessage = false }: ChatMessa
       {/* Avatar */}
       <div className="flex-shrink-0">
         {message.userAvatar ? (
-          <img
+          <Image
             src={message.userAvatar}
             alt={message.userName}
+            width={32}
+            height={32}
             className="h-8 w-8 rounded-full object-cover"
           />
         ) : (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import type { WorkflowStatus, Story } from '@/lib/state/types';
 import { useProject } from '@/lib/context/ProjectContext';
 
@@ -11,21 +11,7 @@ export default function KanbanPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadWorkflowStatus();
-  }, []);
-
-  // Listen for project switch events and reload workflow status
-  useEffect(() => {
-    const handleProjectSwitch = () => {
-      loadWorkflowStatus();
-    };
-
-    window.addEventListener('project-switched', handleProjectSwitch);
-    return () => window.removeEventListener('project-switched', handleProjectSwitch);
-  }, []);
-
-  const loadWorkflowStatus = async (isRefresh = false) => {
+  const loadWorkflowStatus = useCallback(async (isRefresh = false) => {
     try {
       if (isRefresh) {
         setRefreshing(true);
@@ -51,7 +37,21 @@ export default function KanbanPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [currentProject]);
+
+  useEffect(() => {
+    loadWorkflowStatus();
+  }, [loadWorkflowStatus]);
+
+  // Listen for project switch events and reload workflow status
+  useEffect(() => {
+    const handleProjectSwitch = () => {
+      loadWorkflowStatus();
+    };
+
+    window.addEventListener('project-switched', handleProjectSwitch);
+    return () => window.removeEventListener('project-switched', handleProjectSwitch);
+  }, [loadWorkflowStatus]);
 
   if (loading || projectLoading) {
     return (

@@ -249,7 +249,7 @@ export class GeminiProvider extends BaseLLMProvider {
     };
 
     // Log request for debugging
-    console.log('[Gemini] Streaming request:', JSON.stringify(geminiRequest, null, 2));
+    console.warn('[Gemini] Streaming request:', JSON.stringify(geminiRequest, null, 2));
 
     const endpoint = `models/${GEMINI_MODELS[this.config.model as keyof typeof GEMINI_MODELS].apiEndpoint}:streamGenerateContent`;
 

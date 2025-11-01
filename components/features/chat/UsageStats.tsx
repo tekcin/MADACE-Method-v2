@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   ChartBarIcon,
   CurrencyDollarIcon,
@@ -48,14 +48,7 @@ export function UsageStats({ sessionId }: UsageStatsProps) {
   const [error, setError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  useEffect(() => {
-    fetchUsage();
-    // Refresh stats every 5 seconds
-    const interval = setInterval(fetchUsage, 5000);
-    return () => clearInterval(interval);
-  }, [sessionId]);
-
-  const fetchUsage = async () => {
+  const fetchUsage = useCallback(async () => {
     try {
       const response = await fetch(`/api/v3/chat/sessions/${sessionId}/usage`);
       const data = await response.json();
@@ -72,7 +65,14 @@ export function UsageStats({ sessionId }: UsageStatsProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sessionId]);
+
+  useEffect(() => {
+    fetchUsage();
+    // Refresh stats every 5 seconds
+    const interval = setInterval(fetchUsage, 5000);
+    return () => clearInterval(interval);
+  }, [fetchUsage]);
 
   const formatTokens = (tokens: number): string => {
     return tokens.toLocaleString();

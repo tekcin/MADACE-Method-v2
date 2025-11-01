@@ -359,19 +359,29 @@ export class LocalProvider extends BaseLLMProvider {
   /**
    * Format response from Ollama API
    */
-  private formatResponse(response: any): LLMResponse {
-    const message = response.message;
+  private formatResponse(response: unknown): LLMResponse {
+    const resp = response as {
+      message?: {
+        content?: string;
+        prompt_eval_count?: number;
+        eval_count?: number;
+      };
+      model?: string;
+      done?: boolean;
+    };
+
+    const message = resp.message;
 
     return {
       content: message?.content || '',
       provider: 'local',
-      model: response.model || this.modelConfig.name,
+      model: resp.model || this.modelConfig.name,
       usage: {
         promptTokens: message?.prompt_eval_count || 0,
         completionTokens: message?.eval_count || 0,
         totalTokens: (message?.prompt_eval_count || 0) + (message?.eval_count || 0),
       },
-      finishReason: this.mapFinishReason(response.done),
+      finishReason: this.mapFinishReason(resp.done),
     };
   }
 
@@ -388,7 +398,7 @@ export class LocalProvider extends BaseLLMProvider {
   /**
    * Call local model API
    */
-  private async callAPI(endpoint: string, data: unknown): Promise<any> {
+  private async callAPI(endpoint: string, data: unknown): Promise<unknown> {
     try {
       const response = await fetch(`${this.modelConfig.endpoint}/api/${endpoint}`, {
         method: 'POST',

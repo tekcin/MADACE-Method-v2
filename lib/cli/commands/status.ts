@@ -153,7 +153,11 @@ async function startWatchMode(
 
   const registry = getStatusRegistry();
   let isRunning = true;
-  let ws: any = null; // WebSocket instance
+  let ws: {
+    close: () => void;
+    readyState: number;
+    on: (event: string, listener: (...args: unknown[]) => void) => void;
+  } | null = null; // WebSocket instance
   let useWebSocket = true; // Flag to switch between WebSocket and polling
 
   // Display status once immediately
@@ -226,8 +230,9 @@ async function startWatchMode(
       displayCurrentStatus();
     });
 
-    ws.on('message', (data: Buffer) => {
+    ws.on('message', (...args: unknown[]) => {
       try {
+        const data = args[0] as Buffer;
         const message = JSON.parse(data.toString());
 
         // Update display on relevant messages
@@ -244,7 +249,8 @@ async function startWatchMode(
       }
     });
 
-    ws.on('error', (error: Error) => {
+    ws.on('error', (...args: unknown[]) => {
+      const error = args[0] as Error;
       console.error('[WebSocket] Connection failed:', error.message);
       console.log('[WebSocket] Falling back to polling mode...');
       useWebSocket = false;

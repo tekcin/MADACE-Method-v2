@@ -37,13 +37,21 @@ export default function WorkflowsPage() {
 
       const data = await response.json();
       if (data.success && data.workflows) {
-        const workflowData: WorkflowCardData[] = data.workflows.map((w: any) => ({
-          name: w.name,
-          description: w.description,
-          agent: w.agent,
-          phase: w.phase,
-          stepCount: w.stepCount,
-        }));
+        const workflowData: WorkflowCardData[] = data.workflows.map(
+          (w: {
+            name: string;
+            description: string;
+            agent: string;
+            phase: string;
+            stepCount: number;
+          }) => ({
+            name: w.name,
+            description: w.description,
+            agent: w.agent,
+            phase: w.phase,
+            stepCount: w.stepCount,
+          })
+        );
         setWorkflows(workflowData);
       }
     } catch (err) {

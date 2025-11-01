@@ -5,24 +5,16 @@
  * Executes business logic based on classified user intent
  */
 
-import type { NLUIntent, NLUEntity, IntentActionHandler, IntentActionRegistry } from './types';
+import type {
+  NLUIntent,
+  NLUEntity,
+  IntentActionHandler,
+  IntentActionRegistry,
+  IntentActionResult,
+} from './types';
 import * as agentService from '@/lib/services/agent-service';
 import { getConfigManager } from '@/lib/config/manager';
 import { createStateMachine } from '@/lib/state/machine';
-
-/**
- * Intent Action Result
- *
- * Standardized response from intent handlers
- */
-export interface IntentActionResult {
-  success: boolean;
-  data?: any;
-  message: string;
-  error?: string;
-  requiresFollowUp?: boolean;
-  followUpQuestion?: string;
-}
 
 /**
  * Agent Creation Handler
@@ -179,7 +171,7 @@ const handleGetConfig: IntentActionHandler = async (intent, entities) => {
     }
 
     // Access config property by key (simplified - assumes top-level keys)
-    const value = (config as any)[configKey];
+    const value = (config as Record<string, unknown>)[configKey];
 
     if (value === undefined) {
       return {

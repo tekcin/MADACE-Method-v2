@@ -46,7 +46,10 @@ export class DialogflowCXProvider implements INLUProvider {
     this.defaultLanguage = config.defaultLanguage || 'en';
 
     // Initialize Dialogflow CX client
-    const clientOptions: any = {};
+    const clientOptions: {
+      keyFilename?: string;
+      credentials?: object;
+    } = {};
 
     if (credentials) {
       if (typeof credentials === 'string') {
@@ -132,14 +135,15 @@ export class DialogflowCXProvider implements INLUProvider {
   /**
    * Extract parameters from Dialogflow CX query result
    */
-  private extractParameters(parameters: any): Record<string, any> {
-    if (!parameters || !parameters.fields) {
+  private extractParameters(parameters: unknown): Record<string, unknown> {
+    if (!parameters || typeof parameters !== 'object' || !('fields' in parameters)) {
       return {};
     }
 
-    const extracted: Record<string, any> = {};
+    const extracted: Record<string, unknown> = {};
+    const fields = (parameters as { fields: Record<string, unknown> }).fields;
 
-    for (const [key, value] of Object.entries(parameters.fields)) {
+    for (const [key, value] of Object.entries(fields)) {
       extracted[key] = this.parseParameterValue(value);
     }
 
@@ -149,18 +153,21 @@ export class DialogflowCXProvider implements INLUProvider {
   /**
    * Parse parameter value from Dialogflow CX struct format
    */
-  private parseParameterValue(value: any): any {
-    if (!value) return null;
+  private parseParameterValue(value: unknown): unknown {
+    if (!value || typeof value !== 'object') return null;
+
+    const v = value as Record<string, unknown>;
 
     // Handle different value types
-    if (value.stringValue !== undefined) return value.stringValue;
-    if (value.numberValue !== undefined) return value.numberValue;
-    if (value.boolValue !== undefined) return value.boolValue;
-    if (value.listValue !== undefined) {
-      return value.listValue.values?.map((v: any) => this.parseParameterValue(v)) || [];
+    if ('stringValue' in v && v.stringValue !== undefined) return v.stringValue;
+    if ('numberValue' in v && v.numberValue !== undefined) return v.numberValue;
+    if ('boolValue' in v && v.boolValue !== undefined) return v.boolValue;
+    if ('listValue' in v && v.listValue !== undefined) {
+      const listValue = v.listValue as { values?: unknown[] };
+      return listValue.values?.map((val) => this.parseParameterValue(val)) || [];
     }
-    if (value.structValue !== undefined) {
-      return this.extractParameters(value.structValue);
+    if ('structValue' in v && v.structValue !== undefined) {
+      return this.extractParameters(v.structValue);
     }
 
     return null;
@@ -169,14 +176,16 @@ export class DialogflowCXProvider implements INLUProvider {
   /**
    * Extract entities from parameters
    */
-  private extractEntities(parameters: any): NLUEntity[] {
+  private extractEntities(parameters: unknown): NLUEntity[] {
     const entities: NLUEntity[] = [];
 
-    if (!parameters || !parameters.fields) {
+    if (!parameters || typeof parameters !== 'object' || !('fields' in parameters)) {
       return entities;
     }
 
-    for (const [key, value] of Object.entries(parameters.fields)) {
+    const fields = (parameters as { fields: Record<string, unknown> }).fields;
+
+    for (const [key, value] of Object.entries(fields)) {
       const entityValue = this.parseParameterValue(value);
 
       if (entityValue) {

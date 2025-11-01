@@ -9,7 +9,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { ProjectBadge } from '@/components/features/ProjectBadge';
 import { WorkflowExecutionModal } from '@/components/features/workflow/WorkflowExecutionModal';
@@ -65,13 +65,7 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
     params.then((p) => setResolvedParams(p));
   }, [params]);
 
-  useEffect(() => {
-    if (resolvedParams?.id) {
-      loadAgent();
-    }
-  }, [resolvedParams]);
-
-  const loadAgent = async () => {
+  const loadAgent = useCallback(async () => {
     if (!resolvedParams?.id) return;
 
     try {
@@ -89,7 +83,13 @@ export default function AgentDetailPage({ params }: { params: Promise<{ id: stri
     } finally {
       setLoading(false);
     }
-  };
+  }, [resolvedParams]);
+
+  useEffect(() => {
+    if (resolvedParams?.id) {
+      loadAgent();
+    }
+  }, [resolvedParams, loadAgent]);
 
   const startChat = () => {
     if (agent) {

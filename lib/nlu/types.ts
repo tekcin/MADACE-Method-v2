@@ -29,7 +29,7 @@ export interface NLUIntent {
   /**
    * Extracted parameters/entities from user input
    */
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 
   /**
    * Whether the intent requires follow-up questions
@@ -130,7 +130,7 @@ export interface NLUParseResponse {
   /**
    * Raw response from NLU service (for debugging)
    */
-  raw?: any;
+  raw?: unknown;
 }
 
 /**
@@ -220,11 +220,26 @@ export interface INLUProvider {
 }
 
 /**
+ * Intent Action Result (generic)
+ */
+export interface IntentActionResult {
+  success: boolean;
+  data?: unknown;
+  message: string;
+  error?: string;
+  requiresFollowUp?: boolean;
+  followUpQuestion?: string;
+}
+
+/**
  * Intent Action Handler
  *
  * Function signature for handling a specific intent
  */
-export type IntentActionHandler = (intent: NLUIntent, entities: NLUEntity[]) => Promise<any>;
+export type IntentActionHandler = (
+  intent: NLUIntent,
+  entities: NLUEntity[]
+) => Promise<IntentActionResult>;
 
 /**
  * Intent Action Registry

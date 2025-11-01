@@ -8,6 +8,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { getPresenceManager, type UserPresence } from '@/lib/collab/presence-manager';
 import { toast } from './Toast';
 
@@ -139,9 +140,11 @@ function UserCard({ user }: { user: UserPresence }) {
       {/* Avatar */}
       <div className="relative">
         {user.avatar ? (
-          <img
+          <Image
             src={user.avatar}
             alt={user.name}
+            width={40}
+            height={40}
             className="h-10 w-10 rounded-full object-cover"
             style={{ border: `2px solid ${user.color}` }}
           />

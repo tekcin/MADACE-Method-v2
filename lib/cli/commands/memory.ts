@@ -72,7 +72,12 @@ export function registerMemoryCommands(program: Command): void {
         }
 
         // Build query
-        const where: any = {
+        const where: {
+          agentId: string;
+          userId: string;
+          type?: string;
+          category?: string;
+        } = {
           agentId,
           userId: DEFAULT_USER_ID,
         };
@@ -243,7 +248,11 @@ export function registerMemoryCommands(program: Command): void {
         }
 
         // Count memories to delete
-        const where: any = {
+        const where: {
+          agentId: string;
+          userId: string;
+          type?: string;
+        } = {
           agentId: agent.id,
           userId: DEFAULT_USER_ID,
         };

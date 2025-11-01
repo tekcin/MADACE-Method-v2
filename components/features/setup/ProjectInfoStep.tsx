@@ -23,7 +23,6 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
   };
 
   // Auto-assess when assessment fields change
-
   useEffect(() => {
     const {
       projectSize,
@@ -68,6 +67,7 @@ export function ProjectInfoStep({ config, setConfig }: Props) {
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- config and setConfig would cause infinite loop since setConfig creates new config object
   }, [
     config.projectInfo.projectSize,
     config.projectInfo.teamSize,

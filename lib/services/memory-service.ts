@@ -44,6 +44,7 @@ export async function saveMemory(
     data: {
       agentId,
       userId,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       context: memory as any,
       type: memory.type,
       category: memory.category,
@@ -110,7 +111,15 @@ export async function updateMemory(
   memoryId: string,
   updates: Partial<MemoryContext>
 ): Promise<AgentMemory> {
-  const data: any = {};
+  const data: {
+    importance?: number;
+    value?: string;
+    expiresAt?: Date;
+    type?: 'short-term' | 'long-term';
+    category?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    context?: any;
+  } = {};
 
   if (updates.importance !== undefined) data.importance = updates.importance;
   if (updates.value !== undefined) data.value = updates.value;
@@ -121,9 +130,9 @@ export async function updateMemory(
   // Update context JSON if any fields changed
   if (Object.keys(updates).length > 0) {
     const existing = await getMemory(memoryId);
-    if (existing) {
+    if (existing && typeof existing.context === 'object' && existing.context !== null) {
       data.context = {
-        ...(existing.context as any),
+        ...(existing.context as Record<string, unknown>),
         ...updates,
       };
     }

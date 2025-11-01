@@ -93,14 +93,25 @@ export function handlePrismaError(error: unknown, operation: string): DatabaseEr
  * @param where - Optional where clause
  * @param orderBy - Optional order by clause
  */
-export async function paginate<T extends { findMany: any; count: any }>(
+export async function paginate<
+  T extends {
+    findMany: (args: {
+      where?: unknown;
+      orderBy?: unknown;
+      skip: number;
+      take: number;
+    }) => Promise<unknown[]>;
+    count: (args: { where?: unknown }) => Promise<number>;
+  },
+  TData = unknown,
+>(
   model: T,
   page: number = 1,
   pageSize: number = 10,
-  where?: any,
-  orderBy?: any
+  where?: unknown,
+  orderBy?: unknown
 ): Promise<{
-  data: any[];
+  data: TData[];
   pagination: {
     page: number;
     pageSize: number;
@@ -126,7 +137,7 @@ export async function paginate<T extends { findMany: any; count: any }>(
   const totalPages = Math.ceil(totalRecords / pageSize);
 
   return {
-    data,
+    data: data as TData[],
     pagination: {
       page,
       pageSize,
@@ -164,10 +175,11 @@ export async function transaction<T>(
  * @param model - Prisma model delegate
  * @param id - Record ID
  */
-export async function exists<T extends { findUnique: any }>(
-  model: T,
-  id: string
-): Promise<boolean> {
+export async function exists<
+  T extends {
+    findUnique: (args: { where: { id: string }; select: { id: true } }) => Promise<{ id: string } | null>;
+  },
+>(model: T, id: string): Promise<boolean> {
   try {
     const record = await model.findUnique({
       where: { id },
@@ -186,7 +198,11 @@ export async function exists<T extends { findUnique: any }>(
  * @param model - Prisma model delegate
  * @param id - Record ID
  */
-export async function softDelete<T extends { update: any }>(model: T, id: string): Promise<void> {
+export async function softDelete<
+  T extends {
+    update: (args: { where: { id: string }; data: { deletedAt: Date } }) => Promise<unknown>;
+  },
+>(model: T, id: string): Promise<void> {
   try {
     await model.update({
       where: { id },
@@ -203,12 +219,16 @@ export async function softDelete<T extends { update: any }>(model: T, id: string
  * @param model - Prisma model delegate
  * @param records - Array of records with unique field and data
  */
-export async function batchUpsert<T extends { upsert: any }>(
+export async function batchUpsert<
+  T extends {
+    upsert: (args: { where: unknown; create: unknown; update: unknown }) => Promise<unknown>;
+  },
+>(
   model: T,
   records: Array<{
-    where: any;
-    create: any;
-    update: any;
+    where: unknown;
+    create: unknown;
+    update: unknown;
   }>
 ): Promise<void> {
   try {
@@ -219,7 +239,7 @@ export async function batchUpsert<T extends { upsert: any }>(
           create: record.create,
           update: record.update,
         })
-      )
+      ) as any // eslint-disable-line @typescript-eslint/no-explicit-any
     );
   } catch (error) {
     throw handlePrismaError(error, 'batch upsert');
@@ -307,13 +327,14 @@ export async function clearDatabase(): Promise<void> {
  * @param field - Field to search
  * @param query - Search query
  */
-export async function search<T extends { findMany: any }>(
-  model: T,
-  field: string,
-  query: string
-): Promise<any[]> {
+export async function search<
+  T extends {
+    findMany: (args: { where: Record<string, unknown> }) => Promise<unknown[]>;
+  },
+  TData = unknown,
+>(model: T, field: string, query: string): Promise<TData[]> {
   try {
-    return await model.findMany({
+    const results = await model.findMany({
       where: {
         [field]: {
           contains: query,
@@ -321,6 +342,7 @@ export async function search<T extends { findMany: any }>(
         },
       },
     });
+    return results as TData[];
   } catch (error) {
     throw handlePrismaError(error, 'search');
   }

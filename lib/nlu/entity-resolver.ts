@@ -29,7 +29,7 @@ export interface EntityResolutionResult {
 export interface EntityMatch {
   value: string;
   score: number; // Lower is better (0 = perfect match)
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**

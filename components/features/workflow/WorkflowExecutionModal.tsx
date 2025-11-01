@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type React from 'react';
 
 interface WorkflowStep {
@@ -100,11 +100,7 @@ export function WorkflowExecutionModal({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Record<string, unknown> | null>(null);
 
-  useEffect(() => {
-    executeWorkflow();
-  }, []);
-
-  const executeWorkflow = async () => {
+  const executeWorkflow = useCallback(async () => {
     try {
       setStatus('running');
 
@@ -144,7 +140,11 @@ export function WorkflowExecutionModal({
       setStatus('failed');
       setError(err instanceof Error ? err.message : 'Unknown error');
     }
-  };
+  }, [workflowName, variables]);
+
+  useEffect(() => {
+    executeWorkflow();
+  }, [executeWorkflow]);
 
   const getStatusIcon = () => {
     switch (status) {

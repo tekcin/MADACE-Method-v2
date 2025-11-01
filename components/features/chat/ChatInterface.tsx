@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { ChatMessage } from '@prisma/client';
 import Message from './Message';
 import ChatInput from './ChatInput';
@@ -40,17 +40,7 @@ export default function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Load messages on mount
-  useEffect(() => {
-    loadMessages();
-  }, [sessionId]);
-
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const loadMessages = async (before?: Date) => {
+  const loadMessages = useCallback(async (before?: Date) => {
     try {
       if (before) {
         setIsLoadingMore(true);
@@ -84,10 +74,20 @@ export default function ChatInterface({
       setIsLoading(false);
       setIsLoadingMore(false);
     }
-  };
+  }, [sessionId]);
+
+  // Load messages on mount
+  useEffect(() => {
+    loadMessages();
+  }, [loadMessages]);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   // Infinite scroll handler
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     const container = messagesContainerRef.current;
     if (!container || isLoadingMore || !hasMore) return;
 
@@ -98,7 +98,7 @@ export default function ChatInterface({
         loadMessages(new Date(oldestMessage.timestamp));
       }
     }
-  };
+  }, [isLoadingMore, hasMore, messages, loadMessages]);
 
   // Add scroll listener
   useEffect(() => {
@@ -108,7 +108,7 @@ export default function ChatInterface({
       return () => container.removeEventListener('scroll', handleScroll);
     }
     return undefined;
-  }, [messages, isLoadingMore, hasMore]);
+  }, [handleScroll]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
