@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { WorkflowCard, type WorkflowCardData } from '@/components/features/WorkflowCard';
 import {
   WorkflowExecutionPanel,
@@ -19,34 +19,43 @@ export default function WorkflowsPage() {
   const [executionState, setExecutionState] = useState<WorkflowExecutionState | null>(null);
   const [loading, setLoading] = useState(false);
   const [autoExecute, setAutoExecute] = useState(false);
+  const [workflows, setWorkflows] = useState<WorkflowCardData[]>([]);
+  const [loadingWorkflows, setLoadingWorkflows] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock workflows for demonstration (in production, fetch from API)
-  const workflows: WorkflowCardData[] = [
-    {
-      name: 'plan-project',
-      description:
-        'Scale-adaptive project planning workflow. Creates PRD/GDD and breaks down into epics based on project complexity.',
-      agent: 'PM',
-      phase: 1,
-      stepCount: 8,
-    },
-    {
-      name: 'create-story',
-      description:
-        'Generate detailed user story from epic. Includes acceptance criteria, technical requirements, and point estimation.',
-      agent: 'Analyst',
-      phase: 2,
-      stepCount: 6,
-    },
-    {
-      name: 'design-architecture',
-      description:
-        'Design system architecture and create technical specifications. Includes component design, data flow, and tech stack decisions.',
-      agent: 'Architect',
-      phase: 2,
-      stepCount: 7,
-    },
-  ];
+  // Load workflows from API
+  useEffect(() => {
+    loadWorkflows();
+  }, []);
+
+  const loadWorkflows = async () => {
+    try {
+      setLoadingWorkflows(true);
+      setError(null);
+
+      const response = await fetch('/api/v3/workflows');
+      if (!response.ok) throw new Error('Failed to load workflows');
+
+      const data = await response.json();
+      if (data.success && data.workflows) {
+        const workflowData: WorkflowCardData[] = data.workflows.map((w: any) => ({
+          name: w.name,
+          description: w.description,
+          agent: w.agent,
+          phase: w.phase,
+          stepCount: w.stepCount,
+        }));
+        setWorkflows(workflowData);
+      }
+    } catch (err) {
+      console.error('Error loading workflows:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load workflows');
+      // Fallback to empty array if API fails
+      setWorkflows([]);
+    } finally {
+      setLoadingWorkflows(false);
+    }
+  };
 
   const handleExecuteWorkflow = (workflowName: string) => {
     // Initialize workflow execution
@@ -192,11 +201,45 @@ export default function WorkflowsPage() {
         </div>
       )}
 
+      {/* Error Message */}
+      {error && !executionState && (
+        <div className="mb-6 rounded-md border-2 border-red-300 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
+          <div className="flex">
+            <svg
+              className="h-5 w-5 text-red-600 dark:text-red-400"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-red-800 dark:text-red-200">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loadingWorkflows && !executionState && (
+        <div className="flex items-center justify-center py-12">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500 dark:border-gray-600 dark:border-t-blue-400"></div>
+            <p className="text-lg font-medium text-gray-900 dark:text-white">
+              Loading workflows...
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Workflows grid (hide during execution) */}
-      {!executionState && (
+      {!executionState && !loadingWorkflows && workflows.length > 0 && (
         <div>
           <h2 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
-            Available Workflows
+            Available Workflows ({workflows.length})
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {workflows.map((workflow) => (
@@ -212,7 +255,7 @@ export default function WorkflowsPage() {
       )}
 
       {/* Empty state for when no workflows exist */}
-      {workflows.length === 0 && !executionState && (
+      {workflows.length === 0 && !executionState && !loadingWorkflows && (
         <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center dark:border-gray-600 dark:bg-gray-800">
           <svg
             className="mx-auto size-12 text-gray-400"

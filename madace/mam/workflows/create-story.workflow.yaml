@@ -1,0 +1,44 @@
+workflow:
+  name: create-story
+  description: Generate detailed user story from epic. Includes acceptance criteria, technical requirements, and point estimation.
+  agent: Analyst
+  phase: 2
+  variables:
+    epic_name: ""
+    story_points: 0
+
+  steps:
+    - name: Welcome
+      action: display
+      message: "Welcome to the Story Creation Workflow"
+
+    - name: Get Epic Reference
+      action: elicit
+      prompt: "Enter the epic name or ID"
+      variable: epic_name
+
+    - name: Get Story Title
+      action: elicit
+      prompt: "Enter the user story title"
+      variable: story_title
+
+    - name: Get Story Description
+      action: elicit
+      prompt: "Describe the user story (As a... I want... So that...)"
+      variable: story_description
+
+    - name: Generate Acceptance Criteria
+      action: reflect
+      prompt: "Based on the story: {{story_description}}, generate acceptance criteria"
+      model: gemma3:latest
+      store_as: acceptance_criteria
+
+    - name: Estimate Story Points
+      action: reflect
+      prompt: "Estimate story points (1,2,3,5,8,13) for: {{story_description}}"
+      model: gemma3:latest
+      store_as: story_points_estimate
+
+    - name: Summary
+      action: display
+      message: "User story created successfully with acceptance criteria and point estimation"

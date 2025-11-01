@@ -1,0 +1,49 @@
+workflow:
+  name: plan-project
+  description: Scale-adaptive project planning workflow. Creates PRD/GDD and breaks down into epics based on project complexity.
+  agent: PM
+  phase: 1
+  variables:
+    project_name: ""
+    complexity_score: 0
+
+  steps:
+    - name: Welcome
+      action: display
+      message: "Welcome to the MADACE Project Planning Workflow"
+
+    - name: Get Project Name
+      action: elicit
+      prompt: "Enter the project name"
+      variable: project_name
+
+    - name: Get Project Description
+      action: elicit
+      prompt: "Describe your project in detail"
+      variable: project_description
+
+    - name: Assess Complexity
+      action: reflect
+      prompt: "Based on the project description: {{project_description}}, assess the complexity (1-10)"
+      model: gemma3:latest
+      store_as: complexity_assessment
+
+    - name: Create PRD
+      action: template
+      template: templates/prd-template.hbs
+      output_file: docs/PRD-{{project_name}}.md
+
+    - name: Break Down Epics
+      action: reflect
+      prompt: "Break down the project into epics based on complexity {{complexity_score}}"
+      model: gemma3:latest
+      store_as: epic_breakdown
+
+    - name: Generate Epic Files
+      action: template
+      template: templates/epic-template.hbs
+      output_file: docs/epics/epic-list.md
+
+    - name: Summary
+      action: display
+      message: "Project planning complete! PRD and epics generated."

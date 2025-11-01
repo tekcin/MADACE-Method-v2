@@ -1,0 +1,51 @@
+workflow:
+  name: design-architecture
+  description: Design system architecture and create technical specifications. Includes component design, data flow, and tech stack decisions.
+  agent: Architect
+  phase: 2
+  variables:
+    project_name: ""
+    tech_stack: ""
+
+  steps:
+    - name: Welcome
+      action: display
+      message: "Welcome to the Architecture Design Workflow"
+
+    - name: Get Project Context
+      action: elicit
+      prompt: "Enter the project name"
+      variable: project_name
+
+    - name: Get Requirements
+      action: elicit
+      prompt: "Describe the functional and non-functional requirements"
+      variable: requirements
+
+    - name: Analyze Requirements
+      action: reflect
+      prompt: "Analyze these requirements and suggest an architecture: {{requirements}}"
+      model: gemma3:latest
+      store_as: architecture_analysis
+
+    - name: Design Components
+      action: reflect
+      prompt: "Based on the architecture, design the main components and their responsibilities"
+      model: gemma3:latest
+      store_as: component_design
+
+    - name: Define Data Flow
+      action: reflect
+      prompt: "Define the data flow between components for: {{requirements}}"
+      model: gemma3:latest
+      store_as: data_flow
+
+    - name: Select Tech Stack
+      action: reflect
+      prompt: "Recommend a tech stack for this architecture"
+      model: gemma3:latest
+      store_as: tech_stack_recommendation
+
+    - name: Summary
+      action: display
+      message: "Architecture design complete! Technical specifications generated."
