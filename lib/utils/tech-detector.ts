@@ -391,7 +391,7 @@ export function generateTechStackSummary(technologies: Technology[]): string {
   const categories = technologies.reduce(
     (acc, tech) => {
       if (!acc[tech.category]) acc[tech.category] = [];
-      acc[tech.category].push(tech.name);
+      acc[tech.category]!.push(tech.name);
       return acc;
     },
     {} as Record<string, string[]>

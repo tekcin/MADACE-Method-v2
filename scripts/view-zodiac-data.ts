@@ -48,27 +48,27 @@ async function main() {
     };
     stories.forEach((s) => {
       if (byStatus[s.status]) {
-        byStatus[s.status].push(s);
+        byStatus[s.status]!.push(s);
       }
     });
 
-    console.log(`   ✅ DONE (${byStatus.DONE.length}):`);
-    byStatus.DONE.forEach((s) => {
+    console.log(`   ✅ DONE (${byStatus.DONE!.length}):`);
+    byStatus.DONE!.forEach((s) => {
       console.log(`      • ${s.storyId}: ${s.title.substring(0, 60)}...`);
     });
 
-    console.log(`   🔄 IN_PROGRESS (${byStatus.IN_PROGRESS.length}):`);
-    byStatus.IN_PROGRESS.forEach((s) => {
+    console.log(`   🔄 IN_PROGRESS (${byStatus.IN_PROGRESS!.length}):`);
+    byStatus.IN_PROGRESS!.forEach((s) => {
       console.log(`      • ${s.storyId}: ${s.title.substring(0, 60)}...`);
     });
 
-    console.log(`   📋 TODO (${byStatus.TODO.length}):`);
-    byStatus.TODO.forEach((s) => {
+    console.log(`   📋 TODO (${byStatus.TODO!.length}):`);
+    byStatus.TODO!.forEach((s) => {
       console.log(`      • ${s.storyId}: ${s.title.substring(0, 60)}...`);
     });
 
-    console.log(`   📦 BACKLOG (${byStatus.BACKLOG.length}):`);
-    byStatus.BACKLOG.forEach((s) => {
+    console.log(`   📦 BACKLOG (${byStatus.BACKLOG!.length}):`);
+    byStatus.BACKLOG!.forEach((s) => {
       console.log(`      • ${s.storyId}: ${s.title.substring(0, 60)}...`);
     });
 

@@ -221,7 +221,7 @@ export class WorkflowExecutor {
       const { createLLMClient } = await import('@/lib/llm/client');
 
       const client = createLLMClient({
-        provider: llmConfig.provider,
+        provider: llmConfig.provider as import('@/lib/llm/types').LLMProvider,
         apiKey: llmConfig.apiKey,
         model: step.model || llmConfig.model,
       });
@@ -243,7 +243,7 @@ export class WorkflowExecutor {
       // Get LLM response
       const response = await client.chat({
         messages,
-        max_tokens: step.max_tokens || 500,
+        maxTokens: step.max_tokens || 500,
         temperature: step.temperature || 0.7,
       });
 
@@ -254,7 +254,7 @@ export class WorkflowExecutor {
         prompt,
         response: response.content,
         model: response.model || step.model || llmConfig.model,
-        tokensUsed: response.usage?.total_tokens || 0,
+        tokensUsed: response.usage?.totalTokens || 0,
         durationMs: duration,
         timestamp: new Date().toISOString(),
       };

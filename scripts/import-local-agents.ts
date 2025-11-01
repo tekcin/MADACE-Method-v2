@@ -79,12 +79,12 @@ async function importAgent(filePath: string) {
     console.log(`  🔄 Updating: ${agentData.name}`);
     await prisma.agent.update({
       where: { name: agentData.name },
-      data: agentData,
+      data: agentData as any,
     });
   } else {
     console.log(`  ✨ Creating: ${agentData.name}`);
     await prisma.agent.create({
-      data: agentData,
+      data: agentData as any,
     });
   }
 
