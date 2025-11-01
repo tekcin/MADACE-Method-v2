@@ -18,12 +18,14 @@ import {
   CloudArrowDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CommandLineIcon,
 } from '@heroicons/react/24/outline';
 import { ProjectSelector } from './ProjectSelector';
 import { ProjectModal } from './ProjectModal';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: HomeIcon },
+  { name: 'CLI Setup', href: '/cli-setup', icon: CommandLineIcon },
   { name: 'Chat', href: '/chat', icon: ChatBubbleLeftIcon },
   { name: 'Kanban', href: '/kanban', icon: ViewColumnsIcon },
   { name: 'Assess', href: '/assess', icon: ChartBarIcon },
