@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ProjectBadge } from '@/components/features/ProjectBadge';
 import type { Config } from '@/lib/config/schema';
 
 type LLMProvider = 'gemini' | 'claude' | 'openai' | 'local';

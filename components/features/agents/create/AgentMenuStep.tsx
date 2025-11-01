@@ -37,8 +37,11 @@ export function AgentMenuStep({ agentData, setAgentData }: AgentMenuStepProps) {
   };
 
   const handleEditMenuItem = (index: number) => {
-    setMenuItem(agentData.menu[index]);
-    setEditingIndex(index);
+    const item = agentData.menu[index];
+    if (item) {
+      setMenuItem(item);
+      setEditingIndex(index);
+    }
   };
 
   const handleDeleteMenuItem = (index: number) => {
@@ -58,7 +61,7 @@ export function AgentMenuStep({ agentData, setAgentData }: AgentMenuStepProps) {
       <div>
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Menu Actions</h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Define the actions users can trigger from the agent's menu
+          Define the actions users can trigger from the agent&apos;s menu
         </p>
       </div>
 

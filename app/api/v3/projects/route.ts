@@ -15,7 +15,7 @@ const getCurrentUserId = () => 'default-user';
  * GET /api/v3/projects
  * List all projects for the current user
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const userId = getCurrentUserId();
     const projects = await getProjects(userId);

@@ -4,8 +4,8 @@ import path from 'path';
 import fs from 'fs/promises';
 
 /**
- * POST /api/v3/workflows/[id]/execute
- * Start or resume workflow execution
+ * POST /api/v3/workflows/[id]/resume
+ * Resume workflow execution after input submission or pause
  */
 export async function POST(
   request: NextRequest,
@@ -14,44 +14,33 @@ export async function POST(
   try {
     const { id } = await params;
 
-    // Determine workflow path
-    // For now, assume workflows are in madace/*/workflows/ directories
-    // In production, this would come from database
+    // Find and load workflow
     const workflowPath = await findWorkflowPath(id);
-
     if (!workflowPath) {
       return NextResponse.json(
-        {
-          success: false,
-          error: `Workflow not found: ${id}`,
-        },
+        { success: false, error: 'Workflow not found' },
         { status: 404 }
       );
     }
 
-    // Load workflow
     const workflow = await loadWorkflow(workflowPath);
 
     // Create executor with state directory
     const stateDir = path.join(process.cwd(), '.madace', 'workflow-states');
-    await fs.mkdir(stateDir, { recursive: true });
-
     const executor = createWorkflowExecutor(workflow, stateDir);
 
-    // Initialize (will load existing state if present)
+    // Initialize (loads existing state)
     await executor.initialize();
 
-    // Start execution in background (non-blocking)
-    // This will execute steps until it hits an elicit step or completes
+    // Resume execution in background
     executeWorkflowAsync(id, executor);
 
     return NextResponse.json({
       success: true,
-      message: 'Workflow execution started',
-      workflowId: id,
+      message: 'Workflow resumed',
     });
   } catch (error) {
-    console.error('Workflow execution error:', error);
+    console.error('Resume error:', error);
     return NextResponse.json(
       {
         success: false,
@@ -70,6 +59,7 @@ async function findWorkflowPath(id: string): Promise<string | null> {
     path.join(process.cwd(), 'madace', 'mam', 'workflows', `${id}.workflow.yaml`),
     path.join(process.cwd(), 'madace', 'mab', 'workflows', `${id}.workflow.yaml`),
     path.join(process.cwd(), 'madace', 'core', 'workflows', `${id}.workflow.yaml`),
+    path.join(process.cwd(), 'madace', 'mam', 'workflows', 'examples', `${id}.workflow.yaml`),
     path.join(process.cwd(), 'workflows', `${id}.yaml`),
   ];
 
@@ -87,20 +77,18 @@ async function findWorkflowPath(id: string): Promise<string | null> {
 
 /**
  * Execute workflow asynchronously
- * Runs in background and updates state file
  */
 async function executeWorkflowAsync(
   workflowId: string,
   executor: Awaited<ReturnType<typeof createWorkflowExecutor>>
 ) {
   try {
-    // Execute steps until completion or waiting for input
+    // Continue execution from current step
     let result = await executor.executeNextStep();
 
     while (result.success && !result.state?.completed) {
       // Check if waiting for input
       if (result.error?.message === 'WAITING_FOR_INPUT') {
-        // State is saved, workflow paused
         break;
       }
 

@@ -46,7 +46,7 @@ export function WorkflowInputForm({
           setError(`Input must match pattern: ${step.validation}`);
           return;
         }
-      } catch (err) {
+      } catch {
         console.warn('Invalid validation regex:', step.validation);
       }
     }

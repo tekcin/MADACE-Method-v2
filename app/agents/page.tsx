@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AgentSelector, type AgentCardData } from '@/components/features/AgentSelector';
+import { AgentSelector } from '@/components/features/AgentSelector';
 import { ProjectBadge } from '@/components/features/ProjectBadge';
 
 /**

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { ProjectBadge } from '@/components/features/ProjectBadge';
 import { WorkflowCard, type WorkflowCardData } from '@/components/features/WorkflowCard';
 import {
   WorkflowExecutionPanel,

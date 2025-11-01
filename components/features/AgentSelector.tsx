@@ -88,6 +88,7 @@ export function AgentSelector({
       window.addEventListener('project-switched', handleProjectSwitch);
       return () => window.removeEventListener('project-switched', handleProjectSwitch);
     }
+    return undefined;
   }, [providedAgents]);
 
   const fetchAgents = async () => {

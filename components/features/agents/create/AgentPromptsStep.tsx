@@ -37,8 +37,11 @@ export function AgentPromptsStep({ agentData, setAgentData }: AgentPromptsStepPr
   };
 
   const handleEditPrompt = (index: number) => {
-    setPrompt(agentData.prompts[index]);
-    setEditingIndex(index);
+    const item = agentData.prompts[index];
+    if (item) {
+      setPrompt(item);
+      setEditingIndex(index);
+    }
   };
 
   const handleDeletePrompt = (index: number) => {

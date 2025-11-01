@@ -37,7 +37,7 @@ export function AgentPersonaStep({ agentData, setAgentData }: AgentPersonaStepPr
       <div>
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Agent Persona</h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Define your agent's personality and communication style
+          Define your agent&apos;s personality and communication style
         </p>
       </div>
 
@@ -61,7 +61,7 @@ export function AgentPersonaStep({ agentData, setAgentData }: AgentPersonaStepPr
           required
         />
         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          The agent's primary role or job title
+          The agent&apos;s primary role or job title
         </p>
       </div>
 

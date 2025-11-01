@@ -33,7 +33,7 @@ export function WorkflowExecutionModal({
     'initializing'
   );
   const [steps, setSteps] = useState<WorkflowStep[]>([]);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [_currentStepIndex, _setCurrentStepIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<unknown>(null);
 

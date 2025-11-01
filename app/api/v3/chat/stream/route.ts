@@ -6,7 +6,6 @@
 
 import { NextRequest } from 'next/server';
 import { createMessage, getSession } from '@/lib/services/chat-service';
-import { createLLMClient } from '@/lib/llm/client';
 import {
   createResilientLLMClient,
   ResilientLLMError,
