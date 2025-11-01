@@ -18,7 +18,6 @@ import {
 export default function WorkflowsPage() {
   const [executionState, setExecutionState] = useState<WorkflowExecutionState | null>(null);
   const [loading, setLoading] = useState(false);
-  const [autoExecute, setAutoExecute] = useState(false);
   const [workflows, setWorkflows] = useState<WorkflowCardData[]>([]);
   const [loadingWorkflows, setLoadingWorkflows] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -138,7 +137,6 @@ export default function WorkflowsPage() {
       ...executionState,
       paused: true,
     });
-    setAutoExecute(false);
   };
 
   const handleResume = () => {
@@ -147,20 +145,17 @@ export default function WorkflowsPage() {
       ...executionState,
       paused: false,
     });
-    setAutoExecute(true);
   };
 
   const handleCancel = () => {
     if (!executionState) return;
     if (confirm('Are you sure you want to cancel this workflow? All progress will be lost.')) {
       setExecutionState(null);
-      setAutoExecute(false);
     }
   };
 
   const handleReset = () => {
     setExecutionState(null);
-    setAutoExecute(false);
   };
 
   const handleWorkflowClick = (_workflowName: string) => {

@@ -96,7 +96,7 @@ export class IDEPage {
    * Close a tab by index
    */
   async closeTab(index: number): Promise<void> {
-    const closeButto = this.page.locator('[data-testid="tab-close"]').nth(index);
+    const closeButton = this.page.locator('[data-testid="tab-close"]').nth(index);
     await closeButton.click();
     await this.page.waitForTimeout(300);
   }

@@ -135,7 +135,7 @@ export async function getSessionProviderStats(sessionId: string): Promise<Provid
       if (!acc[record.provider]) {
         acc[record.provider] = [];
       }
-      acc[record.provider].push(record);
+      acc[record.provider]!.push(record);
       return acc;
     },
     {} as Record<string, typeof usage>
@@ -221,7 +221,7 @@ export async function getUserUsageStats(
       if (!acc[record.provider]) {
         acc[record.provider] = [];
       }
-      acc[record.provider].push(record);
+      acc[record.provider]!.push(record);
       return acc;
     },
     {} as Record<string, typeof usage>

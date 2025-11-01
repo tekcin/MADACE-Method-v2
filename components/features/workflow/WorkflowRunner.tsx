@@ -281,9 +281,9 @@ export function WorkflowRunner({ workflow, workflowId, autoStart = false }: Work
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
             {workflow.description}
           </p>
-          {workflow.agent && (
+          {workflow.workflow?.agent && (
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
-              Agent: {workflow.agent} | Phase: {workflow.phase || 1}
+              Agent: {workflow.workflow.agent} | Phase: {workflow.workflow.phase || 1}
             </p>
           )}
         </div>

@@ -42,7 +42,7 @@ export class MonacoEditorPage {
     await this.editorContainer.waitFor({ state: 'visible', timeout: 10000 });
     await this.page.waitForFunction(
       () => {
-        return window.monaco !== undefined;
+        return (window as any).monaco !== undefined;
       },
       { timeout: 10000 }
     );
@@ -268,7 +268,7 @@ export class MonacoEditorPage {
     await this.page.evaluate((lang) => {
       const editor = (window as any).monaco?.editor?.getModels()[0];
       if (!editor) throw new Error('Monaco editor not found');
-      window.monaco.editor.setModelLanguage(editor, lang);
+      (window as any).monaco.editor.setModelLanguage(editor, lang);
     }, language);
   }
 
@@ -279,7 +279,7 @@ export class MonacoEditorPage {
     return await this.page.evaluate(() => {
       const editor = (window as any).monaco?.editor?.getModels()[0];
       if (!editor) throw new Error('Monaco editor not found');
-      return editor.getOptions().get(window.monaco.editor.EditorOption.readOnly);
+      return editor.getOptions().get((window as any).monaco.editor.EditorOption.readOnly);
     });
   }
 

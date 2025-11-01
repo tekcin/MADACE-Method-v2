@@ -7,12 +7,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type React from 'react';
 
 interface WorkflowStep {
   id: string;
   status: 'pending' | 'running' | 'completed' | 'failed';
   name?: string;
-  result?: unknown;
+  result?: Record<string, unknown> | string | number | boolean | null;
   error?: string;
 }
 
@@ -21,6 +22,68 @@ interface WorkflowExecutionModalProps {
   workflowDescription?: string;
   onClose: () => void;
   variables?: Record<string, unknown>;
+}
+
+// Helper function to render steps section
+function StepsSection({ steps }: { steps: WorkflowStep[] }): React.ReactElement | null {
+  if (steps.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mb-6 space-y-3">
+      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        Execution Steps:
+      </h3>
+      {steps.map((step, index) => (
+        <div
+          key={step.id}
+          className={`flex items-start gap-3 rounded-lg border p-3 ${
+            step.status === 'failed'
+              ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20'
+              : step.status === 'completed'
+                ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
+                : step.status === 'running'
+                  ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20'
+                  : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900'
+          }`}
+        >
+          {step.status === 'completed' && (
+            <svg className="h-5 w-5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+          {step.status === 'running' && (
+            <div className="h-5 w-5 flex-shrink-0 animate-spin rounded-full border-2 border-yellow-500 border-t-transparent"></div>
+          )}
+          {step.status === 'failed' && (
+            <svg className="h-5 w-5 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+          {step.status === 'pending' && (
+            <div className="h-5 w-5 flex-shrink-0 rounded-full border-2 border-gray-300"></div>
+          )}
+          <div className="flex-1">
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {step.name || `Step ${index + 1}`}
+            </p>
+            {step.error && (
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{step.error}</p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export function WorkflowExecutionModal({
@@ -35,7 +98,7 @@ export function WorkflowExecutionModal({
   const [steps, setSteps] = useState<WorkflowStep[]>([]);
   const [_currentStepIndex, _setCurrentStepIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<unknown>(null);
+  const [result, setResult] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     executeWorkflow();
@@ -200,62 +263,7 @@ export function WorkflowExecutionModal({
           </div>
 
           {/* Steps */}
-          {steps.length > 0 && (
-            <>
-              <div className="mb-6 space-y-3">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Execution Steps:
-                </h3>
-                {steps.map((step, index) => (
-                <div
-                  key={step.id}
-                  className={`flex items-start gap-3 rounded-lg border p-3 ${
-                    step.status === 'failed'
-                      ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20'
-                      : step.status === 'completed'
-                        ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
-                        : step.status === 'running'
-                          ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20'
-                          : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900'
-                  }`}
-                >
-                  {step.status === 'completed' && (
-                    <svg className="h-5 w-5 flex-shrink-0 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                  {step.status === 'running' && (
-                    <div className="h-5 w-5 flex-shrink-0 animate-spin rounded-full border-2 border-yellow-500 border-t-transparent"></div>
-                  )}
-                  {step.status === 'failed' && (
-                    <svg className="h-5 w-5 flex-shrink-0 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                  {step.status === 'pending' && (
-                    <div className="h-5 w-5 flex-shrink-0 rounded-full border-2 border-gray-300"></div>
-                  )}
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {step.name || `Step ${index + 1}`}
-                    </p>
-                    {step.error && (
-                      <p className="mt-1 text-xs text-red-600 dark:text-red-400">{step.error}</p>
-                    )}
-                  </div>
-                </div>
-                ))}
-              </div>
-            </>
-          )}
+          <StepsSection steps={steps} />
 
           {/* Error Message */}
           {error && (
@@ -285,7 +293,7 @@ export function WorkflowExecutionModal({
             <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20">
               <h4 className="mb-2 font-medium text-green-800 dark:text-green-200">Result</h4>
               <pre className="max-h-48 overflow-auto rounded bg-white p-3 text-xs text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-                {JSON.stringify(result, null, 2)}
+                {JSON.stringify(result, null, 2) || 'No result data'}
               </pre>
             </div>
           )}

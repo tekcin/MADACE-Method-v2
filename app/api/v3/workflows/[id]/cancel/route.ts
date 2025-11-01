@@ -29,7 +29,7 @@ export async function POST(
         message: 'Workflow cancelled successfully',
         workflowId: id,
       });
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,

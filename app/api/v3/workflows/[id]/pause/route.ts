@@ -38,7 +38,7 @@ export async function POST(
           paused: true,
         },
       });
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,

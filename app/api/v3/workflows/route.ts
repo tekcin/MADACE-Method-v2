@@ -21,7 +21,7 @@ const WORKFLOWS_DIRS = [
 /**
  * Get all available workflows from YAML files
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const workflows: Array<{
       id: string;
@@ -52,25 +52,29 @@ export async function GET(request: NextRequest) {
 
             if (data.workflow) {
               const workflow = data.workflow;
-              const module = dir.split('/')[1] || 'custom'; // Extract mam/mab/cis
+              const workflowName = workflow.workflow?.name || workflow.name;
 
-              workflows.push({
-                id: workflow.name,
-                name: workflow.name,
-                description: workflow.description || '',
-                agent: workflow.agent || 'Unknown',
-                phase: workflow.phase || 1,
-                stepCount: workflow.steps?.length || 0,
-                module,
-                filePath: filePath.replace(process.cwd(), ''), // Relative path
-              });
+              if (workflowName) {
+                const workflowModule = dir.split('/')[1] || 'custom'; // Extract mam/mab/cis
+
+                workflows.push({
+                  id: workflowName,
+                  name: workflowName,
+                  description: workflow.workflow?.description || workflow.description || '',
+                  agent: workflow.workflow?.agent || 'Unknown',
+                  phase: workflow.workflow?.phase || 1,
+                  stepCount: workflow.workflow?.steps?.length || workflow.steps?.length || 0,
+                  module: workflowModule,
+                  filePath: filePath.replace(process.cwd(), ''), // Relative path
+                });
+              }
             }
-          } catch (error) {
-            console.error(`Error loading workflow file ${file}:`, error);
+          } catch (fileError) {
+            console.error(`Error loading workflow file ${file}:`, fileError);
             // Continue with other files
           }
         }
-      } catch (error) {
+      } catch {
         // Directory doesn't exist, skip
         continue;
       }

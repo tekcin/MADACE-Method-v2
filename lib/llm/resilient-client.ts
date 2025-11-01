@@ -10,7 +10,7 @@
  */
 
 import { createLLMClient } from './client';
-import type { LLMClient, LLMProvider, LLMConfig, ChatRequest, ChatResponse } from './types';
+import type { LLMProvider, LLMConfig, LLMRequest, LLMResponse, LLMStreamChunk } from './types';
 
 export interface ResilientClientOptions {
   preferredProvider?: LLMProvider;
@@ -19,6 +19,13 @@ export interface ResilientClientOptions {
   maxBackoffMs?: number;
   enableFallback?: boolean;
   fallbackProviders?: LLMProvider[];
+}
+
+export interface ResilientLLMClient {
+  chat(request: LLMRequest): Promise<LLMResponse>;
+  chatStream(request: LLMRequest): AsyncGenerator<LLMStreamChunk>;
+  provider: LLMProvider;
+  config: LLMConfig;
 }
 
 export interface ProviderAttempt {
@@ -130,7 +137,7 @@ function getProviderConfig(provider: LLMProvider): LLMConfig {
  */
 export async function createResilientLLMClient(
   options: ResilientClientOptions = {}
-): Promise<LLMClient> {
+): Promise<ResilientLLMClient> {
   const {
     preferredProvider = 'gemini',
     maxRetries = 2,
@@ -147,8 +154,8 @@ export async function createResilientLLMClient(
    */
   async function attemptRequest(
     provider: LLMProvider,
-    request: ChatRequest
-  ): Promise<ChatResponse> {
+    request: LLMRequest
+  ): Promise<LLMResponse> {
     const config = getProviderConfig(provider);
     const client = createLLMClient(config);
 
@@ -188,7 +195,7 @@ export async function createResilientLLMClient(
   /**
    * Wrapped chat method with resilience
    */
-  async function chat(request: ChatRequest): Promise<ChatResponse> {
+  async function chat(request: LLMRequest): Promise<LLMResponse> {
     // Try preferred provider first
     try {
       return await attemptRequest(preferredProvider, request);
@@ -242,7 +249,7 @@ export async function createResilientLLMClient(
   /**
    * Wrapped chatStream method with resilience
    */
-  async function* chatStream(request: ChatRequest): AsyncGenerator<ChatResponse> {
+  async function* chatStream(request: LLMRequest): AsyncGenerator<LLMStreamChunk> {
     // Similar logic to chat, but for streaming
     try {
       const config = getProviderConfig(preferredProvider);

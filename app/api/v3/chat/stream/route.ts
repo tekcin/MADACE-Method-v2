@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
           const responseTime = Date.now() - startTime;
 
           // Get actual provider used (may be different due to fallback)
-          usedProvider = llmClient.provider;
+          usedProvider = llmClient.config.provider;
           usedModel = llmClient.config.model;
 
           // Log successful usage
