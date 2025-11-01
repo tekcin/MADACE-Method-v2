@@ -157,10 +157,10 @@ export function WorkflowCreator({ onComplete, onCancel }: WorkflowCreatorProps) 
   };
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-5xl" data-testid="workflow-creator">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="creator-title">
           Create New Workflow
         </h1>
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
@@ -169,16 +169,17 @@ export function WorkflowCreator({ onComplete, onCancel }: WorkflowCreatorProps) 
       </div>
 
       {/* Progress Indicator */}
-      <div className="mb-8">
+      <div className="mb-8" data-testid="progress-indicator">
         <div className="flex items-center justify-between">
           {STEPS.map((step, index) => {
             const isActive = step.id === currentStep;
             const isCompleted = index < currentStepIndex;
 
             return (
-              <div key={step.id} className="flex flex-1 items-center">
+              <div key={step.id} className="flex flex-1 items-center" data-testid={`step-${step.id}`}>
                 <div className="flex flex-col items-center">
                   <div
+                    data-testid={`step-indicator-${step.id}`}
                     className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
                       isActive
                         ? 'border-blue-600 bg-blue-600 text-white dark:border-blue-500 dark:bg-blue-500'
@@ -230,7 +231,10 @@ export function WorkflowCreator({ onComplete, onCancel }: WorkflowCreatorProps) 
       </div>
 
       {/* Step Content */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div
+        className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+        data-testid="step-content"
+      >
         {currentStep === 'basic' && (
           <BasicInfoStep workflowData={workflowData} setWorkflowData={setWorkflowData} />
         )}
@@ -245,7 +249,7 @@ export function WorkflowCreator({ onComplete, onCancel }: WorkflowCreatorProps) 
 
       {/* Error Message */}
       {submitError && (
-        <div className="mt-4 rounded-md bg-red-50 p-4 dark:bg-red-900/20">
+        <div className="mt-4 rounded-md bg-red-50 p-4 dark:bg-red-900/20" data-testid="error-message">
           <div className="flex">
             <svg
               className="h-5 w-5 text-red-400"
@@ -265,7 +269,7 @@ export function WorkflowCreator({ onComplete, onCancel }: WorkflowCreatorProps) 
 
       {/* Success Message */}
       {submitSuccess && (
-        <div className="mt-4 rounded-md bg-green-50 p-4 dark:bg-green-900/20">
+        <div className="mt-4 rounded-md bg-green-50 p-4 dark:bg-green-900/20" data-testid="success-message">
           <div className="flex">
             <svg
               className="h-5 w-5 text-green-400"
@@ -286,13 +290,14 @@ export function WorkflowCreator({ onComplete, onCancel }: WorkflowCreatorProps) 
       )}
 
       {/* Navigation Buttons */}
-      <div className="mt-6 flex items-center justify-between">
+      <div className="mt-6 flex items-center justify-between" data-testid="navigation-buttons">
         <div>
           {currentStepIndex > 0 && (
             <button
               type="button"
               onClick={handlePrevious}
               disabled={isSubmitting}
+              data-testid="previous-button"
               className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             >
               Previous
@@ -305,6 +310,7 @@ export function WorkflowCreator({ onComplete, onCancel }: WorkflowCreatorProps) 
             type="button"
             onClick={handleCancel}
             disabled={isSubmitting}
+            data-testid="cancel-button"
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
           >
             Cancel
@@ -315,6 +321,7 @@ export function WorkflowCreator({ onComplete, onCancel }: WorkflowCreatorProps) 
               type="button"
               onClick={handleNext}
               disabled={isSubmitting}
+              data-testid="next-button"
               className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50"
             >
               Next
@@ -324,6 +331,7 @@ export function WorkflowCreator({ onComplete, onCancel }: WorkflowCreatorProps) 
               type="button"
               onClick={handleFinish}
               disabled={isSubmitting}
+              data-testid="finish-button"
               className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 disabled:opacity-50"
             >
               {isSubmitting ? 'Creating...' : 'Finish'}

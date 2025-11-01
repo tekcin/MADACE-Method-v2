@@ -169,17 +169,20 @@ export default function WorkflowsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8" data-testid="workflows-page">
       {/* Page header */}
       <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">MADACE Workflows</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="page-title">
+            MADACE Workflows
+          </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             Execute MADACE workflows to guide your project from planning through implementation.
           </p>
         </div>
         <a
           href="/workflows/create"
+          data-testid="create-workflow-link"
           className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           Create Workflow
@@ -203,7 +206,10 @@ export default function WorkflowsPage() {
 
       {/* Error Message */}
       {error && !executionState && (
-        <div className="mb-6 rounded-md border-2 border-red-300 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
+        <div
+          className="mb-6 rounded-md border-2 border-red-300 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20"
+          data-testid="error-message"
+        >
           <div className="flex">
             <svg
               className="h-5 w-5 text-red-600 dark:text-red-400"
@@ -225,7 +231,7 @@ export default function WorkflowsPage() {
 
       {/* Loading State */}
       {loadingWorkflows && !executionState && (
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-12" data-testid="loading-state">
           <div className="flex flex-col items-center space-y-4">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500 dark:border-gray-600 dark:border-t-blue-400"></div>
             <p className="text-lg font-medium text-gray-900 dark:text-white">
@@ -237,7 +243,7 @@ export default function WorkflowsPage() {
 
       {/* Workflows grid (hide during execution) */}
       {!executionState && !loadingWorkflows && workflows.length > 0 && (
-        <div>
+        <div data-testid="workflows-grid">
           <h2 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">
             Available Workflows ({workflows.length})
           </h2>
@@ -256,7 +262,10 @@ export default function WorkflowsPage() {
 
       {/* Empty state for when no workflows exist */}
       {workflows.length === 0 && !executionState && !loadingWorkflows && (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center dark:border-gray-600 dark:bg-gray-800">
+        <div
+          className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center dark:border-gray-600 dark:bg-gray-800"
+          data-testid="empty-state"
+        >
           <svg
             className="mx-auto size-12 text-gray-400"
             fill="none"
