@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import {
   CommandLineIcon,
   ClipboardDocumentIcon,
@@ -370,7 +371,7 @@ NODE_ENV=development`}
             </p>
           </a>
 
-          <a
+          <Link
             href="/docs"
             className="block rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
           >
@@ -380,9 +381,9 @@ NODE_ENV=development`}
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Full guides and API reference
             </p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/chat"
             className="block rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
           >
@@ -392,9 +393,9 @@ NODE_ENV=development`}
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Chat with MADACE agents
             </p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/workflows"
             className="block rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
           >
@@ -404,7 +405,7 @@ NODE_ENV=development`}
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Execute guided development workflows
             </p>
-          </a>
+          </Link>
         </div>
       </section>
     </div>
